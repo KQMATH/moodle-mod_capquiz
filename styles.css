@@ -1,0 +1,31 @@
+.capquiz-question-list-item {
+    display: flex;
+}
+
+.capquiz-list-widget {
+
+}
+
+.capquiz-list-widget-item {
+
+}
+
+.capquiz-tree-widget {
+
+}
+
+.capquiz-tree-widget-row {
+
+}
+
+.capquiz-tree-widget-cell {
+
+}
+
+.capquiz-tree-header-cell {
+    font-weight: bold;
+}
+
+.capquiz-tree-header-row {
+    background-color: grey;
+}
