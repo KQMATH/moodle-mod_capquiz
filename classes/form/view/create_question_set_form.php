@@ -6,10 +6,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class create_question_set_form extends \moodleform
-{
-    public function definition()
-    {
+class create_question_set_form extends \moodleform {
+
+    public function definition() {
         $form = $this->_form;
         $form->addElement('text', 'title', get_string('title', 'capquiz'));
         $form->setType('title', PARAM_TEXT);
@@ -22,8 +21,7 @@ class create_question_set_form extends \moodleform
         $form->addElement('submit', 'submitbutton', get_string('create_question_list', 'capquiz'));
     }
 
-    public function validations($data, $files)
-    {
+    public function validations($data, $files) {
         $validation_errors = [];
         if (empty($data['title'])) {
             $validation_errors['title'] = get_string('title_required', 'capquiz');
@@ -33,4 +31,5 @@ class create_question_set_form extends \moodleform
         }
         return $validation_errors;
     }
+
 }

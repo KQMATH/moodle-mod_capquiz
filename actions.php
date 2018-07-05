@@ -2,8 +2,8 @@
 
 namespace mod_capquiz;
 
-class capquiz_actions
-{
+class capquiz_actions {
+
     public static $param_action = 'action';
     public static $action_attempt_answered = 'answered';
     public static $action_attempt_reviewed = 'reviewed';
@@ -13,4 +13,3 @@ class capquiz_actions
     public static $action_publish_question_list = 'publish-question-list';
 
 }
-

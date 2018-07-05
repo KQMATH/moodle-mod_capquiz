@@ -2,8 +2,8 @@
 
 namespace mod_capquiz;
 
-class database_meta
-{
+class database_meta {
+
     public static $table_capquiz = "capquiz";
     public static $table_capquiz_user = "capquiz_user";
     public static $table_capquiz_attempt = "capquiz_attempt";
@@ -25,4 +25,5 @@ class database_meta
     public static $field_description = "description";
 
     public static $moodletable_question = 'question';
+
 }
