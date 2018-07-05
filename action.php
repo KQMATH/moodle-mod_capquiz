@@ -10,21 +10,18 @@ require_once($CFG->dirroot . '/mod/capquiz/urls.php');
 require_once($CFG->dirroot . '/mod/capquiz/actions.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor/question_list_create_view.php');
 
-function redirect_to_front_page()
-{
+function redirect_to_front_page() {
     header('Location: /');
     exit;
 }
 
-function redirect_to_plugin_index(capquiz $capquiz)
-{
+function redirect_to_plugin_index(capquiz $capquiz) {
     $target_url = new \moodle_url(capquiz_urls::$url_view);
     $target_url->param(capquiz_urls::$param_id, $capquiz->course_module_id());
     redirect($target_url);
 }
 
-function set_action_url(capquiz $capquiz)
-{
+function set_action_url(capquiz $capquiz) {
     global $PAGE;
     $PAGE->set_context($capquiz->context());
     $PAGE->set_cm($capquiz->course_module());
@@ -32,15 +29,13 @@ function set_action_url(capquiz $capquiz)
     $PAGE->set_url($PAGE->url);
 }
 
-function assign_question_list(capquiz $capquiz)
-{
+function assign_question_list(capquiz $capquiz) {
     if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_TEXT)) {
         $capquiz->assign_question_list($question_list_id);
     }
 }
 
-function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating = 600)
-{
+function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating = 600) {
     global $DB;
     $rated_question = new \stdClass();
     $rated_question->question_list_id = $list->id();
@@ -49,27 +44,25 @@ function create_capquiz_question(int $question_id, capquiz_question_list $list, 
     $DB->insert_record(database_meta::$table_capquiz_question, $rated_question);
 }
 
-function add_question_to_list(capquiz $capquiz)
-{
+function add_question_to_list(capquiz $capquiz) {
     if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_TEXT)) {
         if (!$capquiz->has_question_list()) {
             if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_TEXT)) {
                 create_capquiz_question($question_id, $capquiz->question_registry()->question_list($question_list_id), $capquiz->default_question_rating());
             }
-        } else
+        } else {
             create_capquiz_question($question_id, $capquiz->question_list());
+        }
     }
 }
 
-function publish_question_list(capquiz $capquiz)
-{
+function publish_question_list(capquiz $capquiz) {
     if (!$capquiz->publish()) {
         throw new \Exception("Unable to publish question list for CAPQuiz " . $capquiz->name());
     }
 }
 
-function set_question_rating(capquiz $capquiz)
-{
+function set_question_rating(capquiz $capquiz) {
     $question_id = required_param(capquiz_urls::$param_question_id, PARAM_INT);
     if ($question = $capquiz->question_list()->question($question_id)) {
         if ($rating = optional_param(capquiz_urls::$param_rating, null, PARAM_FLOAT)) {
@@ -82,8 +75,7 @@ function set_question_rating(capquiz $capquiz)
     }
 }
 
-function determine_action(capquiz $capquiz, string $action_type)
-{
+function determine_action(capquiz $capquiz, string $action_type) {
     $capquiz->require_instructor_capability();
     if ($action_type == capquiz_actions::$action_set_question_list) {
         assign_question_list($capquiz);
@@ -97,8 +89,7 @@ function determine_action(capquiz $capquiz, string $action_type)
     redirect_to_plugin_index($capquiz);
 }
 
-function capquiz_action()
-{
+function capquiz_action() {
     $course_module_id = optional_param(capquiz_urls::$param_cmid, null, PARAM_INT);
     $action_type = optional_param(capquiz_actions::$param_action, '', PARAM_TEXT);
     if ($course_module_id) {

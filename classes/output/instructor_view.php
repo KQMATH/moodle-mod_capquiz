@@ -11,19 +11,17 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor/question_li
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor/enrolled_users_widget.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor/question_list_selection_widget.php');
 
-class instructor_view
-{
+class instructor_view {
+
     private $renderer;
     private $capquiz;
 
-    public function __construct(capquiz $capquiz, \core_renderer $renderer)
-    {
+    public function __construct(capquiz $capquiz, \core_renderer $renderer) {
         $this->renderer = $renderer;
         $this->capquiz = $capquiz;
     }
 
-    public function show()
-    {
+    public function show() {
         echo $this->renderer->header();
         if ($this->capquiz->has_question_list()) {
             $this->show_question_list();
@@ -34,14 +32,12 @@ class instructor_view
         echo $this->renderer->footer();
     }
 
-    private function show_question_set_selection()
-    {
+    private function show_question_set_selection() {
         $set_view = new question_list_selection_widget($this->capquiz, $this->renderer);
         $set_view->show();
     }
 
-    private function show_question_list()
-    {
+    private function show_question_list() {
         echo '<h2>Question list</h2>';
         $this->show_question_list_view();
         if (!$this->capquiz->is_published()) {
@@ -50,20 +46,17 @@ class instructor_view
         }
     }
 
-    private function show_question_list_view()
-    {
+    private function show_question_list_view() {
         $question_view = new question_list_widget($this->capquiz);
         $question_view->show();
     }
 
-    private function show_publish_button()
-    {
+    private function show_publish_button() {
         $url = capquiz_urls::create_question_list_publish_url($this->capquiz, $this->capquiz->question_list());
         echo \html_writer::div($this->renderer->single_button($url, get_string('publish', 'capquiz')));
     }
 
-    private function show_question_bank_view()
-    {
+    private function show_question_bank_view() {
         if (isset($_GET[capquiz_urls::$param_id])) {
             $_GET['cmid'] = $_GET['id'];
         }
@@ -75,9 +68,9 @@ class instructor_view
         $question_view->show('editq', $questionpage, $questionsperpage, $pagevars['cat'], true, true, true);
     }
 
-    private function show_user_list()
-    {
+    private function show_user_list() {
         $widget = new enrolled_users_widget($this->capquiz);
         $widget->show();
     }
+
 }
