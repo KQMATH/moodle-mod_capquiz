@@ -24,7 +24,7 @@ class default_elo_rating_system extends capquiz_rating_system {
 
     //Must return an array with modified ratings such as: array(first_rating, second_rating)
     public function question_draw_ratings(capquiz_question $first, capquiz_question $second) {
-        return array($first->rating(), $second->rating());
+        return [$first->rating(), $second->rating()];
     }
 
     //Must return an array with modified ratings such as: array(winner_rating, loser_rating)
