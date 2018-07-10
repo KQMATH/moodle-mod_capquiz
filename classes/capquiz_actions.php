@@ -24,7 +24,6 @@ class capquiz_actions {
     public static $action_set_question_list = 'set-question-list';
     public static $action_set_question_rating = "set-question-rating";
     public static $action_add_question_to_list = 'add-question';
-    public static $action_create_question_list = 'create-question-list';
     public static $action_publish_question_list = 'publish-question-list';
 
 }
