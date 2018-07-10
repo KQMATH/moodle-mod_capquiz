@@ -16,8 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_attempt.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 abstract class capquiz_rating_system {

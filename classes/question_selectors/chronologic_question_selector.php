@@ -16,8 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_selector.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 class chronologic_question_selector extends capquiz_question_selector {

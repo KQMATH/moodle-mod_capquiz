@@ -17,7 +17,7 @@
 namespace mod_capquiz;
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/capquiz/urls.php');
+require_once($CFG->dirroot . '/mod/capquiz/capquiz_urls.php');
 
 function redirect_to_plugin_index(capquiz $capquiz) {
     $target_url = new \moodle_url(capquiz_urls::$url_view);

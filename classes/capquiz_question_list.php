@@ -16,8 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 class capquiz_question_list {

@@ -22,7 +22,6 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/urls.php');
 
 function return_to_previous() {
     header('Location: ' . $_SERVER['HTTP_REFERER']);
