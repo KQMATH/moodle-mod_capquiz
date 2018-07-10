@@ -14,14 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_attempt.php');
+namespace mod_capquiz\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-abstract class capquiz_question_selector {
+class renderer extends \plugin_renderer_base  {
 
-    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts);
+    public function output_renderer() {
+        return $this->output;
+    }
+
+    public function display($view) {
+        echo $this->output->header();
+        echo $view->render($this);
+        echo $this->output->footer();
+    }
+
+    public function display_student_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display(new student_view($capquiz));
+    }
+
+    public function display_instructor_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display(new instructor_view($capquiz));
+    }
+
+    public function display_unauthorized_view() {
+        $this->display(new unauthorized_view());
+    }
 
 }
