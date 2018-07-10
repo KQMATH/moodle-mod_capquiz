@@ -16,11 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/database_meta.php');
-
-require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/default_elo_rating_system.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/chronologic_question_selector.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 class capquiz {

@@ -16,8 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 class default_elo_rating_system extends capquiz_rating_system {

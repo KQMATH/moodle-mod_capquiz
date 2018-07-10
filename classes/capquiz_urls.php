@@ -16,9 +16,6 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/actions.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_attempt.php');
-
 class capquiz_urls {
 
     public static $param_id = 'id';

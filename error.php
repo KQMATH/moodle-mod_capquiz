@@ -20,7 +20,7 @@ require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/urls.php');
+require_once($CFG->dirroot . '/mod/capquiz/capquiz_urls.php');
 
 function redirect_to_front_page() {
     header('Location: /');
