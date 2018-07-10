@@ -16,11 +16,12 @@
 
 namespace mod_capquiz;
 
+use mod_capquiz\output\renderer;
+
 require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/capquiz_urls.php');
 
 function redirect_to_front_page() {
     header('Location: /');
@@ -37,7 +38,7 @@ function set_view_url(capquiz $capquiz) {
     $PAGE->set_url($url);
 }
 
-function render_error_view(capquiz $capquiz, \mod_capquiz_renderer $renderer) {
+function render_error_view(capquiz $capquiz, renderer $renderer) {
     echo $renderer->output_renderer()->header();
     if ($capquiz->is_instructor()) {
         echo 'Something went wrong(instructor)';
