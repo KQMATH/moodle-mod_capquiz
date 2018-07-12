@@ -14,9 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_capquiz\output;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018060510;
-$plugin->requires = 2016052304;
-$plugin->cron = 0; 
-$plugin->component = 'mod_capquiz';
+class renderer extends \plugin_renderer_base  {
+
+    public function output_renderer() {
+        return $this->output;
+    }
+
+    public function display($view) {
+        echo $this->output->header();
+        echo $view->render($this);
+        echo $this->output->footer();
+    }
+
+    public function display_student_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display(new student_view($capquiz));
+    }
+
+    public function display_instructor_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display(new instructor_view($capquiz));
+    }
+
+    public function display_unauthorized_view() {
+        $this->display(new unauthorized_view());
+    }
+
+}

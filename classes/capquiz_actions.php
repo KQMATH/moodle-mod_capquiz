@@ -14,9 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_capquiz;
 
-$plugin->version = 2018060510;
-$plugin->requires = 2016052304;
-$plugin->cron = 0; 
-$plugin->component = 'mod_capquiz';
+class capquiz_actions {
+
+    public static $param_action = 'action';
+    public static $action_attempt_answered = 'answered';
+    public static $action_attempt_reviewed = 'reviewed';
+    public static $action_set_question_list = 'set-question-list';
+    public static $action_set_question_rating = "set-question-rating";
+    public static $action_add_question_to_list = 'add-question';
+    public static $action_publish_question_list = 'publish-question-list';
+
+}
