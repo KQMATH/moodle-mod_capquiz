@@ -21,26 +21,37 @@ defined('MOODLE_INTERNAL') || die();
 class adaptive_question_selector extends capquiz_question_selector {
 
     private $capquiz;
+    private $user_win_probability;
+    private $number_of_questions_drawn;
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
+        $this->user_win_probability = 0.75;
+        $this->number_of_questions_drawn = 10;
     }
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
-        $is_answered = function (capquiz_question $q) use ($inactive_capquiz_attempts) {
-            foreach ($inactive_capquiz_attempts as $attempt) {
-                if ($attempt->question_id() === $q->id()) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        foreach ($question_list->questions() as $question) {
-            if (!$is_answered($question)) {
-                return $question;
-            }
-        }
+        $candidate_questions = $this->find_questions_closest_to_rating($user);
+        $index = mt_rand(0, count($candidate_questions) - 1);
+        if ($question = $candidate_questions[$index])
+            return $question;
         return null;
     }
 
+    private function find_questions_closest_to_rating(capquiz_user $user) {
+        global $DB;
+        $ideal_question_rating = $this->ideal_question_rating($user);
+        $sql = "SELECT * FROM {capquiz_question} WHERE question_list_id=" . $this->capquiz->question_list()->id();
+        $sql .= " ORDER BY ABS(rating-$ideal_question_rating) LIMIT $this->number_of_questions_drawn";
+        $sql .= ";";
+        $questions = [];
+        foreach ($DB->get_records_sql($sql) as $question_db_entry) {
+            $questions[] = new capquiz_question($question_db_entry);
+        }
+        return $questions;
+    }
+
+    private function ideal_question_rating(capquiz_user $user) {
+        return 400.0 * log((1.0 / $this->user_win_probability) - 1.0, 10.0) + $user->rating();
+    }
 }

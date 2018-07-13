@@ -19,8 +19,11 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
+use mod_capquiz\capquiz_actions;
 use mod_capquiz\capquiz_question_registry;
+
 use mod_capquiz\bank\question_bank_view;
+
 use mod_capquiz\form\view\create_question_set_form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,23 +34,24 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class instructor_view {
 
     private $capquiz;
+    private $renderer;
 
-    public function __construct(capquiz $capquiz) {
+    public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
+        $this->renderer = $renderer;
     }
 
-    public function render(renderer $renderer) {
+    public function render() {
         if ($this->capquiz->has_question_list()) {
-            $html = $this->render_question_set($renderer);
+            $html = $this->render_question_set();
         } else {
-            //$html = $this->render_question_list_selection($renderer);
-            $html = $this->render_create_question_list($renderer);
+            $html = $this->render_create_question_list();
         }
-        $html .= $this->render_enrolled_students($renderer);
+        $html .= $this->render_enrolled_students();
         return $html;
     }
 
-    private function render_enrolled_students(renderer $renderer) {
+    private function render_enrolled_students() {
         $users = capquiz_user::list_users($this->capquiz);
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {
@@ -58,12 +62,12 @@ class instructor_view {
                 'rating' => $user->rating()
             ];
         }
-        return $renderer->render_from_template('capquiz/enrolled_students', [
+        return $this->renderer->render_from_template('capquiz/enrolled_students', [
             'users' => $rows
         ]);
     }
 
-    public function render_create_question_list(renderer $renderer) {
+    public function render_create_question_list() {
         global $PAGE;
         $url = $PAGE->url;
         $form = new create_question_set_form($url);
@@ -77,23 +81,23 @@ class instructor_view {
             header('Location: /');
             exit;
         }
-        return $renderer->render_from_template('capquiz/create_question_set', [
+        return $this->renderer->render_from_template('capquiz/create_question_set', [
             'form' => $form->render()
         ]);
     }
 
-    private function render_question_list_selection(renderer $renderer) {
+    private function render_question_list_selection() {
         $question_registry = new capquiz_question_registry($this->capquiz);
-        $lists = $question_registry->question_lists();
+        $question_lists = $question_registry->question_lists();
         $sets = [];
-        foreach ($lists as $list) {
+        foreach ($question_lists as $list) {
             $sets[] = [
-                'url' => capquiz_urls::create_question_list_select_url($this->capquiz, $list),
+                'url' => capquiz_urls::question_list_select_url($this->capquiz, $list),
                 'title' => $list->title(),
                 'description' => $list->description()
             ];
         }
-        return $renderer->render_from_template('capquiz/question_set_list', [
+        return $this->renderer->render_from_template('capquiz/question_set_list', [
             'sets' => $sets,
             'create' => [
                 'primary' => true,
@@ -110,7 +114,7 @@ class instructor_view {
         ]);
     }
 
-    private function render_question_set(renderer $renderer) {
+    private function render_question_set() {
         $question_list = $this->capquiz->question_list();
         $rows = [];
         $questions = $question_list->questions();
@@ -118,12 +122,10 @@ class instructor_view {
             $question = $questions[$i];
             $rows[] = [
                 'published' => $this->capquiz->is_published(),
-                'num' => $i + 1,
+                'index' => $i + 1,
                 'name' => $question->name(),
-                'rating' => [
-                    'action' => capquiz_urls::create_set_question_rating_url($this->capquiz, $question->id()),
-                    'value' => $question->rating()
-                ]
+                'rating' => $question->rating(),
+                'url' => capquiz_urls::set_question_rating_url($this->capquiz, $question->id())->out_as_local_url(false)
             ];
         }
         $publish = false;
@@ -131,11 +133,11 @@ class instructor_view {
             $publish = [
                 'primary' => true,
                 'method' => 'post',
-                'url' => capquiz_urls::create_question_list_publish_url($this->capquiz, $this->capquiz->question_list()),
+                'url' => capquiz_urls::question_list_publish_url($this->capquiz, $this->capquiz->question_list())->out_as_local_url(false),
                 'label' => get_string('publish', 'capquiz')
             ];
         }
-        $html = $renderer->render_from_template('capquiz/question_set', [
+        $html = $this->renderer->render_from_template('capquiz/question_set', [
             'publish' => $publish,
             'questions' => $rows
         ]);
