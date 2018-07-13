@@ -17,6 +17,8 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_question;
+use mod_capquiz\capquiz_question_attempt;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
@@ -24,65 +26,79 @@ defined('MOODLE_INTERNAL') || die();
 class student_view {
 
     private $capquiz;
+    private $renderer;
 
-    public function __construct(capquiz $capquiz) {
+    public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
+        $this->renderer = $renderer;
     }
 
-    public function render(renderer $renderer) {
-        global $PAGE;
-        $capquiz = $this->capquiz;
-        $user = $capquiz->user();
-        $quba = $capquiz->question_usage();
-        $context = $capquiz->context();
-        $qengine = $capquiz->question_engine();
-        if (!$qengine) {
-            return 'No question engine.';
+    public function render() {
+        if (!$this->capquiz->is_published())
+            return "Nothing here yet";
+        $question_engine = $this->capquiz->question_engine();
+        if ($attempt = $question_engine->attempt_for_user($this->capquiz->user())) {
+            if ($attempt->is_answered())
+                return $this->render_question_review($attempt);
+            else if ($attempt->is_pending())
+                return $this->render_question_attempt($attempt);
+        } else {
+            return $this->render_quiz_finished();
         }
-        $attempt = $qengine->attempt_for_user($user);
+    }
 
-        $question = [
-            'attempt' => [
-                'url' => '',
-                'slots' => '',
-                'body' => ''
-            ],
-            'summary' => [
-                'response' => '',
-                'feedback' => '',
-                'next' => [
-                    'primary' => true,
-                    'method' => 'post',
-                    'url' => '',
-                    'label' => get_string('next', 'capquiz')
+    private function render_question_attempt(capquiz_question_attempt $attempt) {
+        global $PAGE;
+        $question_usage = $this->capquiz->question_usage();
+        $context = $this->capquiz->context();
+        $question = capquiz_question::load($attempt->question_id());
+        $displayoptions = $this->summary_display_options($context);
+
+        $PAGE->requires->js_module('core_question_engine');
+        return $this->renderer->render_from_template('capquiz/student_question_attempt', [
+                'question' => [
+                    'student' => [
+                        'rating' => $this->capquiz->user()->rating()
+                    ],
+                    'question' => [
+                        'id' => $question->id(),
+                        'rating' => $question->rating()
+                    ],
+                    'attempt' => [
+                        'url' => capquiz_urls::response_submit_url($this->capquiz, $attempt)->out_as_local_url(false),
+                        'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
+                        'slots' => ''
+                    ]
                 ]
             ]
-        ];
+        );
+    }
 
-        if ($attempt && $attempt->is_pending()) {
-            if ($attempt->is_answered()) {
-                $displayoptions = $this->attempt_display_options($context);
-                $moodle_question = $quba->get_question($attempt->question_slot());
-                $questionrenderer = $moodle_question->get_renderer($PAGE);
-                $questionattempt = $quba->get_question_attempt($attempt->question_slot());
-                $question['summary']['response'] = $quba->get_response_summary($attempt->question_slot());
-                $question['summary']['feedback'] = $questionrenderer->feedback($questionattempt, $displayoptions);
-            } else {
-                $displayoptions = $this->summary_display_options($context);
-                $PAGE->requires->js_module('core_question_engine');
-                $question['attempt'] = [
-                    'url' => capquiz_urls::create_response_submit_url($capquiz, $attempt),
-                    'body' => $quba->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
-                    'slots' => ''
-                ];
-            }
-        }
+    private function render_question_review(capquiz_question_attempt $attempt) {
+        global $PAGE;
+        $question_usage = $this->capquiz->question_usage();
+        $displayoptions = $this->attempt_display_options($this->capquiz->context());
+        $moodle_question = $question_usage->get_question($attempt->question_slot());
+        $questionrenderer = $moodle_question->get_renderer($PAGE);
+        $questionattempt = $question_usage->get_question_attempt($attempt->question_slot());
 
-        return $renderer->render_from_template('capquiz/student_quiz', [
-            'published' => $capquiz->is_published(),
-            'completed' => $qengine->user_is_completed($user),
-            'question' => $question
-        ]);
+        return $this->renderer->render_from_template('capquiz/student_question_review', [
+                'summary' => [
+                    'response' => $question_usage->get_response_summary($attempt->question_slot()),
+                    'feedback' => $questionrenderer->feedback($questionattempt, $displayoptions),
+                    'next' => [
+                        'primary' => true,
+                        'method' => 'post',
+                        'url' => capquiz_urls::response_reviewed_url($this->capquiz, $attempt)->out_as_local_url(false),
+                        'label' => get_string('next', 'capquiz')
+                    ]
+                ]
+            ]
+        );
+    }
+
+    private function render_quiz_finished() {
+        return $this->renderer->render_from_template('capquiz/student_quiz_finished', []);
     }
 
     private function summary_display_options($context) {

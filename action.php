@@ -20,8 +20,6 @@ require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/capquiz_urls.php');
-require_once($CFG->dirroot . '/mod/capquiz/capquiz_actions.php');
 
 function redirect_to_front_page() {
     header('Location: /');
@@ -90,21 +88,21 @@ function set_question_rating(capquiz $capquiz) {
 
 function determine_action(capquiz $capquiz, string $action_type) {
     $capquiz->require_instructor_capability();
-    if ($action_type == capquiz_actions::$action_set_question_list) {
+    if ($action_type == capquiz_actions::$set_question_list) {
         assign_question_list($capquiz);
-    } else if ($action_type == capquiz_actions::$action_add_question_to_list) {
+    } else if ($action_type == capquiz_actions::$add_question_to_list) {
         add_question_to_list($capquiz);
-    } else if ($action_type == capquiz_actions::$action_publish_question_list) {
+    } else if ($action_type == capquiz_actions::$publish_question_list) {
         publish_question_list($capquiz);
-    } else if ($action_type == capquiz_actions::$action_set_question_rating) {
+    } else if ($action_type == capquiz_actions::$set_question_rating) {
         set_question_rating($capquiz);
     }
     redirect_to_plugin_index($capquiz);
 }
 
 function capquiz_action() {
-    $course_module_id = optional_param(capquiz_urls::$param_cmid, null, PARAM_INT);
-    $action_type = optional_param(capquiz_actions::$param_action, '', PARAM_TEXT);
+    $course_module_id = required_param(capquiz_urls::$param_cmid, PARAM_INT);
+    $action_type = required_param(capquiz_actions::$parameter, PARAM_TEXT);
     if ($course_module_id) {
         $capquiz = new capquiz($course_module_id);
         determine_action($capquiz, $action_type);
