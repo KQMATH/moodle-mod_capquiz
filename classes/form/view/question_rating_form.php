@@ -14,9 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_capquiz\form\view;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018060511;
-$plugin->requires = 2016052304;
-$plugin->cron = 0; 
-$plugin->component = 'mod_capquiz';
+require_once($CFG->libdir . '/formslib.php');
+
+class question_rating_form extends \moodleform {
+
+    public function definition() {
+        $form = $this->_form;
+        $form->addElement('rating', 'rating', get_string('rating', 'capquiz'));
+        $form->setType('rating', PARAM_FLOAT);
+        $form->addRule('rating', get_string('rating_required', 'capquiz'), 'required', null, 'client');
+    }
+
+    public function validations($data, $files) {
+        $validation_errors = [];
+        if (empty($data['rating'])) {
+            $validation_errors['rating'] = get_string('rating_required', 'capquiz');
+        }
+        return $validation_errors;
+    }
+
+}

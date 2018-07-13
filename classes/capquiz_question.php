@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_capquiz;
 
@@ -18,6 +32,16 @@ class capquiz_question {
             $this->db_entry->name = $question->name;
             $this->db_entry->text = $question->questiontext;
         }
+    }
+
+    public static function load(int $question_id) {
+        global $DB;
+        $entry = $DB->get_record(database_meta::$table_capquiz_question, [
+            database_meta::$field_id => $question_id
+        ]);
+        if ($entry)
+            return new capquiz_question($entry);
+        return null;
     }
 
     public function id() {

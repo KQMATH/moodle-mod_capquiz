@@ -1,31 +1,40 @@
-.capquiz-question-list-item {
+.capquiz-list {
+    border: 1px solid #eaeaea;
+    padding: 0;
+}
+
+.capquiz-list li {
+    padding: 4px;
+    background: #fafafa;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.capquiz-question-list li {
     display: flex;
 }
 
-.capquiz-list-widget {
+/*
+.capquiz-question-list li:hover {
+    background: #fefefe;
+    cursor: pointer;
+}*/
+
+.capquiz-tree {
 
 }
 
-.capquiz-list-widget-item {
-
+.capquiz-tree tr:first-child {
+    background: #fafafa;
 }
 
-.capquiz-tree-widget {
-
-}
-
-.capquiz-tree-widget-row {
-
-}
-
-.capquiz-tree-widget-cell {
-
-}
-
-.capquiz-tree-header-cell {
+.capquiz-tree tr:first-child td {
     font-weight: bold;
 }
 
-.capquiz-tree-header-row {
-    background-color: grey;
+.capquiz-tree tr {
+
+}
+
+.capquiz-tree tr td {
+    padding: 8px;
 }
