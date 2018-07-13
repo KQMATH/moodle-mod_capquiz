@@ -45,7 +45,7 @@ function set_create_question_list_url(capquiz $capquiz) {
     $PAGE->set_pagelayout('incourse');
     $url = new \moodle_url(capquiz_urls::$url_view);
     $url->param(capquiz_urls::$param_id, $capquiz->course_module_id());
-    $url->param(capquiz_urls::$param_action, capquiz_actions::$action_create_question_list);
+    $url->param(capquiz_actions::$parameter, capquiz_actions::$create_question_list);
     $PAGE->set_url($url);
 }
 
@@ -62,7 +62,6 @@ function create_question_set_view() {
     } else {
         $capquiz = new capquiz($course_module_id);
         set_create_question_list_url($capquiz);
-        //render_create_question_list_view($capquiz);
     }
 }
 
