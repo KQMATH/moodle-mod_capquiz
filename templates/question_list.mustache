@@ -1,0 +1,29 @@
+<h2>Question list</h2>
+<table class="capquiz-tree">
+    <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Rating</th>
+        <th>Action</th>
+    </tr>
+    {{^questions}}
+        No questions added to the list.
+    {{/questions}}
+    {{#questions}}
+        <tr>
+            {{#.}}
+                <td>{{ index }}</td>
+                <td>{{ name }}</td>
+                <td>
+                    <form method="post"
+                          name="question_rating_form"
+                          action="{{ url }}"
+                    >
+                        <input type="number" name="rating" value="{{ rating }}">
+                    </form>
+                </td>
+                <td>Remove</td>
+            {{/.}}
+        </tr>
+    {{/questions}}
+</table>

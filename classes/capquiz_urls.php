@@ -19,27 +19,57 @@ namespace mod_capquiz;
 class capquiz_urls {
 
     public static $param_id = 'id';
-    public static $param_cmid = 'cmid';
     public static $param_rating = 'rating';
     public static $param_attempt = 'attempt';
+    public static $param_target_url = 'target-url';
     public static $param_question_id = 'question-id';
     public static $param_question_list_id = 'question-list-id';
 
     public static $url_view = '/mod/capquiz/view.php';
     public static $url_async = '/mod/capquiz/async.php';
+    public static $url_error = '/mod/capquiz/error.php';
     public static $url_action = '/mod/capquiz/action.php';
+    public static $url_view_leaderboard = '/mod/capquiz/view_leaderboard.php';
+    public static $url_view_configuration = '/mod/capquiz/view_configuration.php';
+    public static $url_view_question_list = '/mod/capquiz/view_question_list.php';
+    public static $url_view_enrolled_students = '/mod/capquiz/view_leaderboard.php';
+
+    public static function redirect(\moodle_url $target) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
+        $url->param(capquiz_actions::$parameter, capquiz_actions::$redirect);
+        $url->param(capquiz_urls::$param_target_url, $target->out_as_local_url());
+        return $url;
+    }
+
+    public static function view_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view);
+    }
+
+    public static function view_question_list_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view_question_list);
+    }
+
+    public static function view_enrolled_students_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view_enrolled_students);
+    }
+
+    public static function view_leaderboard_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view_enrolled_students);
+    }
+
+    public static function view_configuration_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view_configuration);
+    }
 
     public static function add_question_to_list_url(int $question_id) {
-        $url = new \moodle_url(capquiz_urls::$url_action);
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$add_question_to_list);
-        $url->param(capquiz_urls::$param_cmid, required_param(capquiz_urls::$param_cmid, PARAM_INT));
         $url->param(capquiz_urls::$param_question_id, $question_id);
         return $url;
     }
 
-    public static function question_list_publish_url(capquiz $capquiz, capquiz_question_list $question_list) {
-        $url = new \moodle_url(capquiz_urls::$url_action);
-        $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
+    public static function question_list_publish_url(capquiz_question_list $question_list) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$publish_question_list);
 
@@ -47,34 +77,36 @@ class capquiz_urls {
     }
 
     public static function question_list_select_url(capquiz $capquiz, capquiz_question_list $question_list) {
-        $url = new \moodle_url(capquiz_urls::$url_action);
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$set_question_list);
-        $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
         return $url;
     }
 
-    public static function set_question_rating_url(capquiz $capquiz, int $question_id) {
-        $url = new \moodle_url(capquiz_urls::$url_action);
-        $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
+    public static function set_question_rating_url(int $question_id) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_urls::$param_question_id, $question_id);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$set_question_rating);
         return $url;
     }
 
-    public static function response_submit_url(capquiz $capquiz, capquiz_question_attempt $attempt) {
-        $url = new \moodle_url(capquiz_urls::$url_async);
-        $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
+    public static function response_submit_url(capquiz_question_attempt $attempt) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_async);
         $url->param(capquiz_urls::$param_attempt, $attempt->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$attempt_answered);
         return $url;
     }
 
-    public static function response_reviewed_url(capquiz $capquiz, capquiz_question_attempt $attempt) {
-        $url = new \moodle_url(capquiz_urls::$url_async);
-        $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
+    public static function response_reviewed_url(capquiz_question_attempt $attempt) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_async);
         $url->param(capquiz_urls::$param_attempt, $attempt->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$attempt_reviewed);
+        return $url;
+    }
+
+    private static function create_view_url(string $url) {
+        $url = new \moodle_url($url);
+        $url->param(capquiz_urls::$param_id, required_param(capquiz_urls::$param_id, PARAM_INT));
         return $url;
     }
 
