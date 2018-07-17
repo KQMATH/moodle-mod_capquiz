@@ -12,19 +12,20 @@
     {{#questions}}
         <tr>
             {{#.}}
-                <td>{{ num }}</td>
+                <td>{{ index }}</td>
                 <td>{{ name }}</td>
                 <td>
-                    {{#rating}}
-                        {{^published}}
-                            <form method="post" name="form" action="{{ action }}">
-                                <input type="number" name="rating" value="{{ value }}">
-                            </form>
-                        {{/published}}
-                        {{#published}}
-                            {{ value }}
-                        {{/published}}
-                    {{/rating}}
+                    {{^published}}
+                        <form method="post"
+                              name="question_rating_form"
+                              action="{{ url }}"
+                        >
+                            <input type="number" name="rating" value="{{ rating }}">
+                        </form>
+                    {{/published}}
+                    {{#published}}
+                        {{ rating }}
+                    {{/published}}
                 </td>
                 <td>Remove</td>
             {{/.}}

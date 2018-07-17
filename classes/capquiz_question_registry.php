@@ -69,10 +69,18 @@ class capquiz_question_registry {
         $list->time_created = time();
         $list->time_modified = time();
         try {
-            return $DB->insert_record(database_meta::$table_capquiz_question_list, $list);
+            if ($id = $DB->insert_record(database_meta::$table_capquiz_question_list, $list)) {
+                $this->assign_to_capquiz($id);
+                return true;
+            }
+            return false;
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    private function assign_to_capquiz(int $id) {
+        $this->capquiz->assign_question_list($id);
     }
 
 }

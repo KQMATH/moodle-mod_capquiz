@@ -43,7 +43,7 @@ class add_question_to_list_column extends \core_question\bank\action_column_base
     }
 
     private function icon_action_url(\stdClass $question) {
-        return capquiz_urls::create_add_question_to_list_url($question->id);
+        return capquiz_urls::add_question_to_list_url($question->id);
     }
 
 }
