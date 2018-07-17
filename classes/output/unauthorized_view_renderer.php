@@ -14,17 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
+namespace mod_capquiz\output;
 
-class capquiz_actions {
+defined('MOODLE_INTERNAL') || die();
 
-    public static $parameter = 'action';
-    public static $redirect = 'redirect';
-    public static $attempt_answered = 'answered';
-    public static $attempt_reviewed = 'reviewed';
-    public static $set_question_list = 'set-question-list';
-    public static $set_question_rating = "set-question-rating";
-    public static $add_question_to_list = 'add-question';
-    public static $publish_question_list = 'publish-question-list';
+class unauthorized_view_renderer {
+
+    public function render(renderer $renderer) {
+        return $renderer->render_from_template('capquiz/unauthorized', []);
+    }
 
 }

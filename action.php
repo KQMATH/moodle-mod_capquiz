@@ -20,24 +20,12 @@ require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
-function redirect_to_front_page() {
-    header('Location: /');
-    exit;
-}
-
-function redirect_to_plugin_index(capquiz $capquiz) {
-    $target_url = new \moodle_url(capquiz_urls::$url_view);
-    $target_url->param(capquiz_urls::$param_id, $capquiz->course_module_id());
-    redirect($target_url);
-}
-
-function set_action_url(capquiz $capquiz) {
-    global $PAGE;
-    $PAGE->set_context($capquiz->context());
-    $PAGE->set_cm($capquiz->course_module());
-    $PAGE->set_pagelayout('incourse');
-    $PAGE->set_url($PAGE->url);
+function redirect_to(capquiz $capquiz) {
+    if ($target_url = optional_param(capquiz_urls::$param_target_url, null, PARAM_TEXT)) {
+        redirect_to_url(new \moodle_url($target_url));
+    }
 }
 
 function assign_question_list(capquiz $capquiz) {
@@ -64,6 +52,7 @@ function add_question_to_list(capquiz $capquiz) {
         } else {
             create_capquiz_question($question_id, $capquiz->question_list());
         }
+        redirect_to_url(capquiz_urls::view_question_list_url());
     }
 }
 
@@ -81,6 +70,7 @@ function set_question_rating(capquiz $capquiz) {
         } else if ($rating = $_POST[capquiz_urls::$param_rating]) {
             $question->set_rating($rating);
         }
+        redirect_to_url(capquiz_urls::view_question_list_url());
     } else {
         throw new \Exception("The specified question does not exist");
     }
@@ -88,7 +78,9 @@ function set_question_rating(capquiz $capquiz) {
 
 function determine_action(capquiz $capquiz, string $action_type) {
     $capquiz->require_instructor_capability();
-    if ($action_type == capquiz_actions::$set_question_list) {
+    if ($action_type == capquiz_actions::$redirect) {
+        redirect_to($capquiz);
+    } else if ($action_type == capquiz_actions::$set_question_list) {
         assign_question_list($capquiz);
     } else if ($action_type == capquiz_actions::$add_question_to_list) {
         add_question_to_list($capquiz);
@@ -97,14 +89,12 @@ function determine_action(capquiz $capquiz, string $action_type) {
     } else if ($action_type == capquiz_actions::$set_question_rating) {
         set_question_rating($capquiz);
     }
-    redirect_to_plugin_index($capquiz);
+    redirect_to_dashboard($capquiz);
 }
 
 function capquiz_action() {
-    $course_module_id = required_param(capquiz_urls::$param_cmid, PARAM_INT);
     $action_type = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-    if ($course_module_id) {
-        $capquiz = new capquiz($course_module_id);
+    if ($capquiz = capquiz::create()) {
         determine_action($capquiz, $action_type);
     } else {
         redirect_to_front_page();
