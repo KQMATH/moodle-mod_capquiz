@@ -16,6 +16,8 @@
 
 namespace mod_capquiz;
 
+use core\session\database;
+
 defined('MOODLE_INTERNAL') || die();
 
 class adaptive_question_selector extends capquiz_question_selector {
@@ -40,9 +42,13 @@ class adaptive_question_selector extends capquiz_question_selector {
 
     private function find_questions_closest_to_rating(capquiz_user $user) {
         global $DB;
+        $table = database_meta::$table_capquiz_question;
+        $field = database_meta::$field_question_list_id;
         $ideal_question_rating = $this->ideal_question_rating($user);
-        $sql = "SELECT * FROM {capquiz_question} WHERE question_list_id=" . $this->capquiz->question_list()->id();
-        $sql .= " ORDER BY ABS(rating-$ideal_question_rating) LIMIT $this->number_of_questions_drawn";
+        $rating_field = database_meta::$field_rating;
+        $question_list_id = $this->capquiz->question_list()->id();
+        $sql = "SELECT * FROM {" . $table . "} WHERE $field=$question_list_id";
+        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_drawn";
         $sql .= ";";
         $questions = [];
         foreach ($DB->get_records_sql($sql) as $question_db_entry) {

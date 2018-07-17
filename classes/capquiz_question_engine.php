@@ -57,10 +57,14 @@ class capquiz_question_engine {
         $attempt->mark_as_answered();
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
-            $this->update_rating_user_victory($user, $question);
+            $this->question_rating_system->update_user_victory_rating($user, $question);
         } else {
-            $this->update_rating_user_loss($user, $question);
+            $this->question_rating_system->update_user_loss_rating($user, $question);
         }
+        if ($previous_attempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user)) {
+            $this->update_question_rating($previous_attempt, $attempt);
+        }
+
     }
 
     public function attempt_reviewed(capquiz_user $user, capquiz_question_attempt $attempt) {
@@ -78,16 +82,15 @@ class capquiz_question_engine {
         return $this->question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
     }
 
-    private function update_rating_user_victory(capquiz_user $user, capquiz_question $question) {
-        $rating = $this->question_rating_system->user_victory_rating($user, $question);
-        $current_rating = $user->rating();
-        $user->set_rating($rating);
-    }
-
-    private function update_rating_user_loss(capquiz_user $user, capquiz_question $question) {
-        $rating = $this->question_rating_system->user_loss_rating($user, $question);
-        $current_rating = $user->rating();
-        $user->set_rating($rating);
+    private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
+        $current_correct = $current->is_correctly_answered();
+        $previous_correct = $previous->is_correctly_answered();
+        $current_question = $this->capquiz->question_list()->question($current->question_id());
+        $previous_question = $this->capquiz->question_list()->question($previous->question_id());
+        if ($previous_correct && !$current_correct)
+            $this->question_rating_system->question_victory_ratings($current_question, $previous_question);
+        else if (!$previous_correct && $current_correct)
+            $this->question_rating_system->question_victory_ratings($previous_question, $current_question);
     }
 
 }
