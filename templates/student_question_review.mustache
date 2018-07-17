@@ -1,0 +1,17 @@
+{{#summary}}
+    <div>
+        <h3>Question summary</h3>
+        {{#response}}
+            Your answer: {{{ response }}}
+        {{/response}}
+        {{^response}}
+            Response not registered.
+        {{/response}}
+        {{{ feedback }}}
+        {{#next}}
+            <div>
+                {{>core/single_button}}
+            </div>
+        {{/next}}
+    </div>
+{{/summary}}
