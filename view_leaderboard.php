@@ -16,15 +16,16 @@
 
 namespace mod_capquiz;
 
-class capquiz_actions {
+require_once('../../config.php');
 
-    public static $parameter = 'action';
-    public static $redirect = 'redirect';
-    public static $attempt_answered = 'answered';
-    public static $attempt_reviewed = 'reviewed';
-    public static $set_question_list = 'set-question-list';
-    public static $set_question_rating = "set-question-rating";
-    public static $add_question_to_list = 'add-question';
-    public static $publish_question_list = 'publish-question-list';
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
-}
+if ($capquiz = capquiz::create()) {
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
+    $renderer = $capquiz->renderer();
+    $renderer->display_leaderboard($capquiz);
+} else
+    redirect_to_front_page();
