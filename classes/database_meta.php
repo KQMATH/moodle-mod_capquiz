@@ -38,6 +38,9 @@ class database_meta {
     public static $field_reviewed = 'reviewed';
     public static $field_description = 'description';
 
+    public static $field_time_answered = 'time_answered';
+    public static $field_time_reviewed = 'time_reviewed';
+
     public static $moodletable_question = 'question';
 
 }
