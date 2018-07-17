@@ -14,32 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz\output;
+namespace mod_capquiz\form\view;
 
 defined('MOODLE_INTERNAL') || die();
 
-class renderer extends \plugin_renderer_base  {
+require_once($CFG->libdir . '/formslib.php');
 
-    public function output_renderer() {
-        return $this->output;
+class question_rating_form extends \moodleform {
+
+    public function definition() {
+        $form = $this->_form;
+        $form->addElement('rating', 'rating', get_string('rating', 'capquiz'));
+        $form->setType('rating', PARAM_FLOAT);
+        $form->addRule('rating', get_string('rating_required', 'capquiz'), 'required', null, 'client');
     }
 
-    public function display($view) {
-        echo $this->output->header();
-        echo $view->render();
-        echo $this->output->footer();
-    }
-
-    public function display_student_view(\mod_capquiz\capquiz $capquiz) {
-        $this->display(new student_view($capquiz, $this));
-    }
-
-    public function display_instructor_view(\mod_capquiz\capquiz $capquiz) {
-        $this->display(new instructor_view($capquiz, $this));
-    }
-
-    public function display_unauthorized_view() {
-        $this->display(new unauthorized_view($this));
+    public function validations($data, $files) {
+        $validation_errors = [];
+        if (empty($data['rating'])) {
+            $validation_errors['rating'] = get_string('rating_required', 'capquiz');
+        }
+        return $validation_errors;
     }
 
 }

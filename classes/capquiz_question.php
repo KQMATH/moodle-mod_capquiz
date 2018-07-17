@@ -34,6 +34,16 @@ class capquiz_question {
         }
     }
 
+    public static function load(int $question_id) {
+        global $DB;
+        $entry = $DB->get_record(database_meta::$table_capquiz_question, [
+            database_meta::$field_id => $question_id
+        ]);
+        if ($entry)
+            return new capquiz_question($entry);
+        return null;
+    }
+
     public function id() {
         return $this->db_entry->id;
     }

@@ -16,6 +16,10 @@
 
 namespace mod_capquiz;
 
+require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/default_elo_rating_system.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/adaptive_question_selector.php');
+
 defined('MOODLE_INTERNAL') || die();
 
 class capquiz {
@@ -139,12 +143,16 @@ class capquiz {
         return $this->capquiz_db_entry->default_user_k_factor;
     }
 
+    public function default_question_k_factor() {
+        return $this->capquiz_db_entry->default_question_k_factor;
+    }
+
     public function default_user_rating() {
         return $this->capquiz_db_entry->default_user_rating;
     }
 
     public function default_question_rating() {
-        return $this->capquiz_db_entry->default_user_rating;
+        return $this->capquiz_db_entry->default_question_rating;
     }
 
     public function context() {
@@ -183,11 +191,10 @@ class capquiz {
     }
 
     private function question_selector() {
-        return new chronologic_question_selector();
+        return new adaptive_question_selector($this);
     }
 
     private function rating_system() {
-        return new default_elo_rating_system($this->default_user_k_factor());
+        return new default_elo_rating_system($this->default_user_k_factor(), $this->default_question_k_factor());
     }
-
 }

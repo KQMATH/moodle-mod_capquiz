@@ -16,6 +16,8 @@
 
 namespace mod_capquiz;
 
+use core\session\database;
+
 defined('MOODLE_INTERNAL') || die();
 
 class capquiz_question_attempt {
@@ -65,6 +67,24 @@ class capquiz_question_attempt {
         return null;
     }
 
+    public static function previous_attempt(capquiz $capquiz, capquiz_user $user) {
+        global $DB;
+        $table = database_meta::$table_capquiz_attempt;
+        $target_field = database_meta::$field_user_id;
+        $sort_field = database_meta::$field_time_reviewed;
+        $userid = $user->id();
+        $sql = "SELECT * FROM {" . $table . "} WHERE $target_field=$userid";
+        $sql .= " ORDER BY $sort_field DESC LIMIT 1;";
+        try {
+            if ($question_db_entry = $DB->get_record_sql($sql)) {
+                return new capquiz_question_attempt($capquiz->question_usage(), $question_db_entry);
+            }
+        } catch (\Exception $e){
+            throw e;
+        }
+        return null;
+    }
+
     public static function inactive_attempts(capquiz $capquiz, capquiz_user $user) {
         global $DB;
         $records = [];
@@ -73,7 +93,7 @@ class capquiz_question_attempt {
             database_meta::$field_answered => true,
             database_meta::$field_reviewed => true
         ];
-        foreach ($DB->get_records(database_meta::$table_capquiz_attempt, $criteria) as $entry) {
+        foreach ($DB->get_records(database_meta::$table_capquiz_attempt, $criteria, database_meta::$field_time_reviewed) as $entry) {
             array_push($records, new capquiz_question_attempt($capquiz->question_usage(), $entry));
         }
         return $records;
@@ -125,6 +145,7 @@ class capquiz_question_attempt {
         $this->question_usage->process_action($this->question_slot(), $submitteddata);
         $db_entry = $this->db_entry;
         $db_entry->answered = true;
+        $db_entry->time_answered = time();
         $this->question_usage->finish_question($this->question_slot(), time());
         \question_engine::save_questions_usage_by_activity($this->question_usage);
         try {
@@ -142,6 +163,7 @@ class capquiz_question_attempt {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->reviewed = true;
+        $db_entry->time_reviewed = time();
         try {
             if ($DB->update_record(database_meta::$table_capquiz_attempt, $db_entry)) {
                 $this->db_entry = $db_entry;
