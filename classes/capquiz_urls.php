@@ -42,7 +42,6 @@ class capquiz_urls {
         $url->param(capquiz_urls::$param_cmid, $capquiz->course_module_id());
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$publish_question_list);
-
         return $url;
     }
 

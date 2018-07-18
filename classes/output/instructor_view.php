@@ -71,9 +71,11 @@ class instructor_view {
         global $PAGE;
         $url = $PAGE->url;
         $form = new create_question_set_form($url);
-        if ($form_data = $form->get_data()) {
+        $formdata = $form->get_data();
+        if ($formdata) {
             $registry = $this->capquiz->question_registry();
-            if ($registry->create_question_list($form_data->title, $form_data->description)) {
+            $success = $registry->create_question_list($formdata->title, $formdata->description, $formdata->bronze_rating, $formdata->silver_rating, $formdata->gold_rating);
+            if ($success) {
                 $url = new \moodle_url(capquiz_urls::$url_view);
                 $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
                 redirect($url);

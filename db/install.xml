@@ -29,6 +29,9 @@
                 <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
                 <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="bronze_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false"/>
+                <FIELD NAME="silver_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1500" SEQUENCE="false"/>
+                <FIELD NAME="gold_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
