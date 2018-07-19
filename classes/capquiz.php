@@ -143,12 +143,16 @@ class capquiz {
         return $this->capquiz_db_entry->default_user_k_factor;
     }
 
+    public function default_question_k_factor() {
+        return $this->capquiz_db_entry->default_question_k_factor;
+    }
+
     public function default_user_rating() {
         return $this->capquiz_db_entry->default_user_rating;
     }
 
     public function default_question_rating() {
-        return $this->capquiz_db_entry->default_user_rating;
+        return $this->capquiz_db_entry->default_question_rating;
     }
 
     public function context() {
@@ -191,22 +195,7 @@ class capquiz {
     }
 
     private function rating_system() {
-        return new default_elo_rating_system($this->default_user_k_factor());
-    }
-
-    /**
-     * Awards badge to a student.
-     * @param int $studentuserid
-     * @param int $badgeid
-     */
-    public function award_badge($studentuserid, $badgeid) {
-        $badge = new \badge($badgeid);
-        if (!$badge->is_active()) {
-            return;
-        }
-        if (!$badge->is_issued($studentuserid)) {
-            $badge->issue($studentuserid);
-        }
+        return new default_elo_rating_system($this->default_user_k_factor(), $this->default_question_k_factor());
     }
 
 }
