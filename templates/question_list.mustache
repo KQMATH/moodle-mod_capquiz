@@ -17,12 +17,16 @@
                 <td>
                     <form method="post"
                           name="question_rating_form"
-                          action="{{ url }}"
+                          action="{{ rating_url }}"
                     >
                         <input type="number" name="rating" value="{{ rating }}">
                     </form>
                 </td>
-                <td>Remove</td>
+                <td>
+                    {{#button}}
+                        {{>core/single_button}}
+                    {{/button}}
+                </td>
             {{/.}}
         </tr>
     {{/questions}}
