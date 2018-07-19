@@ -3,23 +3,26 @@
     No students are enrolled.
 {{/users}}
 {{#users}}
-    <table class="capquiz-tree-widget">
-        <tr class="capquiz-tree-header">
+    <table class="capquiz-tree">
+        <tr>
             <th>#</th>
-            <th>Student</th>
+            <th>ID</th>
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
             <th>Rating</th>
         </tr>
         {{#users}}
             <tr>
                 {{#.}}
-                    <td>{{ num }}</td>
-                    <td>{{ student }}</td>
+                    <td>{{ index }}</td>
+                    <td>{{ student_id }}</td>
+                    <td>{{ username }}</td>
+                    <td>{{ firstname }}</td>
+                    <td>{{ lastname }}</td>
                     <td>{{ rating }}</td>
                 {{/.}}
             </tr>
         {{/users}}
     </table>
 {{/users}}
-{{#publish}}
-    {{>core/single_button}}
-{{/publish}}
