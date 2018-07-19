@@ -43,17 +43,33 @@ function create_capquiz_question(int $question_id, capquiz_question_list $list, 
     $DB->insert_record(database_meta::$table_capquiz_question, $rated_question);
 }
 
+function remove_capquiz_question(int $question_id, int $question_list_id) {
+    global $DB;
+    $conditions = [database_meta::$field_id => $question_id, database_meta::$field_question_list_id => $question_list_id];
+    $DB->delete_records(database_meta::$table_capquiz_question, $conditions);
+}
+
 function add_question_to_list(capquiz $capquiz) {
-    if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_TEXT)) {
-        if (!$capquiz->has_question_list()) {
-            if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_TEXT)) {
-                create_capquiz_question($question_id, $capquiz->question_registry()->question_list($question_list_id), $capquiz->default_question_rating());
-            }
+    if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
+        if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT)) {
+            create_capquiz_question($question_id, $capquiz->question_registry()->question_list($question_list_id), $capquiz->default_question_rating());
         } else {
             create_capquiz_question($question_id, $capquiz->question_list());
         }
-        redirect_to_url(capquiz_urls::view_question_list_url());
     }
+    redirect_to_url(capquiz_urls::view_question_list_url());
+}
+
+function remove_question_from_list(capquiz $capquiz) {
+    if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
+        if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT)) {
+            if ($question_list = $capquiz->question_registry()->question_list($question_list_id))
+                remove_capquiz_question($question_id, $question_list->id());
+        } else if ($capquiz->has_question_list()) {
+            remove_capquiz_question($question_id, $capquiz->question_list()->id());
+        }
+    }
+    redirect_to_url(capquiz_urls::view_question_list_url());
 }
 
 function publish_question_list(capquiz $capquiz) {
@@ -84,6 +100,8 @@ function determine_action(capquiz $capquiz, string $action_type) {
         assign_question_list($capquiz);
     } else if ($action_type == capquiz_actions::$add_question_to_list) {
         add_question_to_list($capquiz);
+    } else if ($action_type == capquiz_actions::$remove_question_from_list) {
+        remove_question_from_list($capquiz);
     } else if ($action_type == capquiz_actions::$publish_question_list) {
         publish_question_list($capquiz);
     } else if ($action_type == capquiz_actions::$set_question_rating) {
