@@ -14,14 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz\output;
+namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
+require_once('../../config.php');
 
-class unauthorized_view {
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
-    public function render(renderer $renderer) {
-        return $renderer->render_from_template('capquiz/unauthorized', []);
-    }
-
-}
+if ($capquiz = capquiz::create()) {
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
+    $renderer = $capquiz->renderer();
+    $renderer->display_question_list_view($capquiz);
+} else
+    redirect_to_front_page();

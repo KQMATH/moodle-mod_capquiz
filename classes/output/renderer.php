@@ -16,30 +16,64 @@
 
 namespace mod_capquiz\output;
 
+use mod_capquiz\bank\question_bank_view;
+
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/leaderboard_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_bank_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/create_question_list_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
+
 defined('MOODLE_INTERNAL') || die();
 
-class renderer extends \plugin_renderer_base  {
+class renderer extends \plugin_renderer_base {
 
     public function output_renderer() {
         return $this->output;
     }
 
-    public function display($view) {
+    public function display_view($view) {
         echo $this->output->header();
         echo $view->render();
         echo $this->output->footer();
     }
 
-    public function display_student_view(\mod_capquiz\capquiz $capquiz) {
-        $this->display(new student_view($capquiz, $this));
+    public function display_views(array $views) {
+        echo $this->output->header();
+        foreach ($views as $view)
+            echo $view->render();
+        echo $this->output->footer();
     }
 
-    public function display_instructor_view(\mod_capquiz\capquiz $capquiz) {
-        $this->display(new instructor_view($capquiz, $this));
+    public function display_question_attempt_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new question_attempt_renderer($capquiz, $this));
     }
 
-    public function display_unauthorized_view() {
-        $this->display(new unauthorized_view($this));
+    public function display_instructor_dashboard(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new instructor_dashboard_renderer($capquiz, $this));
     }
 
+    public function display_question_list_create_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new create_question_list_renderer($capquiz, $this));
+    }
+
+    public function display_unauthorized_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new unauthorized_view_renderer($capquiz, $this));
+    }
+
+    public function display_question_list_view(\mod_capquiz\capquiz $capquiz) {
+        $this->display_views([new question_list_renderer($capquiz, $this), new question_bank_renderer($capquiz, $this)]);
+    }
+
+    public function display_leaderboard(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new leaderboard_renderer($capquiz, $this));
+    }
+
+    public function display_configuration(\mod_capquiz\capquiz $capquiz) {
+        $this->display_view(new configuration_renderer($capquiz, $this));
+    }
 }

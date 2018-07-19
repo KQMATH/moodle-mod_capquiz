@@ -16,8 +16,6 @@
 
 namespace mod_capquiz;
 
-use core\session\database;
-
 defined('MOODLE_INTERNAL') || die();
 
 class adaptive_question_selector extends capquiz_question_selector {
