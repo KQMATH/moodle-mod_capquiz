@@ -43,6 +43,10 @@ class capquiz_question_list {
         return $this->db_entry->published;
     }
 
+    public function has_questions() {
+        return count($this->questions) > 0;
+    }
+
     public function capquiz_origin_id() {
         return $this->db_entry->capquiz_origin_id;
     }
