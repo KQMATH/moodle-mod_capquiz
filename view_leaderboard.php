@@ -23,17 +23,9 @@ require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
 if ($capquiz = capquiz::create()) {
-    set_page_url($capquiz, capquiz_urls::$url_view);
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
     $renderer = $capquiz->renderer();
-    if ($capquiz->is_instructor()) {
-        if ($capquiz->has_question_list())
-            $renderer->display_instructor_dashboard($capquiz);
-        else
-            $renderer->display_question_list_create_view($capquiz);
-    } else if ($capquiz->is_student()) {
-        $renderer->display_question_attempt_view($capquiz);
-    } else {
-        $renderer->display_unauthorized_view();
-    }
+    $renderer->display_leaderboard($capquiz);
 } else
     redirect_to_front_page();

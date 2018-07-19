@@ -17,13 +17,13 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question;
 use mod_capquiz\capquiz_question_attempt;
-use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
-class student_view {
+class question_attempt_renderer {
 
     private $capquiz;
     private $renderer;
@@ -65,7 +65,7 @@ class student_view {
                         'rating' => $question->rating()
                     ],
                     'attempt' => [
-                        'url' => capquiz_urls::response_submit_url($this->capquiz, $attempt)->out_as_local_url(false),
+                        'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
                         'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
                         'slots' => ''
                     ]
@@ -89,7 +89,7 @@ class student_view {
                     'next' => [
                         'primary' => true,
                         'method' => 'post',
-                        'url' => capquiz_urls::response_reviewed_url($this->capquiz, $attempt)->out_as_local_url(false),
+                        'url' => capquiz_urls::response_reviewed_url($attempt)->out_as_local_url(false),
                         'label' => get_string('next', 'capquiz')
                     ]
                 ]
