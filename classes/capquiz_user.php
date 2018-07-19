@@ -67,33 +67,6 @@ class capquiz_user {
         $db_entry->rating = $rating;
         if ($DB->update_record(database_meta::$table_capquiz_user, $db_entry)) {
             $this->db_entry = $db_entry;
-            $this->ask_for_badge();
-        }
-    }
-
-    private function ask_for_badge() {
-        global $DB;
-        $capquizid = $this->capquiz_id();
-        try {
-            // TODO: Either find an existing instance of the list from somewhere, or use a join to avoid two queries.
-            $capquiz = $DB->get_record('capquiz', ['id' => $capquizid]);
-            if (!$capquiz) {
-                return;
-            }
-            $list = $DB->get_record('capquiz_question_list', ['id' => $capquiz->question_list_id]);
-            if (!$list) {
-                return;
-            }
-        } catch (\dml_exception $exception) {
-            return;
-        }
-        $list = new capquiz_question_list($list);
-        $badge = new capquiz_badge(0, $capquizid);
-        for ($level = 1; $level < 6; $level++) { // TODO: Hardcoded loop range
-            $required = $list->level_rating($level);
-            if ($this->rating() >= $required) {
-                $badge->award($this->moodle_user_id(), $level);
-            }
         }
     }
 
