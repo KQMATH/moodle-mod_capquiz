@@ -19,7 +19,6 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
-use mod_capquiz\capquiz_actions;
 use mod_capquiz\capquiz_question_registry;
 
 use mod_capquiz\bank\question_bank_view;

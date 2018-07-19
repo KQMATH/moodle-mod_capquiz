@@ -67,6 +67,12 @@ class capquiz_user {
         $db_entry->rating = $rating;
         if ($DB->update_record(database_meta::$table_capquiz_user, $db_entry)) {
             $this->db_entry = $db_entry;
+
+            // TODO: WIP
+            if ($this->rating() > 1115) {
+                $badge = new capquiz_badge(null);
+                $badge->award($this->moodle_user_id(), 1);
+            }
         }
     }
 
