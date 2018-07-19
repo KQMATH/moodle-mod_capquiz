@@ -37,10 +37,10 @@ class capquiz_badge {
     private $capquizid;
 
     /**
-     * @param int $courseid
+     * @param int $courseid can be 0 if not creating a new badge
      * @param int $capquizid
      */
-    public function __construct($courseid, $capquizid) {
+    public function __construct(int $courseid, int $capquizid) {
         $this->courseid = $courseid;
         $this->capquizid = $capquizid;
     }
@@ -50,7 +50,7 @@ class capquiz_badge {
      * @param int $level
      * @return bool | null
      */
-    public function exists($level) {
+    public function exists(int $level) {
         global $DB;
         try {
             $badge = $DB->get_record('capquiz_badge', [
@@ -71,7 +71,7 @@ class capquiz_badge {
      */
     private function create_badge(int $level) {
         global $CFG, $DB, $PAGE;
-        if ($this->courseid === null || $this->capquizid === null) {
+        if ($this->courseid === 0 || $this->capquizid === 0) {
             return;
         }
 
