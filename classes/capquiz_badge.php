@@ -65,33 +65,20 @@ class capquiz_badge {
     }
 
     /**
-     * Create a badge for a specified level in the course and activity specified in constructor.
      * @param int $level
+     * @return int
      * @throws \coding_exception
      */
-    private function create_badge(int $level) {
-        global $CFG, $DB, $PAGE;
-        if ($this->courseid === 0 || $this->capquizid === 0) {
-            return;
-        }
-
-        // Check for duplication
-        if ($this->exists($level)) {
-            return;
-        }
-
-        // TODO: hmmmmmmm... Usually this is the default admin, but this must be fixed before release.
-        $userid = 1;
-
-        // Add database row
+    private function insert_badge(int $level) {
+        global $DB, $USER, $CFG;
         $fordb = new \stdClass();
         $fordb->id = null;
-        $fordb->name = "Level $level";
+        $fordb->name = "$level Stars";
         $fordb->description = "You have achieved level $level!";
         $fordb->timecreated = time();
         $fordb->timemodified = time();
-        $fordb->usercreated = $userid;
-        $fordb->usermodified = $userid;
+        $fordb->usercreated = $USER->id;
+        $fordb->usermodified = $USER->id;
         $fordb->issuername = 'CapQuiz';
         $fordb->issuerurl = '';
         $fordb->issuercontact = '';
@@ -107,45 +94,57 @@ class capquiz_badge {
         $fordb->notification = BADGE_MESSAGE_NEVER;
         $fordb->status = BADGE_STATUS_INACTIVE;
         try {
-            $newid = $DB->insert_record('badge', $fordb, true);
+            return $DB->insert_record('badge', $fordb, true);
         } catch (\dml_exception $exception) {
-            return;
+            return 0;
         }
+    }
 
-        // Add the capquiz badge
+    /**
+     * @param int $badgeid
+     * @param int $level
+     * @return int
+     */
+    private function insert(int $badgeid, int $level) {
+        global $DB;
         $fordb = new \stdClass();
         $fordb->id = null;
         $fordb->capquiz_id = $this->capquizid;
-        $fordb->badge_id = $newid;
+        $fordb->badge_id = $badgeid;
         $fordb->level = $level;
         try {
-            $DB->insert_record('capquiz_badge', $fordb);
+            return $DB->insert_record('capquiz_badge', $fordb, true);
         } catch (\dml_exception $exception) {
             // At this point, we have an inactive rogue badge, which must be removed manually.
-            return;
+            return 0;
         }
+    }
 
-        // Trigger event, badge created.
-        $eventparams = [
-            'objectid' => $newid,
+    private function trigger_create_badge_event($objectid) {
+        global $PAGE;
+        $event = \core\event\badge_created::create([
+            'objectid' => $objectid,
             'context' => $PAGE->context
-        ];
-        $event = \core\event\badge_created::create($eventparams);
+        ]);
         $event->trigger();
-        $newbadge = new \badge($newid);
+    }
+
+    private function add_badge_image($badge, $level) {
+        global $CFG;
         // TODO: Fix hardcodedness of path?
         $iconfile = $CFG->dirroot . '/mod/capquiz/pix/badge-level-' . $level . '.png';
-        badges_process_badge_image($newbadge, $iconfile);
+        badges_process_badge_image($badge, $iconfile);
+    }
 
-        // Add the criteria
+    private function add_badge_criteria($badge) {
         $criteria = \award_criteria::build([
             'criteriatype' => BADGE_CRITERIA_TYPE_MANUAL,
-            'badgeid' => $newbadge->id
+            'badgeid' => $badge->id
         ]);
-        if (count($newbadge->criteria) == 0) {
+        if (count($badge->criteria) === 0) {
             $criteria_overall = \award_criteria::build([
                 'criteriatype' => BADGE_CRITERIA_TYPE_OVERALL,
-                'badgeid' => $newbadge->id
+                'badgeid' => $badge->id
             ]);
             $criteria_overall->save([
                 'agg' => BADGE_CRITERIA_AGGREGATION_ALL
@@ -155,8 +154,26 @@ class capquiz_badge {
         $criteria->save([
             'role_3' => 3 // Teacher
         ]);
+    }
 
-        // Enable the badge
+    /**
+     * Create a badge for a specified level in the course and activity specified in constructor.
+     * @param int $level
+     * @throws \coding_exception
+     */
+    private function create_badge(int $level) {
+        if ($this->courseid === 0 || $this->capquizid === 0) {
+            return;
+        }
+        if ($this->exists($level)) {
+            return;
+        }
+        $newid = $this->insert_badge($level);
+        $this->insert($newid, $level);
+        $this->trigger_create_badge_event($newid);
+        $newbadge = new \badge($newid);
+        $this->add_badge_image($newbadge, $level);
+        $this->add_badge_criteria($newbadge);
         $newbadge->set_status(BADGE_STATUS_ACTIVE);
     }
 
@@ -202,6 +219,20 @@ class capquiz_badge {
         }
         if (!$badge->is_issued($studentuserid)) {
             $badge->issue($studentuserid);
+        }
+    }
+
+    /**
+     * @param int $studentuserid
+     * @param int $level
+     */
+    public function take(int $studentuserid, int $level) {
+        $badge = $this->get_badge($level);
+        if ($badge === null || !$badge->is_active()) {
+            return;
+        }
+        if ($badge->is_issued($studentuserid)) {
+            // TODO:
         }
     }
 
