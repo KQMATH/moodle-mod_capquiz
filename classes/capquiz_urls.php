@@ -68,6 +68,13 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function remove_question_from_list_url(int $question_id) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
+        $url->param(capquiz_actions::$parameter, capquiz_actions::$remove_question_from_list);
+        $url->param(capquiz_urls::$param_question_id, $question_id);
+        return $url;
+    }
+
     public static function question_list_publish_url(capquiz_question_list $question_list) {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
