@@ -41,6 +41,11 @@ class instructor_view {
     }
 
     public function render() {
+        // TODO: Move somewhere else. Currently here for testing purposes, and to show usage.
+        $badge = new \mod_capquiz\capquiz_badge($this->capquiz->course_module()->course, $this->capquiz->id());
+        $badge->create_badges();
+
+
         if ($this->capquiz->has_question_list()) {
             $html = $this->render_question_set();
         } else {
@@ -73,7 +78,14 @@ class instructor_view {
         $formdata = $form->get_data();
         if ($formdata) {
             $registry = $this->capquiz->question_registry();
-            $success = $registry->create_question_list($formdata->title, $formdata->description, $formdata->bronze_rating, $formdata->silver_rating, $formdata->gold_rating);
+            $ratings = [
+                $formdata->level_1_rating,
+                $formdata->level_2_rating,
+                $formdata->level_3_rating,
+                $formdata->level_4_rating,
+                $formdata->level_5_rating,
+            ];
+            $success = $registry->create_question_list($formdata->title, $formdata->description, $ratings);
             if ($success) {
                 $url = new \moodle_url(capquiz_urls::$url_view);
                 $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());

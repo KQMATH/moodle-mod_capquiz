@@ -27,11 +27,13 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this question list"/>
                 <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
+                <FIELD NAME="level_1_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1300" SEQUENCE="false"/>
+                <FIELD NAME="level_2_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1450" SEQUENCE="false"/>
+                <FIELD NAME="level_3_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1600" SEQUENCE="false"/>
+                <FIELD NAME="level_4_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1800" SEQUENCE="false"/>
+                <FIELD NAME="level_5_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
                 <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-                <FIELD NAME="bronze_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false"/>
-                <FIELD NAME="silver_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1500" SEQUENCE="false"/>
-                <FIELD NAME="gold_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -78,6 +80,19 @@
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
                 <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
                 <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="capquiz_badge" COMMENT="">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="badge_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="level" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="capquiz_id" TYPE="foreign" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
+                <KEY NAME="badge_id" TYPE="foreign" FIELDS="badge_id" REFTABLE="badge" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
     </TABLES>

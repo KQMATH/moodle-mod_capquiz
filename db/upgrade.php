@@ -17,29 +17,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_capquiz_upgrade($oldversion) {
-    global $DB;
-    $dbman = $DB->get_manager();
-
-    if ($oldversion < 2018071600) {
-        $table = new xmldb_table('capquiz_question_list');
-
-        $field = new xmldb_field('bronze_rating', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '1200');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('silver_rating', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '1500');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('gold_rating', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '2000');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_mod_savepoint(true, 2018071600, 'capquiz');
-    }
-
     return true;
 }

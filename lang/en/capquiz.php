@@ -23,12 +23,8 @@ $string['description'] = 'Description';
 $string['title_required'] = 'Title is required';
 $string['description_required'] = 'Description is required.';
 
-$string['bronze_rating'] = 'Bronze rating';
-$string['silver_rating'] = 'Silver rating';
-$string['gold_rating'] = 'Gold rating';
-$string['bronze_rating_required'] = 'Bronze rating is required';
-$string['silver_rating_required'] = 'Silver rating is required';
-$string['gold_rating_required'] = 'Gold rating is required';
+$string['level_rating'] = 'Level {$a} rating';
+$string['level_rating_required'] = 'Rating for level {$a} is required';
 
 $string['create_question_list'] = 'Create question list';
 

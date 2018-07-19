@@ -32,20 +32,16 @@ class create_question_set_form extends \moodleform {
         $form->setType('description', PARAM_TEXT);
         $form->addRule('description', get_string('description_required', 'capquiz'), 'required', null, 'client');
 
-        $form->addElement('text', 'bronze_rating', get_string('bronze_rating', 'capquiz'));
-        $form->setType('bronze_rating', PARAM_INT);
-        $form->addRule('bronze_rating', get_string('bronze_rating_required', 'capquiz'), 'required', null, 'client');
-        $form->setDefault('bronze_rating', 1200);
-
-        $form->addElement('text', 'silver_rating', get_string('silver_rating', 'capquiz'));
-        $form->setType('silver_rating', PARAM_INT);
-        $form->addRule('silver_rating', get_string('silver_rating_required', 'capquiz'), 'required', null, 'client');
-        $form->setDefault('silver_rating', 1500);
-
-        $form->addElement('text', 'gold_rating', get_string('gold_rating', 'capquiz'));
-        $form->setType('gold_rating', PARAM_INT);
-        $form->addRule('gold_rating', get_string('gold_rating_required', 'capquiz'), 'required', null, 'client');
-        $form->setDefault('gold_rating', 2000);
+        $ratings = [1300, 1450, 1600, 1800, 2000];
+        for ($level = 1; $level < 6; $level++) {
+            $element = "level_{$level}_rating";
+            $text = get_string('level_rating', 'capquiz', $level);
+            $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+            $form->addElement('text', $element, $text);
+            $form->setType($element, PARAM_INT);
+            $form->addRule($element, $requiredtext, 'required', null, 'client');
+            $form->setDefault($element, $ratings[$level - 1]);
+        }
 
         $form->addElement('submit', 'submitbutton', get_string('create_question_list', 'capquiz'));
     }
@@ -58,14 +54,12 @@ class create_question_set_form extends \moodleform {
         if (empty($data['description'])) {
             $validation_errors['description'] = get_string('description_required', 'capquiz');
         }
-        if (empty($data['bronze_rating'])) {
-            $validation_errors['bronze_rating'] = get_string('bronze_rating_required', 'capquiz');
-        }
-        if (empty($data['silver_rating'])) {
-            $validation_errors['silver_rating'] = get_string('silver_rating_required', 'capquiz');
-        }
-        if (empty($data['gold_rating'])) {
-            $validation_errors['gold_rating'] = get_string('gold_rating_required', 'capquiz');
+        for ($level = 1; $level < 6; $level++) {
+            $element = "level_{$level}_rating";
+            if (empty($data[$element])) {
+                $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+                $validation_errors[$element] = $requiredtext;
+            }
         }
         return $validation_errors;
     }

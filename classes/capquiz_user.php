@@ -70,7 +70,7 @@ class capquiz_user {
 
             // TODO: WIP
             if ($this->rating() > 1115) {
-                $badge = new capquiz_badge(null);
+                $badge = new capquiz_badge(null, $this->capquiz_id());
                 $badge->award($this->moodle_user_id(), 1);
             }
         }
