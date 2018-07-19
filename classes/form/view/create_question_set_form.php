@@ -28,7 +28,7 @@ class create_question_set_form extends \moodleform {
         $form->setType('title', PARAM_TEXT);
         $form->addRule('title', get_string('title_required', 'capquiz'), 'required', null, 'client');
 
-        $form->addElement('text', 'description', get_string('description', 'capquiz'));
+        $form->addElement('textarea', 'description', get_string('description', 'capquiz'));
         $form->setType('description', PARAM_TEXT);
         $form->addRule('description', get_string('description_required', 'capquiz'), 'required', null, 'client');
 

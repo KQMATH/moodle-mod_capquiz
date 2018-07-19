@@ -50,6 +50,12 @@ class capquiz {
         $this->capquiz_db_entry = $DB->get_record('capquiz', ['id' => $this->course_module->instance], '*', MUST_EXIST);
     }
 
+    public static function create() {
+        if ($id = required_param(capquiz_urls::$param_id, PARAM_INT))
+            return new capquiz($id);
+        return null;
+    }
+
     public function id() {
         return $this->capquiz_db_entry->id;
     }
@@ -58,8 +64,20 @@ class capquiz {
         return $this->capquiz_db_entry->name;
     }
 
+    public function description() {
+        return $this->capquiz_db_entry->description;
+    }
+
     public function is_published() {
         return $this->capquiz_db_entry->published;
+    }
+
+    public function can_publish() {
+        if (!$this->has_question_list())
+            return false;
+        if ($this->is_published())
+            return false;
+        return $this->question_list()->has_questions();
     }
 
     public function is_student() {
@@ -181,6 +199,22 @@ class capquiz {
 
     public function user_has_capability(string $capability, int $user_id) {
         return has_capability($capability, $this->context, $user_id);
+    }
+
+    public function configure(\stdClass $configuration) {
+        global $DB;
+        $db_entry = $this->capquiz_db_entry;
+        if ($name = $configuration->name)
+            $db_entry->name = $name;
+        if ($default_user_rating = $configuration->default_user_rating)
+            $db_entry->default_user_rating = $default_user_rating;
+        if ($default_user_k_factor = $configuration->default_user_k_factor)
+            $db_entry->default_user_k_factor = $default_user_k_factor;
+        if ($default_question_k_factor = $configuration->default_question_k_factor)
+            $db_entry->default_question_k_factor = $default_question_k_factor;
+        if ($DB->update_record(database_meta::$table_capquiz, $db_entry)) {
+            $this->capquiz_db_entry = $db_entry;
+        }
     }
 
     private function create_question_usage() {

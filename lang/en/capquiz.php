@@ -15,13 +15,27 @@ $string['add_the_quiz_question'] = 'Add the question to the list';
 $string['question_list'] = "Question list";
 $string['question_lists'] = "Question lists";
 
+$string['home'] = 'Home';
+$string['name'] = 'Name';
 $string['next'] = "Next";
 $string['title'] = 'Title';
 $string['select'] = "Select";
 $string['publish'] = "Publish";
+$string['configure'] = 'Configure';
 $string['description'] = 'Description';
+$string['name_required'] = 'Name is required';
 $string['title_required'] = 'Title is required';
+$string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['description_required'] = 'Description is required.';
+$string['default_user_rating_required'] = 'Default user rating is required.';
+$string['default_user_k_factor_required'] = 'Default user k factor is required.';
+$string['default_question_k_factor_required'] = 'Default question k factor is required.';
+
+$string['no_questions'] = 'No questions';
+$string['view_leaderboard'] = 'View leaderboard';
+$string['view_question_list'] = 'View question list';
+$string['view_configuration'] = 'View configuration';
+$string['view_enrolled_students'] = 'View enrolled students';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
