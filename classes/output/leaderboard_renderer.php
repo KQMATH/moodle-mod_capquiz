@@ -45,9 +45,10 @@ class leaderboard_renderer {
                 'rating' => $user->rating()
             ];
         }
+        $tabs = basic_renderer::tabs('view_leaderboard');
         $leaderboard = $this->renderer->render_from_template('capquiz/leaderboard', [
             'users' => $rows
         ]);
-        return $leaderboard . basic_renderer::render_home_button($this->renderer);
+        return $tabs . $leaderboard . basic_renderer::render_home_button($this->renderer);
     }
 }

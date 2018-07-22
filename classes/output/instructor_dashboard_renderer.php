@@ -41,9 +41,7 @@ class instructor_dashboard_renderer {
         $badge->create_badges();
 
         return $this->renderer->render_from_template('capquiz/instructor_dashboard', [
-            'view_question_list_url' => capquiz_urls::view_question_list_url(),
-            'view_leaderboard_url' => capquiz_urls::view_leaderboard_url(),
-            'view_configuration_url' => capquiz_urls::view_configuration_url(),
+            'tabs' => basic_renderer::tabs('view_question_list'),
             'publish' => $this->capquiz->can_publish() ? $this->publish_button() : false,
         ]);
     }

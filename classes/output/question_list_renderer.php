@@ -35,8 +35,9 @@ class question_list_renderer {
 
     public function render() {
         $question_list = $this->capquiz->question_list();
-        if ($question_list->has_questions())
+        if ($question_list->has_questions()) {
             return $this->render_questions($question_list) . basic_renderer::render_home_button($this->renderer);
+        }
         $no_questions = get_string('no_questions', 'capquiz');
         return "<h3>$no_questions</h3>" . basic_renderer::render_home_button($this->renderer);
     }
@@ -59,8 +60,10 @@ class question_list_renderer {
                 ]
             ];
         }
-        return $this->renderer->render_from_template('capquiz/question_list', [
+        $tabs = basic_renderer::tabs('view_question_list');
+        $questionlist = $this->renderer->render_from_template('capquiz/question_list', [
             'questions' => $rows,
         ]);
+        return $tabs . $questionlist;
     }
 }

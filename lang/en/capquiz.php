@@ -36,6 +36,7 @@ $string['view_leaderboard'] = 'View leaderboard';
 $string['view_question_list'] = 'View question list';
 $string['view_configuration'] = 'View configuration';
 $string['view_enrolled_students'] = 'View enrolled students';
+$string['instructor_dashboard'] = 'Instructor dashboard';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
