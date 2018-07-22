@@ -88,10 +88,11 @@ class capquiz_question_engine {
         }
         $list = new capquiz_question_list($list);
         $badge = new capquiz_badge(0, $capquizid);
-        for ($level = 1; $level < 6; $level++) { // TODO: Hardcoded loop range
+        for ($level = 5; $level > 0; $level--) {
             $required = $list->level_rating($level);
             if ($user->rating() >= $required) {
                 $badge->award($user->moodle_user_id(), $level);
+                break;
             }
         }
     }

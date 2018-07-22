@@ -132,7 +132,7 @@ class capquiz_badge {
     private function add_badge_image($badge, $level) {
         global $CFG;
         // TODO: Fix hardcodedness of path?
-        $iconfile = $CFG->dirroot . '/mod/capquiz/pix/badge-level-' . $level . '.png';
+        $iconfile = $CFG->dirroot . '/mod/capquiz/pix/star-' . $level . '.png';
         badges_process_badge_image($badge, $iconfile);
     }
 
@@ -181,7 +181,7 @@ class capquiz_badge {
      * Create badges for the course and activity specified in constructor.
      */
     public function create_badges() {
-        for ($level = 1; $level < 4; $level++) {
+        for ($level = 1; $level < 6; $level++) {
             $this->create_badge($level);
         }
     }
@@ -208,6 +208,27 @@ class capquiz_badge {
     }
 
     /**
+     * @param int $studentuserid
+     * @param int $level
+     */
+    private function take(int $studentuserid, int $level) {
+        global $DB;
+        $badge = $this->get_badge($level);
+        if ($badge === null || !$badge->is_active()) {
+            return;
+        }
+        if ($badge->is_issued($studentuserid)) {
+            $fs = get_file_storage();
+            $usercontext = \context_user::instance($studentuserid);
+            $fs->delete_area_files($usercontext->id, 'badges', 'userbadge', $badge->id);
+            $DB->delete_records('badge_issued', [
+                'badgeid' => $badge->id,
+                'userid' => $studentuserid
+            ]);
+        }
+    }
+
+    /**
      * Awards badge to a student.
      * @param int $studentuserid
      * @param int $level
@@ -217,22 +238,12 @@ class capquiz_badge {
         if ($badge === null || !$badge->is_active()) {
             return;
         }
-        if (!$badge->is_issued($studentuserid)) {
-            $badge->issue($studentuserid);
-        }
-    }
-
-    /**
-     * @param int $studentuserid
-     * @param int $level
-     */
-    public function take(int $studentuserid, int $level) {
-        $badge = $this->get_badge($level);
-        if ($badge === null || !$badge->is_active()) {
+        if ($badge->is_issued($studentuserid)) {
             return;
         }
-        if ($badge->is_issued($studentuserid)) {
-            // TODO:
+        $badge->issue($studentuserid);
+        if ($level > 1) {
+            $this->take($studentuserid, $level - 1);
         }
     }
 
