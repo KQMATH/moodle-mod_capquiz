@@ -60,10 +60,9 @@ class question_list_renderer {
                 ]
             ];
         }
-        $tabs = basic_renderer::tabs('view_question_list');
         $questionlist = $this->renderer->render_from_template('capquiz/question_list', [
             'questions' => $rows,
         ]);
-        return $tabs . $questionlist;
+        return $questionlist;
     }
 }

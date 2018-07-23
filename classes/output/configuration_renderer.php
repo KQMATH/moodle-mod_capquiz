@@ -46,10 +46,9 @@ class configuration_renderer {
             redirect_to_dashboard($this->capquiz);
         }
         $form_html = $form->render();
-        $tabs = basic_renderer::tabs('view_configuration');
         $configuration = $this->renderer->render_from_template('capquiz/configuration', [
             'form' => $form_html
         ]);
-        return $tabs . $configuration;
+        return $configuration;
     }
 }
