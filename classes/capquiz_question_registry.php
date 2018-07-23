@@ -60,12 +60,20 @@ class capquiz_question_registry {
         return count($this->question_lists()) > 0;
     }
 
-    public function create_question_list(string $title, string $description) {
+    public function create_question_list(string $title, string $description, array $ratings) {
         global $DB;
+        if (count($ratings) < 5) {
+            return false;
+        }
         $list = new \stdClass();
         $list->capquiz_id = $this->capquiz->course_module_id();
         $list->title = $title;
         $list->description = $description;
+        $list->level_1_rating = $ratings[0];
+        $list->level_2_rating = $ratings[1];
+        $list->level_3_rating = $ratings[2];
+        $list->level_4_rating = $ratings[3];
+        $list->level_5_rating = $ratings[4];
         $list->time_created = time();
         $list->time_modified = time();
         try {
