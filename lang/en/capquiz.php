@@ -37,6 +37,9 @@ $string['view_question_list'] = 'View question list';
 $string['view_configuration'] = 'View configuration';
 $string['view_enrolled_students'] = 'View enrolled students';
 
+$string['level_rating'] = 'Level {$a} rating';
+$string['level_rating_required'] = 'Rating for level {$a} is required';
+
 $string['create_question_list'] = 'Create question list';
 
 $string['default_user_rating'] = 'Default user rating';
