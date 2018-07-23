@@ -103,7 +103,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_unauthorized_view() {
-        $this->display_view(new unauthorized_view_renderer());
+        $this->display_view(new unauthorized_view_renderer($this));
     }
 
     public function display_question_list_view(capquiz $capquiz) {
