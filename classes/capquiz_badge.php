@@ -73,8 +73,13 @@ class capquiz_badge {
         global $DB, $USER, $CFG;
         $fordb = new \stdClass();
         $fordb->id = null;
-        $fordb->name = "$level Stars";
-        $fordb->description = "You have achieved level $level!";
+        if ($level > 1) {
+            $fordb->name = "1 Star";
+            $fordb->description = "You earned your first star in this activity!";
+        } else {
+            $fordb->name = "$level Stars";
+            $fordb->description = "You earned $level stars in this activity!";
+        }
         $fordb->timecreated = time();
         $fordb->timemodified = time();
         $fordb->usercreated = $USER->id;
