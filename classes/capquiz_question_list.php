@@ -59,6 +59,19 @@ class capquiz_question_list {
         return $this->db_entry->description;
     }
 
+    /**
+     * Get the rating required to earn a badge for the specified level.
+     * @param int $level
+     * @return int | null
+     */
+    public function level_rating(int $level) {
+        $field = "level_{$level}_rating";
+        if (!isset($this->db_entry->{$field})) {
+            return null;
+        }
+        return (int)$this->db_entry->{$field};
+    }
+
     public function time_created() {
         return $this->db_entry->time_created;
     }
