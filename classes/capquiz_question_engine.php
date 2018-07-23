@@ -75,12 +75,7 @@ class capquiz_question_engine {
         global $DB;
         $capquizid = $user->capquiz_id();
         try {
-            // TODO: Either find an existing instance of the list from somewhere, or use a join to avoid two queries.
-            $capquiz = $DB->get_record('capquiz', ['id' => $capquizid]);
-            if (!$capquiz) {
-                return;
-            }
-            $list = $DB->get_record('capquiz_question_list', ['id' => $capquiz->question_list_id]);
+            $list = $DB->get_record('capquiz_question_list', ['id' => $this->capquiz->question_list_id()]);
             if (!$list) {
                 return;
             }
