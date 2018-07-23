@@ -35,8 +35,9 @@ class question_list_renderer {
 
     public function render() {
         $question_list = $this->capquiz->question_list();
-        if ($question_list->has_questions())
+        if ($question_list->has_questions()) {
             return $this->render_questions($question_list) . basic_renderer::render_home_button($this->renderer);
+        }
         $no_questions = get_string('no_questions', 'capquiz');
         return "<h3>$no_questions</h3>" . basic_renderer::render_home_button($this->renderer);
     }
