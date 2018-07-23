@@ -38,16 +38,10 @@ class question_bank_renderer {
         if (isset($_GET[capquiz_urls::$param_id])) {
             $_GET['cmid'] = $_GET['id'];
         }
-        list(
-            $url,
-            $contexts,
-            $cmid,
-            $cm,
-            $capquizrecord,
-            $pagevars) = question_edit_setup('editq', $PAGE->url, false);
+        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $PAGE->url, false);
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);
-        $questionview = new question_bank_view($contexts, $url, $this->capquiz->context(), $this->capquiz->course_module());
+        $questionview = new question_bank_view($contexts, capquiz_urls::view_question_list_url(), $this->capquiz->context(), $this->capquiz->course_module());
         return $questionview->render('editq', $questionpage, $questionsperpage, $pagevars['cat'], true, true, true);
     }
 }
