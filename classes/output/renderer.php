@@ -44,7 +44,7 @@ class renderer extends \plugin_renderer_base {
      * @throws \coding_exception
      */
     private function tab(string $name, \moodle_url $link) {
-        $text = get_string($name, 'capquiz');
+        $text = get_string("tab_$name", 'capquiz');
         return new \tabobject($name, $link, $text);
     }
     /**
@@ -54,6 +54,7 @@ class renderer extends \plugin_renderer_base {
      */
     private function tabs(string $activetab) {
         $tabs = [
+            $this->tab('view_dashboard', capquiz_urls::view_url()),
             $this->tab('view_question_list', capquiz_urls::view_question_list_url()),
             $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url()),
             $this->tab('view_configuration', capquiz_urls::view_configuration_url())
@@ -94,7 +95,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_instructor_dashboard(capquiz $capquiz) {
-        $this->display_view(new instructor_dashboard_renderer($capquiz, $this));
+        $this->display_tabbed_view(new instructor_dashboard_renderer($capquiz, $this), 'view_dashboard');
     }
 
     public function display_question_list_create_view(capquiz $capquiz) {
