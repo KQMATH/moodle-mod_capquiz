@@ -231,4 +231,5 @@ class capquiz {
     private function rating_system() {
         return new default_elo_rating_system($this->default_user_k_factor(), $this->default_question_k_factor());
     }
+
 }

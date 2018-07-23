@@ -79,7 +79,6 @@ class capquiz_urls {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$publish_question_list);
-
         return $url;
     }
 

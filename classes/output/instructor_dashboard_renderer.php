@@ -18,6 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use mod_capquiz\capquiz_badge;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +36,12 @@ class instructor_dashboard_renderer {
     }
 
     public function render() {
+        // TODO: Find another place to add badges.
+        $badge = new capquiz_badge($this->capquiz->course_module()->course, $this->capquiz->id());
+        $badge->create_badges();
+
         return $this->renderer->render_from_template('capquiz/instructor_dashboard', [
-            'view_question_list_url' => capquiz_urls::view_question_list_url(),
-            'view_leaderboard_url' => capquiz_urls::view_leaderboard_url(),
-            'view_configuration_url' => capquiz_urls::view_configuration_url(),
+            'tabs' => basic_renderer::tabs('view_question_list'),
             'publish' => $this->capquiz->can_publish() ? $this->publish_button() : false,
         ]);
     }

@@ -24,30 +24,24 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class leaderboard_renderer
-{
+class leaderboard_renderer {
 
     private $capquiz;
     private $renderer;
 
-    public function __construct(capquiz $capquiz, renderer $renderer)
-    {
+    public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
-    public function render()
-    {
+    public function render() {
         $users = capquiz_user::list_users($this->capquiz);
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
             $rows[] = [
-                'index' => $i + 1,
-                'student_id' => $user->id(),
-                'username' => $user->username(),
-                'firstname' => $user->first_name(),
-                'lastname' => $user->last_name(),
+                'num' => $i + 1,
+                'student' => $user->id(),
                 'rating' => $user->rating()
             ];
         }
