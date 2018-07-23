@@ -102,7 +102,13 @@ class capquiz {
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
+            $this->create_badges();
         }
+    }
+
+    private function create_badges() {
+        $badge = new capquiz_badge($this->course_module()->course, $this->id());
+        $badge->create_badges();
     }
 
     public function publish() {
