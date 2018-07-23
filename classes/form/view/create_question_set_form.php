@@ -32,6 +32,17 @@ class create_question_set_form extends \moodleform {
         $form->setType('description', PARAM_TEXT);
         $form->addRule('description', get_string('description_required', 'capquiz'), 'required', null, 'client');
 
+        $ratings = [1300, 1450, 1600, 1800, 2000];
+        for ($level = 1; $level < 6; $level++) {
+            $element = "level_{$level}_rating";
+            $text = get_string('level_rating', 'capquiz', $level);
+            $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+            $form->addElement('text', $element, $text);
+            $form->setType($element, PARAM_INT);
+            $form->addRule($element, $requiredtext, 'required', null, 'client');
+            $form->setDefault($element, $ratings[$level - 1]);
+        }
+
         $form->addElement('submit', 'submitbutton', get_string('create_question_list', 'capquiz'));
     }
 
@@ -42,6 +53,13 @@ class create_question_set_form extends \moodleform {
         }
         if (empty($data['description'])) {
             $validation_errors['description'] = get_string('description_required', 'capquiz');
+        }
+        for ($level = 1; $level < 6; $level++) {
+            $element = "level_{$level}_rating";
+            if (empty($data[$element])) {
+                $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+                $validation_errors[$element] = $requiredtext;
+            }
         }
         return $validation_errors;
     }
