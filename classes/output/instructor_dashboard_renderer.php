@@ -18,6 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use mod_capquiz\capquiz_badge;
 
 defined('MOODLE_INTERNAL') || die();
 
