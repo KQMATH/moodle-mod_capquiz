@@ -23,6 +23,8 @@ class capquiz_urls {
     public static $param_attempt = 'attempt';
     public static $param_target_url = 'target-url';
     public static $param_question_id = 'question-id';
+    public static $param_question_page = 'qpage';
+    public static $param_delete_selected = 'deleteselected';
     public static $param_question_list_id = 'question-list-id';
 
     public static $url_view = '/mod/capquiz/view.php';
@@ -45,8 +47,10 @@ class capquiz_urls {
         return capquiz_urls::create_view_url(capquiz_urls::$url_view);
     }
 
-    public static function view_question_list_url() {
-        return capquiz_urls::create_view_url(capquiz_urls::$url_view_question_list);
+    public static function view_question_list_url(int $question_page = 0) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_view_question_list);
+        $url->param(capquiz_urls::$param_question_page, $question_page);
+        return $url;
     }
 
     public static function view_enrolled_students_url() {
