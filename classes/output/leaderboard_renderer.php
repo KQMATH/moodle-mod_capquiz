@@ -54,6 +54,6 @@ class leaderboard_renderer
         $leaderboard = $this->renderer->render_from_template('capquiz/leaderboard', [
             'users' => $rows
         ]);
-        return $leaderboard . basic_renderer::render_home_button($this->renderer);
+        return $leaderboard;
     }
 }
