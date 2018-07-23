@@ -24,6 +24,7 @@ class capquiz_urls {
     public static $param_target_url = 'target-url';
     public static $param_question_id = 'question-id';
     public static $param_question_page = 'qpage';
+    public static $param_delete_selected = 'deleteselected';
     public static $param_question_list_id = 'question-list-id';
 
     public static $url_view = '/mod/capquiz/view.php';
