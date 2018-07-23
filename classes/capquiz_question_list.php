@@ -65,7 +65,6 @@ class capquiz_question_list {
      * @return int | null
      */
     public function level_rating(int $level) {
-        $level = (int)$level;
         $field = "level_{$level}_rating";
         if (!isset($this->db_entry->{$field})) {
             return null;
