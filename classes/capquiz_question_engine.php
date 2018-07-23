@@ -58,6 +58,7 @@ class capquiz_question_engine {
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $this->question_rating_system->update_user_victory_rating($user, $question);
+            $this->maybe_award_badge($user);
         } else {
             $this->question_rating_system->update_user_loss_rating($user, $question);
         }
@@ -65,6 +66,36 @@ class capquiz_question_engine {
             $this->update_question_rating($previous_attempt, $attempt);
         }
 
+    }
+
+    /**
+     * @param capquiz_user $user
+     */
+    private function maybe_award_badge(capquiz_user $user) {
+        global $DB;
+        $capquizid = $user->capquiz_id();
+        try {
+            // TODO: Either find an existing instance of the list from somewhere, or use a join to avoid two queries.
+            $capquiz = $DB->get_record('capquiz', ['id' => $capquizid]);
+            if (!$capquiz) {
+                return;
+            }
+            $list = $DB->get_record('capquiz_question_list', ['id' => $capquiz->question_list_id]);
+            if (!$list) {
+                return;
+            }
+        } catch (\dml_exception $exception) {
+            return;
+        }
+        $list = new capquiz_question_list($list);
+        $badge = new capquiz_badge(0, $capquizid);
+        for ($level = 5; $level > 0; $level--) {
+            $required = $list->level_rating($level);
+            if ($user->rating() >= $required) {
+                $badge->award($user->moodle_user_id(), $level);
+                break;
+            }
+        }
     }
 
     public function attempt_reviewed(capquiz_user $user, capquiz_question_attempt $attempt) {
