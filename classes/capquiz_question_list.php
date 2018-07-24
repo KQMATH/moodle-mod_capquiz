@@ -22,10 +22,12 @@ class capquiz_question_list {
 
     private $db_entry;
     private $questions;
+    private $capquiz;
 
-    public function __construct(\stdClass $db_entry) {
+    public function __construct(\stdClass $db_entry, capquiz $capquiz) {
         global $DB;
         $this->db_entry = $db_entry;
+        $this->capquiz = $capquiz;
         $this->questions = [];
         $entries = $DB->get_records(database_meta::$table_capquiz_question, [
             database_meta::$field_question_list_id => $this->db_entry->id
@@ -70,6 +72,44 @@ class capquiz_question_list {
             return null;
         }
         return (int)$this->db_entry->{$field};
+    }
+
+    public function rating_in_stars(int $rating) {
+        $stars = 0;
+        for ($level = 1; $level < 6; $level++) {
+            if ($rating >= $this->level_rating($level)) {
+                $stars++;
+            }
+        }
+        return $stars;
+    }
+
+    public function stars_as_array(int $stars) {
+        $result = [];
+        for ($star = 1; $star < 6; $star++) {
+            $result[] = $stars >= $star;
+        }
+        return $result;
+    }
+
+    public function next_star_percent(int $rating) {
+        $goal = 0;
+        for ($level = 1; $level < 6; $level++) {
+            $goal = $this->level_rating($level);
+            if ($goal > $rating) {
+                $previous = $this->capquiz->default_user_rating();
+                if ($level > 1) {
+                    $previous = $this->level_rating($level - 1);
+                }
+                $rating -= $previous;
+                $goal -= $previous;
+                break;
+            }
+        }
+        if ($goal < 1) {
+            return 0;
+        }
+        return (int)($rating / $goal * 100);
     }
 
     public function time_created() {

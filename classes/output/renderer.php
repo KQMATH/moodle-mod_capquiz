@@ -47,6 +47,7 @@ class renderer extends \plugin_renderer_base {
         $text = get_string("tab_$name", 'capquiz');
         return new \tabobject($name, $link, $text);
     }
+
     /**
      * @param string $activetab
      * @return string html
@@ -63,31 +64,37 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_tabbed_view($view, string $activetab) {
-        echo $this->output->header();
-        echo $this->tabs($activetab);
-        echo $view->render();
-        echo $this->output->footer();
+        $html = $this->output->header();
+        $html .= $this->tabs($activetab);
+        $html .= $view->render();
+        $html .= $this->output->footer();
+        echo $html;
     }
 
     public function display_tabbed_views(array $views, string $activetab) {
-        echo $this->output->header();
-        echo $this->tabs($activetab);
-        foreach ($views as $view)
-            echo $view->render();
-        echo $this->output->footer();
+        $html = $this->output->header();
+        $html .= $this->tabs($activetab);
+        foreach ($views as $view) {
+            $html .= $view->render();
+        }
+        $html .= $this->output->footer();
+        echo $html;
     }
 
     public function display_view($view) {
-        echo $this->output->header();
-        echo $view->render();
-        echo $this->output->footer();
+        $html = $this->output->header();
+        $html .= $view->render();
+        $html .= $this->output->footer();
+        echo $html;
     }
 
     public function display_views(array $views) {
-        echo $this->output->header();
-        foreach ($views as $view)
-            echo $view->render();
-        echo $this->output->footer();
+        $html = $this->output->header();
+        foreach ($views as $view) {
+            $html .= $view->render();
+        }
+        $html .= $this->output->footer();
+        echo $html;
     }
 
     public function display_question_attempt_view(capquiz $capquiz) {
@@ -102,8 +109,8 @@ class renderer extends \plugin_renderer_base {
         $this->display_view(new create_question_list_renderer($capquiz, $this));
     }
 
-    public function display_unauthorized_view(capquiz $capquiz) {
-        $this->display_view(new unauthorized_view_renderer($capquiz, $this));
+    public function display_unauthorized_view() {
+        $this->display_view(new unauthorized_view_renderer($this));
     }
 
     public function display_question_list_view(capquiz $capquiz) {

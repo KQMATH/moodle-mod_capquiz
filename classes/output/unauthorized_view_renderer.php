@@ -19,9 +19,14 @@ namespace mod_capquiz\output;
 defined('MOODLE_INTERNAL') || die();
 
 class unauthorized_view_renderer {
+    private $renderer;
 
-    public function render(renderer $renderer) {
-        return $renderer->render_from_template('capquiz/unauthorized', []);
+    public function __construct(renderer $renderer) {
+        $this->renderer = $renderer;
+    }
+
+    public function render() {
+        return $this->renderer->render_from_template('capquiz/unauthorized', []);
     }
 
 }
