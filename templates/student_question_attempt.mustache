@@ -1,7 +1,7 @@
 {{#question}}
     <div class="capquiz-quiz-top">
-        <div class="capquiz-quiz-stars">
-            {{#student}}
+        {{#student}}
+            <div class="capquiz-quiz-stars">
                 {{#stars}}
                     {{#.}}
                         {{#pix}} star, capquiz {{/pix}}
@@ -10,8 +10,13 @@
                         {{#pix}} blank-star, capquiz {{/pix}}
                     {{/.}}
                 {{/stars}}
-            {{/student}}
-        </div>
+            </div>
+            <div class="capquiz-quiz-progress">
+                <div class="capquiz-quiz-progress-fill" style="width:{{ percent }}%">
+                    {{ percent }}%
+                </div>
+            </div>
+        {{/student}}
     </div>
     {{#attempt}}
         <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"

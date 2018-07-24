@@ -90,6 +90,23 @@ class capquiz_question_list {
         return $result;
     }
 
+    public function next_star_percent(int $rating) {
+        $goal = 0;
+        for ($level = 2; $level < 6; $level++) {
+            $goal = $this->level_rating($level);
+            if ($goal > $rating) {
+                $previous = $this->level_rating($level - 1);
+                $rating -= $previous;
+                $goal -= $previous;
+                break;
+            }
+        }
+        if ($goal < 1) {
+            return 0;
+        }
+        return (int)($rating / $goal * 100);
+    }
+
     public function time_created() {
         return $this->db_entry->time_created;
     }
