@@ -37,9 +37,6 @@ class instructor_dashboard_renderer {
 
     public function render() {
         return $this->renderer->render_from_template('capquiz/instructor_dashboard', [
-            'view_question_list_url' => capquiz_urls::view_question_list_url(),
-            'view_leaderboard_url' => capquiz_urls::view_leaderboard_url(),
-            'view_configuration_url' => capquiz_urls::view_configuration_url(),
             'publish' => $this->capquiz->can_publish() ? $this->publish_button() : false,
         ]);
     }
