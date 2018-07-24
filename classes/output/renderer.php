@@ -47,7 +47,7 @@ class renderer extends \plugin_renderer_base {
         $text = get_string("tab_$name", 'capquiz');
         return new \tabobject($name, $link, $text);
     }
-    
+
     /**
      * @param string $activetab
      * @return string html

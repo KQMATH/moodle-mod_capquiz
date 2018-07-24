@@ -1,12 +1,17 @@
 {{#question}}
-    <div>
-        {{#question}}
-                Question ID: {{{id}}}
-                Question rating: {{{rating}}}
-        {{/question}}
-        {{#student}}
-                Your rating: {{{rating}}}
-        {{/student}}
+    <div class="capquiz-quiz-top">
+        <div class="capquiz-quiz-stars">
+            {{#student}}
+                {{#stars}}
+                    {{#.}}
+                        {{#pix}} star, capquiz {{/pix}}
+                    {{/.}}
+                    {{^.}}
+                        {{#pix}} blank-star, capquiz {{/pix}}
+                    {{/.}}
+                {{/stars}}
+            {{/student}}
+        </div>
     </div>
     {{#attempt}}
         <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"
@@ -18,4 +23,11 @@
             </div>
         </form>
     {{/attempt}}
+    {{#question}}
+        Question rating: {{ rating }}
+        Question ID: {{ id }}
+    {{/question}}
+    {{#student}}
+        Your rating: {{ rating }}
+    {{/student}}
 {{/question}}
