@@ -42,7 +42,7 @@ class capquiz_question_registry {
     public function question_list(int $list_id) {
         global $DB;
         if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, [database_meta::$field_id => $list_id])) {
-            return new capquiz_question_list($entry);
+            return new capquiz_question_list($entry, $this->capquiz);
         }
         return null;
     }
@@ -51,7 +51,7 @@ class capquiz_question_registry {
         global $DB;
         $records = [];
         foreach ($DB->get_records(database_meta::$table_capquiz_question_list) as $entry) {
-            $records[] = new capquiz_question_list($entry);
+            $records[] = new capquiz_question_list($entry, $this->capquiz);
         }
         return $records;
     }

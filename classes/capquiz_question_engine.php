@@ -82,7 +82,7 @@ class capquiz_question_engine {
         } catch (\dml_exception $exception) {
             return;
         }
-        $list = new capquiz_question_list($list);
+        $list = new capquiz_question_list($list, $this->capquiz);
         $badge = new capquiz_badge(0, $capquizid);
         for ($level = 5; $level > 0; $level--) {
             $required = $list->level_rating($level);
