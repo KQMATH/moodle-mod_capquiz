@@ -22,10 +22,12 @@ class capquiz_question_list {
 
     private $db_entry;
     private $questions;
+    private $capquiz;
 
-    public function __construct(\stdClass $db_entry) {
+    public function __construct(\stdClass $db_entry, capquiz $capquiz) {
         global $DB;
         $this->db_entry = $db_entry;
+        $this->capquiz = $capquiz;
         $this->questions = [];
         $entries = $DB->get_records(database_meta::$table_capquiz_question, [
             database_meta::$field_question_list_id => $this->db_entry->id
@@ -92,10 +94,13 @@ class capquiz_question_list {
 
     public function next_star_percent(int $rating) {
         $goal = 0;
-        for ($level = 2; $level < 6; $level++) {
+        for ($level = 1; $level < 6; $level++) {
             $goal = $this->level_rating($level);
             if ($goal > $rating) {
-                $previous = $this->level_rating($level - 1);
+                $previous = $this->capquiz->default_user_rating();
+                if ($level > 1) {
+                    $previous = $this->level_rating($level - 1);
+                }
                 $rating -= $previous;
                 $goal -= $previous;
                 break;
