@@ -64,6 +64,18 @@ class capquiz_badge {
         }
     }
 
+    public function number_of_stars(capquiz_user $user) {
+        for ($level = 5; $level > 0; $level--) {
+            $badge = $this->get_badge($level);
+            if ($badge !== null) {
+                if ($badge->is_issued($user->moodle_user_id())) {
+                    return $level;
+                }
+            }
+        }
+        return 0;
+    }
+
     /**
      * @param int $level
      * @return int
@@ -76,7 +88,8 @@ class capquiz_badge {
         if ($level === 1) {
             $fordb->name = '1 Star';
             $fordb->description = 'You earned your first star in this activity!';
-        } else {
+        }
+        else {
             $fordb->name = "$level Stars";
             $fordb->description = "You earned $level stars in this activity!";
         }
@@ -157,7 +170,8 @@ class capquiz_badge {
         }
         // TODO: Is there a better way to set the criteria?
         $criteria->save([
-            'role_3' => 3 // Teacher
+            'role_3' => 3
+            // Teacher
         ]);
     }
 
