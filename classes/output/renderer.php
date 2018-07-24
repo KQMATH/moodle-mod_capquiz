@@ -16,7 +16,8 @@
 
 namespace mod_capquiz\output;
 
-use mod_capquiz\bank\question_bank_view;
+use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_urls;
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/leaderboard_renderer.php');
@@ -36,6 +37,46 @@ class renderer extends \plugin_renderer_base {
         return $this->output;
     }
 
+    /**
+     * @param string $name
+     * @param \moodle_url $link
+     * @return \tabobject
+     * @throws \coding_exception
+     */
+    private function tab(string $name, \moodle_url $link) {
+        $text = get_string("tab_$name", 'capquiz');
+        return new \tabobject($name, $link, $text);
+    }
+    /**
+     * @param string $activetab
+     * @return string html
+     * @throws \coding_exception
+     */
+    private function tabs(string $activetab) {
+        $tabs = [
+            $this->tab('view_dashboard', capquiz_urls::view_url()),
+            $this->tab('view_question_list', capquiz_urls::view_question_list_url()),
+            $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url()),
+            $this->tab('view_configuration', capquiz_urls::view_configuration_url())
+        ];
+        return print_tabs([$tabs], $activetab, null, null, true);
+    }
+
+    public function display_tabbed_view($view, string $activetab) {
+        echo $this->output->header();
+        echo $this->tabs($activetab);
+        echo $view->render();
+        echo $this->output->footer();
+    }
+
+    public function display_tabbed_views(array $views, string $activetab) {
+        echo $this->output->header();
+        echo $this->tabs($activetab);
+        foreach ($views as $view)
+            echo $view->render();
+        echo $this->output->footer();
+    }
+
     public function display_view($view) {
         echo $this->output->header();
         echo $view->render();
@@ -49,31 +90,34 @@ class renderer extends \plugin_renderer_base {
         echo $this->output->footer();
     }
 
-    public function display_question_attempt_view(\mod_capquiz\capquiz $capquiz) {
+    public function display_question_attempt_view(capquiz $capquiz) {
         $this->display_view(new question_attempt_renderer($capquiz, $this));
     }
 
-    public function display_instructor_dashboard(\mod_capquiz\capquiz $capquiz) {
-        $this->display_view(new instructor_dashboard_renderer($capquiz, $this));
+    public function display_instructor_dashboard(capquiz $capquiz) {
+        $this->display_tabbed_view(new instructor_dashboard_renderer($capquiz, $this), 'view_dashboard');
     }
 
-    public function display_question_list_create_view(\mod_capquiz\capquiz $capquiz) {
+    public function display_question_list_create_view(capquiz $capquiz) {
         $this->display_view(new create_question_list_renderer($capquiz, $this));
     }
 
-    public function display_unauthorized_view(\mod_capquiz\capquiz $capquiz) {
+    public function display_unauthorized_view(capquiz $capquiz) {
         $this->display_view(new unauthorized_view_renderer($capquiz, $this));
     }
 
-    public function display_question_list_view(\mod_capquiz\capquiz $capquiz) {
-        $this->display_views([new question_list_renderer($capquiz, $this), new question_bank_renderer($capquiz, $this)]);
+    public function display_question_list_view(capquiz $capquiz) {
+        $this->display_tabbed_views([
+            new question_list_renderer($capquiz, $this),
+            new question_bank_renderer($capquiz, $this)
+        ], 'view_question_list');
     }
 
-    public function display_leaderboard(\mod_capquiz\capquiz $capquiz) {
-        $this->display_view(new leaderboard_renderer($capquiz, $this));
+    public function display_leaderboard(capquiz $capquiz) {
+        $this->display_tabbed_view(new leaderboard_renderer($capquiz, $this), 'view_leaderboard');
     }
 
-    public function display_configuration(\mod_capquiz\capquiz $capquiz) {
-        $this->display_view(new configuration_renderer($capquiz, $this));
+    public function display_configuration(capquiz $capquiz) {
+        $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_configuration');
     }
 }
