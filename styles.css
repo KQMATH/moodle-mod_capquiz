@@ -38,3 +38,33 @@
 .capquiz-tree tr td {
     padding: 8px;
 }
+
+.capquiz-quiz-top {
+    background: #f7f7f7;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #e0e0e0;
+    height: 40px;
+    overflow: hidden;
+}
+
+.capquiz-quiz-stars {
+    height: 32px;
+    float: right;
+}
+
+.capquiz-quiz-progress {
+    float: left;
+    background: #e0e0e0;
+    min-width: 256px;
+    width: 30%;
+    border: 1px solid #bbb;
+}
+
+.capquiz-quiz-progress-fill {
+    background: #5599ff;
+    height: 24px;
+    text-align: left;
+    padding-left: 8px;
+    color: #e0e0e0;
+}

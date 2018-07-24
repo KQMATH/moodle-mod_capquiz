@@ -53,12 +53,18 @@ class question_attempt_renderer {
         $context = $this->capquiz->context();
         $question = capquiz_question::load($attempt->question_id());
         $displayoptions = $this->summary_display_options($context);
+        $user = $this->capquiz->user();
+        $questionlist = $this->capquiz->question_list();
+        $stars = $questionlist->rating_in_stars($user->rating());
+        $percent = $questionlist->next_star_percent($user->rating());
 
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
                 'question' => [
                     'student' => [
-                        'rating' => $this->capquiz->user()->rating()
+                        'rating' => $user->rating(),
+                        'percent' => $percent,
+                        'stars' => $questionlist->stars_as_array($stars)
                     ],
                     'question' => [
                         'id' => $question->id(),
