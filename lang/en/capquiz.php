@@ -31,11 +31,14 @@ $string['default_user_rating_required'] = 'Default user rating is required.';
 $string['default_user_k_factor_required'] = 'Default user k factor is required.';
 $string['default_question_k_factor_required'] = 'Default question k factor is required.';
 
+$string['instructor_dashboard'] = 'Instructor dashboard';
 $string['no_questions'] = 'No questions';
-$string['view_leaderboard'] = 'View leaderboard';
-$string['view_question_list'] = 'View question list';
-$string['view_configuration'] = 'View configuration';
 $string['view_enrolled_students'] = 'View enrolled students';
+
+$string['tab_view_dashboard'] = 'Dashboard';
+$string['tab_view_leaderboard'] = 'Leaderboard';
+$string['tab_view_question_list'] = 'Question list';
+$string['tab_view_configuration'] = 'Configuration';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
