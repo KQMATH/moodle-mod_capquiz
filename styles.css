@@ -68,3 +68,11 @@
     padding-left: 8px;
     color: #e0e0e0;
 }
+
+.capquiz-response-form .info {
+    display: none;
+}
+
+.capquiz-response-form .que .content {
+    margin: 0;
+}
