@@ -72,6 +72,24 @@ class capquiz_question_list {
         return (int)$this->db_entry->{$field};
     }
 
+    public function rating_in_stars(int $rating) {
+        $stars = 0;
+        for ($level = 1; $level < 6; $level++) {
+            if ($rating >= $this->level_rating($level)) {
+                $stars++;
+            }
+        }
+        return $stars;
+    }
+
+    public function stars_as_array(int $stars) {
+        $result = [];
+        for ($star = 1; $star < 6; $star++) {
+            $result[] = $stars >= $star;
+        }
+        return $result;
+    }
+
     public function time_created() {
         return $this->db_entry->time_created;
     }
