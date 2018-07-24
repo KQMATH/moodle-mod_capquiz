@@ -18,28 +18,27 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_user;
+use mod_capquiz\capquiz_badge;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class leaderboard_renderer
-{
+class leaderboard_renderer {
 
     private $capquiz;
     private $renderer;
 
-    public function __construct(capquiz $capquiz, renderer $renderer)
-    {
+    public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
-    public function render()
-    {
+    public function render() {
         $users = capquiz_user::list_users($this->capquiz);
         $rows = [];
+        $badge_registry = new capquiz_badge($this->capquiz->course_module_id(), $this->capquiz->id());
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
             $rows[] = [
@@ -48,7 +47,8 @@ class leaderboard_renderer
                 'username' => $user->username(),
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),
-                'rating' => $user->rating()
+                'rating' => $user->rating(),
+                'stars' => $badge_registry->number_of_stars($user)
             ];
         }
         $leaderboard = $this->renderer->render_from_template('capquiz/leaderboard', [
