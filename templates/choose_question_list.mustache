@@ -1,11 +1,12 @@
 <h2>
     {{#str}} question_lists, capquiz {{/str}}
 </h2>
-{{^sets}}
-    No question sets have been created.
-{{/sets}}
+<h4>Select one of these templates for your quiz</h4>
+{{^lists}}
+    No templates have been created.
+{{/lists}}
 <ol class="capquiz-list capquiz-question-list">
-    {{#sets}}
+    {{#lists}}
         <li>
             <div>
                 <a href="{{{ url }}}">{{#pix}} t/check, core, {{#str}} select, capquiz {{/str}} {{/pix}}</a>
@@ -15,10 +16,8 @@
                 <p>{{ description }}</p>
             </div>
         </li>
-    {{/sets}}
+    {{/lists}}
 </ol>
-{{#create}}
-    <div>
-        {{>core/single_button}}
-    </div>
-{{/create}}
+<hr>
+<h4>You can also create your own</h4>
+{{{create}}}

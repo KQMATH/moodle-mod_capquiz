@@ -65,7 +65,6 @@ class capquiz_question_engine {
         if ($previous_attempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user)) {
             $this->update_question_rating($previous_attempt, $attempt);
         }
-
     }
 
     /**

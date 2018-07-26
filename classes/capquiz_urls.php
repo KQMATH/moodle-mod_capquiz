@@ -35,6 +35,7 @@ class capquiz_urls {
     public static $url_view_configuration = '/mod/capquiz/view_configuration.php';
     public static $url_view_question_list = '/mod/capquiz/view_question_list.php';
     public static $url_view_enrolled_students = '/mod/capquiz/view_leaderboard.php';
+    public static $url_view_create_question_list = '/mod/capquiz/view_create_question_list.php';
 
     public static function redirect(\moodle_url $target) {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
@@ -65,6 +66,10 @@ class capquiz_urls {
         return capquiz_urls::create_view_url(capquiz_urls::$url_view_configuration);
     }
 
+    public static function view_create_question_list_url() {
+        return capquiz_urls::create_view_url(capquiz_urls::$url_view_create_question_list);
+    }
+
     public static function add_question_to_list_url(int $question_id) {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$add_question_to_list);
@@ -83,11 +88,10 @@ class capquiz_urls {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$publish_question_list);
-
         return $url;
     }
 
-    public static function question_list_select_url(capquiz $capquiz, capquiz_question_list $question_list) {
+    public static function question_list_select_url(capquiz_question_list $question_list) {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$set_question_list);
         $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
