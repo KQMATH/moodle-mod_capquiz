@@ -22,13 +22,13 @@ class capquiz_question_engine {
 
     private $capquiz;
     private $question_usage;
-    private $question_selector;
+    private $question_selector_registry;
     private $question_rating_system;
 
-    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_question_selector $question_selector, capquiz_rating_system $rating_system) {
+    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_selection_strategy_registry $question_selector, capquiz_rating_system $rating_system) {
         $this->capquiz = $capquiz;
         $this->question_usage = $question_usage;
-        $this->question_selector = $question_selector;
+        $this->question_selector_registry = $question_selector;
         $this->question_rating_system = $rating_system;
     }
 
@@ -104,7 +104,8 @@ class capquiz_question_engine {
     }
 
     private function find_question_for_user(capquiz_user $user) {
-        return $this->question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
+        $question_selector = $this->question_selector_registry->selector();
+        return $question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
     }
 
     private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
