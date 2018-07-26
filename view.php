@@ -32,11 +32,12 @@ set_page_url($capquiz, capquiz_urls::$url_view);
 $renderer = $capquiz->renderer();
 
 if ($capquiz->is_instructor()) {
-    if ($capquiz->has_question_list()) {
-        $renderer->display_instructor_dashboard($capquiz);
-    } else {
+    if (!$capquiz->has_question_list()) {
         $renderer->display_choose_question_list_view($capquiz);
-        //$renderer->display_question_list_create_view($capquiz);
+    } else if (!$capquiz->selection_strategy_registry()->has_strategy()) {
+        $renderer->display_set_selection_strategy_view($capquiz);
+    } else {
+        $renderer->display_instructor_dashboard($capquiz);
     }
 } else if ($capquiz->is_student()) {
     $renderer->display_question_attempt_view($capquiz);

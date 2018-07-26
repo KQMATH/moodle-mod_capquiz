@@ -18,7 +18,6 @@ namespace mod_capquiz;
 
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/default_elo_rating_system.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/adaptive_question_selector.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -139,9 +138,13 @@ class capquiz {
         return $this->capquiz_renderer->output_renderer();
     }
 
+    public function selection_strategy_registry() {
+        return new capquiz_selection_strategy_registry($this);
+    }
+
     public function question_engine() {
         if ($question_usage = $this->question_usage()) {
-            return new capquiz_question_engine($this, $question_usage, $this->question_selector(), $this->rating_system());
+            return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_registry(), $this->rating_system());
         }
         return null;
     }
@@ -237,10 +240,6 @@ class capquiz {
         $question_usage->set_preferred_behaviour('immediatefeedback');
         \question_engine::save_questions_usage_by_activity($question_usage);
         return $question_usage->get_id();
-    }
-
-    private function question_selector() {
-        return new adaptive_question_selector($this);
     }
 
     private function rating_system() {

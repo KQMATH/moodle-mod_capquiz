@@ -31,10 +31,6 @@ class configure_capquiz_form extends \moodleform {
 
     }
 
-    public function set_capquiz(capquiz $capquiz) {
-        $this->capquiz = $capquiz;
-    }
-
     public function definition() {
         $form = $this->_form;
 
@@ -57,7 +53,7 @@ class configure_capquiz_form extends \moodleform {
         $form->setType('default_question_k_factor', PARAM_INT);
         $form->setDefault('default_question_k_factor', $this->capquiz->default_question_k_factor());
         $form->addRule('default_question_k_factor', get_string('default_question_k_factor_required', 'capquiz'), 'required', null, 'client');
-        $this->add_action_buttons(true, 'submit');
+        $this->add_action_buttons(false, 'submit');
     }
 
     public function validations($data, $files) {

@@ -18,16 +18,33 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-class adaptive_question_selector extends capquiz_question_selector {
+class n_closest_selector extends capquiz_question_selector {
 
     private $capquiz;
     private $user_win_probability;
-    private $number_of_questions_drawn;
+    private $number_of_questions_to_select;
 
-    public function __construct(capquiz $capquiz) {
+    public function __construct(capquiz $capquiz, \stdClass $configuration) {
         $this->capquiz = $capquiz;
-        $this->user_win_probability = 0.75;
-        $this->number_of_questions_drawn = 10;
+        if ($configuration)
+            $this->set_configuration($configuration);
+        else
+            $this->set_configuration($this->default_configuration());
+
+    }
+
+    public function configuration() {
+        $config = new \stdClass;
+        $config->user_win_probability = $this->user_win_probability;
+        $config->number_of_questions_to_select = $this->number_of_questions_to_select;
+        return $config;
+    }
+
+    public function default_configuration() {
+        $config = new \stdClass;
+        $config->user_win_probability = 0.75;
+        $config->number_of_questions_to_select = 10;
+        return $config;
     }
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
@@ -46,7 +63,7 @@ class adaptive_question_selector extends capquiz_question_selector {
         $rating_field = database_meta::$field_rating;
         $question_list_id = $this->capquiz->question_list()->id();
         $sql = "SELECT * FROM {" . $table . "} WHERE $field=$question_list_id";
-        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_drawn";
+        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_to_select";
         $sql .= ";";
         $questions = [];
         foreach ($DB->get_records_sql($sql) as $question_db_entry) {
@@ -57,5 +74,14 @@ class adaptive_question_selector extends capquiz_question_selector {
 
     private function ideal_question_rating(capquiz_user $user) {
         return 400.0 * log((1.0 / $this->user_win_probability) - 1.0, 10.0) + $user->rating();
+    }
+
+    private function set_configuration(\stdClass $configuration) {
+        if ($user_win_probability = $configuration->user_win_probability) {
+            $this->user_win_probability = $user_win_probability;
+        }
+        if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
+            $this->number_of_questions_to_select = $number_of_questions_to_select;
+        }
     }
 }
