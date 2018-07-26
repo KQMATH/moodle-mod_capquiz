@@ -96,28 +96,6 @@ class capquiz {
         return $this->capquiz_db_entry->question_list_id != null;
     }
 
-    private function copy_question_list(\stdClass $question_list, bool $insert_as_template) {
-        global $DB;
-        $question_list_id = $question_list->id;
-        $question_list->id = null;
-        $question_list->is_template = $insert_as_template ? 1 : 0;
-        $transaction = $DB->start_delegated_transaction();
-        try {
-            $questions = $DB->get_records(database_meta::$table_capquiz_question, ['question_list_id' => $question_list_id]);
-            $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list);
-            foreach ($questions as $question) {
-                $question->id = null;
-                $question->question_list_id = $question_list_id;
-                $DB->insert_record(database_meta::$table_capquiz_question, $question);
-            }
-            $DB->commit_delegated_transaction($transaction);
-            return $question_list_id;
-        } catch (\dml_exception $exception) {
-            $DB->rollback_delegated_transaction($transaction, $exception);
-            return 0;
-        }
-    }
-
     public function assign_question_list(int $question_list_id) {
         global $DB;
         $question_list = $DB->get_record(database_meta::$table_capquiz_question_list, ['id' => $question_list_id]);
@@ -125,7 +103,7 @@ class capquiz {
             return false;
         }
         if ($question_list->is_template) {
-            $question_list_id = $this->copy_question_list($question_list, false);
+            $question_list_id = capquiz_question_list::copy($question_list, false);
         }
         $capquiz_entry = $this->capquiz_db_entry;
         $capquiz_entry->question_list_id = $question_list_id;
