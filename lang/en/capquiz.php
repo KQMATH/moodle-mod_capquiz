@@ -21,6 +21,7 @@ $string['next'] = "Next";
 $string['title'] = 'Title';
 $string['select'] = "Select";
 $string['publish'] = "Publish";
+$string['create_template'] = 'Create template';
 $string['configure'] = 'Configure';
 $string['description'] = 'Description';
 $string['name_required'] = 'Name is required';

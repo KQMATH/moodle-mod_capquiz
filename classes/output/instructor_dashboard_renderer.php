@@ -35,8 +35,10 @@ class instructor_dashboard_renderer {
     }
 
     public function render() {
+        $canpublish = $this->capquiz->can_publish();
         return $this->renderer->render_from_template('capquiz/instructor_dashboard', [
-            'publish' => $this->capquiz->can_publish() ? $this->publish_button() : false,
+            'publish' => $canpublish ? $this->publish_button() : false,
+            'create_template' => $canpublish ? $this->create_template_button() : false,
         ]);
     }
 
@@ -46,6 +48,15 @@ class instructor_dashboard_renderer {
             'method' => 'post',
             'url' => capquiz_urls::question_list_publish_url($this->capquiz->question_list())->out_as_local_url(false),
             'label' => get_string('publish', 'capquiz')
+        ];
+    }
+
+    private function create_template_button() {
+        return [
+            'primary' => true,
+            'method' => 'post',
+            'url' => capquiz_urls::question_list_create_template_url($this->capquiz->question_list())->out_as_local_url(false),
+            'label' => get_string('create_template', 'capquiz')
         ];
     }
 }
