@@ -4,20 +4,22 @@
         <TABLE NAME="capquiz" COMMENT="Table from which sessions are created">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="question_list_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="question_usage_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates whether or not the question list is published, if it has one"/>
-                <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-                <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="default_user_rating" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" DEFAULT="1200" COMMENT="Default rating for users"/>
                 <FIELD NAME="default_user_k_factor" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" DEFAULT="32" COMMENT="Default k-factor for users"/>
                 <FIELD NAME="default_question_k_factor" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" DEFAULT="8" COMMENT="Default k-factor for questions"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-                <KEY NAME="course_id" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id"/>
+                <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
                 <KEY NAME="question_usage_id" TYPE="foreign" FIELDS="question_usage_id" REFTABLE="question_usages" REFFIELDS="id"/>
                 <KEY NAME="question_list_id" TYPE="foreign" FIELDS="question_list_id" REFTABLE="capquiz_question_list" REFFIELDS="id"/>
             </KEYS>

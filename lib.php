@@ -43,7 +43,7 @@ function capquiz_delete_instance(int $id) {
     global $DB;
     try {
         $capquiz = $DB->get_record('capquiz', ['id' => $id], '*', MUST_EXIST);
-        $DB->delete_records('capquiz_questions', ['capquizid' => $capquiz->id]);
+        $DB->delete_records('capquiz_question', ['capquizid' => $capquiz->id]);
         $DB->delete_records('capquiz', ['id' => $capquiz->id]);
     } catch (Exception $e) {
         return false;
