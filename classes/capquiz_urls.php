@@ -91,6 +91,13 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function question_list_create_template_url(capquiz_question_list $question_list) {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
+        $url->param(capquiz_urls::$param_question_list_id, $question_list->id());
+        $url->param(capquiz_actions::$parameter, capquiz_actions::$create_question_list_template);
+        return $url;
+    }
+
     public static function question_list_select_url(capquiz_question_list $question_list) {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_action);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$set_question_list);
