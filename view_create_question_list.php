@@ -35,11 +35,8 @@ if ($capquiz->is_instructor()) {
     if ($capquiz->has_question_list()) {
         $renderer->display_instructor_dashboard($capquiz);
     } else {
-        $renderer->display_choose_question_list_view($capquiz);
-        //$renderer->display_question_list_create_view($capquiz);
+        $renderer->display_question_list_create_view($capquiz);
     }
-} else if ($capquiz->is_student()) {
-    $renderer->display_question_attempt_view($capquiz);
 } else {
     $renderer->display_unauthorized_view();
 }
