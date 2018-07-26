@@ -34,6 +34,7 @@
                 <FIELD NAME="level_3_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1600" SEQUENCE="false"/>
                 <FIELD NAME="level_4_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1800" SEQUENCE="false"/>
                 <FIELD NAME="level_5_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
+                <FIELD NAME="is_template" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
             </FIELDS>

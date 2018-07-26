@@ -98,12 +98,41 @@ class capquiz {
 
     public function assign_question_list(int $question_list_id) {
         global $DB;
+        $listrecord = $DB->get_record(database_meta::$table_capquiz_question_list, ['id' => $question_list_id]);
+        if (!$listrecord) {
+            return false;
+        }
+        if (!$listrecord->is_template) {
+            return false;
+        }
+        $listrecord->id = null;
+        $listrecord->is_template = 0;
+        $transaction = $DB->start_delegated_transaction();
+        try {
+            $questions = $DB->get_records(database_meta::$table_capquiz_question, ['question_list_id' => $question_list_id]);
+            if (!$questions)  {
+                return false;
+            }
+            $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $listrecord);
+            foreach ($questions as $question) {
+                $question->id = null;
+                $question->question_list_id = $question_list_id;
+                $DB->insert_record(database_meta::$table_capquiz_question, $question);
+            }
+            $DB->commit_delegated_transaction($transaction);
+        } catch (\dml_exception $exception) {
+            $DB->rollback_delegated_transaction($transaction, $exception);
+            return false;
+        }
+
         $capquiz_entry = $this->capquiz_db_entry;
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
             $this->create_badges();
+            return true;
         }
+        return false;
     }
 
     private function create_badges() {

@@ -49,6 +49,10 @@ class capquiz_question_list {
         return count($this->questions) > 0;
     }
 
+    public function is_template() {
+        return $this->db_entry->is_template;
+    }
+
     public function capquiz_origin_id() {
         return $this->db_entry->capquiz_origin_id;
     }
