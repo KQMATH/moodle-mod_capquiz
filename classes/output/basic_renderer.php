@@ -23,17 +23,41 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 
 class basic_renderer {
+    /**
+     * @param renderer $renderer
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public static function render_home_button(renderer $renderer) {
         return basic_renderer::render_action_button($renderer, capquiz_urls::redirect(capquiz_urls::view_url()), get_string('home', 'capquiz'));
     }
 
-    public static function render_action_button(renderer $renderer, \moodle_url $url, string $label, string $http_method = 'post') {
+    /**
+     * @param renderer $renderer
+     * @param \moodle_url $url
+     * @param string $label
+     * @param string $httpmethod The HTTP method to use for the form
+     * @param string[] $params The keys are used as names
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public static function render_action_button(renderer $renderer, \moodle_url $url, string $label, string $httpmethod = 'post', array $params = []) {
+        $paramobjects = [];
+        foreach ($params as $name => $value) {
+            $paramobjects = [
+                'name' => $name,
+                'value' => $value
+            ];
+        }
         $html = $renderer->render_from_template('capquiz/button', [
             'button' => [
                 'primary' => true,
-                'method' => $http_method,
+                'method' => $httpmethod,
                 'url' => $url->out_as_local_url(false),
-                'label' => $label
+                'label' => $label,
+                'params' => $paramobjects
             ]
         ]);
         return $html;
