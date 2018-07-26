@@ -49,6 +49,10 @@ class capquiz_question_list {
         return count($this->questions) > 0;
     }
 
+    public function is_template() {
+        return $this->db_entry->is_template;
+    }
+
     public function capquiz_origin_id() {
         return $this->db_entry->capquiz_origin_id;
     }
@@ -135,6 +139,28 @@ class capquiz_question_list {
             }
         }
         return null;
+    }
+
+    public static function copy(\stdClass $question_list, bool $insert_as_template) {
+        global $DB;
+        $question_list_id = $question_list->id;
+        $question_list->id = null;
+        $question_list->is_template = $insert_as_template ? 1 : 0;
+        $transaction = $DB->start_delegated_transaction();
+        try {
+            $questions = $DB->get_records(database_meta::$table_capquiz_question, ['question_list_id' => $question_list_id]);
+            $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list);
+            foreach ($questions as $question) {
+                $question->id = null;
+                $question->question_list_id = $question_list_id;
+                $DB->insert_record(database_meta::$table_capquiz_question, $question);
+            }
+            $DB->commit_delegated_transaction($transaction);
+            return $question_list_id;
+        } catch (\dml_exception $exception) {
+            $DB->rollback_delegated_transaction($transaction, $exception);
+            return 0;
+        }
     }
 
 }

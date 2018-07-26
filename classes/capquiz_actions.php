@@ -27,5 +27,6 @@ class capquiz_actions {
     public static $add_question_to_list = 'add-question';
     public static $publish_question_list = 'publish-question-list';
     public static $remove_question_from_list = 'remove-question';
+    public static $create_question_list_template = 'create-question-list-template';
 
 }

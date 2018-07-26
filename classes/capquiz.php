@@ -98,12 +98,21 @@ class capquiz {
 
     public function assign_question_list(int $question_list_id) {
         global $DB;
+        $question_list = $DB->get_record(database_meta::$table_capquiz_question_list, ['id' => $question_list_id]);
+        if (!$question_list) {
+            return false;
+        }
+        if ($question_list->is_template) {
+            $question_list_id = capquiz_question_list::copy($question_list, false);
+        }
         $capquiz_entry = $this->capquiz_db_entry;
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
             $this->create_badges();
+            return true;
         }
+        return false;
     }
 
     private function create_badges() {
