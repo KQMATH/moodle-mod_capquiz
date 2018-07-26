@@ -28,7 +28,7 @@ if (!$capquiz) {
     redirect_to_front_page();
 }
 
-set_page_url($capquiz, capquiz_urls::$url_view);
+set_page_url($capquiz, capquiz_urls::$url_view_create_question_list);
 $renderer = $capquiz->renderer();
 
 if ($capquiz->is_instructor()) {
