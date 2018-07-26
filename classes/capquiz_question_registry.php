@@ -69,7 +69,7 @@ class capquiz_question_registry {
         return count($this->question_lists()) > 0;
     }
 
-    public function create_question_list(string $title, string $description, array $ratings, bool $is_template) {
+    public function create_question_list(string $title, string $description, array $ratings) {
         global $DB;
         if (count($ratings) < 5) {
             return false;
@@ -83,7 +83,7 @@ class capquiz_question_registry {
         $list->level_3_rating = $ratings[2];
         $list->level_4_rating = $ratings[3];
         $list->level_5_rating = $ratings[4];
-        $list->is_template = $is_template;
+        $list->is_template = 0;
         $list->time_created = time();
         $list->time_modified = time();
         try {
