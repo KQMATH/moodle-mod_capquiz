@@ -50,15 +50,17 @@ class n_closest_configuration_form extends \moodleform {
         $form->setType('user_win_probability', PARAM_FLOAT);
         $form->setDefault('user_win_probability', $this->configuration->user_win_probability);
         $form->addRule('user_win_probability', get_string('user_win_probability', 'capquiz'), 'required', null, 'client');
-        $this->add_action_buttons(true, 'submit');
+        $this->add_action_buttons(false, 'submit');
     }
 
     public function validations($data, $files) {
         $validation_errors = [];
-        if (empty($data['user_win_probability']))
+        if (empty($data['user_win_probability'])) {
             $validation_errors['user_win_probability'] = get_string('user_win_probability_required', 'capquiz');
-        if (empty($data['number_of_questions']))
+        }
+        if (empty($data['number_of_questions'])) {
             $validation_errors['number_of_questions'] = get_string('number_of_questions_required', 'capquiz');
+        }
         return $validation_errors;
     }
 

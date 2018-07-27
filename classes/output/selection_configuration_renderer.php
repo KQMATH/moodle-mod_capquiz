@@ -29,35 +29,43 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class selection_configuration_renderer {
     private $capquiz;
     private $renderer;
+    private $registry;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->registry = $this->capquiz->selection_strategy_registry();
     }
 
     public function render() {
-        $registry = $this->capquiz->selection_strategy_registry();
-        if ($registry->has_strategy())
-            return $this->render_configuration($registry);
-        else
+        if ($this->registry->has_strategy()) {
+            return $this->render_configuration();
+        }
+        else {
             return '<h3>No selection strategy has been specified</h3>';
+        }
     }
 
-    private function render_configuration(capquiz_selection_strategy_registry $registry) {
+    private function render_configuration() {
+        $html = $this->render_form();
+        return $this->renderer->render_from_template('capquiz/selection_configuration', [
+            'strategy' => $this->registry->current_strategy(),
+            'form' => $html
+
+        ]);
+    }
+
+    private function render_form() {
         global $PAGE;
         $url = $PAGE->url;
-        if ($form = $registry->configuration_form($url)) {
+        if ($form = $this->registry->configuration_form($url)) {
             if ($form_data = $form->get_data()) {
-                $registry->configure_current_strategy($form_data);
+                $this->registry->configure_current_strategy($form_data);
                 $url = capquiz_urls::view_selection_configuration_url();
                 redirect($url);
             }
-        } else
-            $form = 'There is nothing to configure for this strategy';
-        return $this->renderer->render_from_template('capquiz/selection_configuration', [
-            'strategy' => $registry->current_strategy(),
-            'form' => $form->render()
-
-        ]);
+            return $form->render();
+        }
+        return 'There is nothing to configure for this strategy';
     }
 }

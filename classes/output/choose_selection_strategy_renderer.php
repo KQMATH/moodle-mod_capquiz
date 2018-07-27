@@ -42,7 +42,7 @@ class choose_selection_strategy_renderer {
             $registry = $this->capquiz->selection_strategy_registry();
             $strategy = $registry->selection_strategies()[$form_data->strategy];
             $registry->set_strategy($strategy);
-            redirect(capquiz_urls::view_configuration_url());
+            redirect(capquiz_urls::view_selection_configuration_url());
         }
 
         return $this->renderer->render_from_template('capquiz/choose_selection_strategy', [

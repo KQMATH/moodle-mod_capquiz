@@ -38,20 +38,23 @@ class capquiz_selection_strategy_registry {
     }
 
     public function selector() {
-        if ($db_entry = $this->db_entry)
+        if ($db_entry = $this->db_entry) {
             return $this->selector_for_strategy($db_entry->strategy, $this->configuration);
+        }
         return null;
     }
 
     public function configuration_form(\moodle_url $url) {
-        if ($db_entry = $this->db_entry)
+        if ($db_entry = $this->db_entry) {
             return $this->configuration_form_for_strategy($db_entry->strategy, $this->configuration, $url);
+        }
         return null;
     }
 
     public function current_strategy() {
-        if ($db_entry = $this->db_entry)
+        if ($db_entry = $this->db_entry) {
             return $db_entry->strategy;
+        }
         return "No strategy specified";
     }
 
@@ -65,10 +68,11 @@ class capquiz_selection_strategy_registry {
     public function configure_current_strategy(\stdClass $candidate_configuration) {
         if ($db_entry = $this->db_entry) {
             $selector = $this->selector_for_strategy($db_entry->strategy, $candidate_configuration);
-            if ($configuration = $selector->configuration())
+            if ($configuration = $selector->configuration()) {
                 $db_entry->configuration = $this->serialize($configuration);
+            }
             else {
-                $db_entry->configuration = new \stdClass;
+                $db_entry->configuration = '';
             }
             $this->update_configuration($db_entry);
         }
@@ -76,22 +80,27 @@ class capquiz_selection_strategy_registry {
 
     public function set_strategy(string $strategy) {
         $selector = $this->selector_for_strategy($strategy, new \stdClass);
-        if ($this->db_entry)
+        if ($this->db_entry) {
             $db_entry = $this->db_entry;
-        else
+        }
+        else {
             $db_entry = new \stdClass;
+        }
         $db_entry->strategy = $strategy;
         $db_entry->capquiz_id = $this->capquiz->id();
         if ($default_configuration = $selector->default_configuration()) {
             $db_entry->configuration = $this->serialize($default_configuration);
-        } else {
-            $db_entry->configuration = new \stdClass;
+        }
+        else {
+            $db_entry->configuration = '';
         }
         global $DB;
         if ($this->db_entry) {
             $this->update_configuration($db_entry);
-        } else {
+        }
+        else {
             $DB->insert_record(database_meta::$table_capquiz_question_selection, $db_entry);
+            $this->set_configuration($db_entry);
         }
     }
 
@@ -109,8 +118,7 @@ class capquiz_selection_strategy_registry {
         ];
         global $DB;
         if ($db_entry = $DB->get_record(database_meta::$table_capquiz_question_selection, $conditions)) {
-            $this->db_entry = $db_entry;
-            $this->configuration = $this->deserialize($db_entry->configuration);
+            $this->set_configuration($db_entry);
         }
     }
 
@@ -118,7 +126,7 @@ class capquiz_selection_strategy_registry {
 
         global $DB;
         if ($DB->update_record(database_meta::$table_capquiz_question_selection, $configuration)) {
-            $this->db_entry = $configuration;
+            $this->set_configuration($configuration);
         }
     }
 
@@ -131,7 +139,8 @@ class capquiz_selection_strategy_registry {
                 },
                 function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
                     return null;
-                }],
+                }
+            ],
 
             'N-closest' => [
                 function (\stdClass $configuration) use ($capquiz) {
@@ -142,6 +151,17 @@ class capquiz_selection_strategy_registry {
                 }
             ]
         ];
+    }
+
+    private function set_configuration(\stdClass $database_entry) {
+        $this->db_entry = $database_entry;
+        if ($configuration = $this->deserialize($database_entry->configuration)) {
+            $this->configuration = $configuration;
+        }
+        else {
+            $this->configuration = new \stdClass();
+        }
+
     }
 
     private function selector_for_strategy(string $strategy, \stdClass $configuration) {
