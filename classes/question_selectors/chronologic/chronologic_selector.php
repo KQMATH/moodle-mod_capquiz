@@ -44,5 +44,4 @@ class chronologic_selector extends capquiz_question_selector {
         }
         return null;
     }
-
 }
