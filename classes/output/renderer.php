@@ -131,7 +131,10 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_selection_configuration_view(capquiz $capquiz) {
-        $this->display_tabbed_view(new selection_configuration_renderer($capquiz, $this), 'view_selection_configuration');
+        $this->display_tabbed_views([
+            new choose_selection_strategy_renderer($capquiz, $this),
+            new selection_configuration_renderer($capquiz, $this)
+        ], 'view_selection_configuration');
     }
 
     public function display_leaderboard(capquiz $capquiz) {
@@ -139,9 +142,6 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_configuration(capquiz $capquiz) {
-        $this->display_tabbed_views([
-            new configuration_renderer($capquiz, $this),
-            new choose_selection_strategy_renderer($capquiz, $this)
-        ], 'view_configuration');
+        $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_configuration');
     }
 }

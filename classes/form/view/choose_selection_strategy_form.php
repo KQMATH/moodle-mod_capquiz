@@ -32,14 +32,22 @@ class choose_selection_strategy_form extends \moodleform {
 
     public function definition() {
         $form = $this->_form;
+        $registry = $this->capquiz->selection_strategy_registry();
+        $strategies = $registry->selection_strategies();
+        $index = 0;
+        $selected_index = -1;
         $radioarray = [];
-        $strategies = $this->capquiz->selection_strategy_registry()->selection_strategies();
-        $selected = 0;
         foreach ($strategies as $strategy) {
-            $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $selected++, [$strategy]);
+            if ($registry->current_strategy() === $strategy) {
+                $selected_index = $index;
+            }
+            $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $index++, [$strategy]);
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
         $this->add_action_buttons(false, 'submit');
+        if ($selected_index > -1) {
+            $form->setDefault('strategy', $selected_index);
+        }
     }
 
     public function validations($data, $files) {
