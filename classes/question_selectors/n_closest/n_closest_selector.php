@@ -18,23 +18,46 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-class adaptive_question_selector extends capquiz_question_selector {
+class n_closest_selector extends capquiz_question_selector {
 
     private $capquiz;
     private $user_win_probability;
-    private $number_of_questions_drawn;
+    private $number_of_questions_to_select;
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
-        $this->user_win_probability = 0.75;
-        $this->number_of_questions_drawn = 10;
+        $this->configure($this->default_configuration());
+    }
+
+    public function configure(\stdClass $configuration) {
+        if ($user_win_probability = $configuration->user_win_probability) {
+            $this->user_win_probability = $user_win_probability;
+        }
+        if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
+            $this->number_of_questions_to_select = $number_of_questions_to_select;
+        }
+    }
+
+    public function configuration() {
+        $config = new \stdClass;
+        $config->user_win_probability = $this->user_win_probability;
+        $config->number_of_questions_to_select = $this->number_of_questions_to_select;
+        return $config;
+    }
+
+    public function default_configuration() {
+        $config = new \stdClass;
+        $config->user_win_probability = 0.75;
+        $config->number_of_questions_to_select = 10;
+        return $config;
     }
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
         $candidate_questions = $this->find_questions_closest_to_rating($user);
         $index = mt_rand(0, count($candidate_questions) - 1);
-        if ($question = $candidate_questions[$index])
+        if ($question = $candidate_questions[$index]) {
             return $question;
+        }
         return null;
     }
 
@@ -46,7 +69,7 @@ class adaptive_question_selector extends capquiz_question_selector {
         $rating_field = database_meta::$field_rating;
         $question_list_id = $this->capquiz->question_list()->id();
         $sql = "SELECT * FROM {" . $table . "} WHERE $field=$question_list_id";
-        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_drawn";
+        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_to_select";
         $sql .= ";";
         $questions = [];
         foreach ($DB->get_records_sql($sql) as $question_db_entry) {

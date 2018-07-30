@@ -34,16 +34,22 @@ class question_attempt_renderer {
     }
 
     public function render() {
-        if (!$this->capquiz->is_published())
-            return "Nothing here yet";
+        if (!$this->capquiz->is_published()) {
+            return 'Nothing here yet';
+        }
         $question_engine = $this->capquiz->question_engine();
         if ($attempt = $question_engine->attempt_for_user($this->capquiz->user())) {
-            if ($attempt->is_answered())
+            if ($attempt->is_answered()) {
                 return $this->render_question_review($attempt);
-            else if ($attempt->is_pending())
-                return $this->render_question_attempt($attempt);
-        } else {
-            return $this->render_quiz_finished();
+            }
+            else {
+                if ($attempt->is_pending()) {
+                    return $this->render_question_attempt($attempt);
+                }
+            }
+        }
+        else {
+            return 'You have finished this quiz!';
         }
     }
 
@@ -60,24 +66,23 @@ class question_attempt_renderer {
 
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
+            'question' => [
+                'student' => [
+                    'rating' => $user->rating(),
+                    'percent' => $percent,
+                    'stars' => $questionlist->stars_as_array($stars)
+                ],
                 'question' => [
-                    'student' => [
-                        'rating' => $user->rating(),
-                        'percent' => $percent,
-                        'stars' => $questionlist->stars_as_array($stars)
-                    ],
-                    'question' => [
-                        'id' => $question->id(),
-                        'rating' => $question->rating()
-                    ],
-                    'attempt' => [
-                        'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
-                        'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
-                        'slots' => ''
-                    ]
+                    'id' => $question->id(),
+                    'rating' => $question->rating()
+                ],
+                'attempt' => [
+                    'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
+                    'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
+                    'slots' => ''
                 ]
             ]
-        );
+        ]);
     }
 
     private function render_question_review(capquiz_question_attempt $attempt) {
@@ -89,22 +94,17 @@ class question_attempt_renderer {
         $questionattempt = $question_usage->get_question_attempt($attempt->question_slot());
 
         return $this->renderer->render_from_template('capquiz/student_question_review', [
-                'summary' => [
-                    'response' => $question_usage->get_response_summary($attempt->question_slot()),
-                    'feedback' => $questionrenderer->feedback($questionattempt, $displayoptions),
-                    'next' => [
-                        'primary' => true,
-                        'method' => 'post',
-                        'url' => capquiz_urls::response_reviewed_url($attempt)->out_as_local_url(false),
-                        'label' => get_string('next', 'capquiz')
-                    ]
+            'summary' => [
+                'response' => $question_usage->get_response_summary($attempt->question_slot()),
+                'feedback' => $questionrenderer->feedback($questionattempt, $displayoptions),
+                'next' => [
+                    'primary' => true,
+                    'method' => 'post',
+                    'url' => capquiz_urls::response_reviewed_url($attempt)->out_as_local_url(false),
+                    'label' => get_string('next', 'capquiz')
                 ]
             ]
-        );
-    }
-
-    private function render_quiz_finished() {
-        return $this->renderer->render_from_template('capquiz/student_quiz_finished', []);
+        ]);
     }
 
     private function summary_display_options($context) {
