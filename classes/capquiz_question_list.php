@@ -65,6 +65,14 @@ class capquiz_question_list {
         return $this->db_entry->description;
     }
 
+    public function first_level() {
+        return 1;
+    }
+
+    public function level_count() {
+        return 5;
+    }
+
     /**
      * Get the rating required to earn a badge for the specified level.
      * @param int $level
@@ -76,6 +84,28 @@ class capquiz_question_list {
             return null;
         }
         return (int)$this->db_entry->{$field};
+    }
+
+    public function set_level_rating(int $level, int $rating) {
+        $db_entry = $this->db_entry;
+        $field = "level_{$level}_rating";
+        $db_entry->{$field} = $rating;
+        $this->update_database($db_entry);
+    }
+
+    public function set_level_ratings(array $ratings) {
+        $counts = count($ratings);
+        if ($counts !== $this->level_count()) {
+            throw new \Exception("Wrong number of ratings specified for badges: $counts given and " . $this->level_count() . ' required');
+        }
+        $db_entry = $this->db_entry;
+        $level = $this->first_level();
+        foreach ($ratings as $rating) {
+            $field = "level_{$level}_rating";
+            $db_entry->{$field} = $rating;
+            $level++;
+        }
+        $this->update_database($db_entry);
     }
 
     public function rating_in_stars(int $rating) {
@@ -160,6 +190,13 @@ class capquiz_question_list {
         } catch (\dml_exception $exception) {
             $DB->rollback_delegated_transaction($transaction, $exception);
             return 0;
+        }
+    }
+
+    private function update_database(\stdClass $db_entry) {
+        global $DB;
+        if ($DB->update_record(database_meta::$table_capquiz_question_list, $db_entry)) {
+            $this->db_entry = $db_entry;
         }
     }
 

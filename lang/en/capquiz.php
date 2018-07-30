@@ -14,6 +14,7 @@ $string['add_the_quiz_question'] = 'Add the question to the list';
 
 $string['question_list'] = "Question list";
 $string['question_lists'] = "Question lists";
+$string['configure_badge_rating'] = 'Configure badge rating';
 
 $string['home'] = 'Home';
 $string['name'] = 'Name';
