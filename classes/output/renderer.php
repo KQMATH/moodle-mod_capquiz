@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_rende
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/create_question_list_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/configure_badge_rating_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/selection_configuration_renderer.php');
 
 defined('MOODLE_INTERNAL') || die();
@@ -126,6 +127,7 @@ class renderer extends \plugin_renderer_base {
     public function display_question_list_view(capquiz $capquiz) {
         $this->display_tabbed_views([
             new question_list_renderer($capquiz, $this),
+            new configure_badge_rating_renderer($capquiz, $this),
             new question_bank_renderer($capquiz, $this)
         ], 'view_question_list');
     }

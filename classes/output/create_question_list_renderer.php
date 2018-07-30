@@ -18,7 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\create_question_set_form;
+use mod_capquiz\form\view\create_question_list_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +37,7 @@ class create_question_list_renderer {
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new create_question_set_form($url);
+        $form = new create_question_list_form($url);
         if ($form_data = $form->get_data()) {
             $registry = $this->capquiz->question_registry();
             $ratings = [

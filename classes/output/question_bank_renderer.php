@@ -42,6 +42,6 @@ class question_bank_renderer {
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);
         $questionview = new question_bank_view($contexts, capquiz_urls::view_question_list_url(), $this->capquiz->context(), $this->capquiz->course_module());
-        return $questionview->render('editq', $questionpage, $questionsperpage, $pagevars['cat'], true, true, true);
+        return "<h3>Available questions</h3>" . $questionview->render('editq', $questionpage, $questionsperpage, $pagevars['cat'], true, true, true);
     }
 }

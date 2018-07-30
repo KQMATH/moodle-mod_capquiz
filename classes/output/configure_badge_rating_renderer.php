@@ -17,55 +17,43 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_selection_strategy_registry;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\create_question_list_form;
+use mod_capquiz\form\view\configure_badge_rating_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class selection_configuration_renderer {
+class configure_badge_rating_renderer {
     private $capquiz;
     private $renderer;
-    private $registry;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->selection_strategy_loader();
     }
 
     public function render() {
-        if ($this->registry->has_strategy()) {
-            return $this->render_configuration();
-        }
-        else {
-            return '<h3>No selection strategy has been specified</h3>';
-        }
-    }
-
-    private function render_configuration() {
-        $html = $this->render_form();
-        return $this->renderer->render_from_template('capquiz/selection_configuration', [
-            'strategy' => $this->registry->current_strategy_name(),
-            'form' => $html
-
-        ]);
-    }
-
-    private function render_form() {
         global $PAGE;
         $url = $PAGE->url;
-        if ($form = $this->registry->configuration_form($url)) {
-            if ($form_data = $form->get_data()) {
-                $this->registry->configure_current_strategy($form_data);
-                $url = capquiz_urls::view_selection_configuration_url();
-                redirect($url);
-            }
-            return $form->render();
+        $question_list = $this->capquiz->question_list();
+        $form = new configure_badge_rating_form($question_list, $url);
+        if ($form_data = $form->get_data()) {
+            $ratings = [
+                $form_data->level_1_rating,
+                $form_data->level_2_rating,
+                $form_data->level_3_rating,
+                $form_data->level_4_rating,
+                $form_data->level_5_rating
+            ];
+            $question_list->set_level_ratings($ratings);
+            $url = new \moodle_url(capquiz_urls::$url_view_question_list);
+            $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
+            redirect($url);
         }
-        return 'There is nothing to configure for this strategy';
+        return $this->renderer->render_from_template('capquiz/configure_badge_rating', [
+            'form' => $form->render()
+        ]);
     }
 }
