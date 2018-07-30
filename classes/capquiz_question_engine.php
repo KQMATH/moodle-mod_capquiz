@@ -22,13 +22,13 @@ class capquiz_question_engine {
 
     private $capquiz;
     private $question_usage;
-    private $question_selector;
+    private $strategy_loader;
     private $question_rating_system;
 
-    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_question_selector $question_selector, capquiz_rating_system $rating_system) {
+    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_strategy_loader $strategy_loader, capquiz_rating_system $rating_system) {
         $this->capquiz = $capquiz;
         $this->question_usage = $question_usage;
-        $this->question_selector = $question_selector;
+        $this->strategy_loader = $strategy_loader;
         $this->question_rating_system = $rating_system;
     }
 
@@ -59,7 +59,8 @@ class capquiz_question_engine {
         if ($attempt->is_correctly_answered()) {
             $this->question_rating_system->update_user_victory_rating($user, $question);
             $this->maybe_award_badge($user);
-        } else {
+        }
+        else {
             $this->question_rating_system->update_user_loss_rating($user, $question);
         }
         if ($previous_attempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user)) {
@@ -104,7 +105,8 @@ class capquiz_question_engine {
     }
 
     private function find_question_for_user(capquiz_user $user) {
-        return $this->question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
+        $question_selector = $this->strategy_loader->selector();
+        return $question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
     }
 
     private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
@@ -112,10 +114,14 @@ class capquiz_question_engine {
         $previous_correct = $previous->is_correctly_answered();
         $current_question = $this->capquiz->question_list()->question($current->question_id());
         $previous_question = $this->capquiz->question_list()->question($previous->question_id());
-        if ($previous_correct && !$current_correct)
+        if ($previous_correct && !$current_correct) {
             $this->question_rating_system->question_victory_ratings($current_question, $previous_question);
-        else if (!$previous_correct && $current_correct)
-            $this->question_rating_system->question_victory_ratings($previous_question, $current_question);
+        }
+        else {
+            if (!$previous_correct && $current_correct) {
+                $this->question_rating_system->question_victory_ratings($previous_question, $current_question);
+            }
+        }
     }
 
 }

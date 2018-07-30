@@ -23,6 +23,7 @@ class database_meta {
     public static $table_capquiz_attempt = 'capquiz_attempt';
     public static $table_capquiz_question = 'capquiz_question';
     public static $table_capquiz_question_list = 'capquiz_question_list';
+    public static $table_capquiz_question_selection = 'capquiz_question_selection';
 
     public static $field_id = 'id';
     public static $field_user_id = 'user_id';

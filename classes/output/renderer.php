@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_rende
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/create_question_list_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/selection_configuration_renderer.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -58,40 +59,41 @@ class renderer extends \plugin_renderer_base {
             $this->tab('view_dashboard', capquiz_urls::view_url()),
             $this->tab('view_question_list', capquiz_urls::view_question_list_url()),
             $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url()),
-            $this->tab('view_configuration', capquiz_urls::view_configuration_url())
+            $this->tab('view_configuration', capquiz_urls::view_configuration_url()),
+            $this->tab('view_selection_configuration', capquiz_urls::view_selection_configuration_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
 
-    public function display_tabbed_view($view, string $activetab) {
+    public function display_tabbed_view($renderer, string $activetab) {
         $html = $this->output->header();
         $html .= $this->tabs($activetab);
-        $html .= $view->render();
+        $html .= $renderer->render();
         $html .= $this->output->footer();
         echo $html;
     }
 
-    public function display_tabbed_views(array $views, string $activetab) {
+    public function display_tabbed_views(array $renderers, string $activetab) {
         $html = $this->output->header();
         $html .= $this->tabs($activetab);
-        foreach ($views as $view) {
-            $html .= $view->render();
+        foreach ($renderers as $renderer) {
+            $html .= $renderer->render();
         }
         $html .= $this->output->footer();
         echo $html;
     }
 
-    public function display_view($view) {
+    public function display_view($renderer) {
         $html = $this->output->header();
-        $html .= $view->render();
+        $html .= $renderer->render();
         $html .= $this->output->footer();
         echo $html;
     }
 
-    public function display_views(array $views) {
+    public function display_views(array $renderers) {
         $html = $this->output->header();
-        foreach ($views as $view) {
-            $html .= $view->render();
+        foreach ($renderers as $renderer) {
+            $html .= $renderer->render();
         }
         $html .= $this->output->footer();
         echo $html;
@@ -111,7 +113,11 @@ class renderer extends \plugin_renderer_base {
 
     public function display_choose_question_list_view(capquiz $capquiz) {
         $this->display_view(new choose_question_list_renderer($capquiz, $this));
-}
+    }
+
+    public function display_set_selection_strategy_view(capquiz $capquiz) {
+        $this->display_view(new choose_selection_strategy_renderer($capquiz, $this));
+    }
 
     public function display_unauthorized_view() {
         $this->display_view(new unauthorized_view_renderer($this));
@@ -122,6 +128,13 @@ class renderer extends \plugin_renderer_base {
             new question_list_renderer($capquiz, $this),
             new question_bank_renderer($capquiz, $this)
         ], 'view_question_list');
+    }
+
+    public function display_selection_configuration_view(capquiz $capquiz) {
+        $this->display_tabbed_views([
+            new choose_selection_strategy_renderer($capquiz, $this),
+            new selection_configuration_renderer($capquiz, $this)
+        ], 'view_selection_configuration');
     }
 
     public function display_leaderboard(capquiz $capquiz) {

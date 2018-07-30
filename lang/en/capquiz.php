@@ -40,11 +40,16 @@ $string['tab_view_dashboard'] = 'Dashboard';
 $string['tab_view_leaderboard'] = 'Leaderboard';
 $string['tab_view_question_list'] = 'Question list';
 $string['tab_view_configuration'] = 'Configuration';
+$string['tab_view_selection_configuration'] = 'Question selection';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
 
 $string['create_question_list'] = 'Create question list';
+
+$string['user_win_probability'] = 'Desired user win probability';
+$string['choose_selection_strategy'] = 'Choose selection strategy';
+$string['number_of_questions_to_select'] = 'Number of questions to draw';
 
 $string['default_user_rating'] = 'Default user rating';
 $string['default_user_k_factor'] = 'Default user k-factor';

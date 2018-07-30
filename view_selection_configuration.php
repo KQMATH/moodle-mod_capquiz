@@ -22,25 +22,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
-$capquiz = capquiz::create();
-
-if (!$capquiz) {
+if ($capquiz = capquiz::create()) {
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_selection_configuration);
+    $renderer = $capquiz->renderer();
+    $renderer->display_selection_configuration_view($capquiz);
+} else
     redirect_to_front_page();
-}
-
-set_page_url($capquiz, capquiz_urls::$url_view);
-$renderer = $capquiz->renderer();
-
-if ($capquiz->is_instructor()) {
-    if (!$capquiz->has_question_list()) {
-        $renderer->display_choose_question_list_view($capquiz);
-    } else if (!$capquiz->selection_strategy_loader()->has_strategy()) {
-        $renderer->display_set_selection_strategy_view($capquiz);
-    } else {
-        $renderer->display_instructor_dashboard($capquiz);
-    }
-} else if ($capquiz->is_student()) {
-    $renderer->display_question_attempt_view($capquiz);
-} else {
-    $renderer->display_unauthorized_view();
-}
