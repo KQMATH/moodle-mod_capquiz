@@ -39,9 +39,10 @@ class choose_selection_strategy_renderer {
         $url = $PAGE->url;
         $form = new choose_selection_strategy_form($this->capquiz, $url);
         if ($form_data = $form->get_data()) {
+            $loader = $this->capquiz->selection_strategy_loader();
             $registry = $this->capquiz->selection_strategy_registry();
             $strategy = $registry->selection_strategies()[$form_data->strategy];
-            $registry->set_strategy($strategy);
+            $loader->set_strategy($strategy);
             redirect(capquiz_urls::view_selection_configuration_url());
         }
 
