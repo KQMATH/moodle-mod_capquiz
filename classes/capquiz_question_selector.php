@@ -20,6 +20,8 @@ defined('MOODLE_INTERNAL') || die();
 
 abstract class capquiz_question_selector {
 
+    public abstract function configure(\stdClass $configuration);
+
     public abstract function configuration();
 
     public abstract function default_configuration();

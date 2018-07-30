@@ -34,7 +34,7 @@ class selection_configuration_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->selection_strategy_registry();
+        $this->registry = $this->capquiz->selection_strategy_loader();
     }
 
     public function render() {
@@ -49,7 +49,7 @@ class selection_configuration_renderer {
     private function render_configuration() {
         $html = $this->render_form();
         return $this->renderer->render_from_template('capquiz/selection_configuration', [
-            'strategy' => $this->registry->current_strategy(),
+            'strategy' => $this->registry->current_strategy_name(),
             'form' => $html
 
         ]);

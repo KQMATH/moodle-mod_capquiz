@@ -24,13 +24,18 @@ class n_closest_selector extends capquiz_question_selector {
     private $user_win_probability;
     private $number_of_questions_to_select;
 
-    public function __construct(capquiz $capquiz, \stdClass $configuration) {
+    public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
-        if ($configuration)
-            $this->set_configuration($configuration);
-        else
-            $this->set_configuration($this->default_configuration());
+        $this->configure($this->default_configuration());
+    }
 
+    public function configure(\stdClass $configuration) {
+        if ($user_win_probability = $configuration->user_win_probability) {
+            $this->user_win_probability = $user_win_probability;
+        }
+        if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
+            $this->number_of_questions_to_select = $number_of_questions_to_select;
+        }
     }
 
     public function configuration() {
@@ -50,8 +55,9 @@ class n_closest_selector extends capquiz_question_selector {
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
         $candidate_questions = $this->find_questions_closest_to_rating($user);
         $index = mt_rand(0, count($candidate_questions) - 1);
-        if ($question = $candidate_questions[$index])
+        if ($question = $candidate_questions[$index]) {
             return $question;
+        }
         return null;
     }
 
@@ -74,14 +80,5 @@ class n_closest_selector extends capquiz_question_selector {
 
     private function ideal_question_rating(capquiz_user $user) {
         return 400.0 * log((1.0 / $this->user_win_probability) - 1.0, 10.0) + $user->rating();
-    }
-
-    private function set_configuration(\stdClass $configuration) {
-        if ($user_win_probability = $configuration->user_win_probability) {
-            $this->user_win_probability = $user_win_probability;
-        }
-        if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
-            $this->number_of_questions_to_select = $number_of_questions_to_select;
-        }
     }
 }
