@@ -65,23 +65,23 @@ class capquiz_selection_strategy_registry {
     }
 
     private function register_selection_strategies() {
+        //The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->strategies = [
-            'Chronological' => [
-                function () use ($capquiz) {
-                    return new chronologic_selector($capquiz);
-                },
-                function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
-                    return null;
-                }
-            ],
-
             'N-closest' => [
                 function () use ($capquiz) {
                     return new n_closest_selector($capquiz);
                 },
                 function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
                     return new n_closest_configuration_form($capquiz, $configuration, $url);
+                }
+            ],
+            'Chronological' => [
+                function () use ($capquiz) {
+                    return new chronologic_selector($capquiz);
+                },
+                function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
+                    return null;
                 }
             ]
         ];
