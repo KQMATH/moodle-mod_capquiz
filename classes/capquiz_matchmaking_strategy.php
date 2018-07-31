@@ -16,16 +16,15 @@
 
 namespace mod_capquiz;
 
-require_once('../../config.php');
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/editlib.php');
-require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
+abstract class capquiz_matchmaking_strategy {
 
-if ($capquiz = capquiz::create()) {
-    $capquiz->require_instructor_capability();
-    set_page_url($capquiz, capquiz_urls::$url_view_selection_configuration);
-    $renderer = $capquiz->renderer();
-    $renderer->display_selection_configuration_view($capquiz);
-} else
-    redirect_to_front_page();
+    public abstract function configure(\stdClass $configuration);
+
+    public abstract function configuration();
+
+    public abstract function default_configuration();
+
+    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts);
+}

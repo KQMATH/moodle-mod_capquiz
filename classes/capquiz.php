@@ -17,8 +17,9 @@
 namespace mod_capquiz;
 
 require_once($CFG->libdir . '/questionlib.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/default_elo_rating_system.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_strategy_loader.php');
+
+require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -143,16 +144,24 @@ class capquiz {
     }
 
     public function selection_strategy_loader() {
-        return new capquiz_strategy_loader($this);
+        return new capquiz_matchmaking_strategy_loader($this);
     }
 
     public function selection_strategy_registry() {
-        return new capquiz_selection_strategy_registry($this);
+        return new capquiz_matchmaking_strategy_registry($this);
+    }
+
+    public function rating_system_loader() {
+        return new capquiz_rating_system_loader($this);
+    }
+
+    public function rating_system_registry() {
+        return new capquiz_rating_system_registry($this);
     }
 
     public function question_engine() {
         if ($question_usage = $this->question_usage()) {
-            return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_loader(), $this->rating_system());
+            return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_loader(), $this->rating_system_loader());
         }
         return null;
     }
@@ -181,14 +190,6 @@ class capquiz {
     public function user() {
         global $USER;
         return capquiz_user::load_user($this, $USER->id);
-    }
-
-    public function default_user_k_factor() {
-        return $this->capquiz_db_entry->default_user_k_factor;
-    }
-
-    public function default_question_k_factor() {
-        return $this->capquiz_db_entry->default_question_k_factor;
     }
 
     public function default_user_rating() {
@@ -236,12 +237,6 @@ class capquiz {
         if ($default_user_rating = $configuration->default_user_rating) {
             $db_entry->default_user_rating = $default_user_rating;
         }
-        if ($default_user_k_factor = $configuration->default_user_k_factor) {
-            $db_entry->default_user_k_factor = $default_user_k_factor;
-        }
-        if ($default_question_k_factor = $configuration->default_question_k_factor) {
-            $db_entry->default_question_k_factor = $default_question_k_factor;
-        }
         if ($DB->update_record(database_meta::$table_capquiz, $db_entry)) {
             $this->capquiz_db_entry = $db_entry;
         }
@@ -252,9 +247,5 @@ class capquiz {
         $question_usage->set_preferred_behaviour('immediatefeedback');
         \question_engine::save_questions_usage_by_activity($question_usage);
         return $question_usage->get_id();
-    }
-
-    private function rating_system() {
-        return new default_elo_rating_system($this->default_user_k_factor(), $this->default_question_k_factor());
     }
 }

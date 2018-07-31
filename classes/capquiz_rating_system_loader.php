@@ -16,17 +16,13 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_selector.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/capquiz_rating_system_registry.php');
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/capquiz_selection_strategy_registry.php');
-
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/chronologic/chronologic_selector.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/n_closest_selector.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/n_closest_configuration_form.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/elo_rating/elo_rating_system.php');
 
 defined('MOODLE_INTERNAL') || die();
 
-class capquiz_strategy_loader {
+class capquiz_rating_system_loader {
 
     private $capquiz;
     private $db_entry;
@@ -35,17 +31,17 @@ class capquiz_strategy_loader {
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
-        $this->registry = new capquiz_selection_strategy_registry($capquiz);
+        $this->registry = new capquiz_rating_system_registry($capquiz);
         $this->load_configuration();
     }
 
-    public function selector() {
+    public function rating_system() {
         if ($db_entry = $this->db_entry) {
-            $strategy = $this->registry->selector($db_entry->strategy);
+            $rating_system = $this->registry->rating_system($db_entry->rating_system);
             if ($config = $this->configuration) {
-                $strategy->configure($config);
+                $rating_system->configure($config);
             }
-            return $strategy;
+            return $rating_system;
         }
         return null;
     }
@@ -53,58 +49,55 @@ class capquiz_strategy_loader {
     public function configuration_form(\moodle_url $url) {
         if ($db_entry = $this->db_entry) {
             if ($config = $this->configuration) {
-                return $this->registry->configuration_form($db_entry->strategy, $config, $url);
+                return $this->registry->configuration_form($db_entry->rating_system, $config, $url);
             }
         }
         return null;
     }
 
-    public function has_strategy() {
+    public function has_rating_system() {
         if ($db_entry = $this->db_entry) {
-            return $this->selector() != null;
+            return $this->rating_system() != null;
         }
         return false;
     }
 
-    public function current_strategy_name() {
+    public function current_rating_system_name() {
         if ($db_entry = $this->db_entry) {
-            return $db_entry->strategy;
+            return $db_entry->rating_system;
         }
-        return "No strategy specified";
+        return "No rating system specified";
     }
 
-    public function configure_current_strategy(\stdClass $candidate_configuration) {
+    public function configure_current_rating_system(\stdClass $candidate_configuration) {
         if ($db_entry = $this->db_entry) {
-            $selector = $this->selector($db_entry->strategy);
-            $selector->configure($candidate_configuration);
-            if ($configuration = $selector->configuration()) {
+            $system = $this->rating_system($db_entry->rating_system);
+            $system->configure($candidate_configuration);
+            if ($configuration = $system->configuration()) {
                 $db_entry->configuration = $this->serialize($configuration);
-            }
-            else {
+            } else {
                 $db_entry->configuration = '';
             }
             $this->update_configuration($db_entry);
         }
     }
 
-    public function set_strategy(string $strategy) {
-        $selector = $this->registry->selector($strategy);
+    public function set_rating_system(string $rating_system) {
+        $system = $this->registry->rating_system($rating_system);
         $db_entry = new \stdClass;
-        $db_entry->strategy = $strategy;
+        $db_entry->rating_system = $rating_system;
         $db_entry->capquiz_id = $this->capquiz->id();
-        if ($default_configuration = $selector->default_configuration()) {
+        if ($default_configuration = $system->default_configuration()) {
             $db_entry->configuration = $this->serialize($default_configuration);
-        }
-        else {
+        } else {
             $db_entry->configuration = '';
         }
         global $DB;
         if ($this->db_entry) {
             $db_entry->id = $this->db_entry->id;
             $this->update_configuration($db_entry);
-        }
-        else {
-            $DB->insert_record(database_meta::$table_capquiz_question_selection, $db_entry);
+        } else {
+            $DB->insert_record(database_meta::$table_capquiz_rating_system, $db_entry);
             $this->set_configuration($db_entry);
         }
     }
@@ -114,7 +107,7 @@ class capquiz_strategy_loader {
             database_meta::$field_capquiz_id => $this->capquiz->id()
         ];
         global $DB;
-        if ($configuration = $DB->get_record(database_meta::$table_capquiz_question_selection, $conditions)) {
+        if ($configuration = $DB->get_record(database_meta::$table_capquiz_rating_system, $conditions)) {
             $this->set_configuration($configuration);
         }
     }
@@ -122,7 +115,7 @@ class capquiz_strategy_loader {
     private function update_configuration(\stdClass $configuration) {
 
         global $DB;
-        if ($DB->update_record(database_meta::$table_capquiz_question_selection, $configuration)) {
+        if ($DB->update_record(database_meta::$table_capquiz_rating_system, $configuration)) {
             $this->set_configuration($configuration);
         }
     }
@@ -131,8 +124,7 @@ class capquiz_strategy_loader {
         $this->db_entry = $database_entry;
         if ($configuration = $this->deserialize($database_entry->configuration)) {
             $this->configuration = $configuration;
-        }
-        else {
+        } else {
             $this->configuration = null;
         }
     }

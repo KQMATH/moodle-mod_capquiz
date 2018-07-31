@@ -18,25 +18,37 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-class default_elo_rating_system extends capquiz_rating_system {
+class elo_rating_system extends capquiz_rating_system {
 
     private $student_k_factor;
     private $question_k_factor;
 
-    public function __construct(float $student_k_factor, float $question_k_factor) {
-        $this->student_k_factor = $student_k_factor;
-        $this->question_k_factor = $question_k_factor;
+    public function configure(\stdClass $configuration) {
+        if ($student_k_factor = $configuration->student_k_factor) {
+            $this->student_k_factor = $student_k_factor;
+        }
+        if ($question_k_factor = $configuration->question_k_factor) {
+            $this->question_k_factor = $question_k_factor;
+        }
     }
 
-    public function update_user_loss_rating(capquiz_user $user, capquiz_question $question) {
-        $user_rating = $user->rating();
-        $updated_rating = $user_rating + $this->student_k_factor * (0 - $this->expected_result($user_rating, $question->rating()));
-        $user->set_rating($updated_rating);
+    public function configuration() {
+        $config = new \stdClass;
+        $config->student_k_factor = $this->student_k_factor;
+        $config->question_k_factor = $this->question_k_factor;
+        return $config;
     }
 
-    public function update_user_victory_rating(capquiz_user $user, capquiz_question $question) {
+    public function default_configuration() {
+        $config = new \stdClass;
+        $config->student_k_factor = 32;
+        $config->question_k_factor = 8;
+        return $config;
+    }
+
+    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) {
         $user_rating = $user->rating();
-        $updated_rating = $user_rating + $this->student_k_factor * (1 - $this->expected_result($user_rating, $question->rating()));
+        $updated_rating = $user_rating + $this->student_k_factor * ($score - $this->expected_result($user_rating, $question->rating()));
         $user->set_rating($updated_rating);
     }
 

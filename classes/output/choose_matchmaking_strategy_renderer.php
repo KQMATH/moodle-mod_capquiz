@@ -18,35 +18,41 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\choose_selection_strategy_form;
+use mod_capquiz\form\view\choose_matchmaking_strategy_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 
-class choose_selection_strategy_renderer {
+class choose_matchmaking_strategy_renderer {
 
+    private $url;
     private $capquiz;
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->url = capquiz_urls::view_matchmaking_configuration_url();
+    }
+
+    public function set_redirect_url(\moodle_url $url) {
+        $this->url = $url;
     }
 
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new choose_selection_strategy_form($this->capquiz, $url);
+        $form = new choose_matchmaking_strategy_form($this->capquiz, $url);
         if ($form_data = $form->get_data()) {
             $loader = $this->capquiz->selection_strategy_loader();
             $registry = $this->capquiz->selection_strategy_registry();
             $strategy = $registry->selection_strategies()[$form_data->strategy];
             $loader->set_strategy($strategy);
-            redirect(capquiz_urls::view_selection_configuration_url());
+            redirect($this->url);
         }
 
-        return $this->renderer->render_from_template('capquiz/choose_selection_strategy', [
+        return $this->renderer->render_from_template('capquiz/choose_matchmaking_strategy', [
             'form' => $form->render()
         ]);
     }

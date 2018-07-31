@@ -20,9 +20,13 @@ defined('MOODLE_INTERNAL') || die();
 
 abstract class capquiz_rating_system {
 
-    public abstract function update_user_loss_rating(capquiz_user $user, capquiz_question $question);
+    public abstract function configure(\stdClass $configuration);
 
-    public abstract function update_user_victory_rating(capquiz_user $user, capquiz_question $question);
+    public abstract function configuration();
+
+    public abstract function default_configuration();
+
+    public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
 
     public abstract function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
 
