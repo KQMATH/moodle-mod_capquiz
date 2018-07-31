@@ -43,16 +43,6 @@ class configure_capquiz_form extends \moodleform {
         $form->setType('default_user_rating', PARAM_INT);
         $form->setDefault('default_user_rating', $this->capquiz->default_user_rating());
         $form->addRule('default_user_rating', get_string('default_user_rating_required', 'capquiz'), 'required', null, 'client');
-
-        $form->addElement('text', 'default_user_k_factor', get_string('default_user_k_factor', 'capquiz'));
-        $form->setType('default_user_k_factor', PARAM_INT);
-        $form->setDefault('default_user_k_factor', $this->capquiz->default_user_k_factor());
-        $form->addRule('default_user_k_factor', get_string('default_user_k_factor_required', 'capquiz'), 'required', null, 'client');
-
-        $form->addElement('text', 'default_question_k_factor', get_string('default_question_k_factor', 'capquiz'));
-        $form->setType('default_question_k_factor', PARAM_INT);
-        $form->setDefault('default_question_k_factor', $this->capquiz->default_question_k_factor());
-        $form->addRule('default_question_k_factor', get_string('default_question_k_factor_required', 'capquiz'), 'required', null, 'client');
         $this->add_action_buttons(false, 'submit');
     }
 
@@ -64,10 +54,6 @@ class configure_capquiz_form extends \moodleform {
             $validation_errors['description'] = get_string('description_required', 'capquiz');
         if (empty($data['default_user_rating']))
             $validation_errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
-        if (empty($data['default_user_k_factor']))
-            $validation_errors['default_user_k_factor_required'] = get_string('default_user_rating_required', 'capquiz');
-        if (empty($data['default_question_k_factor']))
-            $validation_errors['default_question_k_factor'] = get_string('default_question_k_factor_required', 'capquiz');
         return $validation_errors;
     }
 

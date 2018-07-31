@@ -18,7 +18,7 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-class chronologic_selector extends capquiz_question_selector {
+class chronologic_selector extends capquiz_matchmaking_strategy {
 
     public function configure(\stdClass $configuration) {
 

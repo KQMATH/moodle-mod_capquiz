@@ -35,6 +35,7 @@ function capquiz_async() {
     $action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
     $attemptid = optional_param(capquiz_urls::$param_attempt, null, PARAM_INT);
     $capquiz = new capquiz($cmid);
+    set_page_url($capquiz, capquiz_urls::$url_async);
     if ($attemptid !== null) {
         question_attempt_async($capquiz, $action, $attemptid);
     }

@@ -33,18 +33,6 @@ class mod_capquiz_mod_form extends moodleform_mod {
         $form->addRule('default_user_rating', get_string('default_rating_numeric_rule', 'capquiz'), 'numeric', null, 'client');
         $form->setDefault('default_user_rating', 1200);
 
-        $form->addElement('text', 'default_user_k_factor', get_string('default_user_k_factor', 'capquiz'));
-        $form->setType('default_user_k_factor', PARAM_INT);
-        $form->addRule('default_user_k_factor', get_string('default_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
-        $form->addRule('default_user_k_factor', get_string('default_k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
-        $form->setDefault('default_user_k_factor', 32);
-
-        $form->addElement('text', 'default_question_k_factor', get_string('default_question_k_factor', 'capquiz'));
-        $form->setType('default_question_k_factor', PARAM_INT);
-        $form->addRule('default_question_k_factor', get_string('default_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
-        $form->addRule('default_question_k_factor', get_string('default_k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
-        $form->setDefault('default_question_k_factor', 8);
-
         $this->standard_intro_elements(get_string('description'));
         $this->standard_coursemodule_elements();
         $this->add_action_buttons();

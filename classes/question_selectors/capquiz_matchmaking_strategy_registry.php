@@ -16,7 +16,7 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_question_selector.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy.php');
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/chronologic/chronologic_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/n_closest_selector.php');
@@ -24,7 +24,7 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/
 
 defined('MOODLE_INTERNAL') || die();
 
-class capquiz_selection_strategy_registry {
+class capquiz_matchmaking_strategy_registry {
 
     private $capquiz;
     private $strategies;
@@ -72,15 +72,15 @@ class capquiz_selection_strategy_registry {
                 function () use ($capquiz) {
                     return new n_closest_selector($capquiz);
                 },
-                function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
-                    return new n_closest_configuration_form($capquiz, $configuration, $url);
+                function (\moodle_url $url, \stdClass $configuration) {
+                    return new n_closest_configuration_form($configuration, $url);
                 }
             ],
             'Chronological' => [
                 function () use ($capquiz) {
                     return new chronologic_selector($capquiz);
                 },
-                function (\moodle_url $url, \stdClass $configuration) use ($capquiz) {
+                function (\moodle_url $url, \stdClass $configuration) {
                     return null;
                 }
             ]

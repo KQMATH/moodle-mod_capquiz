@@ -36,6 +36,8 @@ if ($capquiz->is_instructor()) {
         $renderer->display_choose_question_list_view($capquiz);
     } else if (!$capquiz->selection_strategy_loader()->has_strategy()) {
         $renderer->display_set_selection_strategy_view($capquiz);
+    } else if (!$capquiz->rating_system_loader()->has_rating_system()) {
+        $renderer->display_set_rating_system_view($capquiz);
     } else {
         $renderer->display_instructor_dashboard($capquiz);
     }
