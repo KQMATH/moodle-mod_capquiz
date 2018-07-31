@@ -22,6 +22,7 @@ class database_meta {
     public static $table_capquiz_user = 'capquiz_user';
     public static $table_capquiz_attempt = 'capquiz_attempt';
     public static $table_capquiz_question = 'capquiz_question';
+    public static $table_capquiz_rating_system = 'capquiz_rating_system';
     public static $table_capquiz_question_list = 'capquiz_question_list';
     public static $table_capquiz_question_selection = 'capquiz_question_selection';
 

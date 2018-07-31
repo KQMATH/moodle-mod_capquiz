@@ -26,6 +26,6 @@ if ($capquiz = capquiz::create()) {
     $capquiz->require_instructor_capability();
     set_page_url($capquiz, capquiz_urls::$url_view_configuration);
     $renderer = $capquiz->renderer();
-    $renderer->display_configuration($capquiz);
+    $renderer->display_capquiz_configuration($capquiz);
 } else
     redirect_to_front_page();

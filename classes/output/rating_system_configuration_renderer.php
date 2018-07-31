@@ -17,16 +17,14 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_selection_strategy_registry;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\create_question_set_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class selection_configuration_renderer {
+class rating_system_configuration_renderer {
     private $capquiz;
     private $renderer;
     private $registry;
@@ -34,22 +32,21 @@ class selection_configuration_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->selection_strategy_loader();
+        $this->registry = $this->capquiz->rating_system_loader();
     }
 
     public function render() {
-        if ($this->registry->has_strategy()) {
+        if ($this->registry->has_rating_system()) {
             return $this->render_configuration();
-        }
-        else {
-            return '<h3>No selection strategy has been specified</h3>';
+        } else {
+            return '<h3>No rating system has been specified</h3>';
         }
     }
 
     private function render_configuration() {
         $html = $this->render_form();
-        return $this->renderer->render_from_template('capquiz/selection_configuration', [
-            'strategy' => $this->registry->current_strategy_name(),
+        return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
+            'strategy' => $this->registry->current_rating_system_name(),
             'form' => $html
 
         ]);
@@ -60,12 +57,11 @@ class selection_configuration_renderer {
         $url = $PAGE->url;
         if ($form = $this->registry->configuration_form($url)) {
             if ($form_data = $form->get_data()) {
-                $this->registry->configure_current_strategy($form_data);
-                $url = capquiz_urls::view_selection_configuration_url();
-                redirect($url);
+                $this->registry->configure_current_rating_system($form_data);
+                redirect(capquiz_urls::view_rating_system_configuration_url());
             }
             return $form->render();
         }
-        return 'There is nothing to configure for this strategy';
+        return 'There is nothing to configure for this rating system';
     }
 }

@@ -18,7 +18,7 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-abstract class capquiz_rating_system {
+abstract class capquiz_matchmaking_strategy {
 
     public abstract function configure(\stdClass $configuration);
 
@@ -26,8 +26,5 @@ abstract class capquiz_rating_system {
 
     public abstract function default_configuration();
 
-    public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
-
-    public abstract function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
-
+    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts);
 }

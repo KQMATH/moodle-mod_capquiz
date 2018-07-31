@@ -18,30 +18,42 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\bank\question_bank_view;
+use mod_capquiz\form\view\choose_matchmaking_strategy_form;
+use mod_capquiz\form\view\choose_rating_system_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 
-class question_bank_renderer {
+class choose_rating_system_renderer {
+
+    private $url;
     private $capquiz;
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->url = capquiz_urls::view_rating_system_configuration_url();
+    }
+
+    public function set_redirect_url(\moodle_url $url) {
+        $this->url = $url;
     }
 
     public function render() {
         global $PAGE;
-        if (isset($_GET[capquiz_urls::$param_id])) {
-            $_GET['cmid'] = $_GET['id'];
+        $url = $PAGE->url;
+        $form = new choose_rating_system_form($this->capquiz, $url);
+        if ($form_data = $form->get_data()) {
+            $loader = $this->capquiz->rating_system_loader();
+            $registry = $this->capquiz->rating_system_registry();
+            $loader->set_rating_system($registry->rating_systems()[$form_data->rating_system]);
+            redirect($this->url);
         }
-        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $PAGE->url, false);
-        $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
-        $questionpage = optional_param('qpage', 0, PARAM_INT);
-        $questionview = new question_bank_view($contexts, capquiz_urls::view_question_list_url(), $this->capquiz->context(), $this->capquiz->course_module());
-        return "<h3>Available questions</h3>" . $questionview->render('editq', $questionpage, $questionsperpage, $pagevars['cat'], true, true, true);
+
+        return $this->renderer->render_from_template('capquiz/choose_rating_system', [
+            'form' => $form->render()
+        ]);
     }
 }

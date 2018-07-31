@@ -20,7 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-class create_question_set_form extends \moodleform {
+class create_question_list_form extends \moodleform {
 
     public function definition() {
         $form = $this->_form;
