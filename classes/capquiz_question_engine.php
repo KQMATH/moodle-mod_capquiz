@@ -22,14 +22,14 @@ class capquiz_question_engine {
 
     private $capquiz;
     private $question_usage;
-    private $strategy_loader;
-    private $question_rating_system;
+    private $matchmaking_loader;
+    private $rating_system_loader;
 
-    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_strategy_loader $strategy_loader, capquiz_rating_system $rating_system) {
+    public function __construct(capquiz $capquiz, \question_usage_by_activity $question_usage, capquiz_matchmaking_strategy_loader $strategy_loader, capquiz_rating_system_loader $rating_system_loder) {
         $this->capquiz = $capquiz;
         $this->question_usage = $question_usage;
-        $this->strategy_loader = $strategy_loader;
-        $this->question_rating_system = $rating_system;
+        $this->matchmaking_loader = $strategy_loader;
+        $this->rating_system_loader = $rating_system_loder;
     }
 
     public function user_is_completed(capquiz_user $user) {
@@ -54,14 +54,14 @@ class capquiz_question_engine {
     }
 
     public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) {
+        $rating_system = $this->rating_system_loader->rating_system();
         $attempt->mark_as_answered();
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
-            $this->question_rating_system->update_user_victory_rating($user, $question);
+            $rating_system->update_user_rating($user, $question, 1);
             $this->maybe_award_badge($user);
-        }
-        else {
-            $this->question_rating_system->update_user_loss_rating($user, $question);
+        } else {
+            $rating_system->update_user_rating($user, $question, 0);
         }
         if ($previous_attempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user)) {
             $this->update_question_rating($previous_attempt, $attempt);
@@ -105,21 +105,21 @@ class capquiz_question_engine {
     }
 
     private function find_question_for_user(capquiz_user $user) {
-        $question_selector = $this->strategy_loader->selector();
+        $question_selector = $this->matchmaking_loader->selector();
         return $question_selector->next_question_for_user($user, $this->capquiz->question_list(), capquiz_question_attempt::inactive_attempts($this->capquiz, $user));
     }
 
     private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
+        $rating_system = $this->rating_system_loader->rating_system();
         $current_correct = $current->is_correctly_answered();
         $previous_correct = $previous->is_correctly_answered();
         $current_question = $this->capquiz->question_list()->question($current->question_id());
         $previous_question = $this->capquiz->question_list()->question($previous->question_id());
         if ($previous_correct && !$current_correct) {
-            $this->question_rating_system->question_victory_ratings($current_question, $previous_question);
-        }
-        else {
+            $rating_system->question_victory_ratings($current_question, $previous_question);
+        } else {
             if (!$previous_correct && $current_correct) {
-                $this->question_rating_system->question_victory_ratings($previous_question, $current_question);
+                $rating_system->question_victory_ratings($previous_question, $current_question);
             }
         }
     }

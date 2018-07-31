@@ -28,7 +28,8 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_rende
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/create_question_list_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/selection_configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/configure_badge_rating_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,9 +45,8 @@ class renderer extends \plugin_renderer_base {
      * @return \tabobject
      * @throws \coding_exception
      */
-    private function tab(string $name, \moodle_url $link) {
-        $text = get_string("tab_$name", 'capquiz');
-        return new \tabobject($name, $link, $text);
+    private function tab(string $name, string $title, \moodle_url $link) {
+        return new \tabobject($name, $link, $title);
     }
 
     /**
@@ -56,11 +56,13 @@ class renderer extends \plugin_renderer_base {
      */
     private function tabs(string $activetab) {
         $tabs = [
-            $this->tab('view_dashboard', capquiz_urls::view_url()),
-            $this->tab('view_question_list', capquiz_urls::view_question_list_url()),
-            $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url()),
-            $this->tab('view_configuration', capquiz_urls::view_configuration_url()),
-            $this->tab('view_selection_configuration', capquiz_urls::view_selection_configuration_url())
+            $this->tab('view_dashboard', get_string('dashboard', 'capquiz'), capquiz_urls::view_url()),
+            $this->tab('view_matchmaking', get_string('matchmaking', 'capquiz'), capquiz_urls::view_matchmaking_configuration_url()),
+            $this->tab('view_rating_system', get_string('rating_system', 'capquiz'), capquiz_urls::view_rating_system_configuration_url()),
+            $this->tab('view_questions', get_string('questions', 'capquiz'), capquiz_urls::view_question_list_url()),
+            $this->tab('view_badges', get_string('badges', 'capquiz'), capquiz_urls::view_badge_configuration_url()),
+            $this->tab('view_capquiz', get_string('pluginname', 'capquiz'), capquiz_urls::view_configuration_url()),
+            $this->tab('view_leaderboard', get_string('leaderboard', 'capquiz'), capquiz_urls::view_leaderboard_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
@@ -116,7 +118,15 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_set_selection_strategy_view(capquiz $capquiz) {
-        $this->display_view(new choose_selection_strategy_renderer($capquiz, $this));
+        $view = new choose_matchmaking_strategy_renderer($capquiz, $this);
+        $view->set_redirect_url(capquiz_urls::view_url());
+        $this->display_view($view);
+    }
+
+    public function display_set_rating_system_view(capquiz $capquiz) {
+        $view = new choose_rating_system_renderer($capquiz, $this);
+        $view->set_redirect_url(capquiz_urls::view_url());
+        $this->display_view($view);
     }
 
     public function display_unauthorized_view() {
@@ -124,24 +134,50 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_question_list_view(capquiz $capquiz) {
-        $this->display_tabbed_views([
-            new question_list_renderer($capquiz, $this),
-            new question_bank_renderer($capquiz, $this)
-        ], 'view_question_list');
+        $render = new class($capquiz, $this) {
+            private $capquiz;
+            private $renderer;
+
+            public function __construct(capquiz $capquiz, renderer $renderer) {
+                $this->capquiz = $capquiz;
+                $this->renderer = $renderer;
+            }
+
+            public function render() {
+                $html = '<div class="capquiz-flex">';
+                $r1 = new question_list_renderer($this->capquiz, $this->renderer);
+                $r2 = new question_bank_renderer($this->capquiz, $this->renderer);
+                $html .= '<div class="capquiz-flex-item">' . $r1->render() . '</div>';
+                $html .= '<div class="capquiz-flex-item">' . $r2->render() . '</div >';
+                return $html . '</div>';
+            }
+        };
+        $this->display_tabbed_view($render, 'view_questions');
     }
 
-    public function display_selection_configuration_view(capquiz $capquiz) {
+    public function display_matchmaking_configuration(capquiz $capquiz) {
         $this->display_tabbed_views([
-            new choose_selection_strategy_renderer($capquiz, $this),
-            new selection_configuration_renderer($capquiz, $this)
-        ], 'view_selection_configuration');
+            new choose_matchmaking_strategy_renderer($capquiz, $this),
+            new matchmaking_configuration_renderer($capquiz, $this)
+        ], 'view_matchmaking');
+    }
+
+    public function display_rating_system_configuration(capquiz $capquiz) {
+        $this->display_tabbed_views([
+            new choose_rating_system_renderer($capquiz, $this),
+            new rating_system_configuration_renderer($capquiz, $this)
+        ], 'view_rating_system');
     }
 
     public function display_leaderboard(capquiz $capquiz) {
         $this->display_tabbed_view(new leaderboard_renderer($capquiz, $this), 'view_leaderboard');
     }
 
-    public function display_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_configuration');
+    public function display_capquiz_configuration(capquiz $capquiz) {
+        $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_capquiz');
+    }
+
+    public function display_badge_configuration(capquiz $capquiz) {
+        $this->display_tabbed_view(new configure_badge_rating_renderer($capquiz, $this), 'view_badges');
     }
 }

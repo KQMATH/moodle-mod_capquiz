@@ -23,19 +23,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 class n_closest_configuration_form extends \moodleform {
-
-    private $capquiz;
     private $configuration;
 
-    public function __construct(capquiz $capquiz, \stdClass $configuration, \moodle_url $url) {
-        $this->capquiz = $capquiz;
+    public function __construct(\stdClass $configuration, \moodle_url $url) {
         $this->configuration = $configuration;
         parent::__construct($url);
 
-    }
-
-    public function set_capquiz(capquiz $capquiz) {
-        $this->capquiz = $capquiz;
     }
 
     public function definition() {

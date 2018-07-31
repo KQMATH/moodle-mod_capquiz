@@ -13,14 +13,12 @@
     display: flex;
 }
 
-/*
-.capquiz-question-list li:hover {
-    background: #fefefe;
-    cursor: pointer;
-}*/
+.capquiz-flex {
+    display: flex;
+}
 
-.capquiz-tree {
-
+.capquiz-flex-item {
+    width: 50%;
 }
 
 .capquiz-tree tr:first-child {
@@ -29,10 +27,6 @@
 
 .capquiz-tree tr:first-child td {
     font-weight: bold;
-}
-
-.capquiz-tree tr {
-
 }
 
 .capquiz-tree tr td {

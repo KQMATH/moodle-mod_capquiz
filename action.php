@@ -128,11 +128,9 @@ function determine_action(capquiz $capquiz, string $action_type) {
 
 function capquiz_action() {
     $action_type = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-    if ($capquiz = capquiz::create()) {
-        determine_action($capquiz, $action_type);
-    } else {
-        redirect_to_front_page();
-    }
+    $capquiz = capquiz::create();
+    set_page_url($capquiz, capquiz_urls::$url_async);
+    determine_action($capquiz, $action_type);
 }
 
 capquiz_action();

@@ -16,12 +16,16 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
+require_once('../../config.php');
 
-abstract class capquiz_selection_strategy {
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
-    public abstract function configuration_form(capquiz $capquiz);
-
-    public abstract function selector();
-
-}
+if ($capquiz = capquiz::create()) {
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_rating_system_configuration);
+    $renderer = $capquiz->renderer();
+    $renderer->display_rating_system_configuration($capquiz);
+} else
+    redirect_to_front_page();

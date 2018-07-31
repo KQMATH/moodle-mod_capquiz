@@ -24,8 +24,8 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
 if ($capquiz = capquiz::create()) {
     $capquiz->require_instructor_capability();
-    set_page_url($capquiz, capquiz_urls::$url_view_selection_configuration);
+    set_page_url($capquiz, capquiz_urls::$url_view_badge_configuration);
     $renderer = $capquiz->renderer();
-    $renderer->display_selection_configuration_view($capquiz);
+    $renderer->display_badge_configuration($capquiz);
 } else
     redirect_to_front_page();
