@@ -38,8 +38,9 @@ class question_list_renderer {
         if ($question_list->has_questions()) {
             return $this->render_questions($question_list);
         }
-        $no_questions = get_string('no_questions', 'capquiz');
-        return "<h3>$no_questions</h3>";
+        $title = get_string('question_list', 'capquiz');
+        $no_questions = get_string('question_list_no_questions', 'capquiz');
+        return "<h3>$title</h3><p>$no_questions</p>";
     }
 
     private function render_questions(capquiz_question_list $question_list) {

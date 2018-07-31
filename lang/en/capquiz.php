@@ -35,13 +35,16 @@ $string['default_question_k_factor_required'] = 'Default question k factor is re
 
 $string['instructor_dashboard'] = 'Instructor dashboard';
 $string['no_questions'] = 'No questions';
+
+$string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
 $string['view_enrolled_students'] = 'View enrolled students';
 
 $string['tab_view_dashboard'] = 'Dashboard';
 $string['tab_view_leaderboard'] = 'Leaderboard';
-$string['tab_view_question_list'] = 'Question list';
-$string['tab_view_configuration'] = 'Configuration';
-$string['tab_view_selection_configuration'] = 'Question selection';
+$string['tab_view_question_list'] = 'Questions';
+$string['tab_view_configuration'] = 'Capquiz';
+$string['tab_view_badge_configuration'] = 'Badges';
+$string['tab_view_selection_configuration'] = 'Matchmaking';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';

@@ -14,9 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_capquiz;
 
-$plugin->version = 2018072612;
-$plugin->requires = 2016052304;
-$plugin->cron = 0;
-$plugin->component = 'mod_capquiz';
+require_once('../../config.php');
+
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+require_once($CFG->dirroot . '/mod/capquiz/utility.php');
+
+if ($capquiz = capquiz::create()) {
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_badge_configuration);
+    $renderer = $capquiz->renderer();
+    $renderer->display_badge_configuration_view($capquiz);
+} else
+    redirect_to_front_page();

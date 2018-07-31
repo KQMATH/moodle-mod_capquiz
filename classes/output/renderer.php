@@ -59,9 +59,10 @@ class renderer extends \plugin_renderer_base {
         $tabs = [
             $this->tab('view_dashboard', capquiz_urls::view_url()),
             $this->tab('view_question_list', capquiz_urls::view_question_list_url()),
-            $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url()),
+            $this->tab('view_selection_configuration', capquiz_urls::view_selection_configuration_url()),
+            $this->tab('view_badge_configuration', capquiz_urls::view_badge_configuration_url()),
             $this->tab('view_configuration', capquiz_urls::view_configuration_url()),
-            $this->tab('view_selection_configuration', capquiz_urls::view_selection_configuration_url())
+            $this->tab('view_leaderboard', capquiz_urls::view_leaderboard_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
@@ -125,11 +126,25 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_question_list_view(capquiz $capquiz) {
-        $this->display_tabbed_views([
-            new question_list_renderer($capquiz, $this),
-            new configure_badge_rating_renderer($capquiz, $this),
-            new question_bank_renderer($capquiz, $this)
-        ], 'view_question_list');
+        $render = new class($capquiz, $this) {
+            private $capquiz;
+            private $renderer;
+
+            public function __construct(capquiz $capquiz, renderer $renderer) {
+                $this->capquiz = $capquiz;
+                $this->renderer = $renderer;
+            }
+
+            public function render() {
+                $html = '<div class="capquiz-flex">';
+                $r1 = new question_list_renderer($this->capquiz, $this->renderer);
+                $r2 = new question_bank_renderer($this->capquiz, $this->renderer);
+                $html .= '<div class="capquiz-flex-item">' . $r1->render() . '</div>';
+                $html .= '<div class="capquiz-flex-item">' . $r2->render() . '</div >';
+                return $html . '</div>';
+            }
+        };
+        $this->display_tabbed_view($render, 'view_question_list');
     }
 
     public function display_selection_configuration_view(capquiz $capquiz) {
@@ -145,5 +160,9 @@ class renderer extends \plugin_renderer_base {
 
     public function display_configuration(capquiz $capquiz) {
         $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_configuration');
+    }
+
+    public function display_badge_configuration_view(capquiz $capquiz) {
+        $this->display_tabbed_view(new configure_badge_rating_renderer($capquiz, $this), 'view_badge_configuration');
     }
 }

@@ -35,6 +35,7 @@ class capquiz_urls {
     public static $url_view_configuration = '/mod/capquiz/view_configuration.php';
     public static $url_view_question_list = '/mod/capquiz/view_question_list.php';
     public static $url_view_enrolled_students = '/mod/capquiz/view_leaderboard.php';
+    public static $url_view_badge_configuration = '/mod/capquiz/view_badge_configuration.php';
     public static $url_view_create_question_list = '/mod/capquiz/view_create_question_list.php';
     public static $url_view_selection_configuration = '/mod/capquiz/view_selection_configuration.php';
 
@@ -57,6 +58,11 @@ class capquiz_urls {
 
     public static function view_selection_configuration_url() {
         $url = capquiz_urls::create_view_url(capquiz_urls::$url_view_selection_configuration);
+        return $url;
+    }
+
+    public static function view_badge_configuration_url() {
+        $url = capquiz_urls::create_view_url(capquiz_urls::$url_view_badge_configuration);
         return $url;
     }
 
