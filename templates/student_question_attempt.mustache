@@ -1,38 +1,10 @@
-{{#question}}
-    <div class="capquiz-quiz-top">
-        {{#student}}
-            <div class="capquiz-quiz-stars">
-                {{#stars}}
-                    {{#.}}
-                        {{#pix}} star, capquiz {{/pix}}
-                    {{/.}}
-                    {{^.}}
-                        {{#pix}} blank-star, capquiz {{/pix}}
-                    {{/.}}
-                {{/stars}}
-            </div>
-            <div class="capquiz-quiz-progress">
-                <div class="capquiz-quiz-progress-fill" style="width:{{ percent }}%">
-                    {{ percent }}%
-                </div>
-            </div>
-        {{/student}}
-    </div>
-    {{#attempt}}
-        <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"
-              accept-charset="utf-8">
-            <div>
-                <input type="hidden" name="slots" value="{{ slots }}">
-                <input type="hidden" name="scrollpos" value="">
-                {{{ body }}}
-            </div>
-        </form>
-    {{/attempt}}
-    {{#question}}
-        Question rating: {{ rating }}
-        Question ID: {{ id }}
-    {{/question}}
-    {{#student}}
-        Your rating: {{ rating }}
-    {{/student}}
-{{/question}}
+{{#attempt}}
+    <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"
+          accept-charset="utf-8">
+        <div>
+            <input type="hidden" name="slots" value="{{ slots }}">
+            <input type="hidden" name="scrollpos" value="">
+            {{{ body }}}
+        </div>
+    </form>
+{{/attempt}}

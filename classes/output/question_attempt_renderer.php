@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_user;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question;
 use mod_capquiz\capquiz_question_attempt;
@@ -40,76 +41,89 @@ class question_attempt_renderer {
         $question_engine = $this->capquiz->question_engine();
         if ($attempt = $question_engine->attempt_for_user($this->capquiz->user())) {
             if ($attempt->is_answered()) {
-                return $this->render_question_review($attempt);
-            }
-            else {
+                return $this->render_review($attempt);
+            } else {
                 if ($attempt->is_pending()) {
-                    return $this->render_question_attempt($attempt);
+                    return $this->render_attempt($attempt, $this->attempt_display_options());
                 }
             }
-        }
-        else {
+        } else {
             return 'You have finished this quiz!';
         }
     }
 
-    private function render_question_attempt(capquiz_question_attempt $attempt) {
-        global $PAGE;
-        $question_usage = $this->capquiz->question_usage();
-        $context = $this->capquiz->context();
-        $question = capquiz_question::load($attempt->question_id());
-        $displayoptions = $this->summary_display_options($context);
+    private function render_attempt(capquiz_question_attempt $attempt, \question_display_options $displayoptions) {
         $user = $this->capquiz->user();
+        $html = $this->render_progress($user);
+        $html .= $this->render_question_attempt($attempt, $displayoptions);
+        $html .= $this->render_metainfo($user, $attempt);
+        return $html;
+    }
+
+    private function render_review(capquiz_question_attempt $attempt) {
+        $html = $this->render_attempt($attempt, $this->review_display_options());
+        $html .= $this->render_review_next_button($attempt);
+        return $html;
+    }
+
+    public function render_review_next_button(capquiz_question_attempt $attempt) {
+        return basic_renderer::render_action_button(
+            $this->renderer,
+            capquiz_urls::response_reviewed_url($attempt),
+            get_string('next', 'capquiz')
+        );
+    }
+
+    private function render_progress(capquiz_user $user) {
         $questionlist = $this->capquiz->question_list();
         $stars = $questionlist->rating_in_stars($user->rating());
         $percent = $questionlist->next_star_percent($user->rating());
 
-        $PAGE->requires->js_module('core_question_engine');
-        return $this->renderer->render_from_template('capquiz/student_question_attempt', [
-            'question' => [
+        return $this->renderer->render_from_template('capquiz/student_progress', [
+            'progress' => [
                 'student' => [
-                    'rating' => $user->rating(),
                     'percent' => $percent,
                     'stars' => $questionlist->stars_as_array($stars)
+                ]
+            ]
+        ]);
+    }
+
+    public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $displayoptions) {
+        global $PAGE;
+        $question_usage = $this->capquiz->question_usage();
+        $context = $this->capquiz->context();
+
+        $PAGE->requires->js_module('core_question_engine');
+        return $this->renderer->render_from_template('capquiz/student_question_attempt', [
+            'attempt' => [
+                'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
+                'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
+                'slots' => ''
+            ]
+        ]);
+    }
+
+    public function render_metainfo(capquiz_user $user, capquiz_question_attempt $attempt) {
+        $question = capquiz_question::load($attempt->question_id());
+
+        return $this->renderer->render_from_template('capquiz/student_question_metainfo', [
+            'metainfo' => [
+                'student' => [
+                    'rating' => $user->rating(),
                 ],
                 'question' => [
                     'id' => $question->id(),
-                    'rating' => $question->rating()
-                ],
-                'attempt' => [
-                    'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
-                    'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
-                    'slots' => ''
+                    'rating' => $question->rating(),
                 ]
             ]
         ]);
     }
 
-    private function render_question_review(capquiz_question_attempt $attempt) {
-        global $PAGE;
-        $question_usage = $this->capquiz->question_usage();
-        $displayoptions = $this->attempt_display_options($this->capquiz->context());
-        $moodle_question = $question_usage->get_question($attempt->question_slot());
-        $questionrenderer = $moodle_question->get_renderer($PAGE);
-        $questionattempt = $question_usage->get_question_attempt($attempt->question_slot());
-
-        return $this->renderer->render_from_template('capquiz/student_question_review', [
-            'summary' => [
-                'response' => $question_usage->get_response_summary($attempt->question_slot()),
-                'feedback' => $questionrenderer->feedback($questionattempt, $displayoptions),
-                'next' => [
-                    'primary' => true,
-                    'method' => 'post',
-                    'url' => capquiz_urls::response_reviewed_url($attempt)->out_as_local_url(false),
-                    'label' => get_string('next', 'capquiz')
-                ]
-            ]
-        ]);
-    }
-
-    private function summary_display_options($context) {
+    private function review_display_options() {
         $options = new \question_display_options();
-        $options->context = $context;
+        $options->context = $this->capquiz->context();
+        $options->readonly = true;
         $options->flags = \question_display_options::VISIBLE;
         $options->marks = \question_display_options::VISIBLE;
         $options->rightanswer = \question_display_options::VISIBLE;
@@ -119,12 +133,12 @@ class question_attempt_renderer {
         return $options;
     }
 
-    private function attempt_display_options($context) {
+    private function attempt_display_options() {
         $options = new \question_display_options();
-        $options->context = $context;
+        $options->context = $this->capquiz->context();
         $options->flags = \question_display_options::HIDDEN;
         $options->marks = \question_display_options::HIDDEN;
-        $options->rightanswer = \question_display_options::VISIBLE;
+        $options->rightanswer = \question_display_options::HIDDEN;
         $options->numpartscorrect = \question_display_options::HIDDEN;
         $options->manualcomment = \question_display_options::HIDDEN;
         $options->manualcommentlink = \question_display_options::HIDDEN;
