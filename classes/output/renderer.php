@@ -20,7 +20,7 @@ use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/leaderboard_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/classlist_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_bank_renderer.php');
@@ -62,7 +62,7 @@ class renderer extends \plugin_renderer_base {
             $this->tab('view_questions', get_string('questions', 'capquiz'), capquiz_urls::view_question_list_url()),
             $this->tab('view_badges', get_string('badges', 'capquiz'), capquiz_urls::view_badge_configuration_url()),
             $this->tab('view_capquiz', get_string('pluginname', 'capquiz'), capquiz_urls::view_configuration_url()),
-            $this->tab('view_leaderboard', get_string('leaderboard', 'capquiz'), capquiz_urls::view_leaderboard_url())
+            $this->tab('view_classlist', get_string('classlist', 'capquiz'), capquiz_urls::view_classlist_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
@@ -170,7 +170,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_leaderboard(capquiz $capquiz) {
-        $this->display_tabbed_view(new leaderboard_renderer($capquiz, $this), 'view_leaderboard');
+        $this->display_tabbed_view(new classlist_renderer($capquiz, $this), 'view_classlist');
     }
 
     public function display_capquiz_configuration(capquiz $capquiz) {

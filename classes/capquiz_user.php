@@ -18,26 +18,23 @@ namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
-class capquiz_user
-{
-
+class capquiz_user {
     private $db_entry;
+    private $moodle_db_entry;
 
-    public function __construct(\stdClass $user_db_entry)
-    {
+    public function __construct(\stdClass $user_db_entry) {
         $this->db_entry = $user_db_entry;
+        $this->moodle_db_entry = null;
     }
 
-    public static function load_user(capquiz $capquiz, int $moodle_userid)
-    {
+    public static function load_user(capquiz $capquiz, int $moodle_userid) {
         if ($user = self::load_db_entry($capquiz, $moodle_userid)) {
             return $user;
         }
         return self::insert_db_entry($capquiz, $moodle_userid);
     }
 
-    public static function list_users(capquiz $capquiz)
-    {
+    public static function list_users(capquiz $capquiz) {
         global $DB;
         $criteria = [
             database_meta::$field_capquiz_id => $capquiz->id()
@@ -49,46 +46,41 @@ class capquiz_user
         return $users;
     }
 
-    public function id()
-    {
+    public function id() {
         return $this->db_entry->id;
     }
 
-    public function username()
-    {
-        global $USER;
-        return $USER->username;
+    public function username() {
+        if ($this->moodle_db_entry === null)
+            $this->load_moodle_entry();
+        return $this->moodle_db_entry->username;
     }
 
-    public function first_name()
-    {
-        global $USER;
-        return $USER->firstname;
+    public function first_name() {
+        if ($this->moodle_db_entry === null)
+            $this->load_moodle_entry();
+        return $this->moodle_db_entry->firstname;
     }
 
-    public function last_name()
-    {
-        global $USER;
-        return $USER->lastname;
+    public function last_name() {
+        if ($this->moodle_db_entry === null)
+            $this->load_moodle_entry();
+        return $this->moodle_db_entry->lastname;
     }
 
-    public function capquiz_id()
-    {
+    public function capquiz_id() {
         return $this->db_entry->capquiz_id;
     }
 
-    public function moodle_user_id()
-    {
+    public function moodle_user_id() {
         return $this->db_entry->user_id;
     }
 
-    public function rating()
-    {
+    public function rating() {
         return $this->db_entry->rating;
     }
 
-    public function set_rating(float $rating)
-    {
+    public function set_rating(float $rating) {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->rating = $rating;
@@ -97,8 +89,19 @@ class capquiz_user
         }
     }
 
-    private static function load_db_entry(capquiz $capquiz, int $moodle_userid)
-    {
+    private function load_moodle_entry() {
+        global $DB;
+        $criteria = [
+            database_meta::$field_id => $this->moodle_user_id()
+        ];
+        if ($entry = $DB->get_record(database_meta::$table_moodle_user, $criteria)) {
+            $this->moodle_db_entry = $entry;
+        } else {
+            throw new \Exception('Unable to load the specified user with moodle user id ' . $this->moodle_user_id());
+        }
+    }
+
+    private static function load_db_entry(capquiz $capquiz, int $moodle_userid) {
         global $DB;
         $criteria = [
             database_meta::$field_user_id => $moodle_userid,
@@ -110,23 +113,21 @@ class capquiz_user
         return null;
     }
 
-    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid)
-    {
+    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid) {
         global $DB;
         $user_entry = new \stdClass();
         $user_entry->user_id = $moodle_userid;
         $user_entry->capquiz_id = $capquiz->id();
+        $capquiz->require_student_capability();
         $user_entry->rating = $capquiz->default_user_rating();
         try {
             if ($DB->insert_record(database_meta::$table_capquiz_user, $user_entry)) {
                 return self::load_db_entry($capquiz, $moodle_userid);
-            }
-            else {
+            } else {
                 throw new \Exception('Unable to persist capquiz user');
             }
         } catch (\Exception $e) {
             throw $e;
         }
     }
-
 }
