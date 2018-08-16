@@ -35,13 +35,13 @@ $string['question_k_factor_required'] = 'Question k factor is required.';
 
 $string['dashboard'] = 'Dashboard';
 $string['no_questions'] = 'No questions';
+$string['no_enrolled_students'] = 'No students are enrolled';
 
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
-$string['view_enrolled_students'] = 'View enrolled students';
 
 $string['badges'] = 'Badges';
 $string['questions'] = 'Questions';
-$string['leaderboard'] = 'Leaderboard';
+$string['classlist'] = 'Class list';
 $string['matchmaking'] = 'Matchmaking';
 $string['rating_system'] = 'Rating system';
 

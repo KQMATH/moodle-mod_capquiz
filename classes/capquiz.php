@@ -212,6 +212,10 @@ class capquiz {
         return $this->course_module->id;
     }
 
+    public function require_student_capability() {
+        require_capability('mod/capquiz:student', $this->context);
+    }
+
     public function require_instructor_capability() {
         require_capability('mod/capquiz:instructor', $this->context);
     }

@@ -38,7 +38,7 @@ class instructor_dashboard_renderer {
         $canpublish = $this->capquiz->can_publish();
         return $this->renderer->render_from_template('capquiz/instructor_dashboard', [
             'publish' => $canpublish ? $this->publish_button() : false,
-            'create_template' => $canpublish ? $this->create_template_button() : false,
+            'create_template' => $this->create_template_button(),
         ]);
     }
 

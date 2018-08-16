@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class leaderboard_renderer {
+class classlist_renderer {
 
     private $capquiz;
     private $renderer;
@@ -51,7 +51,7 @@ class leaderboard_renderer {
                 'stars' => $badge_registry->number_of_stars($user)
             ];
         }
-        $leaderboard = $this->renderer->render_from_template('capquiz/leaderboard', [
+        $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [
             'users' => $rows
         ]);
         return $leaderboard;

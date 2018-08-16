@@ -1,0 +1,28 @@
+<h2>{{#str}} classlist, capquiz {{/str}}</h2>
+<table class="capquiz-tree">
+    <tr>
+        <th>#</th>
+        <th>ID</th>
+        <th>Username</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Rating</th>
+        <th>Stars</th>
+    </tr>
+    {{^users}}
+        <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
+    {{/users}}
+    {{#users}}
+        <tr>
+            {{#.}}
+                <td>{{ index }}</td>
+                <td>{{ student_id }}</td>
+                <td>{{ username }}</td>
+                <td>{{ firstname }}</td>
+                <td>{{ lastname }}</td>
+                <td>{{ rating }}</td>
+                <td>{{ stars }}</td>
+            {{/.}}
+        </tr>
+    {{/users}}
+</table>
