@@ -1,0 +1,10 @@
+{{#attempt}}
+    <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"
+          accept-charset="utf-8">
+        <div>
+            <input type="hidden" name="slots" value="{{ slots }}">
+            <input type="hidden" name="scrollpos" value="">
+            {{{ body }}}
+        </div>
+    </form>
+{{/attempt}}
