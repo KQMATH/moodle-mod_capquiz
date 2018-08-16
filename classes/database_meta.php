@@ -18,6 +18,8 @@ namespace mod_capquiz;
 
 class database_meta {
 
+    public static $table_moodle_user = 'user';
+
     public static $table_capquiz = 'capquiz';
     public static $table_capquiz_user = 'capquiz_user';
     public static $table_capquiz_attempt = 'capquiz_attempt';
