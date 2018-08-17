@@ -34,6 +34,14 @@ class capquiz_user {
         return self::insert_db_entry($capquiz, $moodle_userid);
     }
 
+    public static function user_count(capquiz $capquiz) {
+        global $DB;
+        $criteria = [
+            database_meta::$field_capquiz_id => $capquiz->id()
+        ];
+        return $DB->count_records(database_meta::$table_capquiz_user, $criteria);
+    }
+
     public static function list_users(capquiz $capquiz) {
         global $DB;
         $criteria = [
