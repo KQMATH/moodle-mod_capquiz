@@ -48,7 +48,7 @@ class instructor_dashboard_renderer {
             'published_status' => $this->capquiz->is_published() ? get_string('published', 'capquiz') : get_string('not_published', 'capquiz'),
             'question_list_title' => $question_list ? $question_list->title() : get_string('no_question_list_assigned', 'capquiz'),
             'question_count' => $question_list ? $question_list->question_count() : get_string('no_questions', 'capquiz'),
-            'enrolled_student_count' => count(capquiz_user::user_count($this->capquiz))
+            'enrolled_student_count' => capquiz_user::user_count($this->capquiz)
         ]);
     }
 

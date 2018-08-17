@@ -1,9 +1,9 @@
 <h2>
     {{#str}} question_lists, capquiz {{/str}}
 </h2>
-<h4>Select one of these templates for your quiz</h4>
+<h4>{{#str}}select_template, capquiz{{/str}}</h4>
 {{^lists}}
-    No templates have been created.
+    {{#str}}no_templates_created, capquiz{{/str}}
 {{/lists}}
 <ol class="capquiz-list capquiz-question-list">
     {{#lists}}
@@ -19,5 +19,5 @@
     {{/lists}}
 </ol>
 <hr>
-<h4>You can also create your own</h4>
+<h4>{{#str}}create_own_template, capquiz{{/str}}</h4>
 {{{create}}}

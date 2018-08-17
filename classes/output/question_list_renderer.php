@@ -57,12 +57,17 @@ class question_list_renderer {
                     'primary' => true,
                     'method' => 'post',
                     'url' => capquiz_urls::remove_question_from_list_url($question->id())->out_as_local_url(false),
-                    'label' => 'Remove'
+                    'label' => get_string('remove', 'capquiz')
                 ]
             ];
         }
+        $message = null;
+        if ($question_list->has_questions()) {
+            $message = get_string('update_rating_explanation', 'capquiz');
+        }
         return $this->renderer->render_from_template('capquiz/question_list', [
             'questions' => $rows,
+            'message' => $message ? $message : false
         ]);
     }
 }

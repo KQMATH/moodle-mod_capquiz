@@ -1,9 +1,9 @@
 {{#metainfo}}
     {{#question}}
-        Question ID: {{ id }}</br>
-        Question rating: {{ rating }}</br>
+        {{#str}}questionid, capqiuiz{{/str}}: {{ id }}</br>
+        {{#str}}questionrating, capqiuiz{{/str}}: {{ rating }}</br>
     {{/question}}
     {{#student}}
-        Your rating: {{ rating }}
+        {{#str}}yourrating, capqiuiz{{/str}}: {{ rating }}
     {{/student}}
 {{/metainfo}}

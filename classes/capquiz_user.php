@@ -39,7 +39,8 @@ class capquiz_user {
         $criteria = [
             database_meta::$field_capquiz_id => $capquiz->id()
         ];
-        return $DB->count_records(database_meta::$table_capquiz_user, $criteria);
+        $count = $DB->count_records(database_meta::$table_capquiz_user, $criteria);
+        return $count;
     }
 
     public static function list_users(capquiz $capquiz) {
