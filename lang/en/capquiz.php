@@ -59,7 +59,7 @@ $string['question_k_factor_required'] = 'Question k factor is required.';
 $string['yourrating'] = 'Question rating';
 $string['questionrating'] = 'Question rating';
 
-$string['need_to_long_in'] = 'You need to log in';
+$string['need_to_log_in'] = 'You need to log in';
 
 $string['no_questions'] = 'No questions';
 $string['no_enrolled_students'] = 'No students are enrolled';
@@ -75,6 +75,8 @@ $string['user_win_probability'] = 'Desired user win probability';
 $string['choose_rating_system'] = 'Choose rating system';
 $string['choose_selection_strategy'] = 'Choose selection strategy';
 $string['number_of_questions_to_select'] = 'Number of questions to draw';
+
+$string['available_questions'] = 'Available questions';
 
 $string['select_template'] = 'Select one of these templates for your quiz';
 $string['no_templates_created'] = 'No templates have been created.';
