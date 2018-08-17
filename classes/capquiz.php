@@ -125,6 +125,8 @@ class capquiz {
     }
 
     public function publish() {
+        if (!$this->can_publish())
+            throw new \Exception("Attempt to publish when capquiz::can_publish() returns false");
         global $DB;
         $capquiz_entry = $this->capquiz_db_entry;
         $capquiz_entry->published = true;
