@@ -92,8 +92,6 @@ class question_attempt_renderer {
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $displayoptions) {
         global $PAGE;
         $question_usage = $this->capquiz->question_usage();
-        $context = $this->capquiz->context();
-
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [

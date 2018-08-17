@@ -18,44 +18,67 @@ $string['question_list'] = "Question list";
 $string['question_lists'] = "Question lists";
 $string['configure_badge_rating'] = 'Configure badge rating';
 
+$string['id'] = 'ID';
 $string['home'] = 'Home';
 $string['name'] = 'Name';
 $string['next'] = "Next";
+$string['stars'] = "Stars";
 $string['title'] = 'Title';
-$string['select'] = "Select";
-$string['publish'] = "Publish";
-$string['create_template'] = 'Make template';
-$string['configure'] = 'Configure';
-$string['description'] = 'Description';
-$string['name_required'] = 'Name is required';
-$string['title_required'] = 'Title is required';
-$string['configure_capquiz'] = 'Configure CAPQuiz';
-$string['description_required'] = 'Description is required.';
-$string['default_user_rating_required'] = 'Default user rating is required.';
-$string['student_k_factor_required'] = 'Student k factor is required.';
-$string['question_k_factor_required'] = 'Question k factor is required.';
-
-$string['dashboard'] = 'Dashboard';
-$string['no_questions'] = 'No questions';
-$string['no_enrolled_students'] = 'No students are enrolled';
-
-$string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
-
 $string['badges'] = 'Badges';
+$string['remove'] = 'Remove';
+$string['rating'] = 'Rating';
+$string['action'] = 'Action';
+$string['select'] = "Select";
+$string['status'] = "Status";
+$string['publish'] = "Publish";
+$string['template'] = "Template";
+$string['username'] = "Username";
+$string['lastname'] = "Last name";
+$string['firstname'] = "First name";
+$string['configure'] = 'Configure';
+$string['dashboard'] = 'Dashboard';
 $string['questions'] = 'Questions';
 $string['classlist'] = 'Class list';
+$string['questionid'] = 'Question ID';
+$string['description'] = 'Description';
 $string['matchmaking'] = 'Matchmaking';
 $string['rating_system'] = 'Rating system';
+$string['name_required'] = 'Name is required';
+$string['title_required'] = 'Title is required';
+$string['question_count'] = "Question count";
+$string['create_template'] = 'Make template';
+$string['enrolled_students'] = "Enrolled students";
+$string['configure_capquiz'] = 'Configure CAPQuiz';
+$string['create_question_list'] = 'Create question list';
+
+$string['description_required'] = 'Description is required.';
+$string['student_k_factor_required'] = 'Student k factor is required.';
+$string['default_user_rating_required'] = 'Default user rating is required.';
+$string['question_k_factor_required'] = 'Question k factor is required.';
+
+$string['yourrating'] = 'Question rating';
+$string['questionrating'] = 'Question rating';
+
+$string['need_to_long_in'] = 'You need to log in';
+
+$string['no_questions'] = 'No questions';
+$string['no_enrolled_students'] = 'No students are enrolled';
+$string['no_questions_added_to_list'] = 'No questions added to the list';
+
+$string['update_rating_explanation'] = '<p>Update ratings by modifying the specified value and press <em>enter</em></p>';
+$string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
 
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
-
-$string['create_question_list'] = 'Create question list';
 
 $string['user_win_probability'] = 'Desired user win probability';
 $string['choose_rating_system'] = 'Choose rating system';
 $string['choose_selection_strategy'] = 'Choose selection strategy';
 $string['number_of_questions_to_select'] = 'Number of questions to draw';
+
+$string['select_template'] = 'Select one of these templates for your quiz';
+$string['no_templates_created'] = 'No templates have been created.';
+$string['create_own_template'] = 'You can also create your own';
 
 $string['default_user_rating'] = 'Default user rating';
 $string['default_question_rating'] = 'Default question rating';
@@ -69,13 +92,6 @@ $string['question_k_factor'] = 'Question k-factor';
 $string['student_k_factor_specified_rule'] = 'Student k-factor must be specified';
 $string['question_k_factor_specified_rule'] = 'Question k-factor must be specified';
 $string['k_factor_numeric_rule'] = 'K-factor must be a numeric value';
-
-//Instructor dashboard strings
-
-$string['status'] = "Status";
-$string['template'] = "Template";
-$string['question_count'] = "Question count";
-$string['enrolled_students'] = "Enrolled students";
 
 $string['publish_explanation'] =
     "<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you're still building your question list and modifying question ratings. " .

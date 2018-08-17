@@ -1,16 +1,18 @@
-<h2>Question list</h2>
+<h2>{{#str}}question_list, capquiz{{/str}}</h2>
 <table class="capquiz-tree">
     <tr>
         <th>#</th>
-        <th>Title</th>
-        <th>Rating</th>
-        <th>Action</th>
+        <th>{{#str}}title, capquiz{{/str}}</th>
+        <th>{{#str}}rating, capquiz{{/str}}</th>
+        <th>{{#str}}action, capquiz{{/str}}</th>
     </tr>
     {{^questions}}
-        No questions added to the list.
+        {{#str}}no_questions_added_to_list, capquiz{{/str}}
     {{/questions}}
 
-    <p>Update ratings by modifying the specified value and press <em>enter</em></p>
+    {{#message}}
+        {{{message}}}
+    {{/message}}
     {{#questions}}
         <tr>
             {{#.}}
