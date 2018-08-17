@@ -24,7 +24,7 @@ $string['next'] = "Next";
 $string['title'] = 'Title';
 $string['select'] = "Select";
 $string['publish'] = "Publish";
-$string['create_template'] = 'Create template';
+$string['create_template'] = 'Make template';
 $string['configure'] = 'Configure';
 $string['description'] = 'Description';
 $string['name_required'] = 'Name is required';
@@ -78,7 +78,7 @@ $string['question_count'] = "Question count";
 $string['enrolled_students'] = "Enrolled students";
 
 $string['publish_explanation'] =
-    "<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you're still building your question list and modifying question ratings." .
+    "<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you're still building your question list and modifying question ratings. " .
     "Similarly, modifying the default student rating before a quiz has been published ensures that all students are given the same initial rating.</p>" .
     "<p>Students can answer questions once the quiz has been published. " .
     "After this point you can still modify your question list and assign different rating to questions. " .
