@@ -41,8 +41,8 @@ class capquiz_question_list {
         return $this->db_entry->id;
     }
 
-    public function is_published() {
-        return $this->db_entry->published;
+    public function can_create_template() {
+        return $this->has_questions();
     }
 
     public function has_questions() {
