@@ -72,7 +72,7 @@ function remove_question_from_list(capquiz $capquiz) {
     redirect_to_url(capquiz_urls::view_question_list_url());
 }
 
-function publish_question_list(capquiz $capquiz) {
+function publish_capquiz(capquiz $capquiz) {
     if (!$capquiz->publish()) {
         throw new \Exception("Unable to publish question list for CAPQuiz " . $capquiz->name());
     }
@@ -93,12 +93,11 @@ function set_question_rating(capquiz $capquiz) {
 }
 
 function create_question_list_template(capquiz $capquiz) {
-    global $DB;
-    $question_list = $DB->get_record(database_meta::$table_capquiz_question_list, [
-        'id' => $capquiz->question_list_id()
-    ]);
+    $question_list = $capquiz->question_list();
     if (!$question_list) {
         throw new \Exception('Failed to find question list for this CAPQuiz.');
+    } else if (!$question_list->can_create_template()) {
+        throw new \Exception("Attempt to crate template when capquiz_question_list::can_create_template() returns false");
     }
     $id = capquiz_question_list::copy($question_list, true);
     if ($id === 0) {
@@ -117,7 +116,7 @@ function determine_action(capquiz $capquiz, string $action_type) {
     } else if ($action_type == capquiz_actions::$remove_question_from_list) {
         remove_question_from_list($capquiz);
     } else if ($action_type == capquiz_actions::$publish_question_list) {
-        publish_question_list($capquiz);
+        publish_capquiz($capquiz);
     } else if ($action_type == capquiz_actions::$set_question_rating) {
         set_question_rating($capquiz);
     } else if ($action_type == capquiz_actions::$create_question_list_template) {
