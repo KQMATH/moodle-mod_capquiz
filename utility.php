@@ -38,7 +38,7 @@ function redirect_to_dashboard(capquiz $capquiz) {
     redirect_to_url($target_url);
 }
 
-function return_to_previous() {
+function redirect_to_previous() {
     header('Location: ' . $_SERVER['HTTP_REFERER']);
     exit;
 }

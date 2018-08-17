@@ -57,7 +57,7 @@ function add_question_to_list(capquiz $capquiz) {
             create_capquiz_question($question_id, $capquiz->question_list());
         }
     }
-    redirect_to_url(capquiz_urls::view_question_list_url());
+    redirect_to_previous();
 }
 
 function remove_question_from_list(capquiz $capquiz) {
@@ -69,7 +69,7 @@ function remove_question_from_list(capquiz $capquiz) {
             remove_capquiz_question($question_id, $capquiz->question_list()->id());
         }
     }
-    redirect_to_url(capquiz_urls::view_question_list_url());
+    redirect_to_previous();
 }
 
 function publish_capquiz(capquiz $capquiz) {

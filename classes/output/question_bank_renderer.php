@@ -35,12 +35,7 @@ class question_bank_renderer {
 
     public function render() {
         global $PAGE;
-        if (isset($_GET[capquiz_urls::$param_id])) {
-            $_GET['cmid'] = $_GET['id'];
-        }
-        if (isset($_POST[capquiz_urls::$param_id])) {
-            $_POST['cmid'] = $_POST['id'];
-        }
+        $this->set_missing_id_param();
         list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $PAGE->url, false);
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);
@@ -59,5 +54,15 @@ class question_bank_renderer {
             true,
             true);
         return $html;
+    }
+
+    private function set_missing_id_param() {
+
+        if (isset($_GET[capquiz_urls::$param_id])) {
+            $_GET['cmid'] = $_GET['id'];
+        }
+        if (isset($_POST[capquiz_urls::$param_id])) {
+            $_POST['cmid'] = $_POST['id'];
+        }
     }
 }
