@@ -26,7 +26,7 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_bank_renderer
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/capquiz_configuration_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_creater_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_creator_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/badge_rating_configuration_renderer.php');
@@ -117,7 +117,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_question_list_create_view(capquiz $capquiz) {
-        $this->display_view(new _question_list_creater_renderer($capquiz, $this));
+        $this->display_view(new question_list_creator_renderer($capquiz, $this));
     }
 
     public function display_choose_question_list_view(capquiz $capquiz) {
@@ -125,13 +125,13 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_set_selection_strategy_view(capquiz $capquiz) {
-        $view = new _matchmaking_strategy_selection_renderer($capquiz, $this);
+        $view = new matchmaking_strategy_selection_renderer($capquiz, $this);
         $view->set_redirect_url(capquiz_urls::view_url());
         $this->display_view($view);
     }
 
     public function display_set_rating_system_view(capquiz $capquiz) {
-        $view = new _rating_system_selection_renderer($capquiz, $this);
+        $view = new rating_system_selection_renderer($capquiz, $this);
         $view->set_redirect_url(capquiz_urls::view_url());
         $this->display_view($view);
     }

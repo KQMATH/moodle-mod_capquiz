@@ -81,7 +81,7 @@ class capquiz_question_engine {
         global $DB;
         $capquizid = $user->capquiz_id();
         try {
-            $list = $DB->get_record('capquiz_question_list', ['id' => $this->capquiz->question_list_id()]);
+            $list = $DB->get_record(database_meta::$table_capquiz_question_list, [database_meta::$field_id => $this->capquiz->question_list_id()]);
             if (!$list) {
                 return;
             }

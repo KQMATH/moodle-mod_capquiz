@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_question_list;
 use mod_capquiz\capquiz_question_registry;
 use mod_capquiz\capquiz_urls;
 
@@ -42,13 +43,14 @@ class question_list_selection_renderer {
     }
 
     public function render() {
-        $registry = new capquiz_question_registry($this->capquiz);
-        $templates = $registry->question_lists(true);
+        $templates = capquiz_question_list::load_question_list_templates($this->capquiz);
         $lists = [];
         foreach ($templates as $template) {
             $lists[] = [
                 'title' => $template->title(),
                 'description' => $template->description(),
+                'author' => $template->author()->username,
+                'created' => date("Y-m-d H:i:s", substr($template->time_created(), 0, 10)),
                 'url' => capquiz_urls::question_list_select_url($template)
             ];
         }
@@ -59,7 +61,7 @@ class question_list_selection_renderer {
         $createlabel = get_string('create_question_list', 'capquiz');
         $create = basic_renderer::render_action_button($this->renderer, $createurl, $createlabel, 'get', $params);
 
-        return $this->renderer->render_from_template('capquiz/choose_question_list', [
+        return $this->renderer->render_from_template('capquiz/question_list_selection', [
             'lists' => $lists,
             'create' => $create
         ]);

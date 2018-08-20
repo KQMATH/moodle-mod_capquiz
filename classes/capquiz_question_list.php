@@ -16,6 +16,8 @@
 
 namespace mod_capquiz;
 
+use core\session\database;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -45,6 +47,18 @@ class capquiz_question_list {
 
     public function id() {
         return $this->db_entry->id;
+    }
+
+    public function author() {
+        global $DB;
+        $criteria = [
+            database_meta::$field_id => $this->db_entry->author
+        ];
+        if ($entry = $DB->get_record(database_meta::$table_moodle_user, $criteria)) {
+            return $entry;
+        } else {
+            return null;
+        }
     }
 
     public function can_create_template() {
@@ -177,6 +191,41 @@ class capquiz_question_list {
         return null;
     }
 
+    public static function load_question_list(capquiz $capquiz, int $question_list_id) {
+        global $DB;
+        $conditions = [database_meta::$field_id => $question_list_id, database_meta::$field_is_template => 0];
+        if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {
+            return new capquiz_question_list($entry, $capquiz);
+        }
+        return null;
+    }
+
+    public static function load_question_template(capquiz $capquiz, int $question_list_id) {
+        $conditions = [database_meta::$field_id => $question_list_id, database_meta::$field_is_template => 1];
+        global $DB;
+        if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {
+            return new capquiz_question_list($entry, $capquiz);
+        }
+        return null;
+    }
+
+    public static function load_any(capquiz $capquiz, int $question_list_id) {
+        global $DB;
+        $conditions = [database_meta::$field_id => $question_list_id];
+        if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {
+            return new capquiz_question_list($entry, $capquiz);
+        }
+        return null;
+    }
+
+    public static function load_question_lists(capquiz $capquiz) {
+        return capquiz_question_list::load_question_lists_from_criteria($capquiz, [database_meta::$field_is_template => 0]);
+    }
+
+    public static function load_question_list_templates(capquiz $capquiz) {
+        return capquiz_question_list::load_question_lists_from_criteria($capquiz, [database_meta::$field_is_template => 1]);
+    }
+
     public static function copy(capquiz_question_list $question_list, bool $insert_as_template) {
         global $DB;
         $question_list_entry = $question_list->db_entry;
@@ -185,7 +234,7 @@ class capquiz_question_list {
         $question_list_entry->is_template = $insert_as_template ? 1 : 0;
         $transaction = $DB->start_delegated_transaction();
         try {
-            $questions = $DB->get_records(database_meta::$table_capquiz_question, ['question_list_id' => $question_list_id]);
+            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database::$field_question_list_id => $question_list_id]);
             $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list_entry);
             foreach ($questions as $question) {
                 $question->id = null;
@@ -205,6 +254,16 @@ class capquiz_question_list {
         if ($DB->update_record(database_meta::$table_capquiz_question_list, $db_entry)) {
             $this->db_entry = $db_entry;
         }
+    }
+
+    private static function load_question_lists_from_criteria(capquiz $capquiz, array $conditions) {
+        global $DB;
+        $lists = [];
+        $records = $DB->get_records(database_meta::$table_capquiz_question_list, $conditions);
+        foreach ($records as $record) {
+            $lists[] = new capquiz_question_list($record, $capquiz);
+        }
+        return $lists;
     }
 
 }

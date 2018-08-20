@@ -56,9 +56,9 @@ class capquiz_badge {
     public function exists(int $level) {
         global $DB;
         try {
-            $badge = $DB->get_record('capquiz_badge', [
-                'capquiz_id' => $this->capquizid,
-                'level' => $level
+            $badge = $DB->get_record(database_meta::$table_capquiz_badge, [
+                database_meta::$field_capquiz_id => $this->capquizid,
+                database_meta::$field_level => $level
             ]);
             return $badge !== false;
         } catch (\dml_exception $exception) {
@@ -89,17 +89,17 @@ class capquiz_badge {
         $fordb = new \stdClass();
         $fordb->id = null;
         if ($level === 1) {
-            $fordb->name = '1 Star';
-            $fordb->description = 'You earned your first star in this activity!';
+            $fordb->name = get_string('1_star', capquiz);
+            $fordb->description = get_string('earned_first_star', capquiz, $level);
         } else {
-            $fordb->name = "$level Stars";
-            $fordb->description = "You earned $level stars in this activity!";
+            $fordb->name = get_string('level_star', capquiz);
+            $fordb->description = get_string('earned_level_star', capquiz, $level);
         }
         $fordb->timecreated = time();
         $fordb->timemodified = time();
         $fordb->usercreated = $USER->id;
         $fordb->usermodified = $USER->id;
-        $fordb->issuername = 'CapQuiz';
+        $fordb->issuername = get_string(modulename, 'capquiz');
         $fordb->issuerurl = '';
         $fordb->issuercontact = '';
         $fordb->expiredate = null;
@@ -218,9 +218,9 @@ class capquiz_badge {
             return null;
         }
         try {
-            $badge = $DB->get_record('capquiz_badge', [
-                'capquiz_id' => $this->capquizid,
-                'level' => $level
+            $badge = $DB->get_record(database_meta::$table_capquiz_badge, [
+                database_meta::$field_capquiz_id => $this->capquizid,
+                database_meta::$field_level => $level
             ], 'badge_id', MUST_EXIST);
             return new \badge($badge->badge_id);
         } catch (\dml_exception $exception) {

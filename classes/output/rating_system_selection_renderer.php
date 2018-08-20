@@ -57,7 +57,7 @@ class rating_system_selection_renderer {
             redirect($this->url);
         }
 
-        return $this->renderer->render_from_template('capquiz/choose_rating_system', [
+        return $this->renderer->render_from_template('capquiz/rating_system_selection', [
             'form' => $form->render()
         ]);
     }

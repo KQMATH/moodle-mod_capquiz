@@ -46,11 +46,7 @@ class capquiz_question_registry {
     }
 
     public function question_list(int $list_id) {
-        global $DB;
-        if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, [database_meta::$field_id => $list_id])) {
-            return new capquiz_question_list($entry, $this->capquiz);
-        }
-        return null;
+        return capquiz_question_list::load_question_list($list_id);
     }
 
     /**
@@ -58,25 +54,11 @@ class capquiz_question_registry {
      * @return capquiz_question_list[]
      */
     public function question_lists(bool $istemplate = null) {
-        global $DB;
-        $lists = [];
-        $conditions = null;
-        if ($istemplate !== null) {
-            $conditions = ['is_template' => (int)$istemplate];
-        }
-        $records = $DB->get_records(database_meta::$table_capquiz_question_list, $conditions);
-        foreach ($records as $record) {
-            $lists[] = new capquiz_question_list($record, $this->capquiz);
-        }
-        return $lists;
-    }
-
-    public function has_question_lists() {
-        return count($this->question_lists()) > 0;
     }
 
     public function create_question_list(string $title, string $description, array $ratings) {
         global $DB;
+        global $USER;
         if (count($ratings) < 5) {
             return false;
         }
@@ -89,6 +71,7 @@ class capquiz_question_registry {
         $list->level_3_rating = $ratings[2];
         $list->level_4_rating = $ratings[3];
         $list->level_5_rating = $ratings[4];
+        $list->author = $USER->id;
         $list->is_template = 0;
         $list->time_created = time();
         $list->time_modified = time();

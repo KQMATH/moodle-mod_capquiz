@@ -52,7 +52,7 @@ class capquiz_configuration_renderer {
             redirect_to_dashboard($this->capquiz);
         }
         $form_html = $form->render();
-        return $this->renderer->render_from_template('capquiz/configuration', [
+        return $this->renderer->render_from_template('capquiz/capquiz_configuration', [
             'form' => $form_html
         ]);
     }
