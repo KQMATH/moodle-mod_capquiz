@@ -18,8 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\choose_matchmaking_strategy_form;
-use mod_capquiz\form\view\choose_rating_system_form;
+use mod_capquiz\form\view\rating_system_selection_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,7 +49,7 @@ class rating_system_selection_renderer {
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new choose_rating_system_form($this->capquiz, $url);
+        $form = new rating_system_selection_form($this->capquiz, $url);
         if ($form_data = $form->get_data()) {
             $loader = $this->capquiz->rating_system_loader();
             $registry = $this->capquiz->rating_system_registry();

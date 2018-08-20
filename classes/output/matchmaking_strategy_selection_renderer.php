@@ -18,7 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\choose_matchmaking_strategy_form;
+use mod_capquiz\form\view\matchmaking_strategy_selection_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -49,7 +49,7 @@ class matchmaking_strategy_selection_renderer {
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new choose_matchmaking_strategy_form($this->capquiz, $url);
+        $form = new matchmaking_strategy_selection_form($this->capquiz, $url);
         if ($form_data = $form->get_data()) {
             $loader = $this->capquiz->selection_strategy_loader();
             $registry = $this->capquiz->selection_strategy_registry();

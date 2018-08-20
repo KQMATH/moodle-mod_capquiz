@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class configure_badge_rating_form extends \moodleform {
+class badge_rating_configuration_form extends \moodleform {
 
     private $question_list;
 
