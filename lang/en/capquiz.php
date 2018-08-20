@@ -31,12 +31,15 @@ $string['name'] = 'Name';
 $string['next'] = "Next";
 $string['stars'] = "Stars";
 $string['title'] = 'Title';
+$string['author'] = 'Author';
+$string['created'] = 'Created';
 $string['badges'] = 'Badges';
 $string['remove'] = 'Remove';
 $string['rating'] = 'Rating';
 $string['action'] = 'Action';
 $string['select'] = "Select";
 $string['status'] = "Status";
+$string['created'] = 'Created';
 $string['publish'] = "Publish";
 $string['template'] = "Template";
 $string['username'] = "Username";
@@ -63,7 +66,7 @@ $string['student_k_factor_required'] = 'Student k factor is required.';
 $string['default_user_rating_required'] = 'Default user rating is required.';
 $string['question_k_factor_required'] = 'Question k factor is required.';
 
-$string['yourrating'] = 'Question rating';
+$string['yourrating'] = 'Your rating';
 $string['questionrating'] = 'Question rating';
 
 $string['need_to_log_in'] = 'You need to log in';
@@ -75,6 +78,10 @@ $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['update_rating_explanation'] = '<p>Update ratings by modifying the specified value and press <em>enter</em></p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
 
+$string['1_star'] = '1 Star';
+$string['level_stars'] = '{$a} Stars';
+$string['earned_first_star'] = 'You earned your first star in this activity!';
+$string['earned_level_star'] = 'You earned {$a} stars in this activity!';
 $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
 

@@ -53,8 +53,8 @@ class capquiz {
         $PAGE->set_context($this->context);
         $this->capquiz_renderer = $PAGE->get_renderer('mod_capquiz');
 
-        $this->course_db_entry = $DB->get_record('course', ['id' => $this->course_module->course], '*', MUST_EXIST);
-        $this->capquiz_db_entry = $DB->get_record('capquiz', ['id' => $this->course_module->instance], '*', MUST_EXIST);
+        $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course, [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
+        $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
     }
 
     public static function create() {
@@ -62,6 +62,10 @@ class capquiz {
             return new capquiz($id);
         }
         return null;
+    }
+
+    public static function create_from_id(int $id) {
+        return new capquiz($id);
     }
 
     public function id() {
@@ -108,11 +112,11 @@ class capquiz {
 
     public function assign_question_list(int $question_list_id) {
         global $DB;
-        $question_list = $DB->get_record(database_meta::$table_capquiz_question_list, ['id' => $question_list_id]);
+        $question_list = capquiz_question_list::load_any($this, $question_list_id);
         if (!$question_list) {
             return false;
         }
-        if ($question_list->is_template) {
+        if ($question_list->is_template()) {
             $question_list_id = capquiz_question_list::copy($question_list, false);
         }
         $capquiz_entry = $this->capquiz_db_entry;
@@ -180,7 +184,7 @@ class capquiz {
 
     public function question_list() {
         if ($this->has_question_list()) {
-            return $this->question_registry()->question_list($this->question_list_id());
+            return capquiz_question_list::load_question_list($this, $this->question_list_id());
         }
         return null;
     }

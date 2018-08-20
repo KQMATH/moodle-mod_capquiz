@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_capquiz\capquiz;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -47,15 +49,10 @@ function capquiz_update_instance(mod_capquiz\capquiz $capquiz) {
 }
 
 function capquiz_delete_instance(int $id) {
-    global $DB;
-    try {
-        $capquiz = $DB->get_record('capquiz', ['id' => $id], '*', MUST_EXIST);
-        $DB->delete_records('capquiz_question', ['capquizid' => $capquiz->id]);
-        $DB->delete_records('capquiz', ['id' => $capquiz->id]);
-    } catch (Exception $e) {
-        return false;
+    if ($capquiz = capquiz::create_from_id($id)) {
+        $question_usage = $capquiz->question_usage();
+        \question_engine::delete_questions_usage_by_activity($question_usage->get_id());
     }
-    return true;
 }
 
 function capquiz_cron() {

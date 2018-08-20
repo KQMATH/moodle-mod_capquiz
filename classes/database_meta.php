@@ -24,10 +24,9 @@ namespace mod_capquiz;
  */
 class database_meta {
 
-    public static $table_moodle_user = 'user';
-
     public static $table_capquiz = 'capquiz';
     public static $table_capquiz_user = 'capquiz_user';
+    public static $table_capquiz_badge = 'capquiz_badge';
     public static $table_capquiz_attempt = 'capquiz_attempt';
     public static $table_capquiz_question = 'capquiz_question';
     public static $table_capquiz_rating_system = 'capquiz_rating_system';
@@ -35,10 +34,12 @@ class database_meta {
     public static $table_capquiz_question_selection = 'capquiz_question_selection';
 
     public static $field_id = 'id';
+    public static $field_level = 'level';
     public static $field_user_id = 'user_id';
     public static $field_course_id = 'course_id';
     public static $field_attempt_id = 'attempt_id';
     public static $field_capquiz_id = 'capquiz_id';
+    public static $field_is_template = 'is_template';
     public static $field_question_id = 'question_id';
     public static $field_question_list_id = 'question_list_id';
 
@@ -51,6 +52,8 @@ class database_meta {
     public static $field_time_answered = 'time_answered';
     public static $field_time_reviewed = 'time_reviewed';
 
-    public static $moodletable_question = 'question';
+    public static $table_moodle_user = 'user';
+    public static $table_moodle_course = 'course';
+    public static $table_moodle_question = 'question';
 
 }

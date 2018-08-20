@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_list_creater_renderer {
+class question_list_creator_renderer {
     private $capquiz;
     private $renderer;
 

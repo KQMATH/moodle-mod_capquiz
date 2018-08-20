@@ -58,7 +58,7 @@ class matchmaking_strategy_selection_renderer {
             redirect($this->url);
         }
 
-        return $this->renderer->render_from_template('capquiz/choose_matchmaking_strategy', [
+        return $this->renderer->render_from_template('capquiz/matchmaking_selection_strategy', [
             'form' => $form->render()
         ]);
     }

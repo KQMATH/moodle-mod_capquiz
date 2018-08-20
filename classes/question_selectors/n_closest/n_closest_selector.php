@@ -75,7 +75,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         $rating_field = database_meta::$field_rating;
         $question_list_id = $this->capquiz->question_list()->id();
         $sql = "SELECT * FROM {" . $table . "} WHERE $field=$question_list_id";
-        $sql .= " ORDER BY ABS($rating_field-$ideal_question_rating) LIMIT $this->number_of_questions_to_select";
+        $sql .= " ORDER BY ABS($ideal_question_rating - $rating_field) LIMIT $this->number_of_questions_to_select";
         $sql .= ";";
         $questions = [];
         foreach ($DB->get_records_sql($sql) as $question_db_entry) {

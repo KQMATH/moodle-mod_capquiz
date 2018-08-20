@@ -31,7 +31,7 @@ class capquiz_question {
     public function __construct(\stdClass $db_entry) {
         global $DB;
         $this->db_entry = $db_entry;
-        $question = $DB->get_record(database_meta::$moodletable_question, [
+        $question = $DB->get_record(database_meta::$table_moodle_question, [
             database_meta::$field_id => $db_entry->question_id
         ], '*', MUST_EXIST);
         if ($question) {
