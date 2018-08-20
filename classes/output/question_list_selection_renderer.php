@@ -30,7 +30,7 @@ require_once('../../config.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class choose_question_list_renderer {
+class question_list_selection_renderer {
 
     private $capquiz;
 

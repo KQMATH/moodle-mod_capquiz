@@ -20,6 +20,12 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_rating_form extends \moodleform {
 
     public function definition() {

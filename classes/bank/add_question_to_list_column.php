@@ -20,6 +20,12 @@ use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class add_question_to_list_column extends \core_question\bank\action_column_base {
 
     public function get_name() {

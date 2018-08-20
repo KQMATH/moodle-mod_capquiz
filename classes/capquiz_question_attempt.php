@@ -20,6 +20,12 @@ use core\session\database;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class capquiz_question_attempt {
 
     private $db_entry;
@@ -79,7 +85,7 @@ class capquiz_question_attempt {
             if ($question_db_entry = $DB->get_record_sql($sql)) {
                 return new capquiz_question_attempt($capquiz->question_usage(), $question_db_entry);
             }
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             throw e;
         }
         return null;

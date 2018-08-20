@@ -16,6 +16,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $capabilities = [
     'mod/capquiz:instructor' => [
         'captype' => 'write',

@@ -18,41 +18,50 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\choose_matchmaking_strategy_form;
-use mod_capquiz\form\view\choose_rating_system_form;
+use mod_capquiz\form\view\question_list_create_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
-class choose_rating_system_renderer {
-
-    private $url;
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_list_creater_renderer {
     private $capquiz;
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->url = capquiz_urls::view_rating_system_configuration_url();
-    }
-
-    public function set_redirect_url(\moodle_url $url) {
-        $this->url = $url;
     }
 
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new choose_rating_system_form($this->capquiz, $url);
+        $form = new question_list_create_form($url);
         if ($form_data = $form->get_data()) {
-            $loader = $this->capquiz->rating_system_loader();
-            $registry = $this->capquiz->rating_system_registry();
-            $loader->set_rating_system($registry->rating_systems()[$form_data->rating_system]);
-            redirect($this->url);
+            $registry = $this->capquiz->question_registry();
+            $ratings = [
+                $form_data->level_1_rating,
+                $form_data->level_2_rating,
+                $form_data->level_3_rating,
+                $form_data->level_4_rating,
+                $form_data->level_5_rating
+            ];
+            if ($registry->create_question_list($form_data->title, $form_data->description, $ratings)) {
+                $url = new \moodle_url(capquiz_urls::$url_view);
+                $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
+                redirect($url);
+            }
+            header('Location: /');
+            exit;
         }
-
-        return $this->renderer->render_from_template('capquiz/choose_rating_system', [
+        return $this->renderer->render_from_template('capquiz/create_question_list', [
             'form' => $form->render()
         ]);
     }

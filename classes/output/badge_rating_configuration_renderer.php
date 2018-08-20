@@ -18,41 +18,47 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\choose_matchmaking_strategy_form;
+use mod_capquiz\form\view\configure_badge_rating_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
-class choose_matchmaking_strategy_renderer {
-
-    private $url;
+/**
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class badge_rating_configuration_renderer {
     private $capquiz;
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->url = capquiz_urls::view_matchmaking_configuration_url();
-    }
-
-    public function set_redirect_url(\moodle_url $url) {
-        $this->url = $url;
     }
 
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new choose_matchmaking_strategy_form($this->capquiz, $url);
+        $question_list = $this->capquiz->question_list();
+        $form = new configure_badge_rating_form($question_list, $url);
         if ($form_data = $form->get_data()) {
-            $loader = $this->capquiz->selection_strategy_loader();
-            $registry = $this->capquiz->selection_strategy_registry();
-            $strategy = $registry->selection_strategies()[$form_data->strategy];
-            $loader->set_strategy($strategy);
-            redirect($this->url);
+            $ratings = [
+                $form_data->level_1_rating,
+                $form_data->level_2_rating,
+                $form_data->level_3_rating,
+                $form_data->level_4_rating,
+                $form_data->level_5_rating
+            ];
+            $question_list->set_level_ratings($ratings);
+            $url = new \moodle_url(capquiz_urls::$url_view_question_list);
+            $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
+            redirect($url);
         }
-
-        return $this->renderer->render_from_template('capquiz/choose_matchmaking_strategy', [
+        return $this->renderer->render_from_template('capquiz/configure_badge_rating', [
             'form' => $form->render()
         ]);
     }

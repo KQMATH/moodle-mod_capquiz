@@ -22,7 +22,10 @@ require_once('../../config.php');
 require_once($CFG->dirroot . '/lib/badgeslib.php');
 
 /**
- * @package mod_capquiz
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_badge {
 
@@ -88,8 +91,7 @@ class capquiz_badge {
         if ($level === 1) {
             $fordb->name = '1 Star';
             $fordb->description = 'You earned your first star in this activity!';
-        }
-        else {
+        } else {
             $fordb->name = "$level Stars";
             $fordb->description = "You earned $level stars in this activity!";
         }

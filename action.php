@@ -22,6 +22,13 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function redirect_to(capquiz $capquiz) {
     if ($target_url = optional_param(capquiz_urls::$param_target_url, null, PARAM_TEXT)) {
         redirect_to_url(new \moodle_url($target_url));

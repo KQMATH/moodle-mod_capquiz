@@ -21,18 +21,25 @@ use mod_capquiz\capquiz_urls;
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/classlist_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_bank_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/create_question_list_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/capquiz_configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_creater_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/configure_badge_rating_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/badge_rating_configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_strategy_selection_renderer.php');
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class renderer extends \plugin_renderer_base {
 
     public function output_renderer() {
@@ -110,21 +117,21 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_question_list_create_view(capquiz $capquiz) {
-        $this->display_view(new create_question_list_renderer($capquiz, $this));
+        $this->display_view(new _question_list_creater_renderer($capquiz, $this));
     }
 
     public function display_choose_question_list_view(capquiz $capquiz) {
-        $this->display_view(new choose_question_list_renderer($capquiz, $this));
+        $this->display_view(new question_list_selection_renderer($capquiz, $this));
     }
 
     public function display_set_selection_strategy_view(capquiz $capquiz) {
-        $view = new choose_matchmaking_strategy_renderer($capquiz, $this);
+        $view = new _matchmaking_strategy_selection_renderer($capquiz, $this);
         $view->set_redirect_url(capquiz_urls::view_url());
         $this->display_view($view);
     }
 
     public function display_set_rating_system_view(capquiz $capquiz) {
-        $view = new choose_rating_system_renderer($capquiz, $this);
+        $view = new _rating_system_selection_renderer($capquiz, $this);
         $view->set_redirect_url(capquiz_urls::view_url());
         $this->display_view($view);
     }
@@ -157,14 +164,14 @@ class renderer extends \plugin_renderer_base {
 
     public function display_matchmaking_configuration(capquiz $capquiz) {
         $this->display_tabbed_views([
-            new choose_matchmaking_strategy_renderer($capquiz, $this),
+            new matchmaking_strategy_selection_renderer($capquiz, $this),
             new matchmaking_configuration_renderer($capquiz, $this)
         ], 'view_matchmaking');
     }
 
     public function display_rating_system_configuration(capquiz $capquiz) {
         $this->display_tabbed_views([
-            new choose_rating_system_renderer($capquiz, $this),
+            new rating_system_selection_renderer($capquiz, $this),
             new rating_system_configuration_renderer($capquiz, $this)
         ], 'view_rating_system');
     }
@@ -174,10 +181,10 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function display_capquiz_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new configuration_renderer($capquiz, $this), 'view_capquiz');
+        $this->display_tabbed_view(new capquiz_configuration_renderer($capquiz, $this), 'view_capquiz');
     }
 
     public function display_badge_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new configure_badge_rating_renderer($capquiz, $this), 'view_badges');
+        $this->display_tabbed_view(new badge_rating_configuration_renderer($capquiz, $this), 'view_badges');
     }
 }

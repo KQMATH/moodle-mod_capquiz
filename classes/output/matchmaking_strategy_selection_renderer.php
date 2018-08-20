@@ -17,37 +17,49 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\form\view\configure_capquiz_form;
-use function mod_capquiz\redirect_to_dashboard;
+use mod_capquiz\capquiz_urls;
+use mod_capquiz\form\view\choose_matchmaking_strategy_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/question/editlib.php');
 
-class configuration_renderer {
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class matchmaking_strategy_selection_renderer {
+
+    private $url;
     private $capquiz;
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->url = capquiz_urls::view_matchmaking_configuration_url();
+    }
+
+    public function set_redirect_url(\moodle_url $url) {
+        $this->url = $url;
     }
 
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new configure_capquiz_form($this->capquiz, $url);
-        if ($form->is_cancelled()) {
-            redirect_to_dashboard($this->capquiz);
-        }
+        $form = new choose_matchmaking_strategy_form($this->capquiz, $url);
         if ($form_data = $form->get_data()) {
-            $this->capquiz->configure($form_data);
-            redirect_to_dashboard($this->capquiz);
+            $loader = $this->capquiz->selection_strategy_loader();
+            $registry = $this->capquiz->selection_strategy_registry();
+            $strategy = $registry->selection_strategies()[$form_data->strategy];
+            $loader->set_strategy($strategy);
+            redirect($this->url);
         }
-        $form_html = $form->render();
-        return $this->renderer->render_from_template('capquiz/configuration', [
-            'form' => $form_html
+
+        return $this->renderer->render_from_template('capquiz/choose_matchmaking_strategy', [
+            'form' => $form->render()
         ]);
     }
 }

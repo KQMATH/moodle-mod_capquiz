@@ -22,12 +22,18 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 if ($capquiz = capquiz::create()) {
     if ($delete_selected = optional_param(capquiz_urls::$param_delete_selected, null, PARAM_TEXT)) {
         echo "Delete is not implemented";
         return;
-    }
-    else {
+    } else {
         $question_page = optional_param(capquiz_urls::$param_question_page, 0, PARAM_INT);
         redirect_to_url(capquiz_urls::view_question_list_url($question_page));
     }
