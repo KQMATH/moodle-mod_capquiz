@@ -18,4 +18,11 @@ namespace mod_capquiz;
 
 require('../../config.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $PAGE->set_url(new \moodle_url(capquiz_urls::$url_view));

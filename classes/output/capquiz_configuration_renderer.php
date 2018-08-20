@@ -17,15 +17,21 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\create_question_list_form;
+use mod_capquiz\form\view\configure_capquiz_form;
+use function mod_capquiz\redirect_to_dashboard;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
-class create_question_list_renderer {
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class capquiz_configuration_renderer {
     private $capquiz;
     private $renderer;
 
@@ -37,26 +43,17 @@ class create_question_list_renderer {
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new create_question_list_form($url);
-        if ($form_data = $form->get_data()) {
-            $registry = $this->capquiz->question_registry();
-            $ratings = [
-                $form_data->level_1_rating,
-                $form_data->level_2_rating,
-                $form_data->level_3_rating,
-                $form_data->level_4_rating,
-                $form_data->level_5_rating
-            ];
-            if ($registry->create_question_list($form_data->title, $form_data->description, $ratings)) {
-                $url = new \moodle_url(capquiz_urls::$url_view);
-                $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
-                redirect($url);
-            }
-            header('Location: /');
-            exit;
+        $form = new configure_capquiz_form($this->capquiz, $url);
+        if ($form->is_cancelled()) {
+            redirect_to_dashboard($this->capquiz);
         }
-        return $this->renderer->render_from_template('capquiz/create_question_list', [
-            'form' => $form->render()
+        if ($form_data = $form->get_data()) {
+            $this->capquiz->configure($form_data);
+            redirect_to_dashboard($this->capquiz);
+        }
+        $form_html = $form->render();
+        return $this->renderer->render_from_template('capquiz/configuration', [
+            'form' => $form_html
         ]);
     }
 }

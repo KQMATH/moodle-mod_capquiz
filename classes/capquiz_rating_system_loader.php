@@ -22,6 +22,12 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/elo_rating/elo_
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class capquiz_rating_system_loader {
 
     private $capquiz;

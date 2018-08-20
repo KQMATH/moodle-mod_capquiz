@@ -23,6 +23,13 @@ require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function redirect_to_front_page() {
     header('Location: /');
     exit;

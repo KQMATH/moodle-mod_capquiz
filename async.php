@@ -19,6 +19,13 @@ namespace mod_capquiz;
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function question_attempt_async(capquiz $capquiz, string $action, int $attemptid) {
     $user = $capquiz->user();
     $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);

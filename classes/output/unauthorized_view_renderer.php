@@ -18,6 +18,12 @@ namespace mod_capquiz\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class unauthorized_view_renderer {
     private $renderer;
 

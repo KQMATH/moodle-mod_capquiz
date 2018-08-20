@@ -2,6 +2,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 $string['pluginname'] = 'CAPQuiz';
 $string['modulename'] = 'CAPQuiz';
 $string['modulenameplural'] = 'CAPQuizzes';
@@ -101,7 +108,7 @@ $string['publish_explanation'] =
     "<p>Students can answer questions once the quiz has been published. " .
     "After this point you can still modify your question list and assign different rating to questions. " .
     "However, modifying the default student rating will not influence rating of students that has already entered the quiz, but will influence the initial rating of students that has yet to enter the quiz. </p>" .
-    "<p>Once CAPQuiz has been published, it can not be reverted and will be visible students.</p>";
+    "<p>Once CAPQuiz has been published, it can not be reverted and will be visible to students.</p>";
 
 $string['template_explanation'] =
     "<p>A template is a read-only copy of a question list. " .

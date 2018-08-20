@@ -24,6 +24,12 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class capquiz_matchmaking_strategy_loader {
 
     private $capquiz;
@@ -77,8 +83,7 @@ class capquiz_matchmaking_strategy_loader {
             $selector->configure($candidate_configuration);
             if ($configuration = $selector->configuration()) {
                 $db_entry->configuration = $this->serialize($configuration);
-            }
-            else {
+            } else {
                 $db_entry->configuration = '';
             }
             $this->update_configuration($db_entry);
@@ -92,16 +97,14 @@ class capquiz_matchmaking_strategy_loader {
         $db_entry->capquiz_id = $this->capquiz->id();
         if ($default_configuration = $selector->default_configuration()) {
             $db_entry->configuration = $this->serialize($default_configuration);
-        }
-        else {
+        } else {
             $db_entry->configuration = '';
         }
         global $DB;
         if ($this->db_entry) {
             $db_entry->id = $this->db_entry->id;
             $this->update_configuration($db_entry);
-        }
-        else {
+        } else {
             $DB->insert_record(database_meta::$table_capquiz_question_selection, $db_entry);
             $this->set_configuration($db_entry);
         }
@@ -129,8 +132,7 @@ class capquiz_matchmaking_strategy_loader {
         $this->db_entry = $database_entry;
         if ($configuration = $this->deserialize($database_entry->configuration)) {
             $this->configuration = $configuration;
-        }
-        else {
+        } else {
             $this->configuration = null;
         }
     }

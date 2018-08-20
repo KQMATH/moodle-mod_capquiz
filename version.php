@@ -16,7 +16,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018081508;
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$plugin->version = 2018081509;
 $plugin->requires = 2016052304;
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';

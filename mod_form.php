@@ -18,6 +18,13 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 class mod_capquiz_mod_form extends moodleform_mod {
 
     function definition() {

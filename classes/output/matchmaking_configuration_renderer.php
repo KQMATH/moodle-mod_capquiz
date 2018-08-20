@@ -19,13 +19,19 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_matchmaking_strategy_registry;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\create_question_list_form;
+use mod_capquiz\form\view\question_list_create_form;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
+/**
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class matchmaking_configuration_renderer {
     private $capquiz;
     private $renderer;
