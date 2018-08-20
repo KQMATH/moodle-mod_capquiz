@@ -28,36 +28,39 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class choose_rating_system_form extends \moodleform {
+class capquiz_configuration_form extends \moodleform {
     private $capquiz;
 
     public function __construct(capquiz $capquiz, \moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
+
     }
 
     public function definition() {
         $form = $this->_form;
-        $loader = $this->capquiz->rating_system_loader();
-        $registry = $this->capquiz->rating_system_registry();
-        $index = 0;
-        $selected_index = -1;
-        $radioarray = [];
-        foreach ($registry->rating_systems() as $rating_system) {
-            if ($loader->current_rating_system_name() === $rating_system) {
-                $selected_index = $index;
-            }
-            $radioarray[] = $form->createElement('radio', 'rating_system', '', $rating_system, $index++, [$rating_system]);
-        }
-        $form->addGroup($radioarray, 'radioar', '', '</br>', false);
+
+        $form->addElement('text', 'name', get_string('name', 'capquiz'));
+        $form->setType('name', PARAM_TEXT);
+        $form->setDefault('name', $this->capquiz->name());
+        $form->addRule('name', get_string('name_required', 'capquiz'), 'required', null, 'client');
+
+        $form->addElement('text', 'default_user_rating', get_string('default_user_rating', 'capquiz'));
+        $form->setType('default_user_rating', PARAM_INT);
+        $form->setDefault('default_user_rating', $this->capquiz->default_user_rating());
+        $form->addRule('default_user_rating', get_string('default_user_rating_required', 'capquiz'), 'required', null, 'client');
         $this->add_action_buttons(false, 'submit');
-        if ($selected_index > -1) {
-            $form->setDefault('rating_system', $selected_index);
-        }
     }
 
     public function validations($data, $files) {
-        return [];
+        $validation_errors = [];
+        if (empty($data['name']))
+            $validation_errors['name'] = get_string('name_required', 'capquiz');
+        if (empty($data['description']))
+            $validation_errors['description'] = get_string('description_required', 'capquiz');
+        if (empty($data['default_user_rating']))
+            $validation_errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
+        return $validation_errors;
     }
 
 }

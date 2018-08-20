@@ -17,9 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_matchmaking_strategy_registry;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\question_list_create_form;
 
 defined('MOODLE_INTERNAL') || die();
 

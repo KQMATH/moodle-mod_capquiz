@@ -18,7 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\configure_badge_rating_form;
+use mod_capquiz\form\view\badge_rating_configuration_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,7 +44,7 @@ class badge_rating_configuration_renderer {
         global $PAGE;
         $url = $PAGE->url;
         $question_list = $this->capquiz->question_list();
-        $form = new configure_badge_rating_form($question_list, $url);
+        $form = new badge_rating_configuration_form($question_list, $url);
         if ($form_data = $form->get_data()) {
             $ratings = [
                 $form_data->level_1_rating,
