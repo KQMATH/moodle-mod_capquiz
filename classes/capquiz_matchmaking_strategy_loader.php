@@ -16,11 +16,11 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/capquiz_matchmaking_strategy_registry.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/capquiz_matchmaking_strategy_registry.php');
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/chronologic/chronologic_selector.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/n_closest_selector.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/question_selectors/n_closest/n_closest_configuration_form.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/chronologic/chronologic_selector.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_selector.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_configuration_form.php');
 
 defined('MOODLE_INTERNAL') || die();
 

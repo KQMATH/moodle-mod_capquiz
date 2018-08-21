@@ -45,7 +45,7 @@ class matchmaking_configuration_renderer {
         if ($this->registry->has_strategy()) {
             return $this->render_configuration();
         } else {
-            return '<h3>No selection strategy has been specified</h3>';
+            return '<h3>' . get_string('no_matchmaing_strategy_selected', 'capquiz') . '</h3>';
         }
     }
 

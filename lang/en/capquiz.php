@@ -59,8 +59,11 @@ $string['question_count'] = "Question count";
 $string['create_template'] = 'Make template';
 $string['enrolled_students'] = "Enrolled students";
 $string['configure_capquiz'] = 'Configure CAPQuiz';
+$string['moodlequestionid'] = 'Question Moodle ID';
+$string['capquizquestionid'] = 'Question CAPQuiz ID';
 $string['create_question_list'] = 'Create question list';
 
+$string['field_required'] = 'This field is required';
 $string['description_required'] = 'Description is required.';
 $string['student_k_factor_required'] = 'Student k factor is required.';
 $string['default_user_rating_required'] = 'Default user rating is required.';
@@ -74,6 +77,7 @@ $string['need_to_log_in'] = 'You need to log in';
 $string['no_questions'] = 'No questions';
 $string['no_enrolled_students'] = 'No students are enrolled';
 $string['no_questions_added_to_list'] = 'No questions added to the list';
+$string['no_matchmaking_strategy_selected'] = 'No selection strategy has been specified';
 
 $string['update_rating_explanation'] = '<p>Update ratings by modifying the specified value and press <em>enter</em></p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
@@ -86,9 +90,12 @@ $string['level_rating'] = 'Level {$a} rating';
 $string['level_rating_required'] = 'Rating for level {$a} is required';
 
 $string['user_win_probability'] = 'Desired user win probability';
+$string['user_win_probability_required'] = 'Desired user win probability is required';
 $string['choose_rating_system'] = 'Choose rating system';
 $string['choose_selection_strategy'] = 'Choose selection strategy';
 $string['number_of_questions_to_select'] = 'Number of questions to draw';
+$string['prevent_question_n_times'] = 'Prevent the same question to be used for N attempts';
+$string['number_of_questions_to_select_required'] = 'Number of questions to draw is required';
 
 $string['available_questions'] = 'Available questions';
 

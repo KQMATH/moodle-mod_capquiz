@@ -99,7 +99,7 @@ class capquiz_question_attempt {
             database_meta::$field_answered => true,
             database_meta::$field_reviewed => true
         ];
-        foreach ($DB->get_records(database_meta::$table_capquiz_attempt, $criteria, database_meta::$field_time_reviewed) as $entry) {
+        foreach ($DB->get_records(database_meta::$table_capquiz_attempt, $criteria) as $entry) {
             array_push($records, new capquiz_question_attempt($capquiz->question_usage(), $entry));
         }
         return $records;

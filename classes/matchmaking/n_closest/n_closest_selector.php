@@ -29,6 +29,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     private $capquiz;
     private $user_win_probability;
     private $number_of_questions_to_select;
+    private $prevent_same_question_for_turns;
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
@@ -42,10 +43,14 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
             $this->number_of_questions_to_select = $number_of_questions_to_select;
         }
+        if ($prevent_same_question_for_turns = $configuration->prevent_same_question_for_turns) {
+            $this->prevent_same_question_for_turns = $prevent_same_question_for_turns;
+        }
     }
 
     public function configuration() {
         $config = new \stdClass;
+        $config->prevent_same_question_for_turns = $this->prevent_same_question_for_turns;
         $config->user_win_probability = $this->user_win_probability;
         $config->number_of_questions_to_select = $this->number_of_questions_to_select;
         return $config;
@@ -54,12 +59,24 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     public function default_configuration() {
         $config = new \stdClass;
         $config->user_win_probability = 0.75;
+        $config->prevent_same_question_for_turns = 0;
         $config->number_of_questions_to_select = 10;
         return $config;
     }
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
-        $candidate_questions = $this->find_questions_closest_to_rating($user);
+        while ($this->prevent_same_question_for_turns > 0) {
+            if ($question = $this->draw_question($user, $question_list, $inactive_capquiz_attempts)) {
+                return $question;
+            }
+            $this->prevent_same_question_for_turns--;
+        }
+        return null;
+    }
+
+    private function draw_question(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
+
+        $candidate_questions = $this->find_questions_closest_to_rating($user, $this->determine_excluded_questions($inactive_capquiz_attempts));
         $index = mt_rand(0, count($candidate_questions) - 1);
         if ($question = $candidate_questions[$index]) {
             return $question;
@@ -67,14 +84,18 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return null;
     }
 
-    private function find_questions_closest_to_rating(capquiz_user $user) {
+    private function find_questions_closest_to_rating(capquiz_user $user, array $excluded_questions) {
         global $DB;
         $table = database_meta::$table_capquiz_question;
-        $field = database_meta::$field_question_list_id;
+        $field_list_id = database_meta::$field_question_list_id;
+        $field_question_id = database_meta::$field_id;
         $ideal_question_rating = $this->ideal_question_rating($user);
         $rating_field = database_meta::$field_rating;
         $question_list_id = $this->capquiz->question_list()->id();
-        $sql = "SELECT * FROM {" . $table . "} WHERE $field=$question_list_id";
+        $sql = "SELECT * FROM {" . $table . "} WHERE $field_list_id=$question_list_id";
+        foreach ($excluded_questions as $question_id) {
+            $sql .= " AND $field_question_id <> $question_id";
+        }
         $sql .= " ORDER BY ABS($ideal_question_rating - $rating_field) LIMIT $this->number_of_questions_to_select";
         $sql .= ";";
         $questions = [];
@@ -86,5 +107,21 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
 
     private function ideal_question_rating(capquiz_user $user) {
         return 400.0 * log((1.0 / $this->user_win_probability) - 1.0, 10.0) + $user->rating();
+    }
+
+    private function determine_excluded_questions(array $inactive_attempts) {
+        $reverse = array_reverse($inactive_attempts, true);
+        $it = new \ArrayIterator($reverse);
+        $excluded = [];
+        for ($i = 0; $i < $this->prevent_same_question_for_turns; $i++) {
+            if (!$it->valid()) {
+                break;
+            }
+            $key = $it->current();
+            $excluded[] = $key->question_id();
+            $it->next();
+        }
+        $excluded = array_unique($excluded);
+        return $excluded;
     }
 }
