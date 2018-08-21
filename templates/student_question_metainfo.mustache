@@ -1,10 +1,50 @@
 {{#metainfo}}
-    {{#question}}
-        {{#str}}capquizquestionid, capquiz{{/str}}: {{ capquiz_id }}</br>
-        {{#str}}moodlequestionid, capquiz{{/str}}: {{ moodle_id }}</br>
-        {{#str}}questionrating, capquiz{{/str}}: {{ rating }}</br>
-    {{/question}}
-    {{#student}}
-        {{#str}}yourrating, capquiz{{/str}}: {{ rating }}
-    {{/student}}
+    <table class="capquiz-attempt-metainfo" style="width:100%;">
+        <tr>
+            <td>
+                {{#rating}}
+                    <table>
+                        <tr>
+                            <td>
+                                {{#str}}yourrating, capquiz{{/str}}:
+                            </td>
+                            <td>
+                                {{ student }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{#str}}questionrating, capquiz{{/str}}:
+                            </td>
+                            <td>
+                                {{ question }}
+                            </td>
+                        </tr>
+                    </table>
+                {{/rating}}
+            </td>
+            <td>
+                {{#question}}
+                    <table>
+                        <tr>
+                            <td>
+                                {{#str}}capquizid, capquiz{{/str}}:
+                            </td>
+                            <td>
+                                {{ capquiz_id }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{#str}}moodleid, capquiz{{/str}}:
+                            </td>
+                            <td>
+                                {{ moodle_id }}
+                            </td>
+                        </tr>
+                    </table>
+                {{/question}}
+            </td>
+        </tr>
+    </table>
 {{/metainfo}}

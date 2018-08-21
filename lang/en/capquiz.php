@@ -44,6 +44,8 @@ $string['publish'] = "Publish";
 $string['template'] = "Template";
 $string['username'] = "Username";
 $string['lastname'] = "Last name";
+$string['moodleid'] = 'Moodle ID';
+$string['capquizid'] = 'CAPQuiz ID';
 $string['firstname'] = "First name";
 $string['configure'] = 'Configure';
 $string['dashboard'] = 'Dashboard';
@@ -59,8 +61,6 @@ $string['question_count'] = "Question count";
 $string['create_template'] = 'Make template';
 $string['enrolled_students'] = "Enrolled students";
 $string['configure_capquiz'] = 'Configure CAPQuiz';
-$string['moodlequestionid'] = 'Question Moodle ID';
-$string['capquizquestionid'] = 'Question CAPQuiz ID';
 $string['create_question_list'] = 'Create question list';
 
 $string['field_required'] = 'This field is required';

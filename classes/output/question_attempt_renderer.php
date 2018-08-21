@@ -112,13 +112,13 @@ class question_attempt_renderer {
 
         return $this->renderer->render_from_template('capquiz/student_question_metainfo', [
             'metainfo' => [
-                'student' => [
-                    'rating' => $user->rating(),
+                'rating' => [
+                    'student' => $user->rating(),
+                    'question' => $question->rating()
                 ],
                 'question' => [
                     'capquiz_id' => $question->id(),
-                    'moodle_id' => $question->question_id(),
-                    'rating' => $question->rating(),
+                    'moodle_id' => $question->question_id()
                 ]
             ]
         ]);

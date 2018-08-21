@@ -99,18 +99,15 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     }
 
     private function determine_excluded_questions(array $inactive_attempts) {
-        $reverse = array_reverse($inactive_attempts, true);
-        $it = new \ArrayIterator($reverse);
+        $it = new \ArrayIterator(array_reverse($inactive_attempts, true));
         $excluded = [];
         for ($i = 0; $i < $this->prevent_same_question_for_turns; $i++) {
             if (!$it->valid()) {
                 break;
             }
-            $key = $it->current();
-            $excluded[] = $key->question_id();
+            $excluded[] = $it->current()->question_id();
             $it->next();
         }
-        $excluded = array_unique($excluded);
-        return $excluded;
+        return array_unique($excluded);
     }
 }
