@@ -29,6 +29,22 @@
     font-weight: bold;
 }
 
+.capquiz-attempt-metainfo {
+    background: #f7f7f7;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.capquiz-attempt-metainfo tr:first-child {
+    background: #fafafa;
+}
+
+.capquiz-attempt-metainfo tr:first-child td {
+    font-size: small;
+}
+
 .capquiz-tree tr td {
     padding: 8px;
 }
