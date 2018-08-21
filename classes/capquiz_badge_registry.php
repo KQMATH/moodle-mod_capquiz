@@ -51,16 +51,6 @@ class capquiz_badge_registry {
         return $this->levels;
     }
 
-    public function number_of_stars_for_user(capquiz_user $user) {
-        for ($level = 1; $level < 6; $level++) {
-            $badge = $this->badge($level);
-            if ($badge->is_awarded_to($user->moodle_user_id())) {
-                return $level;
-            }
-        }
-        return 0;
-    }
-
     public function has_badge_for_level(int $level) {
         try {
             return $this->badge($level) !== null;
@@ -111,7 +101,7 @@ class capquiz_badge_registry {
         $moodle_badge_db_entry->issuercontact = '';
         $moodle_badge_db_entry->expiredate = null;
         $moodle_badge_db_entry->expireperiod = null;
-        $moodle_badge_db_entry->type = BADGE_TYPE_COURSE;
+        $moodle_badge_db_entry->type = BADGE_TYPE_SITE;
         $moodle_badge_db_entry->courseid = $this->capquiz->course_module_id();
         $moodle_badge_db_entry->messagesubject = get_string('messagesubject', 'badges');
         $moodle_badge_db_entry->message = get_string('messagebody', 'badges',

@@ -128,25 +128,17 @@ class capquiz_question_list {
         $this->update_database($db_entry);
     }
 
-    public function rating_in_stars(int $rating) {
+    public function user_level(capquiz_user $user) {
         $stars = 0;
         for ($level = 1; $level < 6; $level++) {
-            if ($rating >= $this->level_rating($level)) {
+            if ($user->rating() >= $this->level_rating($level)) {
                 $stars++;
             }
         }
         return $stars;
     }
 
-    public function stars_as_array(int $stars) {
-        $result = [];
-        for ($star = 1; $star < 6; $star++) {
-            $result[] = $stars >= $star;
-        }
-        return $result;
-    }
-
-    public function next_star_percent(int $rating) {
+    public function next_level_percent(int $rating) {
         $goal = 0;
         for ($level = 1; $level < 6; $level++) {
             $goal = $this->level_rating($level);

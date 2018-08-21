@@ -18,7 +18,6 @@ namespace mod_capquiz;
 
 require_once($CFG->libdir . '/questionlib.php');
 
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_badge_registry.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
 
@@ -124,15 +123,9 @@ class capquiz {
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
-            $this->create_badges();
             return true;
         }
         return false;
-    }
-
-    private function create_badges() {
-        $registry = new capquiz_badge_registry($this);
-        $registry->create_badges();
     }
 
     public function publish() {

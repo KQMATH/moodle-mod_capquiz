@@ -64,7 +64,7 @@ class capquiz_question_engine {
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $rating_system->update_user_rating($user, $question, 1);
-            $this->maybe_award_badge($user);
+            $this->set_new_highest_level_if_attained($user);
         } else {
             $rating_system->update_user_rating($user, $question, 0);
         }
@@ -73,14 +73,15 @@ class capquiz_question_engine {
         }
     }
 
-    private function maybe_award_badge(capquiz_user $user) {
+    private function set_new_highest_level_if_attained(capquiz_user $user) {
         $list = $this->capquiz->question_list();
-        $badge_registry = new capquiz_badge_registry($this->capquiz);
-        for ($level = $badge_registry->number_of_levels(); $level > 0; $level--) {
+        for ($level = $list->level_count(); $level > 0; $level--) {
             $required = $list->level_rating($level);
             if ($user->rating() >= $required) {
-                $badge_registry->award($user, $level);
-                break;
+                if ($user->highest_level() < $level) {
+                    $user->set_highest_level($level);
+                    break;
+                }
             }
         }
     }
