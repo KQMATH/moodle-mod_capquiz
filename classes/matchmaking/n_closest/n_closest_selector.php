@@ -65,17 +65,6 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     }
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
-        while ($this->prevent_same_question_for_turns > 0) {
-            if ($question = $this->draw_question($user, $question_list, $inactive_capquiz_attempts)) {
-                return $question;
-            }
-            $this->prevent_same_question_for_turns--;
-        }
-        return null;
-    }
-
-    private function draw_question(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
-
         $candidate_questions = $this->find_questions_closest_to_rating($user, $this->determine_excluded_questions($inactive_capquiz_attempts));
         $index = mt_rand(0, count($candidate_questions) - 1);
         if ($question = $candidate_questions[$index]) {
