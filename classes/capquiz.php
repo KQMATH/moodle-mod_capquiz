@@ -123,6 +123,7 @@ class capquiz {
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
+
             return true;
         }
         return false;
