@@ -116,7 +116,8 @@ class question_attempt_renderer {
                     'rating' => $user->rating(),
                 ],
                 'question' => [
-                    'id' => $question->id(),
+                    'capquiz_id' => $question->id(),
+                    'moodle_id' => $question->question_id(),
                     'rating' => $question->rating(),
                 ]
             ]
