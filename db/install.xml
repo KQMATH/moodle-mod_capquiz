@@ -67,6 +67,7 @@
                 <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
+                <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest level / number of stars attained by this user"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -91,6 +92,7 @@
                 <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
+        <!--
         <TABLE NAME="capquiz_badge" COMMENT="">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
@@ -104,6 +106,7 @@
                 <KEY NAME="badge_id" TYPE="foreign" FIELDS="badge_id" REFTABLE="badge" REFFIELDS="id"/>
             </KEYS>
         </TABLE>
+        -->
         <TABLE NAME="capquiz_question_selection" COMMENT="">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

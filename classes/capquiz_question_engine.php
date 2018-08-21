@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_question_engine {
-
     private $capquiz;
     private $question_usage;
     private $matchmaking_loader;
@@ -65,7 +64,7 @@ class capquiz_question_engine {
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $rating_system->update_user_rating($user, $question, 1);
-            $this->maybe_award_badge($user);
+            $this->set_new_highest_level_if_attained($user);
         } else {
             $rating_system->update_user_rating($user, $question, 0);
         }
@@ -74,27 +73,15 @@ class capquiz_question_engine {
         }
     }
 
-    /**
-     * @param capquiz_user $user
-     */
-    private function maybe_award_badge(capquiz_user $user) {
-        global $DB;
-        $capquizid = $user->capquiz_id();
-        try {
-            $list = $DB->get_record(database_meta::$table_capquiz_question_list, [database_meta::$field_id => $this->capquiz->question_list_id()]);
-            if (!$list) {
-                return;
-            }
-        } catch (\dml_exception $exception) {
-            return;
-        }
-        $list = new capquiz_question_list($list, $this->capquiz);
-        $badge = new capquiz_badge(0, $capquizid);
-        for ($level = 5; $level > 0; $level--) {
+    private function set_new_highest_level_if_attained(capquiz_user $user) {
+        $list = $this->capquiz->question_list();
+        for ($level = $list->level_count(); $level > 0; $level--) {
             $required = $list->level_rating($level);
             if ($user->rating() >= $required) {
-                $badge->award($user->moodle_user_id(), $level);
-                break;
+                if ($user->highest_level() < $level) {
+                    $user->set_highest_level($level);
+                    break;
+                }
             }
         }
     }

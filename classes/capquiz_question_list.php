@@ -128,25 +128,17 @@ class capquiz_question_list {
         $this->update_database($db_entry);
     }
 
-    public function rating_in_stars(int $rating) {
+    public function user_level(capquiz_user $user) {
         $stars = 0;
         for ($level = 1; $level < 6; $level++) {
-            if ($rating >= $this->level_rating($level)) {
+            if ($user->rating() >= $this->level_rating($level)) {
                 $stars++;
             }
         }
         return $stars;
     }
 
-    public function stars_as_array(int $stars) {
-        $result = [];
-        for ($star = 1; $star < 6; $star++) {
-            $result[] = $stars >= $star;
-        }
-        return $result;
-    }
-
-    public function next_star_percent(int $rating) {
+    public function next_level_percent(int $rating) {
         $goal = 0;
         for ($level = 1; $level < 6; $level++) {
             $goal = $this->level_rating($level);
@@ -234,7 +226,7 @@ class capquiz_question_list {
         $question_list_entry->is_template = $insert_as_template ? 1 : 0;
         $transaction = $DB->start_delegated_transaction();
         try {
-            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database::$field_question_list_id => $question_list_id]);
+            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database_meta::$field_question_list_id => $question_list_id]);
             $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list_entry);
             foreach ($questions as $question) {
                 $question->id = null;

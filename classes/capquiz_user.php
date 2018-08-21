@@ -95,6 +95,19 @@ class capquiz_user {
         return $this->db_entry->rating;
     }
 
+    public function highest_level() {
+        return $this->db_entry->highest_level;
+    }
+
+    public function set_highest_level(int $highest_level) {
+        global $DB;
+        $db_entry = $this->db_entry;
+        $db_entry->highest_level = $highest_level;
+        if ($DB->update_record(database_meta::$table_capquiz_user, $db_entry)) {
+            $this->db_entry = $db_entry;
+        }
+    }
+
     public function set_rating(float $rating) {
         global $DB;
         $db_entry = $this->db_entry;

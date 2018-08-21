@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_question_list;
 use mod_capquiz\capquiz_user;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question;
@@ -82,14 +83,12 @@ class question_attempt_renderer {
 
     private function render_progress(capquiz_user $user) {
         $questionlist = $this->capquiz->question_list();
-        $stars = $questionlist->rating_in_stars($user->rating());
-        $percent = $questionlist->next_star_percent($user->rating());
-
+        $percent = $questionlist->next_level_percent($user->rating());
         return $this->renderer->render_from_template('capquiz/student_progress', [
             'progress' => [
                 'student' => [
                     'percent' => $percent,
-                    'stars' => $questionlist->stars_as_array($stars)
+                    'stars' => $this->user_star_progress($user, $questionlist)
                 ]
             ]
         ]);
@@ -122,6 +121,14 @@ class question_attempt_renderer {
                 ]
             ]
         ]);
+    }
+
+    private function user_star_progress(capquiz_user $user, capquiz_question_list $list) {
+        $result = [];
+        for ($star = 1; $star < $list->level_count() + 1; $star++) {
+            $result[] = $user->highest_level() >= $star;
+        }
+        return $result;
     }
 
     private function review_display_options() {
