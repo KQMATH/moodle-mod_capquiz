@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2018081514;
-$plugin->requires = 2016052304;
+$plugin->version = 2018082100.00;
+$plugin->requires = 2018081700.00;
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';
