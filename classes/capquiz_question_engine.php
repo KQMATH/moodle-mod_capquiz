@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_question_engine {
-
     private $capquiz;
     private $question_usage;
     private $matchmaking_loader;
@@ -74,26 +73,13 @@ class capquiz_question_engine {
         }
     }
 
-    /**
-     * @param capquiz_user $user
-     */
     private function maybe_award_badge(capquiz_user $user) {
-        global $DB;
-        $capquizid = $user->capquiz_id();
-        try {
-            $list = $DB->get_record(database_meta::$table_capquiz_question_list, [database_meta::$field_id => $this->capquiz->question_list_id()]);
-            if (!$list) {
-                return;
-            }
-        } catch (\dml_exception $exception) {
-            return;
-        }
-        $list = new capquiz_question_list($list, $this->capquiz);
-        $badge = new capquiz_badge(0, $capquizid);
-        for ($level = 5; $level > 0; $level--) {
+        $list = $this->capquiz->question_list();
+        $badge_registry = new capquiz_badge_registry($this->capquiz);
+        for ($level = $badge_registry->number_of_levels(); $level > 0; $level--) {
             $required = $list->level_rating($level);
             if ($user->rating() >= $required) {
-                $badge->award($user->moodle_user_id(), $level);
+                $badge_registry->award($user, $level);
                 break;
             }
         }

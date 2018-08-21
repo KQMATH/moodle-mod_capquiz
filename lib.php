@@ -53,6 +53,7 @@ function capquiz_delete_instance(int $id) {
         $question_usage = $capquiz->question_usage();
         \question_engine::delete_questions_usage_by_activity($question_usage->get_id());
     }
+    return true;
 }
 
 function capquiz_cron() {

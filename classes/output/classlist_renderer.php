@@ -18,7 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_user;
-use mod_capquiz\capquiz_badge;
+use mod_capquiz\capquiz_badge_registry;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,7 +44,7 @@ class classlist_renderer {
     public function render() {
         $users = capquiz_user::list_users($this->capquiz);
         $rows = [];
-        $badge_registry = new capquiz_badge($this->capquiz->course_module_id(), $this->capquiz->id());
+        $badge_registry = new capquiz_badge_registry($this->capquiz);
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
             $rows[] = [
@@ -54,7 +54,7 @@ class classlist_renderer {
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),
                 'rating' => $user->rating(),
-                'stars' => $badge_registry->number_of_stars($user)
+                'stars' => $badge_registry->number_of_stars_for_user($user)
             ];
         }
         $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [

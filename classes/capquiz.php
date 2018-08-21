@@ -18,6 +18,7 @@ namespace mod_capquiz;
 
 require_once($CFG->libdir . '/questionlib.php');
 
+require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_badge_registry.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
 
@@ -130,8 +131,8 @@ class capquiz {
     }
 
     private function create_badges() {
-        $badge = new capquiz_badge($this->course_module()->course, $this->id());
-        $badge->create_badges();
+        $registry = new capquiz_badge_registry($this);
+        $registry->create_badges();
     }
 
     public function publish() {

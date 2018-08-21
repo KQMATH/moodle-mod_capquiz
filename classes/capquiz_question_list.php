@@ -234,7 +234,7 @@ class capquiz_question_list {
         $question_list_entry->is_template = $insert_as_template ? 1 : 0;
         $transaction = $DB->start_delegated_transaction();
         try {
-            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database::$field_question_list_id => $question_list_id]);
+            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database_meta::$field_question_list_id => $question_list_id]);
             $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list_entry);
             foreach ($questions as $question) {
                 $question->id = null;

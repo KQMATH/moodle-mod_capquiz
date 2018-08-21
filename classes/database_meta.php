@@ -36,6 +36,7 @@ class database_meta {
     public static $field_id = 'id';
     public static $field_level = 'level';
     public static $field_user_id = 'user_id';
+    public static $field_badge_id = 'badge_id';
     public static $field_course_id = 'course_id';
     public static $field_attempt_id = 'attempt_id';
     public static $field_capquiz_id = 'capquiz_id';

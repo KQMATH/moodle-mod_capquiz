@@ -78,7 +78,7 @@ $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['update_rating_explanation'] = '<p>Update ratings by modifying the specified value and press <em>enter</em></p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
 
-$string['1_star'] = '1 Star';
+$string['one_star'] = '1 Star';
 $string['level_stars'] = '{$a} Stars';
 $string['earned_first_star'] = 'You earned your first star in this activity!';
 $string['earned_level_star'] = 'You earned {$a} stars in this activity!';
