@@ -54,9 +54,7 @@ class question_list_creator_renderer {
                 $form_data->level_5_rating
             ];
             if ($registry->create_question_list($form_data->title, $form_data->description, $ratings)) {
-                $url = new \moodle_url(capquiz_urls::$url_view);
-                $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
-                redirect($url);
+                redirect(capquiz_urls::create_view_url(capquiz_urls::$url_view));
             }
             header('Location: /');
             exit;

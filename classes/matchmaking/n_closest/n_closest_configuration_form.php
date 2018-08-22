@@ -44,16 +44,19 @@ class n_closest_configuration_form extends \moodleform {
         $form->setType('number_of_questions_to_select', PARAM_INT);
         $form->setDefault('number_of_questions_to_select', $this->configuration->number_of_questions_to_select);
         $form->addRule('number_of_questions_to_select', get_string('number_of_questions_required', 'capquiz'), 'required', null, 'client');
+        $form->addHelpButton('number_of_questions_to_select', 'number_of_questions_to_select', 'capquiz');
 
         $form->addElement('text', 'user_win_probability', get_string('user_win_probability', 'capquiz'));
         $form->setType('user_win_probability', PARAM_FLOAT);
         $form->setDefault('user_win_probability', $this->configuration->user_win_probability);
         $form->addRule('user_win_probability', get_string('user_win_probability_required', 'capquiz'), 'required', null, 'client');
+        $form->addHelpButton('user_win_probability', 'user_win_probability', 'capquiz');
 
         $form->addElement('text', 'prevent_same_question_for_turns', get_string('prevent_question_n_times', 'capquiz'));
         $form->setType('prevent_same_question_for_turns', PARAM_INT);
         $form->setDefault('prevent_same_question_for_turns', $this->configuration->prevent_same_question_for_turns);
         $form->addRule('prevent_same_question_for_turns', get_string('field_required', 'capquiz'), 'required', null, 'client');
+        $form->addHelpButton('prevent_same_question_for_turns', 'prevent_question_n_times', 'capquiz');
 
         $this->add_action_buttons(false, 'submit');
     }

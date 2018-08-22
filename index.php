@@ -25,4 +25,4 @@ require('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$PAGE->set_url(new \moodle_url(capquiz_urls::$url_view));
+$PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$url_view));

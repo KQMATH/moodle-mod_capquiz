@@ -54,9 +54,7 @@ class badge_rating_configuration_renderer {
                 $form_data->level_5_rating
             ];
             $question_list->set_level_ratings($ratings);
-            $url = new \moodle_url(capquiz_urls::$url_view_question_list);
-            $url->param(capquiz_urls::$param_id, $this->capquiz->course_module_id());
-            redirect($url);
+            redirect(capquiz_urls::create_view_url(capquiz_urls::$url_view_question_list));
         }
         return $this->renderer->render_from_template('capquiz/configure_badge_rating', [
             'form' => $form->render()

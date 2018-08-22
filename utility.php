@@ -40,9 +40,7 @@ function redirect_to_url(\moodle_url $url) {
 }
 
 function redirect_to_dashboard(capquiz $capquiz) {
-    $target_url = new \moodle_url(capquiz_urls::$url_view);
-    $target_url->param(capquiz_urls::$param_id, $capquiz->course_module_id());
-    redirect_to_url($target_url);
+    redirect_to_url(capquiz_urls::create_view_url(capquiz_urls::$url_view));
 }
 
 function redirect_to_previous() {
@@ -55,7 +53,5 @@ function set_page_url(capquiz $capquiz, string $url) {
     $PAGE->set_context($capquiz->context());
     $PAGE->set_cm($capquiz->course_module());
     $PAGE->set_pagelayout('incourse');
-    $url = new \moodle_url($url);
-    $url->param(capquiz_urls::$param_id, $capquiz->course_module_id());
-    $PAGE->set_url($url);
+    $PAGE->set_url(capquiz_urls::create_view_url($url));
 }

@@ -47,12 +47,15 @@ class elo_rating_system_form extends \moodleform {
         $form->addRule('student_k_factor', get_string('student_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
         $form->addRule('student_k_factor', get_string('k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
         $form->setDefault('student_k_factor', $this->configuration->student_k_factor);
+        $form->addHelpButton('student_k_factor', 'student_k_factor', 'capquiz');
+
 
         $form->addElement('text', 'question_k_factor', get_string('question_k_factor', 'capquiz'));
         $form->setType('question_k_factor', PARAM_INT);
         $form->addRule('question_k_factor', get_string('question_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
         $form->addRule('question_k_factor', get_string('k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
         $form->setDefault('question_k_factor', $this->configuration->question_k_factor);
+        $form->addHelpButton('question_k_factor', 'question_k_factor', 'capquiz');
 
         $this->add_action_buttons(false, 'submit');
     }

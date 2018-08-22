@@ -91,11 +91,14 @@ $string['level_rating_required'] = 'Rating for level {$a} is required';
 
 $string['user_win_probability'] = 'Desired user win probability';
 $string['user_win_probability_required'] = 'Desired user win probability is required';
+$string['user_win_probability_help'] = 'This specifies the probability of a student answering the question correctly. A probability of 0.5 will make the matchmaking engine try to find a question with a similar rating as the student.';
 $string['choose_rating_system'] = 'Choose rating system';
 $string['choose_selection_strategy'] = 'Choose selection strategy';
 $string['number_of_questions_to_select'] = 'Number of questions to draw';
-$string['prevent_question_n_times'] = 'Prevent the same question to be used for N attempts';
+$string['number_of_questions_to_select_help'] = 'This indicates how many questions are to be drawn from the question bank before matchmaking. A match is made by selecting a question randomly from these.';
 $string['number_of_questions_to_select_required'] = 'Number of questions to draw is required';
+$string['prevent_question_n_times'] = 'Prevent the same question to be used for N attempts';
+$string['prevent_question_n_times_help'] = 'This will prevent a student from being matched with the same question for the specified number of attempts.';
 
 $string['available_questions'] = 'Available questions';
 
@@ -111,6 +114,8 @@ $string['default_rating_numeric_rule'] = 'Default rating must be a numeric value
 
 $string['student_k_factor'] = 'Student k-factor';
 $string['question_k_factor'] = 'Question k-factor';
+$string['student_k_factor_help'] = 'A higher student k-factor will make ratings change faster. If a student answers correctly, the student will receive a higher rating gain and similarly will lose more rating if the question was answered correctly';
+$string['question_k_factor_help'] = "A higher question k-factor will make question ratings change faster. Question ratings will only change if one question is answered correctly and the other question is answered incorrectly, in no particular order. The question that is answered incorrectly will gain rating, since it 'won' over the question that was answered correctly.";
 
 $string['student_k_factor_specified_rule'] = 'Student k-factor must be specified';
 $string['question_k_factor_specified_rule'] = 'Question k-factor must be specified';

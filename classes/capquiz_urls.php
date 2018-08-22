@@ -145,8 +145,15 @@ class capquiz_urls {
         return $url;
     }
 
-    private static function create_view_url(string $url) {
-        $url = new \moodle_url($url);
+    public static function create_page_url(string $relative_url) {
+        global $CFG;
+        $url = new \moodle_url($CFG->wwwroot . $relative_url);
+        return $url;
+    }
+
+    public static function create_view_url(string $relative_url) {
+        global $CFG;
+        $url = new \moodle_url($CFG->wwwroot . $relative_url);
         $url->param(capquiz_urls::$param_id, required_param(capquiz_urls::$param_id, PARAM_INT));
         return $url;
     }

@@ -41,7 +41,7 @@ function assign_question_list(capquiz $capquiz) {
     }
 }
 
-function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating = 600) {
+function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating) {
     global $DB;
     $rated_question = new \stdClass();
     $rated_question->question_list_id = $list->id();
