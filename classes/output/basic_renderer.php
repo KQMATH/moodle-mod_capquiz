@@ -61,7 +61,7 @@ class basic_renderer {
             'button' => [
                 'primary' => true,
                 'method' => $httpmethod,
-                'url' => $url->out_as_local_url(false),
+                'url' => $url->out(false),
                 'label' => $label,
                 'params' => $paramobjects
             ]
