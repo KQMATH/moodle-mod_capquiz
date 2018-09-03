@@ -59,9 +59,12 @@ function remove_capquiz_question(int $question_id, int $question_list_id) {
 function add_question_to_list(capquiz $capquiz) {
     if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
         if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT)) {
-            create_capquiz_question($question_id, capquiz_question_list::load_question_list($question_list_id), $capquiz->default_question_rating());
+           create_capquiz_question($question_id,
+              capquiz_question_list::load_question_list($question_list_id),
+              $capquiz->default_question_rating());
         } else {
-            create_capquiz_question($question_id, $capquiz->question_list());
+           create_capquiz_question($question_id, $capquiz->question_list(),
+              $capquiz->default_question_rating());
         }
     }
     redirect_to_previous();
