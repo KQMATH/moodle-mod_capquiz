@@ -61,12 +61,16 @@ function add_question_to_list(capquiz $capquiz) {
 		capquiz_urls::$param_question_id, 0, PARAM_INT)) {
        if ($question_list_id = optional_param(
 		capquiz_urls::$param_question_list_id, 0, PARAM_INT)) {
+		// Does this case ever occur?  When and why?
            create_capquiz_question($question_id,
               capquiz_question_list::load_question_list($question_list_id),
-              $capquiz->default_question_rating());
+              $capquiz->question_list()->default_question_rating());
         } else {
            create_capquiz_question($question_id, $capquiz->question_list(),
-              $capquiz->default_question_rating());
+              $capquiz->question_list()->default_question_rating());
+	   // The third argument (both cases) could be ommitted, with
+	   // the default rating being looked up in the callee.
+	   // TODO: Review. 
         }
     }
     redirect_to_previous();
