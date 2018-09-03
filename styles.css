@@ -80,11 +80,12 @@
 }
 
 .capquiz-quiz-progress-unfill {
-    background: #5599ff;
+    background: red ;
     height: 24px;
     text-align: right ;
+    float: right ;
     padding-left: 8px;
-    color: red ;
+    color: #e0e0e0;
 }
 
 .capquiz-response-form .info {
