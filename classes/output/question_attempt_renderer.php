@@ -100,7 +100,7 @@ class question_attempt_renderer {
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
-                'url' => capquiz_urls::response_submit_url($attempt)->out_as_local_url(false),
+                'url' => capquiz_urls::response_submit_url($attempt)->out(false),
                 'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
                 'slots' => ''
             ]

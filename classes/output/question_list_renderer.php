@@ -58,11 +58,11 @@ class question_list_renderer {
                 'index' => $i + 1,
                 'name' => $question->name(),
                 'rating' => $question->rating(),
-                'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out_as_local_url(false),
+                'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out(false),
                 'button' => [
                     'primary' => true,
                     'method' => 'post',
-                    'url' => capquiz_urls::remove_question_from_list_url($question->id())->out_as_local_url(false),
+                    'url' => capquiz_urls::remove_question_from_list_url($question->id())->out(false),
                     'label' => get_string('remove', 'capquiz')
                 ]
             ];
