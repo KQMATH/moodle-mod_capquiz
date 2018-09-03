@@ -84,12 +84,12 @@ class question_attempt_renderer {
     private function render_progress(capquiz_user $user) {
         $questionlist = $this->capquiz->question_list();
         $percent = $questionlist->next_level_percent($user->rating());
-        if ( gmp_sign( $percent ) >= 0 ) {
+        if ( $percent >= 0 ) {
            $progressclass = "capquiz-quiz-progress-fill" ;
         } else {
            $progressclass = "capquiz-quiz-progress-unfill" ;
+           $percent = 0 - $percent ;
         }
-        $percent = gmp_abs( $percent ) ;
         return $this->renderer->render_from_template('capquiz/student_progress', [
             'progress' => [
                 'student' => [
