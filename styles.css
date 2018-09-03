@@ -79,6 +79,14 @@
     color: #e0e0e0;
 }
 
+.capquiz-quiz-progress-unfill {
+    background: #5599ff;
+    height: 24px;
+    text-align: right ;
+    padding-left: 8px;
+    color: red ;
+}
+
 .capquiz-response-form .info {
     display: none;
 }
