@@ -68,9 +68,9 @@ function add_question_to_list(capquiz $capquiz) {
         } else {
            create_capquiz_question($question_id, $capquiz->question_list(),
               $capquiz->question_list()->default_question_rating());
-	   // The third argument (both cases) could be ommitted, with
-	   // the default rating being looked up in the callee.
-	   // TODO: Review. 
+	   // TODO: Review
+	   // The third argument (both cases) looks awful. 
+	   // Can it be simplified?
         }
     }
     redirect_to_previous();
