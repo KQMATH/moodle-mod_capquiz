@@ -43,7 +43,7 @@ class n_closest_configuration_form extends \moodleform {
         $form->addElement('text', 'number_of_questions_to_select', get_string('number_of_questions_to_select', 'capquiz'));
         $form->setType('number_of_questions_to_select', PARAM_INT);
         $form->setDefault('number_of_questions_to_select', $this->configuration->number_of_questions_to_select);
-        $form->addRule('number_of_questions_to_select', get_string('number_of_questions_required', 'capquiz'), 'required', null, 'client');
+        $form->addRule('number_of_questions_to_select', get_string('number_of_questions_to_select_required', 'capquiz'), 'required', null, 'client');
         $form->addHelpButton('number_of_questions_to_select', 'number_of_questions_to_select', 'capquiz');
 
         $form->addElement('text', 'user_win_probability', get_string('user_win_probability', 'capquiz'));
@@ -67,7 +67,7 @@ class n_closest_configuration_form extends \moodleform {
             $validation_errors['user_win_probability'] = get_string('user_win_probability_required', 'capquiz');
         }
         if (empty($data['number_of_questions'])) {
-            $validation_errors['number_of_questions'] = get_string('number_of_questions_required', 'capquiz');
+            $validation_errors['number_of_questions'] = get_string('number_of_questions_to_select_required', 'capquiz');
         }
         if (empty($data['prevent_same_question_for_turns'])) {
             $validation_errors['prevent_same_question_for_turns'] = get_string('field_required', 'capquiz');
