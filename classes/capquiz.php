@@ -203,13 +203,6 @@ class capquiz {
         return $this->capquiz_db_entry->default_user_rating;
     }
 
-    public function default_question_rating() {
-	    // It seems that the attribute has been moved to the 
-	    // capquiz_question_list table, so that the function always
-	    // returns null
-        return $this->capquiz_db_entry->default_question_rating;
-    }
-
     public function context() {
         return $this->context;
     }
