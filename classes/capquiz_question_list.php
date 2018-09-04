@@ -77,6 +77,10 @@ class capquiz_question_list {
         return $this->db_entry->capquiz_origin_id;
     }
 
+    public function default_question_rating() {
+        return $this->db_entry->default_question_rating;
+    }
+
     public function title() {
         return $this->db_entry->title;
     }
