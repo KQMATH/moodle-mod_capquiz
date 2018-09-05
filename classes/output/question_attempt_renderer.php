@@ -84,22 +84,29 @@ class question_attempt_renderer {
     private function render_progress(capquiz_user $user) {
         $questionlist = $this->capquiz->question_list();
         $percent = $questionlist->next_level_percent($user->rating());
-	$abspercent = $percent ;
         if ( $percent >= 0 ) {
            $progressclass = "capquiz-quiz-progress-fill" ;
-        } else {
-           $progressclass = "capquiz-quiz-progress-unfill" ;
-           $abspercent = 0 - $abspercent ;
-        }
-        return $this->renderer->render_from_template('capquiz/student_progress', [
-            'progress' => [
+           $progress = [
                 'student' => [
                     'percent' => $percent,
-                    'abspercent' => $abspercent,
+                    'abspercent' => $percent,
                     'progressclass' => $progressclass,
                     'stars' => $this->user_star_progress($user, $questionlist)
                 ]
-            ]
+            ] ;
+        } else {
+           $progressclass = "capquiz-quiz-progress-unfill" ;
+           $progress = [
+                'student' => [
+                    'percent' => $percent,
+                    'abspercent' => -$percent,
+                    'progressclass' => $progressclass,
+                    'stars' => $this->user_star_progress($user, $questionlist)
+                ]
+            ] ;
+        }
+        return $this->renderer->render_from_template('capquiz/student_progress', [
+	    'progress' => $progress ;
         ]);
     }
 
