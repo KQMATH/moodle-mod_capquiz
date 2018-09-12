@@ -203,10 +203,6 @@ class capquiz {
         return $this->capquiz_db_entry->default_user_rating;
     }
 
-    public function default_question_rating() {
-        return $this->capquiz_db_entry->default_question_rating;
-    }
-
     public function context() {
         return $this->context;
     }

@@ -41,7 +41,7 @@ function capquiz_add_instance(stdClass $capquiz_mod_form_data) {
     return $DB->insert_record('capquiz', $capquiz_mod_form_data);
 }
 
-function capquiz_update_instance(mod_capquiz\capquiz $capquiz) {
+function capquiz_update_instance(stdClass $capquiz) {
     global $DB;
     $capquiz->id = $capquiz->instance;
     $DB->update_record('capquiz', $capquiz);
