@@ -41,6 +41,13 @@ function assign_question_list(capquiz $capquiz) {
     }
 }
 
+function validate_matchmaking_and_rating_systems(capquiz $capquiz) {
+    if (!$capquiz->rating_system_loader()->has_rating_system())
+        $capquiz->rating_system_loader()->set_default_rating_system();
+    if (!$capquiz->selection_strategy_loader()->has_strategy())
+        $capquiz->selection_strategy_loader()->set_default_strategy();
+}
+
 function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating) {
     global $DB;
     $rated_question = new \stdClass();
@@ -59,7 +66,7 @@ function remove_capquiz_question(int $question_id, int $question_list_id) {
 function add_question_to_list(capquiz $capquiz) {
     $question_list = $capquiz->question_list();
     if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
-           create_capquiz_question($question_id, $question_list, $question_list->default_question_rating());
+        create_capquiz_question($question_id, $question_list, $question_list->default_question_rating());
     }
     redirect_to_previous();
 }
@@ -115,6 +122,7 @@ function determine_action(capquiz $capquiz, string $action_type) {
         redirect_to($capquiz);
     } else if ($action_type == capquiz_actions::$set_question_list) {
         assign_question_list($capquiz);
+        validate_matchmaking_and_rating_systems($capquiz);
     } else if ($action_type == capquiz_actions::$add_question_to_list) {
         add_question_to_list($capquiz);
     } else if ($action_type == capquiz_actions::$remove_question_from_list) {

@@ -25,12 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function capquiz($capquiz) {
-    global $DB;
-    $capquiz->id = $DB->insert_record('capquiz', $capquiz);
-    return $capquiz->id;
-}
-
 function capquiz_add_instance(stdClass $capquiz_mod_form_data) {
     global $DB;
     $capquiz_mod_form_data->time_modified = time();
@@ -38,7 +32,8 @@ function capquiz_add_instance(stdClass $capquiz_mod_form_data) {
     $capquiz_mod_form_data->published = false;
     $capquiz_mod_form_data->question_list_id = null;
     $capquiz_mod_form_data->question_usage_id = null;
-    return $DB->insert_record('capquiz', $capquiz_mod_form_data);
+    $capquiz_id = $DB->insert_record('capquiz', $capquiz_mod_form_data);
+    return $capquiz_id;
 }
 
 function capquiz_update_instance(stdClass $capquiz) {

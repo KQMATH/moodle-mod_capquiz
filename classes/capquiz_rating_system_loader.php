@@ -88,6 +88,10 @@ class capquiz_rating_system_loader {
         }
     }
 
+    public function set_default_rating_system() {
+        $this->set_rating_system($this->registry->default_rating_system());
+    }
+
     public function set_rating_system(string $rating_system) {
         $system = $this->registry->rating_system($rating_system);
         $db_entry = new \stdClass;
