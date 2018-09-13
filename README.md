@@ -37,7 +37,7 @@ The first prototype was tested by several lecturers, and was well received by st
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
 **Developers:**
-Aleksander Skrede <aleksander.skrede@protonmail.com>,
+Aleksander Skrede <aleksander.skrede@gmail.com>,
 Sebastian S. Gundersen <sebastsg@stud.ntnu.no>,
 André Storhaug <andstorh@stud.ntnu.no>
 
