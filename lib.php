@@ -32,8 +32,7 @@ function capquiz_add_instance(stdClass $capquiz_mod_form_data) {
     $capquiz_mod_form_data->published = false;
     $capquiz_mod_form_data->question_list_id = null;
     $capquiz_mod_form_data->question_usage_id = null;
-    $capquiz_id = $DB->insert_record('capquiz', $capquiz_mod_form_data);
-    return $capquiz_id;
+    return $DB->insert_record('capquiz', $capquiz_mod_form_data);
 }
 
 function capquiz_update_instance(stdClass $capquiz) {
