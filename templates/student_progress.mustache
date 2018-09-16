@@ -12,9 +12,22 @@
                 {{/stars}}
             </div>
             <div class="capquiz-quiz-progress">
-                <div class="capquiz-quiz-progress-fill" style="width:{{ percent }}%">
+                {{#up}}
+                  <div class="capquiz-quiz-progress-fill"
+                     style="width:{{ percent }}%">
+                      <div class="capquiz-quiz-progress-percent">
                     {{ percent }}%
-                </div>
+                      </div>
+                  </div>
+                {{/up}}
+                {{#down}}
+                  <div class="capquiz-quiz-progress-unfill"
+                     style="width:{{ percent }}%">
+                      <div class="capquiz-quiz-progress-percent">
+                          -{{ percent }}%
+                      </div>
+                  </div>
+                {{/down}}
             </div>
         {{/student}}
     </div>

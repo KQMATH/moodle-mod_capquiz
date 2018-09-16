@@ -52,31 +52,70 @@
 .capquiz-quiz-top {
     background: #f7f7f7;
     padding: 8px;
-    margin: 8px 0;
+    margin-bottom: 8px;
     border: 1px solid #e0e0e0;
-    height: 40px;
+    min-height: 44px;
     overflow: hidden;
 }
 
 .capquiz-quiz-stars {
-    height: 32px;
+    height: 26px;
     float: right;
 }
 
 .capquiz-quiz-progress {
     float: left;
     background: #e0e0e0;
-    min-width: 256px;
-    width: 30%;
+    min-width: unset;
+    width: 100%;
+    margin-top: 8px;
     border: 1px solid #bbb;
+    position: relative;
+    height: 26px;
+}
+
+@media (min-width: 576px) {
+    .capquiz-quiz-progress {
+        float: left;
+        background: #e0e0e0;
+        min-width: 256px;
+        width: 30%;
+        margin-top: 0;
+        border: 1px solid #bbb;
+        position: relative;
+        height: 26px;
+    }
 }
 
 .capquiz-quiz-progress-fill {
     background: #5599ff;
-    height: 24px;
     text-align: left;
-    padding-left: 8px;
+    height: 24px;
     color: #e0e0e0;
+    max-width: 100%;
+}
+
+.capquiz-quiz-progress-unfill {
+    background: #d9534f;
+    text-align: right ;
+    float: right ;
+    height: 24px;
+    color: #f8f9fa;
+    max-width: 100%;
+}
+
+.capquiz-quiz-progress-fill .capquiz-quiz-progress-percent {
+    min-width: 254px;
+    padding-left: 8px;
+    position: absolute;
+    left: 0;
+}
+
+.capquiz-quiz-progress-unfill .capquiz-quiz-progress-percent {
+    min-width: 254px;
+    padding-right: 8px;
+    position: absolute;
+    right: 0;
 }
 
 .capquiz-response-form .info {

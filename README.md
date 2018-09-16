@@ -48,4 +48,3 @@ The first prototype was funded in part by
 [Norgesuniversitetet](https://norgesuniversitetet.no/).
 
 The development of CAPQuiz has been funded in part by internal grants from Ålesund University College and NTNU Toppundervisning at [NTNU - Norwegian University of Science and Technology](http://www.ntnu.no).
-
