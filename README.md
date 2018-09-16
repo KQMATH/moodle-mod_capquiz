@@ -39,7 +39,7 @@ The first prototype was tested by several lecturers, and was well received by st
 **Developers:**
 Aleksander Skrede <aleksander.skrede@gmail.com>,
 Sebastian S. Gundersen <sebastsg@stud.ntnu.no>,
-André Storhaug <andstorh@stud.ntnu.no>
+[André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
 
 **Original idea:**
 Siebe Bruno Van Albada <siebe.b.v.albada@ntnu.no>
