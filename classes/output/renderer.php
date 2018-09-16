@@ -124,18 +124,6 @@ class renderer extends \plugin_renderer_base {
         $this->display_view(new question_list_selection_renderer($capquiz, $this));
     }
 
-    public function display_set_selection_strategy_view(capquiz $capquiz) {
-        $view = new matchmaking_strategy_selection_renderer($capquiz, $this);
-        $view->set_redirect_url(capquiz_urls::view_url());
-        $this->display_view($view);
-    }
-
-    public function display_set_rating_system_view(capquiz $capquiz) {
-        $view = new rating_system_selection_renderer($capquiz, $this);
-        $view->set_redirect_url(capquiz_urls::view_url());
-        $this->display_view($view);
-    }
-
     public function display_unauthorized_view() {
         $this->display_view(new unauthorized_view_renderer($this));
     }

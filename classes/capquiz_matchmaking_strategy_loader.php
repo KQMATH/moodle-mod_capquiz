@@ -90,6 +90,10 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    public function set_default_strategy() {
+        $this->set_strategy($this->registry->default_selection_strategy());
+    }
+
     public function set_strategy(string $strategy) {
         $selector = $this->registry->selector($strategy);
         $db_entry = new \stdClass;

@@ -2,7 +2,7 @@
 
 ## What is it?
 
-CAP is short for /Computer Adaptive Practice/, a term coined by [Klinkenberg, Straatemeier, and van der Maas](https://www.sciencedirect.com/science/article/pii/S0360131511000418). Where most LMS quiz systems give the students a fixed sequence of questions regardless of how well the students answer, a CAP system will estimate student ability based on their answers, and try to find questions at the right level of difficulty.
+CAP is short for /Computer Adaptive Practice/, a term coined by [Klinkenberg, Straatemeier, and van der Maas (2011)](https://www.sciencedirect.com/science/article/pii/S0360131511000418). Where most LMS quiz systems give the students a fixed sequence of questions regardless of how well the students answer, a CAP system will estimate student ability based on their answers, and try to find questions at the right level of difficulty.
 
 In CAPQuiz, the proficiency is measured by a rating.  Good answers increase the rating, and bad answers decrease it.  To increase the rating, students need to give good answers more of than bad ones /over time/.  We have used CAPQuiz as a mandatory assignment, where the students have to reach a certain rating in order to be allowed to sit the exam.
 
@@ -37,9 +37,14 @@ The first prototype was tested by several lecturers, and was well received by st
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
 **Developers:**
-Aleksander Skrede <aleksander.skrede@protonmail.com>,
+Aleksander Skrede <aleksander.skrede@gmail.com>,
 Sebastian S. Gundersen <sebastsg@stud.ntnu.no>,
 André Storhaug <andstorh@stud.ntnu.no>
 
 **Original idea:**
 Siebe Bruno Van Albada <siebe.b.v.albada@ntnu.no>
+
+The first prototype was funded in part by
+[Norgesuniversitetet](https://norgesuniversitetet.no/).
+
+The development of CAPQuiz has been funded in part by internal grants from Ålesund University College and NTNU Toppundervisning at [NTNU - Norwegian University of Science and Technology](http://www.ntnu.no).

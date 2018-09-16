@@ -112,6 +112,7 @@ class capquiz {
 
     public function assign_question_list(int $question_list_id) {
         global $DB;
+        $this->validate_matchmaking_and_rating_systems();
         $question_list = capquiz_question_list::load_any($this, $question_list_id);
         if (!$question_list) {
             return false;
@@ -254,5 +255,12 @@ class capquiz {
         $question_usage->set_preferred_behaviour('immediatefeedback');
         \question_engine::save_questions_usage_by_activity($question_usage);
         return $question_usage->get_id();
+    }
+
+    private function validate_matchmaking_and_rating_systems() {
+        if (!$this->rating_system_loader()->has_rating_system())
+            $this->rating_system_loader()->set_default_rating_system();
+        if (!$this->selection_strategy_loader()->has_strategy())
+            $this->selection_strategy_loader()->set_default_strategy();
     }
 }

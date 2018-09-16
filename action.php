@@ -59,7 +59,7 @@ function remove_capquiz_question(int $question_id, int $question_list_id) {
 function add_question_to_list(capquiz $capquiz) {
     $question_list = $capquiz->question_list();
     if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
-           create_capquiz_question($question_id, $question_list, $question_list->default_question_rating());
+        create_capquiz_question($question_id, $question_list, $question_list->default_question_rating());
     }
     redirect_to_previous();
 }
