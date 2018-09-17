@@ -39,6 +39,12 @@ class question_attempt_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->render_question_head_html();
+    }
+
+    private function render_question_head_html() {
+        $attempt = $this->capquiz->question_engine()->attempt_for_user($this->capquiz->user());
+        $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
     }
 
     public function render() {
