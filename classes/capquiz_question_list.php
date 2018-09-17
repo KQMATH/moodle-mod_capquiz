@@ -28,8 +28,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_question_list {
 
+    /** @var \stdClass $db_entry */
     private $db_entry;
+
+    /** @var capquiz_question[] $questions */
     private $questions;
+
+    /** @var capquiz $capquiz */
     private $capquiz;
 
     public function __construct(\stdClass $db_entry, capquiz $capquiz) {

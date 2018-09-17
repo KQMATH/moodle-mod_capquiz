@@ -50,6 +50,10 @@ class question_list_renderer {
     }
 
     private function render_questions(capquiz_question_list $question_list) {
+        global $PAGE;
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [
+            $this->capquiz->course_module_id()
+        ]);
         $rows = [];
         $questions = $question_list->questions();
         for ($i = 0; $i < $question_list->question_count(); $i++) {
@@ -58,6 +62,7 @@ class question_list_renderer {
                 'index' => $i + 1,
                 'name' => $question->name(),
                 'rating' => $question->rating(),
+                'question_id' => $question->id(),
                 'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out(false),
                 'button' => [
                     'primary' => true,
