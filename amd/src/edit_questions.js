@@ -71,10 +71,17 @@ define(['jquery'], $ => {
         });
     }
 
+    function fixTabIndicesForQuestionRatingInputs() {
+        $('.capquiz-question-rating-submit-wrapper button').each((index, object) => {
+            $(object).attr('tabindex', -1);
+        });
+    }
+
     return {
         initialize: (capquizId) => {
             parameters.capquizId = capquizId;
             registerQuestionRatingListeners();
+            fixTabIndicesForQuestionRatingInputs();
         }
     };
 
