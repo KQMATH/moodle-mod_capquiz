@@ -63,8 +63,10 @@ class capquiz_matchmaking_strategy_registry {
     }
 
     public function default_selection_strategy(){
-        //default selection strategy is added first. Modify caquiz_matchmaking_strategy_registry:register_selection_strategies() to change this
-        return reset($this->selection_strategies());
+        // default selection strategy is added first.
+        //Modify caquiz_matchmaking_strategy_registry::register_selection_strategies() to change this.
+        $selection_strategies = $this->selection_strategies();
+        return reset($selection_strategies);
     }
 
     public function selection_strategies() {
