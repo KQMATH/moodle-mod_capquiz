@@ -57,11 +57,11 @@ class capquiz {
         $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
     }
 
+    /**
+     * @throws \coding_exception
+     */
     public static function create() {
-        if ($id = required_param(capquiz_urls::$param_id, PARAM_INT)) {
-            return new capquiz($id);
-        }
-        return null;
+        return self::create_from_id(capquiz_urls::require_course_module_id_param()); // throws if no id/cmid param
     }
 
     public static function create_from_id(int $id) {
@@ -124,7 +124,6 @@ class capquiz {
         $capquiz_entry->question_list_id = $question_list_id;
         if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
             $this->capquiz_db_entry = $capquiz_entry;
-
             return true;
         }
         return false;
@@ -214,6 +213,10 @@ class capquiz {
 
     public function course_module_id() {
         return $this->course_module->id;
+    }
+
+    public function course() {
+        return $this->course_db_entry;
     }
 
     public function require_student_capability() {

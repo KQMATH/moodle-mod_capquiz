@@ -33,42 +33,45 @@ require_once('../../config.php');
 class question_bank_renderer {
     private $capquiz;
     private $renderer;
+    private $pagevars;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
-    public function render() {
-        global $PAGE;
+    public function create_view() {
         $this->set_missing_id_param();
-        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $PAGE->url, false);
+        $baseurl = '/mod/capquiz/edit.php';
+        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $baseurl, true);
+        $this->pagevars = $pagevars;
+        return new question_bank_view($contexts, $url, $this->capquiz->course(), $this->capquiz->course_module());
+    }
+
+    public function render() {
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);
-        $questionview = new question_bank_view(
-            $contexts,
-            capquiz_urls::view_question_list_url(),
-            $this->capquiz->context(),
-            $this->capquiz->course_module()
-        );
+        $questionview = $this->create_view();
         $html = "<h3>" . get_string('available_questions', 'capquiz') . "</h3>";
         $html .= $questionview->render('editq',
             $questionpage,
             $questionsperpage,
-            $pagevars['cat'],
+            $this->pagevars['cat'],
             true,
             true,
             true);
         return $html;
     }
 
+    /**
+     * Solves apparent inconsistency in question_edit_setup()
+     */
     private function set_missing_id_param() {
-
         if (isset($_GET[capquiz_urls::$param_id])) {
-            $_GET['cmid'] = $_GET['id'];
+            $_GET[capquiz_urls::$param_course_module_id] = $_GET[capquiz_urls::$param_id];
         }
         if (isset($_POST[capquiz_urls::$param_id])) {
-            $_POST['cmid'] = $_POST['id'];
+            $_POST[capquiz_urls::$param_course_module_id] = $_POST[capquiz_urls::$param_id];
         }
     }
 }

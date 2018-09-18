@@ -29,14 +29,16 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if ($capquiz = capquiz::create()) {
-    if ($delete_selected = optional_param(capquiz_urls::$param_delete_selected, null, PARAM_TEXT)) {
-        echo "Delete is not implemented";
-        return;
-    } else {
-        $question_page = optional_param(capquiz_urls::$param_question_page, 0, PARAM_INT);
-        redirect_to_url(capquiz_urls::view_question_list_url($question_page));
-    }
+try {
+    $capquiz = capquiz::create();
+    $capquiz->require_instructor_capability();
+    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
+    $question_page = optional_param(capquiz_urls::$param_question_page, 0, PARAM_INT);
+    $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
+    $bankview = $bankrenderer->create_view();
+    $bankview->process_actions();
+    $renderer = $capquiz->renderer();
+    $renderer->display_question_list_view($capquiz);
+} catch (\coding_exception $e) {
+    redirect_to_front_page();
 }
-
-redirect_to_front_page();

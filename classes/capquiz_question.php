@@ -33,10 +33,13 @@ class capquiz_question {
         $this->db_entry = $db_entry;
         $question = $DB->get_record(database_meta::$table_moodle_question, [
             database_meta::$field_id => $db_entry->question_id
-        ], '*', MUST_EXIST);
-        if ($question) {
+        ]);
+        if ($question !== false) {
             $this->db_entry->name = $question->name;
             $this->db_entry->text = $question->questiontext;
+        } else {
+            $this->db_entry->name = 'Missing question';
+            $this->db_entry->text = 'This question is missing.';
         }
     }
 

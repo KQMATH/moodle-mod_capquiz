@@ -25,6 +25,7 @@ namespace mod_capquiz;
 class capquiz_urls {
 
     public static $param_id = 'id';
+    public static $param_course_module_id = 'cmid';
     public static $param_rating = 'rating';
     public static $param_attempt = 'attempt';
     public static $param_target_url = 'target-url';
@@ -39,7 +40,8 @@ class capquiz_urls {
     public static $url_action = '/mod/capquiz/action.php';
     public static $url_view_classlist = '/mod/capquiz/view_classlist.php';
     public static $url_view_configuration = '/mod/capquiz/view_configuration.php';
-    public static $url_view_question_list = '/mod/capquiz/view_question_list.php';
+    // TODO: If Moodle fixes their forms, change this to view_question_list.php
+    public static $url_view_question_list = '/mod/capquiz/edit.php';
     public static $url_view_badge_configuration = '/mod/capquiz/view_badge_configuration.php';
     public static $url_view_create_question_list = '/mod/capquiz/view_create_question_list.php';
     public static $url_view_matchmaking_configuration = '/mod/capquiz/view_matchmaking_configuration.php';
@@ -50,6 +52,17 @@ class capquiz_urls {
         $url->param(capquiz_actions::$parameter, capquiz_actions::$redirect);
         $url->param(capquiz_urls::$param_target_url, $target->out_as_local_url());
         return $url;
+    }
+
+    /**
+     * @throws \coding_exception
+     */
+    public static function require_course_module_id_param() {
+        $id = optional_param(capquiz_urls::$param_id, 0, PARAM_INT);
+        if ($id !== 0) {
+            return $id;
+        }
+        return required_param(capquiz_urls::$param_course_module_id, PARAM_INT);
     }
 
     public static function view_url() {
@@ -151,10 +164,14 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public static function create_view_url(string $relative_url) {
         global $CFG;
         $url = new \moodle_url($CFG->wwwroot . $relative_url);
-        $url->param(capquiz_urls::$param_id, required_param(capquiz_urls::$param_id, PARAM_INT));
+        $url->param(capquiz_urls::$param_id, capquiz_urls::require_course_module_id_param());
         return $url;
     }
 }
