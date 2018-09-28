@@ -26,19 +26,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class chronologic_selector extends capquiz_matchmaking_strategy {
 
-    public function configure(\stdClass $configuration) {
+    public function configure(\stdClass $configuration) : void {
 
     }
 
-    public function configuration() {
+    public function configuration() : ?\stdClass {
         return null;
     }
 
-    public function default_configuration() {
+    public function default_configuration() : ?\stdClass {
         return null;
     }
 
-    public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) {
+    public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) : ?capquiz_question {
         $is_answered = function (capquiz_question $q) use ($inactive_capquiz_attempts) {
             foreach ($inactive_capquiz_attempts as $attempt) {
                 if ($attempt->question_id() === $q->id()) {

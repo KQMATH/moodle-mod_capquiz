@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_bank_view extends \core_question\bank\view {
 
-    protected function wanted_columns() {
+    protected function wanted_columns() : array {
         $this->requiredcolumns = [
             new add_question_to_list_column($this),
             new checkbox_column($this),
@@ -49,7 +49,7 @@ class question_bank_view extends \core_question\bank\view {
         return $this->requiredcolumns;
     }
 
-    public function render(string $tabname, int $page, int $perpage, string $category, bool $show_subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) {
+    public function render(string $tabname, int $page, int $perpage, string $category, bool $show_subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
         global $PAGE;
         if ($this->process_actions_needing_ui()) {
             return '';

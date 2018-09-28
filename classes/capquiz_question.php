@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_question {
 
+    /** @var \stdClass $db_entry */
     private $db_entry;
 
     public function __construct(\stdClass $db_entry) {
@@ -43,33 +44,34 @@ class capquiz_question {
         }
     }
 
-    public static function load(int $question_id) {
+    public static function load(int $question_id) : ?capquiz_question {
         global $DB;
         $entry = $DB->get_record(database_meta::$table_capquiz_question, [
             database_meta::$field_id => $question_id
         ]);
-        if ($entry)
-            return new capquiz_question($entry);
-        return null;
+        if ($entry === false) {
+            return null;
+        }
+        return new capquiz_question($entry);
     }
 
-    public function id() {
+    public function id() : int {
         return $this->db_entry->id;
     }
 
-    public function question_id() {
+    public function question_id() : int {
         return $this->db_entry->question_id;
     }
 
-    public function question_list_id() {
+    public function question_list_id() : int {
         return $this->db_entry->question_list_id;
     }
 
-    public function rating() {
+    public function rating() : float {
         return $this->db_entry->rating;
     }
 
-    public function set_rating(float $rating) {
+    public function set_rating(float $rating) : bool {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->rating = $rating;
@@ -80,11 +82,11 @@ class capquiz_question {
         return false;
     }
 
-    public function name() {
+    public function name() : string {
         return $this->db_entry->name;
     }
 
-    public function text() {
+    public function text() : string {
         return $this->db_entry->text;
     }
 

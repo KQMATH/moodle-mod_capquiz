@@ -1,6 +1,18 @@
 <?php
-
-defined('MOODLE_INTERNAL') || die();
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @package     mod_capquiz
@@ -9,27 +21,28 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['pluginname'] = 'CAPQuiz';
 $string['modulename'] = 'CAPQuiz';
 $string['modulenameplural'] = 'CAPQuizzes';
 $string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to create quizzes comprising of questions of various types.' .
     'Questions can be rated to different difficulties while students are given an initial rating. ' .
     'Using these ratings CAPQuiz will match questions to individual students based on their skill level.</p>';
-$string['pluginadministration'] = 'JazzQuiz administration';
+$string['pluginadministration'] = 'CAPQuiz administration';
 
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
 $string['add_the_quiz_question'] = 'Add the question to the list';
 
-$string['question_list'] = "Question list";
-$string['question_lists'] = "Question lists";
+$string['question_list'] = 'Question list';
+$string['question_lists'] = 'Question lists';
 $string['configure_badge_rating'] = 'Configure badge rating';
 
-$string['id'] = 'ID';
 $string['home'] = 'Home';
 $string['name'] = 'Name';
-$string['next'] = "Next";
-$string['stars'] = "Stars";
+$string['next'] = 'Next';
+$string['stars'] = 'Stars';
 $string['title'] = 'Title';
 $string['author'] = 'Author';
 $string['created'] = 'Created';
@@ -37,40 +50,37 @@ $string['badges'] = 'Badges';
 $string['remove'] = 'Remove';
 $string['rating'] = 'Rating';
 $string['action'] = 'Action';
-$string['select'] = "Select";
-$string['status'] = "Status";
+$string['select'] = 'Select';
+$string['status'] = 'Status';
 $string['created'] = 'Created';
-$string['publish'] = "Publish";
-$string['template'] = "Template";
-$string['username'] = "Username";
-$string['lastname'] = "Last name";
-$string['moodleid'] = 'Moodle ID';
-$string['capquizid'] = 'CAPQuiz ID';
-$string['firstname'] = "First name";
+$string['publish'] = 'Publish';
+$string['template'] = 'Template';
+$string['username'] = 'Username';
+$string['lastname'] = 'Last name';
+$string['firstname'] = 'First name';
 $string['configure'] = 'Configure';
 $string['dashboard'] = 'Dashboard';
 $string['questions'] = 'Questions';
 $string['classlist'] = 'Class list';
-$string['questionid'] = 'Question ID';
 $string['description'] = 'Description';
 $string['matchmaking'] = 'Matchmaking';
 $string['rating_system'] = 'Rating system';
 $string['name_required'] = 'Name is required';
 $string['title_required'] = 'Title is required';
-$string['question_count'] = "Question count";
+$string['question_count'] = 'Question count';
 $string['create_template'] = 'Make template';
-$string['enrolled_students'] = "Enrolled students";
+$string['enrolled_students'] = 'Enrolled students';
 $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
 
 $string['field_required'] = 'This field is required';
 $string['description_required'] = 'Description is required.';
-$string['student_k_factor_required'] = 'Student k factor is required.';
+$string['student_k_factor_required'] = 'Student k-factor is required.';
 $string['default_user_rating_required'] = 'Default user rating is required.';
-$string['question_k_factor_required'] = 'Question k factor is required.';
+$string['question_k_factor_required'] = 'Question k-factor is required.';
 
-$string['yourrating'] = 'Your rating';
-$string['questionrating'] = 'Question rating';
+$string['your_rating'] = 'Your rating';
+$string['question_rating'] = 'Question rating';
 
 $string['need_to_log_in'] = 'You need to log in';
 
@@ -79,7 +89,7 @@ $string['no_enrolled_students'] = 'No students are enrolled';
 $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['no_matchmaking_strategy_selected'] = 'No selection strategy has been specified';
 
-$string['update_rating_explanation'] = '<p>Update ratings by modifying the specified value and press <em>enter</em></p>';
+$string['update_rating_explanation'] = '<p>The question ratings can be edited below. Changes are saved automatically.</p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
 
 $string['one_star'] = '1 Star';
@@ -140,6 +150,6 @@ $string['template_no_questions_in_list'] = "<p>There doesn't seem to be any ques
 $string['publish_no_questions_in_list'] = "<p>There doesn't seem to be any questions in the question list for this CAPQuiz instance. You must have at least one question before you can publish</p>";
 $string['publish_already_published'] = "<p>This CAPQuiz is already published</p>";
 
-$string['no_question_list_assigned'] = "no question list assigned";
-$string['published'] = "published";
-$string['not_published'] = "not published";
+$string['no_question_list_assigned'] = 'No question list has been assigned';
+$string['published'] = 'Published';
+$string['not_published'] = 'Not published';

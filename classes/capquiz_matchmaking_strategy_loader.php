@@ -17,7 +17,6 @@
 namespace mod_capquiz;
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/capquiz_matchmaking_strategy_registry.php');
-
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/chronologic/chronologic_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_configuration_form.php');
@@ -32,9 +31,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_matchmaking_strategy_loader {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var \stdClass $db_entry */
     private $db_entry;
+
+    /** @var capquiz_matchmaking_strategy_registry $registry */
     private $registry;
+
+    /** @var \stdClass $configuration */
     private $configuration;
 
     public function __construct(capquiz $capquiz) {
@@ -43,7 +49,7 @@ class capquiz_matchmaking_strategy_loader {
         $this->load_configuration();
     }
 
-    public function selector() {
+    public function selector() : ?capquiz_matchmaking_strategy {
         if ($db_entry = $this->db_entry) {
             $strategy = $this->registry->selector($db_entry->strategy);
             if ($config = $this->configuration) {
@@ -54,7 +60,7 @@ class capquiz_matchmaking_strategy_loader {
         return null;
     }
 
-    public function configuration_form(\moodle_url $url) {
+    public function configuration_form(\moodle_url $url) : ?\moodleform {
         if ($db_entry = $this->db_entry) {
             if ($config = $this->configuration) {
                 return $this->registry->configuration_form($db_entry->strategy, $config, $url);
@@ -63,21 +69,21 @@ class capquiz_matchmaking_strategy_loader {
         return null;
     }
 
-    public function has_strategy() {
+    public function has_strategy() : bool {
         if ($db_entry = $this->db_entry) {
             return $this->selector() != null;
         }
         return false;
     }
 
-    public function current_strategy_name() {
+    public function current_strategy_name() : string {
         if ($db_entry = $this->db_entry) {
             return $db_entry->strategy;
         }
-        return "No strategy specified";
+        return 'No strategy specified';
     }
 
-    public function configure_current_strategy(\stdClass $candidate_configuration) {
+    public function configure_current_strategy(\stdClass $candidate_configuration) : void {
         if ($db_entry = $this->db_entry) {
             $selector = $this->selector($db_entry->strategy);
             $selector->configure($candidate_configuration);
@@ -90,11 +96,11 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    public function set_default_strategy() {
+    public function set_default_strategy() : void {
         $this->set_strategy($this->registry->default_selection_strategy());
     }
 
-    public function set_strategy(string $strategy) {
+    public function set_strategy(string $strategy) : void {
         $selector = $this->registry->selector($strategy);
         $db_entry = new \stdClass;
         $db_entry->strategy = $strategy;
@@ -114,18 +120,17 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    private function load_configuration() {
+    private function load_configuration() : void {
+        global $DB;
         $conditions = [
             database_meta::$field_capquiz_id => $this->capquiz->id()
         ];
-        global $DB;
         if ($configuration = $DB->get_record(database_meta::$table_capquiz_question_selection, $conditions)) {
             $this->set_configuration($configuration);
         }
     }
 
-    private function update_configuration(\stdClass $configuration) {
-
+    private function update_configuration(\stdClass $configuration) : void {
         global $DB;
         if ($DB->update_record(database_meta::$table_capquiz_question_selection, $configuration)) {
             $this->set_configuration($configuration);
@@ -141,11 +146,12 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    private function serialize(\stdClass $configuration) {
+    private function serialize(\stdClass $configuration) : string {
         return json_encode($configuration);
     }
 
-    private function deserialize(string $configuration) {
-        return json_decode($configuration);
+    private function deserialize(string $configuration) : ?\stdClass {
+        return json_decode($configuration, false);
     }
+
 }

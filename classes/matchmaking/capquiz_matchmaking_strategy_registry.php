@@ -17,7 +17,6 @@
 namespace mod_capquiz;
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy.php');
-
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/chronologic/chronologic_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_configuration_form.php');
@@ -32,7 +31,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_matchmaking_strategy_registry {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var  */
     private $strategies;
 
     public function __construct(capquiz $capquiz) {
@@ -40,36 +42,38 @@ class capquiz_matchmaking_strategy_registry {
         $this->register_selection_strategies();
     }
 
-
-    public function selector(string $strategy) {
+    public function selector(string $strategy) : ?capquiz_matchmaking_strategy {
         if ($value = $this->strategies[$strategy]) {
             return array_values($value)[0]();
         }
         $this->throw_strategy_exception($strategy);
     }
 
-    public function configuration_form(string $strategy, \stdClass $configuration, \moodle_url $url) {
+    public function configuration_form(string $strategy, \stdClass $configuration, \moodle_url $url) : ?\moodleform {
         if ($value = $this->strategies[$strategy]) {
             return array_values($value)[1]($url, $configuration);
         }
         $this->throw_strategy_exception($strategy);
     }
 
-    public function has_strategy(string $strategy) {
+    public function has_strategy(string $strategy) : bool {
         if ($value = $this->strategies[$strategy]) {
             return true;
         }
         return false;
     }
 
-    public function default_selection_strategy(){
-        // default selection strategy is added first.
-        //Modify caquiz_matchmaking_strategy_registry::register_selection_strategies() to change this.
+    public function default_selection_strategy() : string {
+        // The default selection strategy is added first.
+        // Modify capquiz_matchmaking_strategy_registry::register_selection_strategies() to change this.
         $selection_strategies = $this->selection_strategies();
         return reset($selection_strategies);
     }
 
-    public function selection_strategies() {
+    /**
+     * @return string[]
+     */
+    public function selection_strategies() : array {
         $names = [];
         foreach (array_keys($this->strategies) as $value) {
             $names[] = $value;
@@ -77,7 +81,7 @@ class capquiz_matchmaking_strategy_registry {
         return $names;
     }
 
-    private function register_selection_strategies() {
+    private function register_selection_strategies() : void {
         //The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->strategies = [
@@ -91,7 +95,7 @@ class capquiz_matchmaking_strategy_registry {
             ],
             'Chronological' => [
                 function () use ($capquiz) {
-                    return new chronologic_selector($capquiz);
+                    return new chronologic_selector();
                 },
                 function (\moodle_url $url, \stdClass $configuration) {
                     return null;
@@ -100,7 +104,7 @@ class capquiz_matchmaking_strategy_registry {
         ];
     }
 
-    private function throw_strategy_exception(string $strategy) {
+    private function throw_strategy_exception(string $strategy) : void {
         $msg = "The specified strategy '$strategy' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->selection_strategies());
         $msg .= "'}. This issue must be fixed by a programmer";

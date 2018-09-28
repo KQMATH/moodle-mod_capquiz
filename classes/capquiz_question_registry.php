@@ -26,17 +26,18 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_question_registry {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
     }
 
-    public function capquiz_instance() {
+    public function capquiz_instance() : capquiz {
         return $this->capquiz;
     }
 
-    public function question_ids(int $question_list_id) {
+    public function question_ids(int $question_list_id) : array {
         $questions = $this->question_list($question_list_id)->questions();
         $ret = [];
         foreach ($questions as $question) {
@@ -45,8 +46,8 @@ class capquiz_question_registry {
         return $ret;
     }
 
-    public function question_list(int $list_id) {
-        return capquiz_question_list::load_question_list($list_id);
+    public function question_list(int $list_id) : ?capquiz_question_list {
+        return capquiz_question_list::load_question_list($this->capquiz, $list_id);
     }
 
     /**

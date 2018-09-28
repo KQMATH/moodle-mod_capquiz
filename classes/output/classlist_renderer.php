@@ -47,7 +47,6 @@ class classlist_renderer {
             $user = $users[$i];
             $rows[] = [
                 'index' => $i + 1,
-                'student_id' => $user->id(),
                 'username' => $user->username(),
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),

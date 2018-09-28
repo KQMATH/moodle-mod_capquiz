@@ -58,7 +58,7 @@ class n_closest_configuration_form extends \moodleform {
         $form->addRule('prevent_same_question_for_turns', get_string('field_required', 'capquiz'), 'required', null, 'client');
         $form->addHelpButton('prevent_same_question_for_turns', 'prevent_question_n_times', 'capquiz');
 
-        $this->add_action_buttons(false, 'submit');
+        $this->add_action_buttons(false);
     }
 
     public function validations($data, $files) {

@@ -49,7 +49,7 @@ class capquiz_configuration_form extends \moodleform {
         $form->setType('default_user_rating', PARAM_INT);
         $form->setDefault('default_user_rating', $this->capquiz->default_user_rating());
         $form->addRule('default_user_rating', get_string('default_user_rating_required', 'capquiz'), 'required', null, 'client');
-        $this->add_action_buttons(false, 'submit');
+        $this->add_action_buttons(false);
     }
 
     public function validations($data, $files) {

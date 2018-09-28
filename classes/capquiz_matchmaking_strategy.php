@@ -26,11 +26,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class capquiz_matchmaking_strategy {
 
-    public abstract function configure(\stdClass $configuration);
+    public abstract function configure(\stdClass $configuration) : void;
 
-    public abstract function configuration();
+    public abstract function configuration() : ?\stdClass;
 
-    public abstract function default_configuration();
+    public abstract function default_configuration() : ?\stdClass;
 
-    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts);
+    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) : ?capquiz_question;
+
 }

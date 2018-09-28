@@ -46,21 +46,10 @@ class renderer extends \plugin_renderer_base {
         return $this->output;
     }
 
-    /**
-     * @param string $name
-     * @param \moodle_url $link
-     * @return \tabobject
-     * @throws \coding_exception
-     */
     private function tab(string $name, string $title, \moodle_url $link) {
         return new \tabobject($name, $link, $title);
     }
 
-    /**
-     * @param string $activetab
-     * @return string html
-     * @throws \coding_exception
-     */
     private function tabs(string $activetab) {
         $tabs = [
             $this->tab('view_dashboard', get_string('dashboard', 'capquiz'), capquiz_urls::view_url()),
@@ -175,4 +164,5 @@ class renderer extends \plugin_renderer_base {
     public function display_badge_configuration(capquiz $capquiz) {
         $this->display_tabbed_view(new badge_rating_configuration_renderer($capquiz, $this), 'view_badges');
     }
+
 }

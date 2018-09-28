@@ -50,7 +50,7 @@ class rating_system_selection_form extends \moodleform {
             $radioarray[] = $form->createElement('radio', 'rating_system', '', $rating_system, $index++, [$rating_system]);
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
-        $this->add_action_buttons(false, 'submit');
+        $this->add_action_buttons(false);
         if ($selected_index > -1) {
             $form->setDefault('rating_system', $selected_index);
         }

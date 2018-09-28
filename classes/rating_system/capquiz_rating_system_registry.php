@@ -29,7 +29,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_rating_system_registry {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var callable[][] $systems */
     private $systems;
 
     public function __construct(capquiz $capquiz) {
@@ -37,36 +40,38 @@ class capquiz_rating_system_registry {
         $this->register_rating_systems();
     }
 
-
-    public function rating_system(string $rating_system) {
-        if ($value = $this->systems[$rating_system]) {
+    public function rating_system(string $system) : ?capquiz_rating_system {
+        if ($value = $this->systems[$system]) {
             return array_values($value)[0]();
         }
-        $this->throw_rating_system_exception($rating_system);
+        $this->throw_rating_system_exception($system);
     }
 
-    public function configuration_form(string $rating_system, \stdClass $configuration, \moodle_url $url) {
-        if ($value = $this->systems[$rating_system]) {
+    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) : ?\moodleform {
+        if ($value = $this->systems[$system]) {
             return array_values($value)[1]($url, $configuration);
         }
-        $this->throw_rating_system_exception($rating_system);
+        $this->throw_rating_system_exception($system);
     }
 
-    public function has_rating_system(string $rating_system) {
-        if ($value = $this->systems[$rating_system]) {
+    public function has_rating_system(string $system) : bool {
+        if ($value = $this->systems[$system]) {
             return true;
         }
         return false;
     }
 
-    public function default_rating_system(){
+    public function default_rating_system() : string {
         // Default rating system is added first.
         // Modify caquiz_rating_system_registry::register_rating_systems() to change this.
         $rating_systems = $this->rating_systems();
         return reset($rating_systems);
     }
 
-    public function rating_systems() {
+    /**
+     * @return string[]
+     */
+    public function rating_systems() : array {
         $names = [];
         foreach (array_keys($this->systems) as $value) {
             $names[] = $value;
@@ -74,7 +79,7 @@ class capquiz_rating_system_registry {
         return $names;
     }
 
-    private function register_rating_systems() {
+    private function register_rating_systems() : void {
         //The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->systems = [
@@ -89,8 +94,8 @@ class capquiz_rating_system_registry {
         ];
     }
 
-    private function throw_rating_system_exception(string $rating_system) {
-        $msg = "The specified rating system '$rating_system' does not exist.";
+    private function throw_rating_system_exception(string $system) : void {
+        $msg = "The specified rating system '$system' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->rating_systems());
         $msg .= "'}. This issue must be fixed by a programmer";
         throw new \Exception($msg);

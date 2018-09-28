@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 $capquiz = capquiz::create();
 
 if (!$capquiz) {

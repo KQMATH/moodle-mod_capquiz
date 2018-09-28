@@ -30,16 +30,15 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class elo_rating_system_form extends \moodleform {
 
-    private $capquiz;
+    /** @var \stdClass $configuration */
     private $configuration;
 
     public function __construct(\stdClass $configuration, \moodle_url $url) {
         $this->configuration = $configuration;
         parent::__construct($url);
-
     }
 
-    public function definition() {
+    public function definition() : void {
         $form = $this->_form;
 
         $form->addElement('text', 'student_k_factor', get_string('student_k_factor', 'capquiz'));
@@ -57,6 +56,6 @@ class elo_rating_system_form extends \moodleform {
         $form->setDefault('question_k_factor', $this->configuration->question_k_factor);
         $form->addHelpButton('question_k_factor', 'question_k_factor', 'capquiz');
 
-        $this->add_action_buttons(false, 'submit');
+        $this->add_action_buttons(false);
     }
 }

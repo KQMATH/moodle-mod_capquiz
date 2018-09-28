@@ -29,6 +29,8 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matchmaking_strategy_selection_form extends \moodleform {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
 
     public function __construct(capquiz $capquiz, \moodle_url $url) {
@@ -51,7 +53,7 @@ class matchmaking_strategy_selection_form extends \moodleform {
             $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $index++, [$strategy]);
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
-        $this->add_action_buttons(false, 'submit');
+        $this->add_action_buttons(false);
         if ($selected_index > -1) {
             $form->setDefault('strategy', $selected_index);
         }

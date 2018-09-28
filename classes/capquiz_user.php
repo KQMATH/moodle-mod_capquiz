@@ -25,7 +25,11 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_user {
+
+    /** @var \stdClass $db_entry */
     private $db_entry;
+
+    /** @var \stdClass $moodle_db_entry  */
     private $moodle_db_entry;
 
     public function __construct(\stdClass $user_db_entry) {
@@ -33,14 +37,14 @@ class capquiz_user {
         $this->moodle_db_entry = null;
     }
 
-    public static function load_user(capquiz $capquiz, int $moodle_userid) {
+    public static function load_user(capquiz $capquiz, int $moodle_userid) : ?capquiz_user {
         if ($user = self::load_db_entry($capquiz, $moodle_userid)) {
             return $user;
         }
         return self::insert_db_entry($capquiz, $moodle_userid);
     }
 
-    public static function user_count(capquiz $capquiz) {
+    public static function user_count(capquiz $capquiz) : int {
         global $DB;
         $criteria = [
             database_meta::$field_capquiz_id => $capquiz->id()
@@ -49,7 +53,7 @@ class capquiz_user {
         return $count;
     }
 
-    public static function list_users(capquiz $capquiz) {
+    public static function list_users(capquiz $capquiz) : array {
         global $DB;
         $criteria = [
             database_meta::$field_capquiz_id => $capquiz->id()
@@ -61,45 +65,48 @@ class capquiz_user {
         return $users;
     }
 
-    public function id() {
+    public function id() : int {
         return $this->db_entry->id;
     }
 
-    public function username() {
-        if ($this->moodle_db_entry === null)
+    public function username() : string {
+        if ($this->moodle_db_entry === null) {
             $this->load_moodle_entry();
+        }
         return $this->moodle_db_entry->username;
     }
 
-    public function first_name() {
-        if ($this->moodle_db_entry === null)
+    public function first_name() : string {
+        if ($this->moodle_db_entry === null) {
             $this->load_moodle_entry();
+        }
         return $this->moodle_db_entry->firstname;
     }
 
-    public function last_name() {
-        if ($this->moodle_db_entry === null)
+    public function last_name() : string {
+        if ($this->moodle_db_entry === null) {
             $this->load_moodle_entry();
+        }
         return $this->moodle_db_entry->lastname;
     }
 
-    public function capquiz_id() {
+    public function capquiz_id() : int {
         return $this->db_entry->capquiz_id;
     }
 
-    public function moodle_user_id() {
+    public function moodle_user_id() : int {
         return $this->db_entry->user_id;
     }
 
-    public function rating() {
+    public function rating() : float {
         return $this->db_entry->rating;
     }
 
-    public function highest_level() {
+    public function highest_level() : int {
         return $this->db_entry->highest_level;
     }
 
-    public function set_highest_level(int $highest_level) {
+    public function set_highest_level(int $highest_level) : void {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->highest_level = $highest_level;
@@ -108,7 +115,7 @@ class capquiz_user {
         }
     }
 
-    public function set_rating(float $rating) {
+    public function set_rating(float $rating) : void {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->rating = $rating;
@@ -117,7 +124,7 @@ class capquiz_user {
         }
     }
 
-    private function load_moodle_entry() {
+    private function load_moodle_entry() : void {
         global $DB;
         $criteria = [
             database_meta::$field_id => $this->moodle_user_id()
@@ -129,7 +136,7 @@ class capquiz_user {
         }
     }
 
-    private static function load_db_entry(capquiz $capquiz, int $moodle_userid) {
+    private static function load_db_entry(capquiz $capquiz, int $moodle_userid) : ?capquiz_user {
         global $DB;
         $criteria = [
             database_meta::$field_user_id => $moodle_userid,
@@ -141,7 +148,7 @@ class capquiz_user {
         return null;
     }
 
-    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid) {
+    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid) : ?capquiz_user {
         global $DB;
         $user_entry = new \stdClass();
         $user_entry->user_id = $moodle_userid;
@@ -158,4 +165,5 @@ class capquiz_user {
             throw $e;
         }
     }
+
 }

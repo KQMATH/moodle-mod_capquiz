@@ -125,3 +125,7 @@
 .capquiz-response-form .que .content {
     margin: 0;
 }
+
+.capquiz-response-form .content .im-controls .submit {
+    border: 1px solid #bbb;
+}

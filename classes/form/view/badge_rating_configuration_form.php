@@ -47,10 +47,10 @@ class badge_rating_configuration_form extends \moodleform {
             $form->addElement('text', $element, $text);
             $form->setType($element, PARAM_INT);
             $form->addRule($element, $requiredtext, 'required', null, 'client');
-            $form->setDefault($element, $this->question_list->level_rating($level));
+            $form->setDefault($element, $this->question_list->required_rating_for_level($level));
         }
 
-        $form->addElement('submit', 'submitbutton', get_string('configure', 'capquiz'));
+        $form->addElement('submit', 'submitbutton', get_string('savechanges'));
     }
 
     public function validations($data, $files) {
