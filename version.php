@@ -23,9 +23,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2018092817;
+$plugin->version = 2018103000;
 $plugin->requires = 2016120500 ;
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.1.0 (Build: 2018092810)';
+$plugin->release = '0.1.1 (Build: 2018103000)';
