@@ -174,7 +174,7 @@ class capquiz {
         return new capquiz_rating_system_registry($this);
     }
 
-    public function question_engine() : /*?*/capquiz_question_engine {
+    public function question_engine() /*: ?capquiz_question_engine*/ {
         if ($question_usage = $this->question_usage()) {
             return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_loader(), $this->rating_system_loader());
         }
@@ -185,14 +185,14 @@ class capquiz {
         return new capquiz_question_registry($this);
     }
 
-    public function question_list() : /*?*/capquiz_question_list {
+    public function question_list() /*: ?capquiz_question_list*/ {
         if ($this->has_question_list()) {
             return capquiz_question_list::load_question_list($this, $this->question_list_id());
         }
         return null;
     }
 
-    public function question_usage() : /*?*/\question_usage_by_activity {
+    public function question_usage() /*: ?\question_usage_by_activity*/ {
         if (!$this->has_question_list()) {
             return null;
         }

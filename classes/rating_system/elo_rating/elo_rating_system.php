@@ -38,14 +38,14 @@ class elo_rating_system extends capquiz_rating_system {
         }
     }
 
-    public function configuration() : /*?*/\stdClass {
+    public function configuration() /*: ?\stdClass*/ {
         $config = new \stdClass;
         $config->student_k_factor = $this->student_k_factor;
         $config->question_k_factor = $this->question_k_factor;
         return $config;
     }
 
-    public function default_configuration() : /*?*/\stdClass {
+    public function default_configuration() /*: ?\stdClass*/ {
         $config = new \stdClass;
         $config->student_k_factor = 32;
         $config->question_k_factor = 8;

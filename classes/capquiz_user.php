@@ -37,7 +37,7 @@ class capquiz_user {
         $this->moodle_db_entry = null;
     }
 
-    public static function load_user(capquiz $capquiz, int $moodle_userid) : /*?*/capquiz_user {
+    public static function load_user(capquiz $capquiz, int $moodle_userid) /*: ?capquiz_user*/ {
         if ($user = self::load_db_entry($capquiz, $moodle_userid)) {
             return $user;
         }
@@ -136,7 +136,7 @@ class capquiz_user {
         }
     }
 
-    private static function load_db_entry(capquiz $capquiz, int $moodle_userid) : /*?*/capquiz_user {
+    private static function load_db_entry(capquiz $capquiz, int $moodle_userid) /*: ?capquiz_user*/ {
         global $DB;
         $criteria = [
             database_meta::$field_user_id => $moodle_userid,
@@ -148,7 +148,7 @@ class capquiz_user {
         return null;
     }
 
-    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid) : /*?*/capquiz_user {
+    private static function insert_db_entry(capquiz $capquiz, int $moodle_userid) /*: ?capquiz_user*/ {
         global $DB;
         $user_entry = new \stdClass();
         $user_entry->user_id = $moodle_userid;

@@ -40,14 +40,14 @@ class capquiz_rating_system_registry {
         $this->register_rating_systems();
     }
 
-    public function rating_system(string $system) : /*?*/capquiz_rating_system {
+    public function rating_system(string $system) /*: ?capquiz_rating_system*/ {
         if ($value = $this->systems[$system]) {
             return array_values($value)[0]();
         }
         $this->throw_rating_system_exception($system);
     }
 
-    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) : /*?*/\moodleform {
+    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) /*: ?\moodleform*/ {
         if ($value = $this->systems[$system]) {
             return array_values($value)[1]($url, $configuration);
         }

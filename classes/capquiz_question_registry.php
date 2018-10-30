@@ -46,7 +46,7 @@ class capquiz_question_registry {
         return $ret;
     }
 
-    public function question_list(int $list_id) : /*?*/capquiz_question_list {
+    public function question_list(int $list_id) /*: ?capquiz_question_list*/ {
         return capquiz_question_list::load_question_list($this->capquiz, $list_id);
     }
 

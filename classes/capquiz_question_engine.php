@@ -55,14 +55,14 @@ class capquiz_question_engine {
         return true;
     }
 
-    public function attempt_for_user(capquiz_user $user) : /*?*/capquiz_question_attempt {
+    public function attempt_for_user(capquiz_user $user) /*: ?capquiz_question_attempt*/ {
         if ($attempt = capquiz_question_attempt::active_attempt($this->capquiz, $user)) {
             return $attempt;
         }
         return $this->new_attempt_for_user($user);
     }
 
-    public function attempt_for_current_user() : /*?*/capquiz_question_attempt {
+    public function attempt_for_current_user() /*: ?capquiz_question_attempt*/ {
         return $this->attempt_for_user($this->capquiz->user());
     }
 
@@ -98,14 +98,14 @@ class capquiz_question_engine {
         $attempt->mark_as_reviewed();
     }
 
-    private function new_attempt_for_user(capquiz_user $user) : /*?*/capquiz_question_attempt {
+    private function new_attempt_for_user(capquiz_user $user) /*: ?capquiz_question_attempt*/ {
         if ($question = $this->find_question_for_user($user)) {
             return capquiz_question_attempt::create_attempt($this->capquiz, $user, $question);
         }
         return null;
     }
 
-    private function find_question_for_user(capquiz_user $user) : /*?*/capquiz_question {
+    private function find_question_for_user(capquiz_user $user) /*: ?capquiz_question*/ {
         $selector = $this->matchmaking_loader->selector();
         $questionlist = $this->capquiz->question_list();
         $inactiveattempts = capquiz_question_attempt::inactive_attempts($this->capquiz, $user);
