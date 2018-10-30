@@ -47,7 +47,7 @@ class capquiz_rating_system_loader {
         $this->load_configuration();
     }
 
-    public function rating_system() : ?capquiz_rating_system {
+    public function rating_system() : /*?*/capquiz_rating_system {
         if ($db_entry = $this->db_entry) {
             $system = $this->registry->rating_system($db_entry->rating_system);
             if ($config = $this->configuration) {
@@ -58,7 +58,7 @@ class capquiz_rating_system_loader {
         return null;
     }
 
-    public function configuration_form(\moodle_url $url) : ?\moodleform {
+    public function configuration_form(\moodle_url $url) : /*?*/\moodleform {
         if ($db_entry = $this->db_entry) {
             if ($config = $this->configuration) {
                 return $this->registry->configuration_form($db_entry->rating_system, $config, $url);
@@ -148,7 +148,7 @@ class capquiz_rating_system_loader {
         return json_encode($configuration);
     }
 
-    private function deserialize(string $configuration) : ?\stdClass {
+    private function deserialize(string $configuration) : /*?*/\stdClass {
         return json_decode($configuration, false);
     }
 }

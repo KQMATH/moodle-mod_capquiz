@@ -37,7 +37,7 @@ class capquiz_question_attempt {
         $this->question_usage = $question_usage;
     }
 
-    public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) : ?capquiz_question_attempt {
+    public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) : /*?*/capquiz_question_attempt {
         $question_usage = $capquiz->question_usage();
         $questions = question_load_questions([$question->question_id()]);
         $target_question = reset($questions);
@@ -51,7 +51,7 @@ class capquiz_question_attempt {
         return self::insert_attempt_entry($capquiz, $user, $question, $slot);
     }
 
-    public static function active_attempt(capquiz $capquiz, capquiz_user $user) : ?capquiz_question_attempt {
+    public static function active_attempt(capquiz $capquiz, capquiz_user $user) : /*?*/capquiz_question_attempt {
         global $DB;
         $criteria = [
             database_meta::$field_user_id => $user->id(),
@@ -65,7 +65,7 @@ class capquiz_question_attempt {
         }
     }
 
-    public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attempt_id) : ?capquiz_question_attempt {
+    public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attempt_id) : /*?*/capquiz_question_attempt {
         global $DB;
         $criteria = [
             database_meta::$field_id => $attempt_id,
@@ -79,7 +79,7 @@ class capquiz_question_attempt {
         }
     }
 
-    public static function previous_attempt(capquiz $capquiz, capquiz_user $user) : ?capquiz_question_attempt {
+    public static function previous_attempt(capquiz $capquiz, capquiz_user $user) : /*?*/capquiz_question_attempt {
         global $DB;
         $table = database_meta::$table_capquiz_attempt;
         $target_field = database_meta::$field_user_id;
@@ -181,7 +181,7 @@ class capquiz_question_attempt {
         }
     }
 
-    private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) : ?capquiz_question_attempt {
+    private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) : /*?*/capquiz_question_attempt {
         global $DB;
         $attempt_entry = new \stdClass();
         $attempt_entry->slot = $slot;

@@ -44,7 +44,7 @@ class capquiz_question {
         }
     }
 
-    public static function load(int $question_id) : ?capquiz_question {
+    public static function load(int $question_id) : /*?*/capquiz_question {
         global $DB;
         $entry = $DB->get_record(database_meta::$table_capquiz_question, [
             database_meta::$field_id => $question_id

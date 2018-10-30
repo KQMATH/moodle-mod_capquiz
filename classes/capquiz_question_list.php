@@ -52,7 +52,7 @@ class capquiz_question_list {
         return $this->db_entry->id;
     }
 
-    public function author() : ?\stdClass {
+    public function author() : /*?*/\stdClass {
         global $DB;
         $criteria = [
             database_meta::$field_id => $this->db_entry->author
@@ -100,7 +100,7 @@ class capquiz_question_list {
         return 5;
     }
 
-    public function required_rating_for_level(int $level) : ?int {
+    public function required_rating_for_level(int $level) : /*?*/int {
         $field = "level_{$level}_rating";
         if (!isset($this->db_entry->{$field})) {
             return null;
@@ -179,7 +179,7 @@ class capquiz_question_list {
         return $this->questions;
     }
 
-    public function question(int $question_id) : ?capquiz_question {
+    public function question(int $question_id) : /*?*/capquiz_question {
         foreach ($this->questions as $question) {
             if ($question->id() === $question_id) {
                 return $question;
@@ -188,7 +188,7 @@ class capquiz_question_list {
         return null;
     }
 
-    public static function load_question_list(capquiz $capquiz, int $question_list_id) : ?capquiz_question_list {
+    public static function load_question_list(capquiz $capquiz, int $question_list_id) : /*?*/capquiz_question_list {
         global $DB;
         $conditions = [database_meta::$field_id => $question_list_id, database_meta::$field_is_template => 0];
         if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {
@@ -197,7 +197,7 @@ class capquiz_question_list {
         return null;
     }
 
-    public static function load_question_template(capquiz $capquiz, int $question_list_id) : ?capquiz_question_list {
+    public static function load_question_template(capquiz $capquiz, int $question_list_id) : /*?*/capquiz_question_list {
         $conditions = [database_meta::$field_id => $question_list_id, database_meta::$field_is_template => 1];
         global $DB;
         if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {
@@ -206,7 +206,7 @@ class capquiz_question_list {
         return null;
     }
 
-    public static function load_any(capquiz $capquiz, int $question_list_id) : ?capquiz_question_list {
+    public static function load_any(capquiz $capquiz, int $question_list_id) : /*?*/capquiz_question_list {
         global $DB;
         $conditions = [database_meta::$field_id => $question_list_id];
         if ($entry = $DB->get_record(database_meta::$table_capquiz_question_list, $conditions)) {

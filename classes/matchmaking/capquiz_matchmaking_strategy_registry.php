@@ -42,14 +42,14 @@ class capquiz_matchmaking_strategy_registry {
         $this->register_selection_strategies();
     }
 
-    public function selector(string $strategy) : ?capquiz_matchmaking_strategy {
+    public function selector(string $strategy) : /*?*/capquiz_matchmaking_strategy {
         if ($value = $this->strategies[$strategy]) {
             return array_values($value)[0]();
         }
         $this->throw_strategy_exception($strategy);
     }
 
-    public function configuration_form(string $strategy, \stdClass $configuration, \moodle_url $url) : ?\moodleform {
+    public function configuration_form(string $strategy, \stdClass $configuration, \moodle_url $url) : /*?*/\moodleform {
         if ($value = $this->strategies[$strategy]) {
             return array_values($value)[1]($url, $configuration);
         }

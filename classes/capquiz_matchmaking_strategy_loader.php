@@ -49,7 +49,7 @@ class capquiz_matchmaking_strategy_loader {
         $this->load_configuration();
     }
 
-    public function selector() : ?capquiz_matchmaking_strategy {
+    public function selector() : /*?*/capquiz_matchmaking_strategy {
         if ($db_entry = $this->db_entry) {
             $strategy = $this->registry->selector($db_entry->strategy);
             if ($config = $this->configuration) {
@@ -60,7 +60,7 @@ class capquiz_matchmaking_strategy_loader {
         return null;
     }
 
-    public function configuration_form(\moodle_url $url) : ?\moodleform {
+    public function configuration_form(\moodle_url $url) : /*?*/\moodleform {
         if ($db_entry = $this->db_entry) {
             if ($config = $this->configuration) {
                 return $this->registry->configuration_form($db_entry->strategy, $config, $url);
@@ -150,7 +150,7 @@ class capquiz_matchmaking_strategy_loader {
         return json_encode($configuration);
     }
 
-    private function deserialize(string $configuration) : ?\stdClass {
+    private function deserialize(string $configuration) : /*?*/\stdClass {
         return json_decode($configuration, false);
     }
 

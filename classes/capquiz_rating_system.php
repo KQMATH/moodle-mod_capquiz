@@ -28,9 +28,9 @@ abstract class capquiz_rating_system {
 
     public abstract function configure(\stdClass $configuration);
 
-    public abstract function configuration() : ?\stdClass;
+    public abstract function configuration() : /*?*/\stdClass;
 
-    public abstract function default_configuration() : ?\stdClass;
+    public abstract function default_configuration() : /*?*/\stdClass;
 
     public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) : void;
 
