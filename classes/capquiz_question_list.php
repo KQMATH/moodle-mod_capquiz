@@ -108,14 +108,14 @@ class capquiz_question_list {
         return (int)$this->db_entry->{$field};
     }
 
-    public function set_level_rating(int $level, int $rating) : void {
+    public function set_level_rating(int $level, int $rating) /*: void*/ {
         $db_entry = $this->db_entry;
         $field = "level_{$level}_rating";
         $db_entry->{$field} = $rating;
         $this->update_database($db_entry);
     }
 
-    public function set_level_ratings(array $ratings) : void {
+    public function set_level_ratings(array $ratings) /*: void*/ {
         $counts = count($ratings);
         if ($counts !== $this->level_count()) {
             throw new \Exception("Wrong number of ratings specified for badges: $counts given and " . $this->level_count() . ' required');
@@ -246,7 +246,7 @@ class capquiz_question_list {
         }
     }
 
-    private function update_database(\stdClass $db_entry) : void {
+    private function update_database(\stdClass $db_entry) /*: void*/ {
         global $DB;
         if ($DB->update_record(database_meta::$table_capquiz_question_list, $db_entry)) {
             $this->db_entry = $db_entry;

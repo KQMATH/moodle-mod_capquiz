@@ -81,7 +81,7 @@ class capquiz_matchmaking_strategy_registry {
         return $names;
     }
 
-    private function register_selection_strategies() : void {
+    private function register_selection_strategies() /*: void*/ {
         //The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->strategies = [
@@ -104,7 +104,7 @@ class capquiz_matchmaking_strategy_registry {
         ];
     }
 
-    private function throw_strategy_exception(string $strategy) : void {
+    private function throw_strategy_exception(string $strategy) /*: void*/ {
         $msg = "The specified strategy '$strategy' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->selection_strategies());
         $msg .= "'}. This issue must be fixed by a programmer";

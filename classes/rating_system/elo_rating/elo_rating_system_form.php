@@ -38,7 +38,7 @@ class elo_rating_system_form extends \moodleform {
         parent::__construct($url);
     }
 
-    public function definition() : void {
+    public function definition() /*: void*/ {
         $form = $this->_form;
 
         $form->addElement('text', 'student_k_factor', get_string('student_k_factor', 'capquiz'));

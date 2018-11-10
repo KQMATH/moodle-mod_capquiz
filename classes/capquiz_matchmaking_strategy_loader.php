@@ -83,7 +83,7 @@ class capquiz_matchmaking_strategy_loader {
         return 'No strategy specified';
     }
 
-    public function configure_current_strategy(\stdClass $candidate_configuration) : void {
+    public function configure_current_strategy(\stdClass $candidate_configuration) /*: void*/ {
         if ($db_entry = $this->db_entry) {
             $selector = $this->selector($db_entry->strategy);
             $selector->configure($candidate_configuration);
@@ -96,11 +96,11 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    public function set_default_strategy() : void {
+    public function set_default_strategy() /*: void*/ {
         $this->set_strategy($this->registry->default_selection_strategy());
     }
 
-    public function set_strategy(string $strategy) : void {
+    public function set_strategy(string $strategy) /*: void*/ {
         $selector = $this->registry->selector($strategy);
         $db_entry = new \stdClass;
         $db_entry->strategy = $strategy;
@@ -120,7 +120,7 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    private function load_configuration() : void {
+    private function load_configuration() /*: void*/ {
         global $DB;
         $conditions = [
             database_meta::$field_capquiz_id => $this->capquiz->id()
@@ -130,7 +130,7 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    private function update_configuration(\stdClass $configuration) : void {
+    private function update_configuration(\stdClass $configuration) /*: void*/ {
         global $DB;
         if ($DB->update_record(database_meta::$table_capquiz_question_selection, $configuration)) {
             $this->set_configuration($configuration);

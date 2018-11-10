@@ -79,7 +79,7 @@ class capquiz_rating_system_registry {
         return $names;
     }
 
-    private function register_rating_systems() : void {
+    private function register_rating_systems() /*: void*/ {
         //The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->systems = [
@@ -94,7 +94,7 @@ class capquiz_rating_system_registry {
         ];
     }
 
-    private function throw_rating_system_exception(string $system) : void {
+    private function throw_rating_system_exception(string $system) /*: void*/ {
         $msg = "The specified rating system '$system' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->rating_systems());
         $msg .= "'}. This issue must be fixed by a programmer";

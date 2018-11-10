@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class capquiz_matchmaking_strategy {
 
-    public abstract function configure(\stdClass $configuration) : void;
+    public abstract function configure(\stdClass $configuration) /*: void*/;
 
     public abstract function configuration() /*: ?\stdClass*/;
 

@@ -81,7 +81,7 @@ class capquiz_rating_system_loader {
         return 'No rating system specified';
     }
 
-    public function configure_current_rating_system(\stdClass $candidate_configuration) : void {
+    public function configure_current_rating_system(\stdClass $candidate_configuration) /*: void*/ {
         if ($db_entry = $this->db_entry) {
             $system = $this->rating_system($db_entry->rating_system);
             $system->configure($candidate_configuration);
@@ -94,11 +94,11 @@ class capquiz_rating_system_loader {
         }
     }
 
-    public function set_default_rating_system() : void {
+    public function set_default_rating_system() /*: void*/ {
         $this->set_rating_system($this->registry->default_rating_system());
     }
 
-    public function set_rating_system(string $rating_system) : void {
+    public function set_rating_system(string $rating_system) /*: void*/ {
         $system = $this->registry->rating_system($rating_system);
         $db_entry = new \stdClass;
         $db_entry->rating_system = $rating_system;
@@ -118,7 +118,7 @@ class capquiz_rating_system_loader {
         }
     }
 
-    private function load_configuration() : void {
+    private function load_configuration() /*: void*/ {
         global $DB;
         $conditions = [
             database_meta::$field_capquiz_id => $this->capquiz->id()
@@ -128,14 +128,14 @@ class capquiz_rating_system_loader {
         }
     }
 
-    private function update_configuration(\stdClass $configuration) : void {
+    private function update_configuration(\stdClass $configuration) /*: void*/ {
         global $DB;
         if ($DB->update_record(database_meta::$table_capquiz_rating_system, $configuration)) {
             $this->set_configuration($configuration);
         }
     }
 
-    private function set_configuration(\stdClass $db_entry) : void {
+    private function set_configuration(\stdClass $db_entry) /*: void*/ {
         $this->db_entry = $db_entry;
         if ($configuration = $this->deserialize($db_entry->configuration)) {
             $this->configuration = $configuration;

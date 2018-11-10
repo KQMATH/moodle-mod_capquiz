@@ -66,7 +66,7 @@ class capquiz_question_engine {
         return $this->attempt_for_user($this->capquiz->user());
     }
 
-    public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) : void {
+    public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) /*: void*/ {
         $rating_system = $this->rating_system_loader->rating_system();
         $attempt->mark_as_answered();
         $question = $this->capquiz->question_list()->question($attempt->question_id());
@@ -81,7 +81,7 @@ class capquiz_question_engine {
         }
     }
 
-    private function set_new_highest_level_if_attained(capquiz_user $user) : void {
+    private function set_new_highest_level_if_attained(capquiz_user $user) /*: void*/ {
         $list = $this->capquiz->question_list();
         for ($level = $list->level_count(); $level > 0; $level--) {
             $required = $list->required_rating_for_level($level);
@@ -94,7 +94,7 @@ class capquiz_question_engine {
         }
     }
 
-    public function attempt_reviewed(capquiz_user $user, capquiz_question_attempt $attempt) : void {
+    public function attempt_reviewed(capquiz_user $user, capquiz_question_attempt $attempt) /*: void*/ {
         $attempt->mark_as_reviewed();
     }
 
@@ -112,7 +112,7 @@ class capquiz_question_engine {
         return $selector->next_question_for_user($user, $questionlist, $inactiveattempts);
     }
 
-    private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) : void {
+    private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) /*: void*/ {
         $rating_system = $this->rating_system_loader->rating_system();
         $current_correct = $current->is_correctly_answered();
         $previous_correct = $previous->is_correctly_answered();

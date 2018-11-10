@@ -106,7 +106,7 @@ class capquiz_user {
         return $this->db_entry->highest_level;
     }
 
-    public function set_highest_level(int $highest_level) : void {
+    public function set_highest_level(int $highest_level) /*: void*/ {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->highest_level = $highest_level;
@@ -115,7 +115,7 @@ class capquiz_user {
         }
     }
 
-    public function set_rating(float $rating) : void {
+    public function set_rating(float $rating) /*: void*/ {
         global $DB;
         $db_entry = $this->db_entry;
         $db_entry->rating = $rating;
@@ -124,7 +124,7 @@ class capquiz_user {
         }
     }
 
-    private function load_moodle_entry() : void {
+    private function load_moodle_entry() /*: void*/ {
         global $DB;
         $criteria = [
             database_meta::$field_id => $this->moodle_user_id()

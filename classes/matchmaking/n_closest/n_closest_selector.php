@@ -36,7 +36,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         $this->configure($this->default_configuration());
     }
 
-    public function configure(\stdClass $configuration) : void {
+    public function configure(\stdClass $configuration) /*: void*/ {
         if ($user_win_probability = $configuration->user_win_probability) {
             $this->user_win_probability = $user_win_probability;
         }

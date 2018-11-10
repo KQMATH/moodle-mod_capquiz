@@ -227,15 +227,15 @@ class capquiz {
         return $this->course_db_entry;
     }
 
-    public function require_student_capability() : void {
+    public function require_student_capability() /*: void*/ {
         require_capability('mod/capquiz:student', $this->context);
     }
 
-    public function require_instructor_capability() : void {
+    public function require_instructor_capability() /*: void*/ {
         require_capability('mod/capquiz:instructor', $this->context);
     }
 
-    public function require_capability(string $capability) : void {
+    public function require_capability(string $capability) /*: void*/ {
         require_capability($capability, $this->context);
     }
 
@@ -247,7 +247,7 @@ class capquiz {
         return has_capability($capability, $this->context, $user_id);
     }
 
-    public function configure(\stdClass $configuration) : void {
+    public function configure(\stdClass $configuration) /*: void*/ {
         global $DB;
         $db_entry = $this->capquiz_db_entry;
         if ($name = $configuration->name) {
@@ -271,7 +271,7 @@ class capquiz {
         return $question_usage->get_id();
     }
 
-    private function validate_matchmaking_and_rating_systems() : void {
+    private function validate_matchmaking_and_rating_systems() /*: void*/ {
         if (!$this->rating_system_loader()->has_rating_system()) {
             $this->rating_system_loader()->set_default_rating_system();
         }
