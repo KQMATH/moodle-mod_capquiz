@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 $plugin->version = 2018111000;
-$plugin->requires = 2016120500 ;
+$plugin->requires = 2018051700 ;  /* Moodle 3.5 */
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';
 $plugin->maturity = MATURITY_STABLE;
