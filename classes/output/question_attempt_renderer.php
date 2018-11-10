@@ -43,7 +43,11 @@ class question_attempt_renderer {
     }
 
     private function render_question_head_html() {
-        $attempt = $this->capquiz->question_engine()->attempt_for_user($this->capquiz->user());
+        $questionengine = $this->capquiz->question_engine();
+        if ($questionengine === null) {
+            return;
+        }
+        $attempt = $questionengine->attempt_for_user($this->capquiz->user());
         $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
     }
 
