@@ -103,8 +103,6 @@ class capquiz_action_performer {
         if ($question = $capquiz->question_list()->question($question_id)) {
             if ($rating = optional_param(capquiz_urls::$param_rating, null, PARAM_FLOAT)) {
                 $question->set_rating($rating);
-            } else if ($rating = $_POST[capquiz_urls::$param_rating]) {
-                $question->set_rating($rating);
             }
             capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
         } else {

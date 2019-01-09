@@ -151,7 +151,7 @@ class capquiz_question_attempt {
 
     public function mark_as_answered() : bool {
         global $DB;
-        $submitteddata = $this->question_usage->extract_responses($this->question_slot(), $_POST);
+        $submitteddata = $this->question_usage->extract_responses($this->question_slot());
         $this->question_usage->process_action($this->question_slot(), $submitteddata);
         $db_entry = $this->db_entry;
         $db_entry->answered = true;
