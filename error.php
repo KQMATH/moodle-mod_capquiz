@@ -16,13 +16,10 @@
 
 namespace mod_capquiz;
 
-use mod_capquiz\output\renderer;
-
 require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
 /**
  * @package     mod_capquiz
@@ -30,19 +27,18 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function render_error_view(capquiz $capquiz, renderer $renderer) {
-    echo $renderer->output_renderer()->header();
-    if ($capquiz->is_instructor()) {
-        echo 'Something went wrong(instructor)';
-    } else if ($capquiz->is_student()) {
-        echo 'Something went wrong(student)';
-    }
-    echo $renderer->output_renderer()->footer();
+
+$course_module_id = capquiz_urls::require_course_module_id_param();
+$course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
+require_login($course_module->course, false, $course_module);
+
+$capquiz = capquiz::create();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
 }
 
-if ($capquiz = capquiz::create()) {
-    set_page_url($capquiz, capquiz_urls::$url_error);
-    render_error_view($capquiz, $capquiz->renderer());
-} else {
-    redirect_to_front_page();
-}
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$url_error);
+
+echo $capquiz->renderer()->output_renderer()->header();
+echo 'Something went wrong.';
+echo $capquiz->renderer()->output_renderer()->footer();

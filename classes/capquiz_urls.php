@@ -54,6 +54,32 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function redirect_to_front_page() {
+        header('Location: /');
+        exit;
+    }
+
+    public static function redirect_to_url(\moodle_url $url) {
+        redirect($url);
+    }
+
+    public static function redirect_to_dashboard() {
+        self::redirect_to_url(self::create_view_url(self::$url_view));
+    }
+
+    public static function redirect_to_previous() {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    public static function set_page_url(capquiz $capquiz, string $url) {
+        global $PAGE;
+        $PAGE->set_context($capquiz->context());
+        $PAGE->set_cm($capquiz->course_module());
+        $PAGE->set_pagelayout('incourse');
+        $PAGE->set_url(self::create_view_url($url));
+    }
+
     /**
      * @throws \coding_exception
      */
@@ -174,4 +200,5 @@ class capquiz_urls {
         $url->param(capquiz_urls::$param_id, capquiz_urls::require_course_module_id_param());
         return $url;
     }
+
 }

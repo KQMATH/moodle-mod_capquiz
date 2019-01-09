@@ -48,7 +48,9 @@ class question_attempt_renderer {
             return;
         }
         $attempt = $questionengine->attempt_for_user($this->capquiz->user());
-        $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
+        if ($attempt !== null) {
+            $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
+        }
     }
 
     public function render() : string {

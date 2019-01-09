@@ -31,6 +31,7 @@ require_once('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_renderer {
+
     private $capquiz;
     private $renderer;
     private $pagevars;
@@ -41,9 +42,7 @@ class question_bank_renderer {
     }
 
     public function create_view() {
-        $this->set_missing_id_param();
-        $baseurl = '/mod/capquiz/edit.php';
-        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = question_edit_setup('editq', $baseurl, true);
+        list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = $this->setup_question_edit();
         $this->pagevars = $pagevars;
         return new question_bank_view($contexts, $url, $this->capquiz->course(), $this->capquiz->course_module());
     }
@@ -64,14 +63,35 @@ class question_bank_renderer {
     }
 
     /**
-     * Solves apparent inconsistency in question_edit_setup()
+     * This is mostly a copy from editlib.php's question_edit_setup() function.
+     * The original function expects the course module id parameter to be "cmid", but this module gets passed "id"
+     * Moodle coding standard does not allow us to override $_GET or $_POST before calling question_edit_setup()
      */
-    private function set_missing_id_param() {
-        if (isset($_GET[capquiz_urls::$param_id])) {
-            $_GET[capquiz_urls::$param_course_module_id] = $_GET[capquiz_urls::$param_id];
+    private function setup_question_edit() {
+        global $PAGE;
+        $params = [];
+        $params['cmid'] = capquiz_urls::require_course_module_id_param();
+        $params['qpage'] = optional_param('qpage', null, PARAM_INT);
+        $params['cat'] = optional_param('cat', null, PARAM_SEQUENCE);
+        $params['category'] = optional_param('category', null, PARAM_SEQUENCE);
+        $params['qperpage'] = optional_param('qperpage', null, PARAM_INT);
+        for ($i = 1; $i <= question_bank_view::MAX_SORTS; $i++) {
+            $param = 'qbs' . $i;
+            if ($sort = optional_param($param, '', PARAM_TEXT)) {
+                $params[$param] = $sort;
+            } else {
+                break;
+            }
         }
-        if (isset($_POST[capquiz_urls::$param_id])) {
-            $_POST[capquiz_urls::$param_course_module_id] = $_POST[capquiz_urls::$param_id];
-        }
+        $params['recurse'] = optional_param('recurse', null, PARAM_BOOL);
+        $params['showhidden'] = optional_param('showhidden', null, PARAM_BOOL);
+        $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_BOOL);
+        $params['cpage'] = optional_param('cpage', null, PARAM_INT);
+        $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
+        $PAGE->set_pagelayout('admin');
+        $edittab = 'editq';
+        $baseurl = '/mod/capquiz/edit.php';
+        return question_build_edit_resources($edittab, $baseurl, $params);
     }
+
 }

@@ -20,7 +20,6 @@ require_once("../../config.php");
 
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
 /**
  * @package     mod_capquiz
@@ -29,10 +28,15 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$course_module_id = capquiz_urls::require_course_module_id_param();
+$course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
+require_login($course_module->course, false, $course_module);
+$context = \context_module::instance($course_module_id);
+require_capability('mod/capquiz:instructor', $context);
+
 try {
     $capquiz = capquiz::create();
-    $capquiz->require_instructor_capability();
-    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
+    capquiz_urls::set_page_url($capquiz, capquiz_urls::$url_view_question_list);
     $question_page = optional_param(capquiz_urls::$param_question_page, 0, PARAM_INT);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
     $bankview = $bankrenderer->create_view();
@@ -40,5 +44,5 @@ try {
     $renderer = $capquiz->renderer();
     $renderer->display_question_list_view($capquiz);
 } catch (\coding_exception $e) {
-    redirect_to_front_page();
+    capquiz_urls::redirect_to_front_page();
 }

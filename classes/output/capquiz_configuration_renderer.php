@@ -17,8 +17,8 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\capquiz_configuration_form;
-use function mod_capquiz\redirect_to_dashboard;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,11 +45,11 @@ class capquiz_configuration_renderer {
         $url = $PAGE->url;
         $form = new capquiz_configuration_form($this->capquiz, $url);
         if ($form->is_cancelled()) {
-            redirect_to_dashboard($this->capquiz);
+            capquiz_urls::redirect_to_dashboard();
         }
         if ($form_data = $form->get_data()) {
             $this->capquiz->configure($form_data);
-            redirect_to_dashboard($this->capquiz);
+            capquiz_urls::redirect_to_dashboard();
         }
         $form_html = $form->render();
         return $this->renderer->render_from_template('capquiz/capquiz_configuration', [

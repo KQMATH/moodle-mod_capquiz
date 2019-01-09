@@ -153,7 +153,6 @@ class capquiz_user {
         $user_entry = new \stdClass();
         $user_entry->user_id = $moodle_userid;
         $user_entry->capquiz_id = $capquiz->id();
-        $capquiz->require_student_capability();
         $user_entry->rating = $capquiz->default_user_rating();
         try {
             if ($DB->insert_record(database_meta::$table_capquiz_user, $user_entry)) {

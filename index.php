@@ -16,7 +16,7 @@
 
 namespace mod_capquiz;
 
-require('../../config.php');
+require_once('../../config.php');
 
 /**
  * @package     mod_capquiz
@@ -25,4 +25,10 @@ require('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$url_view));
+$course_id = required_param(capquiz_urls::$param_id, PARAM_INT);
+$course = $DB->get_record('course', ['id' => $course_id]);
+if ($course) {
+    $PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$url_view));
+}
+
+// todo

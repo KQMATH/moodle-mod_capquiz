@@ -17,7 +17,6 @@
 namespace mod_capquiz;
 
 require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
 
 /**
  * @package     mod_capquiz
@@ -26,7 +25,19 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function question_attempt_async(capquiz $capquiz, string $action, int $attemptid) {
+$course_module_id = capquiz_urls::require_course_module_id_param();
+$course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
+require_login($course_module->course, false, $course_module);
+$context = \context_module::instance($course_module_id);
+require_capability('mod/capquiz:student', $context);
+
+$action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
+$attemptid = optional_param(capquiz_urls::$param_attempt, null, PARAM_INT);
+$capquiz = capquiz::create();
+
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$url_async);
+
+if ($attemptid !== null) {
     $user = $capquiz->user();
     $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
     if ($action === capquiz_actions::$attempt_answered) {
@@ -34,18 +45,7 @@ function question_attempt_async(capquiz $capquiz, string $action, int $attemptid
     } else if ($action === capquiz_actions::$attempt_reviewed) {
         $capquiz->question_engine()->attempt_reviewed($user, $attempt);
     }
-    redirect_to_dashboard($capquiz);
+    capquiz_urls::redirect_to_dashboard();
 }
 
-function capquiz_async() {
-    $action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-    $attemptid = optional_param(capquiz_urls::$param_attempt, null, PARAM_INT);
-    $capquiz = capquiz::create();
-    set_page_url($capquiz, capquiz_urls::$url_async);
-    if ($attemptid !== null) {
-        question_attempt_async($capquiz, $action, $attemptid);
-    }
-    redirect_to_front_page();
-}
-
-capquiz_async();
+capquiz_urls::redirect_to_front_page();

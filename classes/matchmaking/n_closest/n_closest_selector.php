@@ -37,14 +37,14 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     }
 
     public function configure(\stdClass $configuration) /*: void*/ {
-        if ($user_win_probability = $configuration->user_win_probability) {
-            $this->user_win_probability = $user_win_probability;
+        if ($configuration->user_win_probability > 0) {
+            $this->user_win_probability = $configuration->user_win_probability;
         }
-        if ($number_of_questions_to_select = $configuration->number_of_questions_to_select) {
-            $this->number_of_questions_to_select = $number_of_questions_to_select;
+        if ($configuration->number_of_questions_to_select > 0) {
+            $this->number_of_questions_to_select = $configuration->number_of_questions_to_select;
         }
-        if ($prevent_same_question_for_turns = $configuration->prevent_same_question_for_turns) {
-            $this->prevent_same_question_for_turns = $prevent_same_question_for_turns;
+        if ($configuration->prevent_same_question_for_turns >= 0) {
+            $this->prevent_same_question_for_turns = $configuration->prevent_same_question_for_turns;
         }
     }
 
@@ -66,6 +66,9 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
 
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) /*: ?capquiz_question*/ {
         $candidate_questions = $this->find_questions_closest_to_rating($user, $this->determine_excluded_questions($inactive_capquiz_attempts));
+        if (count($candidate_questions) === 0) {
+            return null;
+        }
         $index = mt_rand(0, count($candidate_questions) - 1);
         if ($question = $candidate_questions[$index]) {
             return $question;

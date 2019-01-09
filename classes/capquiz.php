@@ -48,24 +48,19 @@ class capquiz {
 
     public function __construct(int $course_module_id) {
         global $DB, $PAGE;
-
         $this->course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
-
-        require_login($this->course_module->course, false, $this->course_module);
-
         $this->context = \context_module::instance($course_module_id);
         $PAGE->set_context($this->context);
         $this->capquiz_renderer = $PAGE->get_renderer('mod_capquiz');
-
         $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course, [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
         $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
     }
 
     /**
-     * @throws \coding_exception
+     * @throws \coding_exception if no id/cmid param
      */
     public static function create() : capquiz {
-        return self::create_from_id(capquiz_urls::require_course_module_id_param()); // throws if no id/cmid param
+        return self::create_from_id(capquiz_urls::require_course_module_id_param());
     }
 
     public static function create_from_id(int $id) : capquiz {
@@ -96,14 +91,6 @@ class capquiz {
             return false;
         }
         return $this->question_list()->has_questions();
-    }
-
-    public function is_student() : bool {
-        return $this->has_capability('mod/capquiz:student');
-    }
-
-    public function is_instructor() : bool {
-        return $this->has_capability('mod/capquiz:instructor');
     }
 
     public function question_list_id() : int {
@@ -227,26 +214,6 @@ class capquiz {
         return $this->course_db_entry;
     }
 
-    public function require_student_capability() /*: void*/ {
-        require_capability('mod/capquiz:student', $this->context);
-    }
-
-    public function require_instructor_capability() /*: void*/ {
-        require_capability('mod/capquiz:instructor', $this->context);
-    }
-
-    public function require_capability(string $capability) /*: void*/ {
-        require_capability($capability, $this->context);
-    }
-
-    public function has_capability(string $capability) : bool {
-        return has_capability($capability, $this->context);
-    }
-
-    public function user_has_capability(string $capability, int $user_id) : bool {
-        return has_capability($capability, $this->context, $user_id);
-    }
-
     public function configure(\stdClass $configuration) /*: void*/ {
         global $DB;
         $db_entry = $this->capquiz_db_entry;
@@ -279,4 +246,5 @@ class capquiz {
             $this->selection_strategy_loader()->set_default_strategy();
         }
     }
+
 }
