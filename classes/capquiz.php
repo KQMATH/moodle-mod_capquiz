@@ -52,8 +52,10 @@ class capquiz {
         $this->context = \context_module::instance($course_module_id);
         $PAGE->set_context($this->context);
         $this->capquiz_renderer = $PAGE->get_renderer('mod_capquiz');
-        $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course, [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
-        $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
+        $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course,
+            [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
+        $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz,
+            [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
     }
 
     /**
@@ -163,7 +165,8 @@ class capquiz {
 
     public function question_engine() /*: ?capquiz_question_engine*/ {
         if ($question_usage = $this->question_usage()) {
-            return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_loader(), $this->rating_system_loader());
+            return new capquiz_question_engine($this, $question_usage,
+                $this->selection_strategy_loader(), $this->rating_system_loader());
         }
         return null;
     }

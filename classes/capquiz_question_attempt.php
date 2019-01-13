@@ -37,7 +37,8 @@ class capquiz_question_attempt {
         $this->question_usage = $question_usage;
     }
 
-    public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) /*: ?capquiz_question_attempt*/ {
+    public static function create_attempt(capquiz $capquiz, capquiz_user $user,
+            capquiz_question $question) /*: ?capquiz_question_attempt*/ {
         $question_usage = $capquiz->question_usage();
         $questions = question_load_questions([$question->question_id()]);
         $target_question = reset($questions);
@@ -176,7 +177,8 @@ class capquiz_question_attempt {
         }
     }
 
-    private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) /*: ?capquiz_question_attempt*/ {
+    private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user,
+            capquiz_question $question, int $slot) /*: ?capquiz_question_attempt*/ {
         global $DB;
         $attempt_entry = new \stdClass();
         $attempt_entry->slot = $slot;

@@ -52,13 +52,34 @@ class renderer extends \plugin_renderer_base {
 
     private function tabs(string $activetab) {
         $tabs = [
-            $this->tab('view_dashboard', get_string('dashboard', 'capquiz'), capquiz_urls::view_url()),
-            $this->tab('view_matchmaking', get_string('matchmaking', 'capquiz'), capquiz_urls::view_matchmaking_configuration_url()),
-            $this->tab('view_rating_system', get_string('rating_system', 'capquiz'), capquiz_urls::view_rating_system_configuration_url()),
-            $this->tab('view_questions', get_string('questions', 'capquiz'), capquiz_urls::view_question_list_url()),
-            $this->tab('view_badges', get_string('badges', 'capquiz'), capquiz_urls::view_badge_configuration_url()),
-            $this->tab('view_capquiz', get_string('pluginname', 'capquiz'), capquiz_urls::view_configuration_url()),
-            $this->tab('view_classlist', get_string('classlist', 'capquiz'), capquiz_urls::view_classlist_url())
+            $this->tab('view_dashboard',
+                get_string('dashboard', 'capquiz'),
+                capquiz_urls::view_url()
+            ),
+            $this->tab('view_matchmaking',
+                get_string('matchmaking', 'capquiz'),
+                capquiz_urls::view_matchmaking_configuration_url()
+            ),
+            $this->tab('view_rating_system',
+                get_string('rating_system', 'capquiz'),
+                capquiz_urls::view_rating_system_configuration_url()
+            ),
+            $this->tab('view_questions',
+                get_string('questions', 'capquiz'),
+                capquiz_urls::view_question_list_url()
+            ),
+            $this->tab('view_badges',
+                get_string('badges', 'capquiz'),
+                capquiz_urls::view_badge_configuration_url()
+            ),
+            $this->tab('view_capquiz',
+                get_string('pluginname', 'capquiz'),
+                capquiz_urls::view_configuration_url()
+            ),
+            $this->tab('view_classlist',
+                get_string('classlist', 'capquiz'),
+                capquiz_urls::view_classlist_url()
+            )
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }

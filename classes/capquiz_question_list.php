@@ -118,7 +118,9 @@ class capquiz_question_list {
     public function set_level_ratings(array $ratings) /*: void*/ {
         $counts = count($ratings);
         if ($counts !== $this->level_count()) {
-            throw new \Exception("Wrong number of ratings specified for badges: $counts given and " . $this->level_count() . ' required');
+            throw new \Exception(
+                "Wrong number of ratings specified for badges: $counts given and " . $this->level_count() . ' required'
+            );
         }
         $db_entry = $this->db_entry;
         $level = $this->first_level();
@@ -231,7 +233,8 @@ class capquiz_question_list {
         $question_list_entry->is_template = $insert_as_template ? 1 : 0;
         $transaction = $DB->start_delegated_transaction();
         try {
-            $questions = $DB->get_records(database_meta::$table_capquiz_question, [database_meta::$field_question_list_id => $question_list_id]);
+            $questions = $DB->get_records(database_meta::$table_capquiz_question,
+                [database_meta::$field_question_list_id => $question_list_id]);
             $question_list_id = $DB->insert_record(database_meta::$table_capquiz_question_list, $question_list_entry);
             foreach ($questions as $question) {
                 $question->id = null;
