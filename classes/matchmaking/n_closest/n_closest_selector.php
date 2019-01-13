@@ -78,20 +78,18 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
 
     private function find_questions_closest_to_rating(capquiz_user $user, array $excluded_questions) : array {
         global $DB;
-        $table = database_meta::$table_capquiz_question;
-        $field_list_id = database_meta::$field_question_list_id;
-        $field_question_id = database_meta::$field_id;
-        $ideal_question_rating = $this->ideal_question_rating($user);
-        $rating_field = database_meta::$field_rating;
-        $question_list_id = $this->capquiz->question_list()->id();
-        $sql = "SELECT * FROM {" . $table . "} WHERE $field_list_id=$question_list_id";
-        foreach ($excluded_questions as $question_id) {
-            $sql .= " AND $field_question_id <> $question_id";
+        $sql = 'SELECT * FROM {capquiz_question} WHERE question_list_id = ?';
+        $sql .= str_repeat(' AND id <> ?', count($excluded_questions));
+        $sql .= ' ORDER BY ABS(? - rating)';
+        $params = [];
+        $params[] = $this->capquiz->question_list()->id();
+        if (count($excluded_questions) > 0) {
+            array_push($params, ...$excluded_questions);
         }
-        $sql .= " ORDER BY ABS($ideal_question_rating - $rating_field) LIMIT $this->number_of_questions_to_select";
-        $sql .= ";";
+        $params[] = $this->ideal_question_rating($user);
+        $result_questions = $DB->get_records_sql($sql, $params, 0, $this->number_of_questions_to_select);
         $questions = [];
-        foreach ($DB->get_records_sql($sql) as $question_db_entry) {
+        foreach ($result_questions as $question_db_entry) {
             $questions[] = new capquiz_question($question_db_entry);
         }
         return $questions;
