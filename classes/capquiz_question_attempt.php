@@ -81,15 +81,10 @@ class capquiz_question_attempt {
 
     public static function previous_attempt(capquiz $capquiz, capquiz_user $user) /*: ?capquiz_question_attempt*/ {
         global $DB;
-        $table = database_meta::$table_capquiz_attempt;
-        $target_field = database_meta::$field_user_id;
-        $sort_field = database_meta::$field_time_reviewed;
-        $userid = $user->id();
-        $sql = "SELECT * FROM {" . $table . "} WHERE $target_field=$userid";
-        $sql .= " ORDER BY $sort_field DESC LIMIT 1;";
         try {
-            $question_db_entry = $DB->get_record_sql($sql, null, MUST_EXIST);
-            return new capquiz_question_attempt($capquiz->question_usage(), $question_db_entry);
+            $sql = 'SELECT * FROM {capquiz_attempt} WHERE user_id = ? ORDER BY time_reviewed DESC LIMIT 1';
+            $attempt = $DB->get_record_sql($sql, [$user->id()], MUST_EXIST);
+            return new capquiz_question_attempt($capquiz->question_usage(), $attempt);
         } catch (\dml_exception $e) {
             return null;
         }
