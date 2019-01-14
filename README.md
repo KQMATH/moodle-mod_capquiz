@@ -1,4 +1,7 @@
 # CAPQuiz
+[![Build Status](https://travis-ci.org/KQMATH/moodle-mod_capquiz.svg?branch=master)](https://travis-ci.org/KQMATH/moodle-mod_capquiz)
+
+Computer adaptive practice activity module for Moodle
 
 ## What is it?
 
@@ -8,25 +11,8 @@ In CAPQuiz, the proficiency is measured by a rating.  Good answers increase the 
 
 Estimating question difficulty is known to be difficult. CAPQuiz automates this process to some extent. The question author must provide an initial estimate, but CAPQuiz improves the estimates based by comparing how the same student answers different questions. Hence the rated question sets will improve over time.
 
-**User Documentation:** http://confluence.uials.no:8090/display/KQMATHPUB/CAPQuiz
-
-## Installation:
-
-### Moodle plugins directory
-
-CAPQuiz has not yet been published in the Moodle plugins directory.
-When it is, the following instruction will be valid.
-
-Click on **Install now** within the plugins directory, and then select your site from the list of "My sites"
-
-### Manually
-Unzip all the files into a temporary directory.
-Copy the **capquiz** folder into **moodle/mod**.
-The system administrator should then log in to moodle and click on the **Notifications** link in the Site administration
-block.
-
-## Uninstalling:
-Delete the module from the **Activities** module list in the admin section.
+## Documentation
+Documentation is available [here](https://github.com/KQMATH/moodle-mod_capquiz/wiki), including [installation instructions](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Installation-instructions).
 
 ## History:
 The idea of an adaptive learning system at NTNU in Ålesund (then Ålesund University College) was first conceived by Siebe van Albada.  His efforts led to a prototype, known as [MathGen](https://github.com/MathGen/oppgavegenerator), written as a standalone server in python.
@@ -37,9 +23,9 @@ The first prototype was tested by several lecturers, and was well received by st
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
 **Developers:**
-Aleksander Skrede <aleksander.skrede@gmail.com>,
-Sebastian S. Gundersen <sebastsg@stud.ntnu.no>,
-[André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
+* Aleksander Skrede <aleksander.skrede@gmail.com>
+* Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+* [André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
 
 **Original idea:**
 Siebe Bruno Van Albada <siebe.b.v.albada@ntnu.no>
