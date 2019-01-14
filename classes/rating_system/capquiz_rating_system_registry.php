@@ -80,7 +80,7 @@ class capquiz_rating_system_registry {
     }
 
     private function register_rating_systems() /*: void*/ {
-        //The first listed will be selected by default when creating a new activity
+        // The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->systems = [
             'Elo' => [

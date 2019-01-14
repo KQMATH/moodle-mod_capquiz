@@ -40,7 +40,7 @@ class capquiz_urls {
     public static $url_action = '/mod/capquiz/action.php';
     public static $url_view_classlist = '/mod/capquiz/view_classlist.php';
     public static $url_view_configuration = '/mod/capquiz/view_configuration.php';
-    // TODO: If Moodle fixes their forms, change this to view_question_list.php
+    // TODO: If Moodle fixes their forms, change this to view_question_list.php.
     public static $url_view_question_list = '/mod/capquiz/edit.php';
     public static $url_view_badge_configuration = '/mod/capquiz/view_badge_configuration.php';
     public static $url_view_create_question_list = '/mod/capquiz/view_create_question_list.php';
