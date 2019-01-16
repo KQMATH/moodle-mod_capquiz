@@ -27,13 +27,13 @@ class capquiz_actions {
 
     public static $parameter = 'action';
     public static $redirect = 'redirect';
-    public static $attempt_answered = 'answered';
-    public static $attempt_reviewed = 'reviewed';
-    public static $set_question_list = 'set-question-list';
-    public static $set_question_rating = "set-question-rating";
-    public static $add_question_to_list = 'add-question';
-    public static $publish_question_list = 'publish-question-list';
-    public static $remove_question_from_list = 'remove-question';
-    public static $create_question_list_template = 'create-question-list-template';
+    public static $attemptanswered = 'answered';
+    public static $attemptreviewed = 'reviewed';
+    public static $setquestionlist = 'set-question-list';
+    public static $setquestionrating = "set-question-rating";
+    public static $addquestion = 'add-question';
+    public static $publishquestionlist = 'publish-question-list';
+    public static $removequestion = 'remove-question';
+    public static $createqlisttemplate = 'create-question-list-template';
 
 }

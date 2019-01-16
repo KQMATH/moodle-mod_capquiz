@@ -36,11 +36,11 @@ class question_rating_form extends \moodleform {
     }
 
     public function validations($data, $files) {
-        $validation_errors = [];
+        $errors = [];
         if (empty($data['rating'])) {
-            $validation_errors['rating'] = get_string('rating_required', 'capquiz');
+            $errors['rating'] = get_string('rating_required', 'capquiz');
         }
-        return $validation_errors;
+        return $errors;
     }
 
 }

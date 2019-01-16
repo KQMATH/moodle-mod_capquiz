@@ -22,8 +22,6 @@ use mod_capquiz\capquiz_question_list;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -31,7 +29,11 @@ require_once('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_list_renderer {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -40,26 +42,26 @@ class question_list_renderer {
     }
 
     public function render() {
-        $question_list = $this->capquiz->question_list();
-        if (!$question_list) {
+        $qlist = $this->capquiz->question_list();
+        if (!$qlist) {
             return 'question list error';
         }
-        if ($question_list->has_questions()) {
-            return $this->render_questions($question_list);
+        if ($qlist->has_questions()) {
+            return $this->render_questions($qlist);
         }
         $title = get_string('question_list', 'capquiz');
-        $no_questions = get_string('question_list_no_questions', 'capquiz');
-        return "<h3>$title</h3><p>$no_questions</p>";
+        $noquestions = get_string('question_list_no_questions', 'capquiz');
+        return "<h3>$title</h3><p>$noquestions</p>";
     }
 
-    private function render_questions(capquiz_question_list $question_list) {
+    private function render_questions(capquiz_question_list $qlist) {
         global $PAGE;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [
             $this->capquiz->course_module_id()
         ]);
         $rows = [];
-        $questions = $question_list->questions();
-        for ($i = 0; $i < $question_list->question_count(); $i++) {
+        $questions = $qlist->questions();
+        for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
             $rows[] = [
                 'index' => $i + 1,
@@ -76,7 +78,7 @@ class question_list_renderer {
             ];
         }
         $message = null;
-        if ($question_list->has_questions()) {
+        if ($qlist->has_questions()) {
             $message = get_string('update_rating_explanation', 'capquiz');
         }
         return $this->renderer->render_from_template('capquiz/question_list', [

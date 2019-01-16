@@ -14,19 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-require_once('../../config.php');
-
-require_once($CFG->dirroot . '/question/editlib.php');
-require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_capquiz;
+
+require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
 $course_module_id = capquiz_urls::require_course_module_id_param();
 $course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
@@ -39,6 +38,6 @@ if (!$capquiz) {
     capquiz_urls::redirect_to_front_page();
 }
 
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$url_view_configuration);
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlviewconfig);
 $renderer = $capquiz->renderer();
 $renderer->display_capquiz_configuration($capquiz);

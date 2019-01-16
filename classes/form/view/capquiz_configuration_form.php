@@ -34,7 +34,6 @@ class capquiz_configuration_form extends \moodleform {
     public function __construct(capquiz $capquiz, \moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
-
     }
 
     public function definition() {
@@ -53,17 +52,17 @@ class capquiz_configuration_form extends \moodleform {
     }
 
     public function validations($data, $files) {
-        $validation_errors = [];
+        $errors = [];
         if (empty($data['name'])) {
-            $validation_errors['name'] = get_string('name_required', 'capquiz');
+            $errors['name'] = get_string('name_required', 'capquiz');
         }
         if (empty($data['description'])) {
-            $validation_errors['description'] = get_string('description_required', 'capquiz');
+            $errors['description'] = get_string('description_required', 'capquiz');
         }
         if (empty($data['default_user_rating'])) {
-            $validation_errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
+            $errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
         }
-        return $validation_errors;
+        return $errors;
     }
 
 }

@@ -22,79 +22,34 @@ defined('MOODLE_INTERNAL') || die();
 class backup_capquiz_activity_structure_step extends backup_questions_activity_structure_step {
 
     protected function define_structure() {
-
-        // To know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
-
-        // Define each element separated.
         $capquiz = new backup_nested_element('capquiz', ['id'], [
-            'name',
-            'intro',
-            'introformat',
-            'timecreated',
-            'timemodified',
-            'published',
-            'default_user_rating'
+            'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'published', 'default_user_rating'
         ]);
-
         $questionlist = new backup_nested_element('questionlist', null, [
-            'id',
-            'capquiz_id',
-            'question_usage_id',
-            'title',
-            'author',
-            'description',
-            'level_1_rating',
-            'level_2_rating',
-            'level_3_rating',
-            'level_4_rating',
-            'level_5_rating',
-            'is_template',
-            'time_created',
-            'time_modified',
-            'default_question_rating'
+            'id', 'capquiz_id', 'question_usage_id', 'title', 'author', 'description',
+            'level_1_rating', 'level_2_rating', 'level_3_rating', 'level_4_rating', 'level_5_rating',
+            'is_template', 'time_created', 'time_modified', 'default_question_rating'
         ]);
-
         $this->add_question_usages($questionlist, 'question_usage_id');
-
         $questions = new backup_nested_element('questions');
         $question = new backup_nested_element('question', ['id'], [
-            'question_id',
-            'question_list_id',
-            'rating'
+            'question_id', 'question_list_id', 'rating'
         ]);
-
         $questionselections = new backup_nested_element('questionselections');
         $questionselection = new backup_nested_element('questionselection', ['id'], [
-            'capquiz_id',
-            'strategy',
-            'configuration'
+            'capquiz_id', 'strategy', 'configuration'
         ]);
-
         $ratingsystems = new backup_nested_element('ratingsystems');
         $ratingsystem = new backup_nested_element('ratingsystem', ['id'], [
-            'capquiz_id',
-            'rating_system',
-            'configuration'
+            'capquiz_id', 'rating_system', 'configuration'
         ]);
-
         $users = new backup_nested_element('users');
         $user = new backup_nested_element('user', ['id'], [
-            'user_id',
-            'capquiz_id',
-            'rating',
-            'highest_level'
+            'user_id', 'capquiz_id', 'rating', 'highest_level'
         ]);
-
         $attempts = new backup_nested_element('attempts');
         $attempt = new backup_nested_element('attempt', ['id'], [
-            'slot',
-            'user_id',
-            'question_id',
-            'reviewed',
-            'answered',
-            'time_answered',
-            'time_reviewed'
+            'slot', 'user_id', 'question_id', 'reviewed', 'answered', 'time_answered', 'time_reviewed'
         ]);
 
         // Build the tree.
@@ -116,7 +71,7 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $question->set_source_table('capquiz_question', ['question_list_id' => backup::VAR_PARENTID]);
         $questionselection->set_source_table('capquiz_question_selection', ['capquiz_id' => backup::VAR_PARENTID]);
         $ratingsystem->set_source_table('capquiz_rating_system', ['capquiz_id' => backup::VAR_PARENTID]);
-        if ($userinfo) {
+        if ($this->get_setting_value('userinfo')) {
             $user->set_source_table('capquiz_user', ['capquiz_id' => backup::VAR_PARENTID]);
             $attempt->set_source_table('capquiz_attempt', ['user_id' => backup::VAR_PARENTID]);
         }

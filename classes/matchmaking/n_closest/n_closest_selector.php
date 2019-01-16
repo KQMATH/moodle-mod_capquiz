@@ -27,9 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 class n_closest_selector extends capquiz_matchmaking_strategy {
 
     private $capquiz;
-    private $user_win_probability;
-    private $number_of_questions_to_select;
-    private $prevent_same_question_for_turns;
+    private $userwinprobability;
+    private $numquestionstoselect;
+    private $preventsamequestionforturns;
 
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
@@ -38,21 +38,21 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
 
     public function configure(\stdClass $configuration) /*: void*/ {
         if ($configuration->user_win_probability > 0) {
-            $this->user_win_probability = $configuration->user_win_probability;
+            $this->userwinprobability = $configuration->user_win_probability;
         }
         if ($configuration->number_of_questions_to_select > 0) {
-            $this->number_of_questions_to_select = $configuration->number_of_questions_to_select;
+            $this->numquestionstoselect = $configuration->number_of_questions_to_select;
         }
         if ($configuration->prevent_same_question_for_turns >= 0) {
-            $this->prevent_same_question_for_turns = $configuration->prevent_same_question_for_turns;
+            $this->preventsamequestionforturns = $configuration->prevent_same_question_for_turns;
         }
     }
 
     public function configuration() : \stdClass {
         $config = new \stdClass;
-        $config->prevent_same_question_for_turns = $this->prevent_same_question_for_turns;
-        $config->user_win_probability = $this->user_win_probability;
-        $config->number_of_questions_to_select = $this->number_of_questions_to_select;
+        $config->prevent_same_question_for_turns = $this->preventsamequestionforturns;
+        $config->user_win_probability = $this->userwinprobability;
+        $config->number_of_questions_to_select = $this->numquestionstoselect;
         return $config;
     }
 
@@ -64,11 +64,14 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return $config;
     }
 
-    public function next_question_for_user(capquiz_user $user,
-                                           capquiz_question_list $question_list,
-                                           array $inactive_capquiz_attempts
-    ) /*: ?capquiz_question*/ {
-        $excluded = $this->determine_excluded_questions($inactive_capquiz_attempts);
+    /**
+     * @param capquiz_user $user
+     * @param capquiz_question_list $qlist
+     * @param array $inactiveattempts
+     * @return capquiz_question|null
+     */
+    public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist, array $inactiveattempts) {
+        $excluded = $this->determine_excluded_questions($inactiveattempts);
         $candidates = $this->find_questions_closest_to_rating($user, $excluded);
         if (count($candidates) === 0) {
             return null;
@@ -80,33 +83,33 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return null;
     }
 
-    private function find_questions_closest_to_rating(capquiz_user $user, array $excluded_questions) : array {
+    private function find_questions_closest_to_rating(capquiz_user $user, array $excludedquestions) : array {
         global $DB;
         $sql = 'SELECT * FROM {capquiz_question} WHERE question_list_id = ?';
-        $sql .= str_repeat(' AND id <> ?', count($excluded_questions));
+        $sql .= str_repeat(' AND id <> ?', count($excludedquestions));
         $sql .= ' ORDER BY ABS(? - rating)';
         $params = [];
         $params[] = $this->capquiz->question_list()->id();
-        if (count($excluded_questions) > 0) {
-            array_push($params, ...$excluded_questions);
+        if (count($excludedquestions) > 0) {
+            array_push($params, ...$excludedquestions);
         }
         $params[] = $this->ideal_question_rating($user);
-        $result_questions = $DB->get_records_sql($sql, $params, 0, $this->number_of_questions_to_select);
+        $questionentries = $DB->get_records_sql($sql, $params, 0, $this->numquestionstoselect);
         $questions = [];
-        foreach ($result_questions as $question_db_entry) {
-            $questions[] = new capquiz_question($question_db_entry);
+        foreach ($questionentries as $questionentry) {
+            $questions[] = new capquiz_question($questionentry);
         }
         return $questions;
     }
 
     private function ideal_question_rating(capquiz_user $user) : float {
-        return 400.0 * log((1.0 / $this->user_win_probability) - 1.0, 10.0) + $user->rating();
+        return 400.0 * log((1.0 / $this->userwinprobability) - 1.0, 10.0) + $user->rating();
     }
 
     private function determine_excluded_questions(array $inactive_attempts) : array {
         $it = new \ArrayIterator(array_reverse($inactive_attempts, true));
         $excluded = [];
-        for ($i = 0; $i < $this->prevent_same_question_for_turns; $i++) {
+        for ($i = 0; $i < $this->preventsamequestionforturns; $i++) {
             if (!$it->valid()) {
                 break;
             }
@@ -115,4 +118,5 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         }
         return array_unique($excluded);
     }
+
 }

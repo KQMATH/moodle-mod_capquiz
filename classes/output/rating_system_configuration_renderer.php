@@ -21,7 +21,6 @@ use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
@@ -54,7 +53,6 @@ class rating_system_configuration_renderer {
         return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
             'strategy' => $this->registry->current_rating_system_name(),
             'form' => $html
-
         ]);
     }
 
@@ -62,8 +60,9 @@ class rating_system_configuration_renderer {
         global $PAGE;
         $url = $PAGE->url;
         if ($form = $this->registry->configuration_form($url)) {
-            if ($form_data = $form->get_data()) {
-                $this->registry->configure_current_rating_system($form_data);
+            $formdata = $form->get_data();
+            if ($formdata) {
+                $this->registry->configure_current_rating_system($formdata);
                 redirect(capquiz_urls::view_rating_system_configuration_url());
             }
             return $form->render();

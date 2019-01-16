@@ -24,37 +24,35 @@ namespace mod_capquiz;
  */
 class database_meta {
 
-    public static $table_capquiz = 'capquiz';
-    public static $table_capquiz_user = 'capquiz_user';
-    public static $table_capquiz_badge = 'capquiz_badge';
-    public static $table_capquiz_attempt = 'capquiz_attempt';
-    public static $table_capquiz_question = 'capquiz_question';
-    public static $table_capquiz_rating_system = 'capquiz_rating_system';
-    public static $table_capquiz_question_list = 'capquiz_question_list';
-    public static $table_capquiz_question_selection = 'capquiz_question_selection';
+    public static $tablecapquiz = 'capquiz';
+    public static $tableuser = 'capquiz_user';
+    public static $tableattempt = 'capquiz_attempt';
+    public static $tablequestion = 'capquiz_question';
+    public static $tableratingsystem = 'capquiz_rating_system';
+    public static $tablequestionlist = 'capquiz_question_list';
+    public static $tablequestionselection = 'capquiz_question_selection';
 
-    public static $field_id = 'id';
-    public static $field_level = 'level';
-    public static $field_user_id = 'user_id';
-    public static $field_badge_id = 'badge_id';
-    public static $field_course_id = 'course_id';
-    public static $field_attempt_id = 'attempt_id';
-    public static $field_capquiz_id = 'capquiz_id';
-    public static $field_is_template = 'is_template';
-    public static $field_question_id = 'question_id';
-    public static $field_question_list_id = 'question_list_id';
+    public static $fieldid = 'id';
+    public static $fieldlevel = 'level';
+    public static $fielduserid = 'user_id';
+    public static $fieldcourseid = 'course_id';
+    public static $fieldattemptid = 'attempt_id';
+    public static $fieldcapquizid = 'capquiz_id';
+    public static $fieldistemplate = 'is_template';
+    public static $fieldquestionid = 'question_id';
+    public static $fieldqlistid = 'question_list_id';
 
-    public static $field_title = 'title';
-    public static $field_rating = 'rating';
-    public static $field_answered = 'answered';
-    public static $field_reviewed = 'reviewed';
-    public static $field_description = 'description';
+    public static $fieldtitle = 'title';
+    public static $fieldrating = 'rating';
+    public static $fieldanswered = 'answered';
+    public static $fieldreviewed = 'reviewed';
+    public static $fielddescription = 'description';
 
-    public static $field_time_answered = 'time_answered';
-    public static $field_time_reviewed = 'time_reviewed';
+    public static $fieldtimeanswered = 'time_answered';
+    public static $fieldtimereviewed = 'time_reviewed';
 
-    public static $table_moodle_user = 'user';
-    public static $table_moodle_course = 'course';
-    public static $table_moodle_question = 'question';
+    public static $tablemoodleuser = 'user';
+    public static $tablemoodlecourse = 'course';
+    public static $tablemoodlequestion = 'question';
 
 }

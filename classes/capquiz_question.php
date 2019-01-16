@@ -26,72 +26,70 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_question {
 
-    /** @var \stdClass $db_entry */
-    private $db_entry;
+    /** @var \stdClass $record */
+    private $record;
 
-    public function __construct(\stdClass $db_entry) {
+    public function __construct(\stdClass $record) {
         global $DB;
-        $this->db_entry = $db_entry;
-        $question = $DB->get_record(database_meta::$table_moodle_question, [
-            database_meta::$field_id => $db_entry->question_id
+        $this->record = $record;
+        $question = $DB->get_record(database_meta::$tablemoodlequestion, [
+            database_meta::$fieldid => $record->question_id
         ]);
         if ($question !== false) {
-            $this->db_entry->name = $question->name;
-            $this->db_entry->text = $question->questiontext;
+            $this->record->name = $question->name;
+            $this->record->text = $question->questiontext;
         } else {
-            $this->db_entry->name = 'Missing question';
-            $this->db_entry->text = 'This question is missing.';
+            $this->record->name = 'Missing question';
+            $this->record->text = 'This question is missing.';
         }
     }
 
-    public static function load(int $question_id) /*: ?capquiz_question*/ {
+    public static function load(int $questionid) {
         global $DB;
-        $entry = $DB->get_record(database_meta::$table_capquiz_question, [
-            database_meta::$field_id => $question_id
-        ]);
-        if ($entry === false) {
+        $record = $DB->get_record(database_meta::$tablequestion, [database_meta::$fieldid => $questionid]);
+        if ($record === false) {
             return null;
         }
-        return new capquiz_question($entry);
+        return new capquiz_question($record);
     }
 
     public function entry() : \stdClass {
-        return $this->db_entry;
+        return $this->record;
     }
 
     public function id() : int {
-        return $this->db_entry->id;
+        return $this->record->id;
     }
 
     public function question_id() : int {
-        return $this->db_entry->question_id;
+        return $this->record->question_id;
     }
 
     public function question_list_id() : int {
-        return $this->db_entry->question_list_id;
+        return $this->record->question_list_id;
     }
 
     public function rating() : float {
-        return $this->db_entry->rating;
+        return $this->record->rating;
     }
 
     public function set_rating(float $rating) : bool {
         global $DB;
-        $db_entry = $this->db_entry;
+        $db_entry = $this->record;
         $db_entry->rating = $rating;
-        if ($DB->update_record(database_meta::$table_capquiz_question, $db_entry)) {
-            $this->db_entry = $db_entry;
+        if ($DB->update_record(database_meta::$tablequestion, $db_entry)) {
+            $this->record = $db_entry;
             return true;
         }
         return false;
     }
 
     public function name() : string {
-        return $this->db_entry->name;
+        return $this->record->name;
     }
 
     public function text() : string {
-        return $this->db_entry->text;
+        return $this->record->text;
     }
 
 }

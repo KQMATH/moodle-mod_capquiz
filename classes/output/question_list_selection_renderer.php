@@ -21,8 +21,6 @@ use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
@@ -62,4 +60,5 @@ class question_list_selection_renderer {
             'create' => $create
         ]);
     }
+
 }

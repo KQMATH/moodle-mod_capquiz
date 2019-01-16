@@ -22,8 +22,6 @@ use mod_capquiz\bank\question_bank_view;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -32,8 +30,13 @@ require_once('../../config.php');
  */
 class question_bank_renderer {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
+
+    /** @var array $pagevars */
     private $pagevars;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {

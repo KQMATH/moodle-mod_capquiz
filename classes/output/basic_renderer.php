@@ -20,8 +20,6 @@ use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -36,7 +34,7 @@ class basic_renderer {
      * @throws \moodle_exception
      */
     public static function render_home_button(renderer $renderer) {
-        return basic_renderer::render_action_button($renderer, capquiz_urls::redirect(capquiz_urls::view_url()),
+        return self::render_action_button($renderer, capquiz_urls::redirect(capquiz_urls::view_url()),
             get_string('home', 'capquiz'));
     }
 

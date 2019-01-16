@@ -19,6 +19,8 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/classlist_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer.php');
@@ -31,8 +33,6 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_r
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/badge_rating_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_strategy_selection_renderer.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz

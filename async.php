@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -25,25 +21,29 @@ require_once('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$course_module_id = capquiz_urls::require_course_module_id_param();
-$course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
-require_login($course_module->course, false, $course_module);
-$context = \context_module::instance($course_module_id);
+namespace mod_capquiz;
+
+require_once('../../config.php');
+
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+$context = \context_module::instance($cmid);
 require_capability('mod/capquiz:student', $context);
 
 $action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-$attemptid = optional_param(capquiz_urls::$param_attempt, null, PARAM_INT);
+$attemptid = optional_param(capquiz_urls::$paramattempt, null, PARAM_INT);
 $capquiz = capquiz::create();
 
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$url_async);
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
 
 if ($attemptid !== null) {
     $user = $capquiz->user();
     $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
-    if ($action === capquiz_actions::$attempt_answered) {
+    if ($action === capquiz_actions::$attemptanswered) {
         $capquiz->question_engine()->attempt_answered($user, $attempt);
-    } else if ($action === capquiz_actions::$attempt_reviewed) {
-        $capquiz->question_engine()->attempt_reviewed($user, $attempt);
+    } else if ($action === capquiz_actions::$attemptreviewed) {
+        $capquiz->question_engine()->attempt_reviewed($attempt);
     }
     capquiz_urls::redirect_to_dashboard();
 }

@@ -22,8 +22,6 @@ use mod_capquiz\form\view\matchmaking_strategy_selection_form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -32,8 +30,13 @@ require_once('../../config.php');
  */
 class matchmaking_strategy_selection_renderer {
 
+    /** @var \moodle_url $url */
     private $url;
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -50,16 +53,17 @@ class matchmaking_strategy_selection_renderer {
         global $PAGE;
         $url = $PAGE->url;
         $form = new matchmaking_strategy_selection_form($this->capquiz, $url);
-        if ($form_data = $form->get_data()) {
+        $formdata = $form->get_data();
+        if ($formdata) {
             $loader = $this->capquiz->selection_strategy_loader();
             $registry = $this->capquiz->selection_strategy_registry();
-            $strategy = $registry->selection_strategies()[$form_data->strategy];
+            $strategy = $registry->selection_strategies()[$formdata->strategy];
             $loader->set_strategy($strategy);
             redirect($this->url);
         }
-
         return $this->renderer->render_from_template('capquiz/matchmaking_selection_strategy', [
             'form' => $form->render()
         ]);
     }
+
 }

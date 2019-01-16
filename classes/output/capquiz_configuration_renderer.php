@@ -32,7 +32,11 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_configuration_renderer {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -47,13 +51,13 @@ class capquiz_configuration_renderer {
         if ($form->is_cancelled()) {
             capquiz_urls::redirect_to_dashboard();
         }
-        if ($form_data = $form->get_data()) {
-            $this->capquiz->configure($form_data);
+        $formdata = $form->get_data();
+        if ($formdata) {
+            $this->capquiz->configure($formdata);
             capquiz_urls::redirect_to_dashboard();
         }
-        $form_html = $form->render();
         return $this->renderer->render_from_template('capquiz/capquiz_configuration', [
-            'form' => $form_html
+            'form' => $form->render()
         ]);
     }
 }

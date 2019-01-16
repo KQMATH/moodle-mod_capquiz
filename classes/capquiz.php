@@ -16,12 +16,11 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->libdir . '/questionlib.php');
+defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
@@ -34,8 +33,8 @@ class capquiz {
     /** @var \context_module $context */
     private $context;
 
-    /** @var \stdClass $course_module */
-    private $course_module;
+    /** @var \stdClass $cm */
+    private $cm;
 
     /** @var \stdClass $course_db_entry */
     private $course_db_entry;
@@ -43,20 +42,24 @@ class capquiz {
     /** @var \stdClass $capquiz_db_entry */
     private $capquiz_db_entry;
 
-    /** @var \renderer_base|output\renderer $capquiz_renderer */
-    private $capquiz_renderer;
+    /** @var \renderer_base|output\renderer $renderer */
+    private $renderer;
 
     /** @var capquiz_question_list $qlist */
     private $qlist;
 
-    public function __construct(int $course_module_id) {
+    public function __construct(int $cmid) {
         global $DB, $PAGE;
-        $this->course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
-        $this->context = \context_module::instance($course_module_id);
+        $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+        $this->context = \context_module::instance($cmid);
         $PAGE->set_context($this->context);
-        $this->capquiz_renderer = $PAGE->get_renderer('mod_capquiz');
-        $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course, [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
-        $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
+        $this->renderer = $PAGE->get_renderer('mod_capquiz');
+        $this->course_db_entry = $DB->get_record(database_meta::$tablemoodlecourse, [
+            database_meta::$fieldid => $this->cm->course
+        ], '*', MUST_EXIST);
+        $this->capquiz_db_entry = $DB->get_record(database_meta::$tablecapquiz, [
+            database_meta::$fieldid => $this->cm->instance
+        ], '*', MUST_EXIST);
         $this->qlist = capquiz_question_list::load_question_list($this);
     }
 
@@ -100,11 +103,9 @@ class capquiz {
             return false;
         }
         $this->question_list()->create_question_usage($this->context());
-        $capquiz_entry = $this->capquiz_db_entry;
-        $capquiz_entry->published = true;
+        $this->capquiz_db_entry->published = true;
         try {
-            $DB->update_record(database_meta::$table_capquiz, $capquiz_entry);
-            $this->capquiz_db_entry = $capquiz_entry;
+            $DB->update_record(database_meta::$tablecapquiz, $this->capquiz_db_entry);
         } catch (\dml_exception $e) {
             return false;
         }
@@ -112,11 +113,11 @@ class capquiz {
     }
 
     public function renderer() : \renderer_base {
-        return $this->capquiz_renderer;
+        return $this->renderer;
     }
 
     public function output() : \renderer_base {
-        return $this->capquiz_renderer->output_renderer();
+        return $this->renderer->output_renderer();
     }
 
     public function selection_strategy_loader() : capquiz_matchmaking_strategy_loader {
@@ -132,10 +133,10 @@ class capquiz {
     }
 
     public function rating_system_registry() : capquiz_rating_system_registry {
-        return new capquiz_rating_system_registry($this);
+        return new capquiz_rating_system_registry();
     }
 
-    public function question_engine() /*: ?capquiz_question_engine*/ {
+    public function question_engine() {
         $qusage = $this->question_usage();
         if ($qusage) {
             return new capquiz_question_engine($this, $qusage, $this->selection_strategy_loader(), $this->rating_system_loader());
@@ -151,11 +152,11 @@ class capquiz {
         return $this->qlist !== null;
     }
 
-    public function question_list() /*: ?capquiz_question_list*/ {
+    public function question_list() {
         return $this->qlist;
     }
 
-    public function question_usage() /*: ?\question_usage_by_activity*/ {
+    public function question_usage() {
         if ($this->has_question_list() && $this->is_published()) {
             return $this->question_list()->question_usage();
         }
@@ -176,34 +177,29 @@ class capquiz {
     }
 
     public function course_module() : \stdClass {
-        return $this->course_module;
+        return $this->cm;
     }
 
     public function course_module_id() : int {
-        return $this->course_module->id;
+        return $this->cm->id;
     }
 
     public function course() : \stdClass {
         return $this->course_db_entry;
     }
 
-    public function configure(\stdClass $configuration) /*: void*/ {
+    public function configure(\stdClass $configuration) {
         global $DB;
-        $db_entry = $this->capquiz_db_entry;
-        if ($name = $configuration->name) {
-            $db_entry->name = $name;
+        if ($configuration->name) {
+            $this->capquiz_db_entry->name = $configuration->name;
         }
-        if ($default_user_rating = $configuration->default_user_rating) {
-            $db_entry->default_user_rating = $default_user_rating;
+        if ($configuration->default_user_rating) {
+            $this->capquiz_db_entry->default_user_rating = $configuration->default_user_rating;
         }
-        try {
-            $DB->update_record(database_meta::$table_capquiz, $db_entry);
-            $this->capquiz_db_entry = $db_entry;
-        } catch (\dml_exception $e) {
-        }
+        $DB->update_record(database_meta::$tablecapquiz, $this->capquiz_db_entry);
     }
 
-    public function validate_matchmaking_and_rating_systems() /*: void*/ {
+    public function validate_matchmaking_and_rating_systems() {
         if (!$this->rating_system_loader()->has_rating_system()) {
             $this->rating_system_loader()->set_default_rating_system();
         }

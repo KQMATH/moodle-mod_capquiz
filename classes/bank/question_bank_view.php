@@ -50,8 +50,7 @@ class question_bank_view extends \core_question\bank\view {
     }
 
     public function render(string $tabname, int $page, int $perpage, string $category,
-            bool $show_subcategories, bool $showhidden, bool $showquestiontext,
-            array $tagids = []) : string {
+            bool $subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
         global $PAGE;
         if ($this->process_actions_needing_ui()) {
             return '';
@@ -64,7 +63,7 @@ class question_bank_view extends \core_question\bank\view {
         $this->display_question_bank_header();
         $this->add_searchcondition(new tag_condition([$catcontext, $thiscontext], $tagids));
         $this->add_searchcondition(new hidden_condition(!$showhidden));
-        $this->add_searchcondition(new category_condition($category, $show_subcategories,
+        $this->add_searchcondition(new category_condition($category, $subcategories,
             $contexts, $this->baseurl, $this->course));
         $this->display_options_form($showquestiontext, $this->baseurl->get_path());
         $this->display_question_list(

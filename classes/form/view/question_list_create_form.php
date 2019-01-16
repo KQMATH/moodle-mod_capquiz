@@ -53,21 +53,21 @@ class question_list_create_form extends \moodleform {
     }
 
     public function validations($data, $files) {
-        $validation_errors = [];
+        $errors = [];
         if (empty($data['title'])) {
-            $validation_errors['title'] = get_string('title_required', 'capquiz');
+            $errors['title'] = get_string('title_required', 'capquiz');
         }
         if (empty($data['description'])) {
-            $validation_errors['description'] = get_string('description_required', 'capquiz');
+            $errors['description'] = get_string('description_required', 'capquiz');
         }
         for ($level = 1; $level < 6; $level++) {
             $element = "level_{$level}_rating";
             if (empty($data[$element])) {
                 $requiredtext = get_string('level_rating_required', 'capquiz', $level);
-                $validation_errors[$element] = $requiredtext;
+                $errors[$element] = $requiredtext;
             }
         }
-        return $validation_errors;
+        return $errors;
     }
 
 }

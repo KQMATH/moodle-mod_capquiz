@@ -44,18 +44,19 @@ class matchmaking_strategy_selection_form extends \moodleform {
         $registry = $this->capquiz->selection_strategy_registry();
         $strategies = $registry->selection_strategies();
         $index = 0;
-        $selected_index = -1;
+        $selectedindex = -1;
         $radioarray = [];
         foreach ($strategies as $strategy) {
             if ($loader->current_strategy_name() === $strategy) {
-                $selected_index = $index;
+                $selectedindex = $index;
             }
-            $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $index++, [$strategy]);
+            $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $index, [$strategy]);
+            $index++;
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
         $this->add_action_buttons(false);
-        if ($selected_index > -1) {
-            $form->setDefault('strategy', $selected_index);
+        if ($selectedindex > -1) {
+            $form->setDefault('strategy', $selectedindex);
         }
     }
 

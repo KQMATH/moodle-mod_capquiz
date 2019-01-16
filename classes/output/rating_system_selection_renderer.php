@@ -22,8 +22,6 @@ use mod_capquiz\form\view\rating_system_selection_form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -32,8 +30,13 @@ require_once('../../config.php');
  */
 class rating_system_selection_renderer {
 
+    /** @var \moodle_url $url */
     private $url;
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -50,10 +53,11 @@ class rating_system_selection_renderer {
         global $PAGE;
         $url = $PAGE->url;
         $form = new rating_system_selection_form($this->capquiz, $url);
-        if ($form_data = $form->get_data()) {
+        $formdata = $form->get_data();
+        if ($formdata) {
             $loader = $this->capquiz->rating_system_loader();
             $registry = $this->capquiz->rating_system_registry();
-            $loader->set_rating_system($registry->rating_systems()[$form_data->rating_system]);
+            $loader->set_rating_system($registry->rating_systems()[$formdata->rating_system]);
             redirect($this->url);
         }
 
@@ -61,4 +65,5 @@ class rating_system_selection_renderer {
             'form' => $form->render()
         ]);
     }
+
 }

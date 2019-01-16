@@ -29,12 +29,13 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class n_closest_configuration_form extends \moodleform {
+
+    /** @var \stdClass $configuration */
     private $configuration;
 
     public function __construct(\stdClass $configuration, \moodle_url $url) {
         $this->configuration = $configuration;
         parent::__construct($url);
-
     }
 
     public function definition() {
@@ -65,17 +66,17 @@ class n_closest_configuration_form extends \moodleform {
     }
 
     public function validations($data, $files) {
-        $validation_errors = [];
+        $errors = [];
         if (empty($data['user_win_probability'])) {
-            $validation_errors['user_win_probability'] = get_string('user_win_probability_required', 'capquiz');
+            $errors['user_win_probability'] = get_string('user_win_probability_required', 'capquiz');
         }
         if (empty($data['number_of_questions'])) {
-            $validation_errors['number_of_questions'] = get_string('number_of_questions_to_select_required', 'capquiz');
+            $errors['number_of_questions'] = get_string('number_of_questions_to_select_required', 'capquiz');
         }
         if (empty($data['prevent_same_question_for_turns'])) {
-            $validation_errors['prevent_same_question_for_turns'] = get_string('field_required', 'capquiz');
+            $errors['prevent_same_question_for_turns'] = get_string('field_required', 'capquiz');
         }
-        return $validation_errors;
+        return $errors;
     }
 
 }

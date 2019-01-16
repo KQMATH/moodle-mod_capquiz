@@ -16,12 +16,11 @@
 
 namespace mod_capquiz;
 
-require_once($CFG->libdir . '/questionlib.php');
+defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
@@ -36,22 +35,22 @@ class capquiz_action_performer {
             case capquiz_actions::$redirect:
                 self::redirect();
                 break;
-            case capquiz_actions::$set_question_list:
+            case capquiz_actions::$setquestionlist:
                 self::assign_question_list($capquiz);
                 break;
-            case capquiz_actions::$add_question_to_list:
+            case capquiz_actions::$addquestion:
                 self::add_question_to_list($capquiz);
                 break;
-            case capquiz_actions::$remove_question_from_list:
+            case capquiz_actions::$removequestion:
                 self::remove_question_from_list($capquiz);
                 break;
-            case capquiz_actions::$publish_question_list:
+            case capquiz_actions::$publishquestionlist:
                 self::publish_capquiz($capquiz);
                 break;
-            case capquiz_actions::$set_question_rating:
+            case capquiz_actions::$setquestionrating:
                 self::set_question_rating($capquiz);
                 break;
-            case capquiz_actions::$create_question_list_template:
+            case capquiz_actions::$createqlisttemplate:
                 self::create_question_list_template($capquiz);
                 break;
             default:
@@ -60,14 +59,14 @@ class capquiz_action_performer {
     }
 
     public static function redirect() {
-        $url = optional_param(capquiz_urls::$param_target_url, null, PARAM_TEXT);
+        $url = optional_param(capquiz_urls::$paramtargeturl, null, PARAM_TEXT);
         if ($url) {
             capquiz_urls::redirect_to_url(new \moodle_url($url));
         }
     }
 
     public static function assign_question_list(capquiz $capquiz) {
-        $qlistid = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT);
+        $qlistid = optional_param(capquiz_urls::$paramqlistid, 0, PARAM_INT);
         $qlist = capquiz_question_list::load_any($qlistid);
         if ($qlist) {
             $capquiz->validate_matchmaking_and_rating_systems();
@@ -77,7 +76,7 @@ class capquiz_action_performer {
 
     public static function add_question_to_list(capquiz $capquiz) {
         $qlist = $capquiz->question_list();
-        $questionid = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT);
+        $questionid = optional_param(capquiz_urls::$paramquestionid, 0, PARAM_INT);
         if ($questionid) {
             self::create_capquiz_question($questionid, $qlist, $qlist->default_question_rating());
         }
@@ -85,9 +84,9 @@ class capquiz_action_performer {
     }
 
     public static function remove_question_from_list(capquiz $capquiz) {
-        $question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT);
-        if ($question_id && $capquiz->has_question_list()) {
-            self::remove_capquiz_question($question_id, $capquiz->question_list()->id());
+        $questionid = optional_param(capquiz_urls::$paramquestionid, 0, PARAM_INT);
+        if ($questionid && $capquiz->has_question_list()) {
+            self::remove_capquiz_question($questionid, $capquiz->question_list()->id());
         }
         capquiz_urls::redirect_to_previous();
     }
@@ -97,12 +96,12 @@ class capquiz_action_performer {
     }
 
     public static function set_question_rating(capquiz $capquiz) {
-        $question_id = required_param(capquiz_urls::$param_question_id, PARAM_INT);
-        $question = $capquiz->question_list()->question($question_id);
+        $questionid = required_param(capquiz_urls::$paramquestionid, PARAM_INT);
+        $question = $capquiz->question_list()->question($questionid);
         if (!$question) {
             throw new \Exception('The specified question does not exist');
         }
-        $rating = optional_param(capquiz_urls::$param_rating, null, PARAM_FLOAT);
+        $rating = optional_param(capquiz_urls::$paramrating, null, PARAM_FLOAT);
         if ($rating !== null) {
             $question->set_rating($rating);
         }
@@ -113,7 +112,7 @@ class capquiz_action_performer {
         $qlist = $capquiz->question_list();
         if (!$qlist) {
             throw new \Exception('Failed to find question list for this CAPQuiz.');
-        } else if (!$qlist->can_create_template()) {
+        } else if (!$qlist->has_questions()) {
             throw new \Exception('Attempted to create template without questions.');
         }
         $qlistcopy = $qlist->create_template_copy();
@@ -123,22 +122,22 @@ class capquiz_action_performer {
         return $qlistcopy;
     }
 
-    private static function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating) {
+    private static function create_capquiz_question(int $questionid, capquiz_question_list $list, float $rating) {
         global $DB;
-        $rated_question = new \stdClass();
-        $rated_question->question_list_id = $list->id();
-        $rated_question->question_id = $question_id;
-        $rated_question->rating = $rating;
-        $DB->insert_record(database_meta::$table_capquiz_question, $rated_question);
+        $ratedquestion = new \stdClass();
+        $ratedquestion->question_list_id = $list->id();
+        $ratedquestion->question_id = $questionid;
+        $ratedquestion->rating = $rating;
+        $DB->insert_record(database_meta::$tablequestion, $ratedquestion);
     }
 
-    private static function remove_capquiz_question(int $question_id, int $question_list_id) {
+    private static function remove_capquiz_question(int $questionid, int $qlistid) {
         global $DB;
         $conditions = [
-            database_meta::$field_id => $question_id,
-            database_meta::$field_question_list_id => $question_list_id
+            database_meta::$fieldid => $questionid,
+            database_meta::$fieldqlistid => $qlistid
         ];
-        $DB->delete_records(database_meta::$table_capquiz_question, $conditions);
+        $DB->delete_records(database_meta::$tablequestion, $conditions);
     }
 
 }
