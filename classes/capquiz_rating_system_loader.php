@@ -120,9 +120,7 @@ class capquiz_rating_system_loader {
 
     private function load_configuration() /*: void*/ {
         global $DB;
-        $conditions = [
-            database_meta::$field_capquiz_id => $this->capquiz->id()
-        ];
+        $conditions = [database_meta::$field_capquiz_id => $this->capquiz->id()];
         if ($configuration = $DB->get_record(database_meta::$table_capquiz_rating_system, $conditions)) {
             $this->set_configuration($configuration);
         }
@@ -151,4 +149,5 @@ class capquiz_rating_system_loader {
     private function deserialize(string $configuration) /*: ?\stdClass*/ {
         return json_decode($configuration, false);
     }
+
 }

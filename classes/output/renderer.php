@@ -109,8 +109,8 @@ class renderer extends \plugin_renderer_base {
         $this->display_view(new question_list_creator_renderer($capquiz, $this));
     }
 
-    public function display_choose_question_list_view(capquiz $capquiz) {
-        $this->display_view(new question_list_selection_renderer($capquiz, $this));
+    public function display_choose_question_list_view() {
+        $this->display_view(new question_list_selection_renderer($this));
     }
 
     public function display_unauthorized_view() {

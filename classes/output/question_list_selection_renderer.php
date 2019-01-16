@@ -33,17 +33,14 @@ require_once('../../config.php');
  */
 class question_list_selection_renderer {
 
-    private $capquiz;
-
     private $renderer;
 
-    public function __construct(capquiz $capquiz, renderer $renderer) {
-        $this->capquiz = $capquiz;
+    public function __construct(renderer $renderer) {
         $this->renderer = $renderer;
     }
 
     public function render() {
-        $templates = capquiz_question_list::load_question_list_templates($this->capquiz);
+        $templates = capquiz_question_list::load_question_list_templates();
         $lists = [];
         foreach ($templates as $template) {
             $lists[] = [

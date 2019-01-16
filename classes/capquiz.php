@@ -46,6 +46,9 @@ class capquiz {
     /** @var \renderer_base|output\renderer $capquiz_renderer */
     private $capquiz_renderer;
 
+    /** @var capquiz_question_list $qlist */
+    private $qlist;
+
     public function __construct(int $course_module_id) {
         global $DB, $PAGE;
         $this->course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
@@ -54,6 +57,7 @@ class capquiz {
         $this->capquiz_renderer = $PAGE->get_renderer('mod_capquiz');
         $this->course_db_entry = $DB->get_record(database_meta::$table_moodle_course, [database_meta::$field_id => $this->course_module->course], '*', MUST_EXIST);
         $this->capquiz_db_entry = $DB->get_record(database_meta::$table_capquiz, [database_meta::$field_id => $this->course_module->instance], '*', MUST_EXIST);
+        $this->qlist = capquiz_question_list::load_question_list($this);
     }
 
     /**
@@ -84,40 +88,10 @@ class capquiz {
     }
 
     public function can_publish() : bool {
-        if (!$this->has_question_list()) {
-            return false;
-        }
-        if ($this->is_published()) {
+        if (!$this->has_question_list() || $this->is_published()) {
             return false;
         }
         return $this->question_list()->has_questions();
-    }
-
-    public function question_list_id() : int {
-        return $this->capquiz_db_entry->question_list_id;
-    }
-
-    public function has_question_list() : bool {
-        return $this->capquiz_db_entry->question_list_id != null;
-    }
-
-    public function assign_question_list(int $question_list_id) : bool {
-        global $DB;
-        $this->validate_matchmaking_and_rating_systems();
-        $question_list = capquiz_question_list::load_any($this, $question_list_id);
-        if (!$question_list) {
-            return false;
-        }
-        if ($question_list->is_template()) {
-            $question_list_id = capquiz_question_list::copy($question_list, false);
-        }
-        $capquiz_entry = $this->capquiz_db_entry;
-        $capquiz_entry->question_list_id = $question_list_id;
-        if ($DB->update_record(database_meta::$table_capquiz, $capquiz_entry)) {
-            $this->capquiz_db_entry = $capquiz_entry;
-            return true;
-        }
-        return false;
     }
 
     public function publish() : bool {
@@ -125,9 +99,9 @@ class capquiz {
         if (!$this->can_publish()) {
             return false;
         }
+        $this->question_list()->create_question_usage($this->context());
         $capquiz_entry = $this->capquiz_db_entry;
         $capquiz_entry->published = true;
-        $capquiz_entry->question_usage_id = $this->create_question_usage();
         try {
             $DB->update_record(database_meta::$table_capquiz, $capquiz_entry);
             $this->capquiz_db_entry = $capquiz_entry;
@@ -162,8 +136,9 @@ class capquiz {
     }
 
     public function question_engine() /*: ?capquiz_question_engine*/ {
-        if ($question_usage = $this->question_usage()) {
-            return new capquiz_question_engine($this, $question_usage, $this->selection_strategy_loader(), $this->rating_system_loader());
+        $qusage = $this->question_usage();
+        if ($qusage) {
+            return new capquiz_question_engine($this, $qusage, $this->selection_strategy_loader(), $this->rating_system_loader());
         }
         return null;
     }
@@ -172,21 +147,19 @@ class capquiz {
         return new capquiz_question_registry($this);
     }
 
+    public function has_question_list() : bool {
+        return $this->qlist !== null;
+    }
+
     public function question_list() /*: ?capquiz_question_list*/ {
-        if ($this->has_question_list()) {
-            return capquiz_question_list::load_question_list($this, $this->question_list_id());
-        }
-        return null;
+        return $this->qlist;
     }
 
     public function question_usage() /*: ?\question_usage_by_activity*/ {
-        if (!$this->has_question_list()) {
-            return null;
+        if ($this->has_question_list() && $this->is_published()) {
+            return $this->question_list()->question_usage();
         }
-        if (!$this->is_published()) {
-            return null;
-        }
-        return \question_engine::load_questions_usage_by_activity($this->capquiz_db_entry->question_usage_id);
+        return null;
     }
 
     public function user() : capquiz_user {
@@ -230,15 +203,7 @@ class capquiz {
         }
     }
 
-    private function create_question_usage() : int {
-        $question_usage = \question_engine::make_questions_usage_by_activity('mod_capquiz', $this->context());
-        $question_usage->set_preferred_behaviour('immediatefeedback');
-        // TODO: Don't suppress the error if it becomes possible to save QUBAs without slots.
-        @\question_engine::save_questions_usage_by_activity($question_usage);
-        return $question_usage->get_id();
-    }
-
-    private function validate_matchmaking_and_rating_systems() /*: void*/ {
+    public function validate_matchmaking_and_rating_systems() /*: void*/ {
         if (!$this->rating_system_loader()->has_rating_system()) {
             $this->rating_system_loader()->set_default_rating_system();
         }

@@ -95,7 +95,7 @@ class question_attempt_renderer {
 
     private function render_progress(capquiz_user $user) : string {
         $questionlist = $this->capquiz->question_list();
-        $percent = $questionlist->next_level_percent($user->rating());
+        $percent = $questionlist->next_level_percent($this->capquiz, $user->rating());
         if ($percent >= 0) {
             $student = [
                 'up' => ['percent' => $percent],

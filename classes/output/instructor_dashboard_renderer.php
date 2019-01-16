@@ -50,6 +50,9 @@ class instructor_dashboard_renderer {
 
     private function render_summary() {
         $question_list = $this->capquiz->question_list();
+        if (!$question_list) {
+            return 'question list error';
+        }
         return $this->renderer->render_from_template('capquiz/instructor_dashboard_summary', [
             'published_status' => $this->capquiz->is_published() ? get_string('published', 'capquiz') : get_string('not_published', 'capquiz'),
             'question_list_title' => $question_list ? $question_list->title() : get_string('no_question_list_assigned', 'capquiz'),
@@ -62,6 +65,9 @@ class instructor_dashboard_renderer {
         $is_published = $this->capquiz->is_published();
         $can_publish = $this->capquiz->can_publish();
         $question_list = $this->capquiz->question_list();
+        if (!$question_list) {
+            return 'question list error';
+        }
         $message = null;
         if (!$can_publish) {
             if ($question_list->question_count() === 0) {
@@ -78,6 +84,9 @@ class instructor_dashboard_renderer {
 
     private function render_template() {
         $question_list = $this->capquiz->question_list();
+        if (!$question_list) {
+            return 'question list error';
+        }
         $message = null;
         if (!$question_list->can_create_template()) {
             $message = get_string('template_no_questions_in_list', 'capquiz');

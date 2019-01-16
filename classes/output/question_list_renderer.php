@@ -41,6 +41,9 @@ class question_list_renderer {
 
     public function render() {
         $question_list = $this->capquiz->question_list();
+        if (!$question_list) {
+            return 'question list error';
+        }
         if ($question_list->has_questions()) {
             return $this->render_questions($question_list);
         }

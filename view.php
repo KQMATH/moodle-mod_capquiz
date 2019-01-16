@@ -43,7 +43,7 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($capquiz->has_question_list()) {
         $capquiz->renderer()->display_instructor_dashboard($capquiz);
     } else {
-        $capquiz->renderer()->display_choose_question_list_view($capquiz);
+        $capquiz->renderer()->display_choose_question_list_view();
     }
 } else if (has_capability('mod/capquiz:student', $capquiz->context())) {
     $capquiz->renderer()->display_question_attempt_view($capquiz);

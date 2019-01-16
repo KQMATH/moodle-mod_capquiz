@@ -44,6 +44,9 @@ class badge_rating_configuration_renderer {
         global $PAGE;
         $url = $PAGE->url;
         $question_list = $this->capquiz->question_list();
+        if (!$question_list) {
+            return 'question list error';
+        }
         $form = new badge_rating_configuration_form($question_list, $url);
         if ($form_data = $form->get_data()) {
             $ratings = [

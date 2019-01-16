@@ -55,6 +55,10 @@ class capquiz_question {
         return new capquiz_question($entry);
     }
 
+    public function entry() : \stdClass {
+        return $this->db_entry;
+    }
+
     public function id() : int {
         return $this->db_entry->id;
     }

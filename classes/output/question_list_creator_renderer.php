@@ -18,6 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use mod_capquiz\capquiz_question_list;
 use mod_capquiz\form\view\question_list_create_form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,7 +33,11 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_list_creator_renderer {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -45,7 +50,6 @@ class question_list_creator_renderer {
         $url = $PAGE->url;
         $form = new question_list_create_form($url);
         if ($form_data = $form->get_data()) {
-            $registry = $this->capquiz->question_registry();
             $ratings = [
                 $form_data->level_1_rating,
                 $form_data->level_2_rating,
@@ -53,7 +57,8 @@ class question_list_creator_renderer {
                 $form_data->level_4_rating,
                 $form_data->level_5_rating
             ];
-            if ($registry->create_question_list($form_data->title, $form_data->description, $ratings)) {
+            $qlist = capquiz_question_list::create_new_instance($this->capquiz, $form_data->title, $form_data->description, $ratings);
+            if ($qlist) {
                 redirect(capquiz_urls::create_view_url(capquiz_urls::$url_view));
             }
             header('Location: /');
@@ -63,4 +68,5 @@ class question_list_creator_renderer {
             'form' => $form->render()
         ]);
     }
+
 }

@@ -60,67 +60,67 @@ class capquiz_action_performer {
     }
 
     public static function redirect() {
-        if ($target_url = optional_param(capquiz_urls::$param_target_url, null, PARAM_TEXT)) {
-            capquiz_urls::redirect_to_url(new \moodle_url($target_url));
+        $url = optional_param(capquiz_urls::$param_target_url, null, PARAM_TEXT);
+        if ($url) {
+            capquiz_urls::redirect_to_url(new \moodle_url($url));
         }
     }
 
     public static function assign_question_list(capquiz $capquiz) {
-        if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_TEXT)) {
-            $capquiz->assign_question_list($question_list_id);
+        $qlistid = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT);
+        $qlist = capquiz_question_list::load_any($qlistid);
+        if ($qlist) {
+            $capquiz->validate_matchmaking_and_rating_systems();
+            $qlist->create_instance_copy($capquiz->id());
         }
     }
 
     public static function add_question_to_list(capquiz $capquiz) {
-        $question_list = $capquiz->question_list();
-        if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
-            self::create_capquiz_question($question_id, $question_list, $question_list->default_question_rating());
+        $qlist = $capquiz->question_list();
+        $questionid = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT);
+        if ($questionid) {
+            self::create_capquiz_question($questionid, $qlist, $qlist->default_question_rating());
         }
         capquiz_urls::redirect_to_previous();
     }
 
     public static function remove_question_from_list(capquiz $capquiz) {
-        if ($question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT)) {
-            if ($question_list_id = optional_param(capquiz_urls::$param_question_list_id, 0, PARAM_INT)) {
-                if ($question_list = capquiz_question_list::load_question_list($capquiz, $question_list_id)) {
-                    self::remove_capquiz_question($question_id, $question_list->id());
-                }
-            } else if ($capquiz->has_question_list()) {
-                self::remove_capquiz_question($question_id, $capquiz->question_list()->id());
-            }
+        $question_id = optional_param(capquiz_urls::$param_question_id, 0, PARAM_INT);
+        if ($question_id && $capquiz->has_question_list()) {
+            self::remove_capquiz_question($question_id, $capquiz->question_list()->id());
         }
         capquiz_urls::redirect_to_previous();
     }
 
     public static function publish_capquiz(capquiz $capquiz) {
-        if (!$capquiz->publish()) {
-            throw new \Exception("Unable to publish question list for CAPQuiz " . $capquiz->name());
-        }
+        $capquiz->publish();
     }
 
     public static function set_question_rating(capquiz $capquiz) {
         $question_id = required_param(capquiz_urls::$param_question_id, PARAM_INT);
-        if ($question = $capquiz->question_list()->question($question_id)) {
-            if ($rating = optional_param(capquiz_urls::$param_rating, null, PARAM_FLOAT)) {
-                $question->set_rating($rating);
-            }
-            capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
-        } else {
-            throw new \Exception("The specified question does not exist");
+        $question = $capquiz->question_list()->question($question_id);
+        if (!$question) {
+            throw new \Exception('The specified question does not exist');
         }
+        $rating = optional_param(capquiz_urls::$param_rating, null, PARAM_FLOAT);
+        if ($rating !== null) {
+            $question->set_rating($rating);
+        }
+        capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }
 
     public static function create_question_list_template(capquiz $capquiz) {
-        $question_list = $capquiz->question_list();
-        if (!$question_list) {
+        $qlist = $capquiz->question_list();
+        if (!$qlist) {
             throw new \Exception('Failed to find question list for this CAPQuiz.');
-        } else if (!$question_list->can_create_template()) {
-            throw new \Exception("Attempt to crate template when capquiz_question_list::can_create_template() returns false");
+        } else if (!$qlist->can_create_template()) {
+            throw new \Exception('Attempted to create template without questions.');
         }
-        $id = capquiz_question_list::copy($question_list, true);
-        if ($id === 0) {
+        $qlistcopy = $qlist->create_template_copy();
+        if ($qlistcopy === null) {
             throw new \Exception('Failed to create a template from this question list.');
         }
+        return $qlistcopy;
     }
 
     private static function create_capquiz_question(int $question_id, capquiz_question_list $list, float $rating) {
@@ -134,7 +134,10 @@ class capquiz_action_performer {
 
     private static function remove_capquiz_question(int $question_id, int $question_list_id) {
         global $DB;
-        $conditions = [database_meta::$field_id => $question_id, database_meta::$field_question_list_id => $question_list_id];
+        $conditions = [
+            database_meta::$field_id => $question_id,
+            database_meta::$field_question_list_id => $question_list_id
+        ];
         $DB->delete_records(database_meta::$table_capquiz_question, $conditions);
     }
 
