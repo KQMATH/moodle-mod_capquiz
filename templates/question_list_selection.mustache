@@ -25,7 +25,7 @@
                 "description": "These are my questions",
                 "author": "username",
                 "created": "2019-01-16 16:04:20",
-                "url": "url to select the question list"
+                "url": "#"
             }
         ],
         "create": "raw html for a button to create the question list"
@@ -47,7 +47,9 @@
             <div>
                 <h4>{{ title }}</h4>
                 <p>{{ description }}</p>
-                {{#str}}author, capquiz{{/str}}: {{author}} </br>{{#str}}created, capquiz{{/str}}: {{created}}
+                {{#str}}author, capquiz{{/str}}: {{author}}
+                <br>
+                {{#str}}created, capquiz{{/str}}: {{created}}
             </div>
         </li>
     {{/lists}}
