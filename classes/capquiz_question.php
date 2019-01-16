@@ -75,13 +75,8 @@ class capquiz_question {
 
     public function set_rating(float $rating) : bool {
         global $DB;
-        $db_entry = $this->record;
-        $db_entry->rating = $rating;
-        if ($DB->update_record(database_meta::$tablequestion, $db_entry)) {
-            $this->record = $db_entry;
-            return true;
-        }
-        return false;
+        $this->record->rating = $rating;
+        return $DB->update_record(database_meta::$tablequestion, $this->record);
     }
 
     public function name() : string {

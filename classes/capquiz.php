@@ -36,11 +36,11 @@ class capquiz {
     /** @var \stdClass $cm */
     private $cm;
 
-    /** @var \stdClass $course_db_entry */
-    private $course_db_entry;
+    /** @var \stdClass $courserecord */
+    private $courserecord;
 
-    /** @var \stdClass $capquiz_db_entry */
-    private $capquiz_db_entry;
+    /** @var \stdClass $record */
+    private $record;
 
     /** @var \renderer_base|output\renderer $renderer */
     private $renderer;
@@ -54,10 +54,10 @@ class capquiz {
         $this->context = \context_module::instance($cmid);
         $PAGE->set_context($this->context);
         $this->renderer = $PAGE->get_renderer('mod_capquiz');
-        $this->course_db_entry = $DB->get_record(database_meta::$tablemoodlecourse, [
+        $this->courserecord = $DB->get_record(database_meta::$tablemoodlecourse, [
             database_meta::$fieldid => $this->cm->course
         ], '*', MUST_EXIST);
-        $this->capquiz_db_entry = $DB->get_record(database_meta::$tablecapquiz, [
+        $this->record = $DB->get_record(database_meta::$tablecapquiz, [
             database_meta::$fieldid => $this->cm->instance
         ], '*', MUST_EXIST);
         $this->qlist = capquiz_question_list::load_question_list($this);
@@ -75,19 +75,19 @@ class capquiz {
     }
 
     public function id() : int {
-        return $this->capquiz_db_entry->id;
+        return $this->record->id;
     }
 
     public function name() : string {
-        return $this->capquiz_db_entry->name;
+        return $this->record->name;
     }
 
     public function description() : string {
-        return $this->capquiz_db_entry->description;
+        return $this->record->description;
     }
 
     public function is_published() : bool {
-        return $this->capquiz_db_entry->published;
+        return $this->record->published;
     }
 
     public function can_publish() : bool {
@@ -103,9 +103,9 @@ class capquiz {
             return false;
         }
         $this->question_list()->create_question_usage($this->context());
-        $this->capquiz_db_entry->published = true;
+        $this->record->published = true;
         try {
-            $DB->update_record(database_meta::$tablecapquiz, $this->capquiz_db_entry);
+            $DB->update_record(database_meta::$tablecapquiz, $this->record);
         } catch (\dml_exception $e) {
             return false;
         }
@@ -137,9 +137,9 @@ class capquiz {
     }
 
     public function question_engine() {
-        $qusage = $this->question_usage();
-        if ($qusage) {
-            return new capquiz_question_engine($this, $qusage, $this->selection_strategy_loader(), $this->rating_system_loader());
+        $quba = $this->question_usage();
+        if ($quba) {
+            return new capquiz_question_engine($this, $quba, $this->selection_strategy_loader(), $this->rating_system_loader());
         }
         return null;
     }
@@ -169,7 +169,7 @@ class capquiz {
     }
 
     public function default_user_rating() : float {
-        return $this->capquiz_db_entry->default_user_rating;
+        return $this->record->default_user_rating;
     }
 
     public function context() : \context_module {
@@ -185,18 +185,18 @@ class capquiz {
     }
 
     public function course() : \stdClass {
-        return $this->course_db_entry;
+        return $this->courserecord;
     }
 
     public function configure(\stdClass $configuration) {
         global $DB;
         if ($configuration->name) {
-            $this->capquiz_db_entry->name = $configuration->name;
+            $this->record->name = $configuration->name;
         }
         if ($configuration->default_user_rating) {
-            $this->capquiz_db_entry->default_user_rating = $configuration->default_user_rating;
+            $this->record->default_user_rating = $configuration->default_user_rating;
         }
-        $DB->update_record(database_meta::$tablecapquiz, $this->capquiz_db_entry);
+        $DB->update_record(database_meta::$tablecapquiz, $this->record);
     }
 
     public function validate_matchmaking_and_rating_systems() {

@@ -37,7 +37,7 @@ class capquiz_question_attempt {
         $this->quba = $quba;
     }
 
-    public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) /*: ?capquiz_question_attempt*/ {
+    public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) {
         $quba = $capquiz->question_usage();
         $questions = question_load_questions([$question->question_id()]);
         $targetquestion = reset($questions);
@@ -65,10 +65,10 @@ class capquiz_question_attempt {
         }
     }
 
-    public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attempt_id) {
+    public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attemptid) {
         global $DB;
         $criteria = [
-            database_meta::$fieldid => $attempt_id,
+            database_meta::$fieldid => $attemptid,
             database_meta::$fielduserid => $user->id()
         ];
         try {

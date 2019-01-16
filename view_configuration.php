@@ -27,10 +27,10 @@ require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
-$course_module_id = capquiz_urls::require_course_module_id_param();
-$course_module = get_coursemodule_from_id('capquiz', $course_module_id, 0, false, MUST_EXIST);
-require_login($course_module->course, false, $course_module);
-$context = \context_module::instance($course_module_id);
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+$context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
 $capquiz = capquiz::create();

@@ -25,13 +25,6 @@ namespace mod_capquiz;
 
 require_once('../../config.php');
 
-/**
- * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 require_login();
 
 $courseid = required_param(capquiz_urls::$paramid, PARAM_INT);

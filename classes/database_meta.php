@@ -16,6 +16,8 @@
 
 namespace mod_capquiz;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>

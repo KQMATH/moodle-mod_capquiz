@@ -61,12 +61,9 @@ class capquiz_question_list {
     public function author() {
         global $DB;
         $criteria = [database_meta::$fieldid => $this->record->author];
-        $entry = $DB->get_record(database_meta::$tablemoodleuser, $criteria);
-        if ($entry) {
-            return $entry;
-        } else {
-            return null;
-        }
+        $record = $DB->get_record(database_meta::$tablemoodleuser, $criteria);
+        // Returning null instead of false on failure.
+        return $record ? $record : null;
     }
 
     public function has_questions() : bool {
@@ -111,11 +108,10 @@ class capquiz_question_list {
         if ($numratings !== $this->level_count()) {
             throw new \Exception("$numratings ratings given. " . $this->level_count() . ' required.');
         }
-        $db_entry = $this->record;
         $level = $this->first_level();
         foreach ($ratings as $rating) {
             $field = "level_{$level}_rating";
-            $db_entry->{$field} = $rating;
+            $this->record->{$field} = $rating;
             $level++;
         }
         $DB->update_record(database_meta::$tablequestionlist, $this->record);
@@ -268,7 +264,7 @@ class capquiz_question_list {
         $record->time_modified = time();
         try {
             $qlistid = $DB->insert_record(database_meta::$tablequestionlist, $record);
-            $qlist = capquiz_question_list::load_any($qlistid);
+            $qlist = self::load_any($qlistid);
             if (!$qlist) {
                 return null;
             }
@@ -289,9 +285,9 @@ class capquiz_question_list {
         return null;
     }
 
-    public static function load_any(int $question_list_id) {
+    public static function load_any(int $qlistid) {
         global $DB;
-        $conditions = [database_meta::$fieldid => $question_list_id];
+        $conditions = [database_meta::$fieldid => $qlistid];
         $record = $DB->get_record(database_meta::$tablequestionlist, $conditions);
         if ($record) {
             return new capquiz_question_list($record);

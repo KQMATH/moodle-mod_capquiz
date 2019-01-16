@@ -22,7 +22,6 @@ use mod_capquiz\form\view\capquiz_configuration_form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**

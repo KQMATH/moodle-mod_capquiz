@@ -106,8 +106,8 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return 400.0 * log((1.0 / $this->userwinprobability) - 1.0, 10.0) + $user->rating();
     }
 
-    private function determine_excluded_questions(array $inactive_attempts) : array {
-        $it = new \ArrayIterator(array_reverse($inactive_attempts, true));
+    private function determine_excluded_questions(array $inactiveattempts) : array {
+        $it = new \ArrayIterator(array_reverse($inactiveattempts, true));
         $excluded = [];
         for ($i = 0; $i < $this->preventsamequestionforturns; $i++) {
             if (!$it->valid()) {

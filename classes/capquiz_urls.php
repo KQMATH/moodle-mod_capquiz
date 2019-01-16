@@ -42,7 +42,7 @@ class capquiz_urls {
     public static $urlaction = '/mod/capquiz/action.php';
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
     public static $urlviewconfig = '/mod/capquiz/view_configuration.php';
-    // TODO: If Moodle fixes their forms, change this to view_question_list.php
+    // TODO: If Moodle fixes their forms, change this to view_question_list.php.
     public static $urlviewqlist = '/mod/capquiz/edit.php';
     public static $urlviewbadgeconfig = '/mod/capquiz/view_badge_configuration.php';
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
@@ -94,12 +94,12 @@ class capquiz_urls {
     }
 
     public static function view_url() {
-        return self::create_view_url(capquiz_urls::$urlview);
+        return self::create_view_url(self::$urlview);
     }
 
-    public static function view_question_list_url(int $question_page = 0) {
+    public static function view_question_list_url(int $questionpage = 0) {
         $url = self::create_view_url(self::$urlviewqlist);
-        $url->param(self::$paramquestionpage, $question_page);
+        $url->param(self::$paramquestionpage, $questionpage);
         return $url;
     }
 
@@ -130,44 +130,44 @@ class capquiz_urls {
         return self::create_view_url(self::$urlviewcreateqlist);
     }
 
-    public static function add_question_to_list_url(int $question_id) {
+    public static function add_question_to_list_url(int $questionid) {
         $url = self::create_view_url(self::$urlaction);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$addquestion);
-        $url->param(self::$paramquestionid, $question_id);
+        $url->param(self::$paramquestionid, $questionid);
         return $url;
     }
 
-    public static function remove_question_from_list_url(int $question_id) {
+    public static function remove_question_from_list_url(int $questionid) {
         $url = self::create_view_url(self::$urlaction);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$removequestion);
-        $url->param(self::$paramquestionid, $question_id);
+        $url->param(self::$paramquestionid, $questionid);
         return $url;
     }
 
-    public static function question_list_publish_url(capquiz_question_list $question_list) {
+    public static function question_list_publish_url(capquiz_question_list $qlist) {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramqlistid, $question_list->id());
+        $url->param(self::$paramqlistid, $qlist->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$publishquestionlist);
         return $url;
     }
 
-    public static function question_list_create_template_url(capquiz_question_list $question_list) {
+    public static function question_list_create_template_url(capquiz_question_list $qlist) {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramqlistid, $question_list->id());
+        $url->param(self::$paramqlistid, $qlist->id());
         $url->param(capquiz_actions::$parameter, capquiz_actions::$createqlisttemplate);
         return $url;
     }
 
-    public static function question_list_select_url(capquiz_question_list $question_list) {
+    public static function question_list_select_url(capquiz_question_list $qlist) {
         $url = self::create_view_url(self::$urlaction);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$setquestionlist);
-        $url->param(self::$paramqlistid, $question_list->id());
+        $url->param(self::$paramqlistid, $qlist->id());
         return $url;
     }
 
-    public static function set_question_rating_url(int $question_id) {
+    public static function set_question_rating_url(int $questionid) {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramquestionid, $question_id);
+        $url->param(self::$paramquestionid, $questionid);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$setquestionrating);
         return $url;
     }

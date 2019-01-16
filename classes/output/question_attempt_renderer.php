@@ -161,7 +161,6 @@ class question_attempt_renderer {
         $options->rightanswer = \question_display_options::VISIBLE;
         $options->numpartscorrect = \question_display_options::VISIBLE;
         $options->manualcomment = \question_display_options::HIDDEN;
-        // $options->manualcommentlink = 'insert the link to solve issue #44';
         return $options;
     }
 
@@ -173,7 +172,6 @@ class question_attempt_renderer {
         $options->rightanswer = \question_display_options::HIDDEN;
         $options->numpartscorrect = \question_display_options::HIDDEN;
         $options->manualcomment = \question_display_options::HIDDEN;
-        // $options->manualcommentlink = 'insert the link to solve issue #44';
         return $options;
     }
 

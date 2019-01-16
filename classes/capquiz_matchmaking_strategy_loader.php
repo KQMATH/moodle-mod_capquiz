@@ -73,8 +73,8 @@ class capquiz_matchmaking_strategy_loader {
     }
 
     public function current_strategy_name() : string {
-        if ($db_entry = $this->record) {
-            return $db_entry->strategy;
+        if ($this->record) {
+            return $this->record->strategy;
         }
         return 'No strategy specified';
     }
@@ -135,9 +135,9 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
-    private function set_configuration(\stdClass $database_entry) {
-        $this->record = $database_entry;
-        $configuration = $this->deserialize($database_entry->configuration);
+    private function set_configuration(\stdClass $record) {
+        $this->record = $record;
+        $configuration = $this->deserialize($record->configuration);
         if ($configuration) {
             $this->configuration = $configuration;
         } else {

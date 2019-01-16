@@ -58,8 +58,8 @@ class capquiz_rating_system_registry {
     public function default_rating_system() : string {
         // Default rating system is added first.
         // Modify caquiz_rating_system_registry::register_rating_systems() to change this.
-        $rating_systems = $this->rating_systems();
-        return reset($rating_systems);
+        $ratingsystems = $this->rating_systems();
+        return reset($ratingsystems);
     }
 
     /**
