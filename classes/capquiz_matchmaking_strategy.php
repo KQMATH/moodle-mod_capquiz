@@ -32,6 +32,7 @@ abstract class capquiz_matchmaking_strategy {
 
     public abstract function default_configuration() /*: ?\stdClass*/;
 
-    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) /*: ?capquiz_question*/;
+    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list,
+            array $inactive_capquiz_attempts) /*: ?capquiz_question*/;
 
 }

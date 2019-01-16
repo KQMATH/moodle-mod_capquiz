@@ -27,7 +27,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 class mod_capquiz_mod_form extends moodleform_mod {
 
-    function definition() {
+    public function definition() {
         $form = $this->_form;
         $form->addElement('text', 'name', get_string('name'), ['size' => '64']);
         $form->setType('name', PARAM_TEXT);

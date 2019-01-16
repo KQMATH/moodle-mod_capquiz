@@ -16,9 +16,7 @@
 
 namespace mod_capquiz\output;
 
-use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_question_list;
-use mod_capquiz\capquiz_question_registry;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,6 +31,7 @@ require_once('../../config.php');
  */
 class question_list_selection_renderer {
 
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(renderer $renderer) {

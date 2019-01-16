@@ -117,9 +117,9 @@ class capquiz_question_list {
     }
 
     public function set_level_ratings(array $ratings) /*: void*/ {
-        $counts = count($ratings);
-        if ($counts !== $this->level_count()) {
-            throw new \Exception("Wrong number of ratings specified for badges: $counts given and " . $this->level_count() . ' required');
+        $numratings = count($ratings);
+        if ($numratings !== $this->level_count()) {
+            throw new \Exception("$numratings ratings given. " . $this->level_count() . ' required.');
         }
         $db_entry = $this->db_entry;
         $level = $this->first_level();

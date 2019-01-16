@@ -82,7 +82,7 @@ class capquiz_matchmaking_strategy_registry {
     }
 
     private function register_selection_strategies() /*: void*/ {
-        //The first listed will be selected by default when creating a new activity
+        // The first listed will be selected by default when creating a new activity
         $capquiz = $this->capquiz;
         $this->strategies = [
             'N-closest' => [
