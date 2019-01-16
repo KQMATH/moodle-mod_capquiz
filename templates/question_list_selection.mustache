@@ -14,6 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/question_list_selection
+
+    Example context:
+    {
+        "lists": [
+            {
+                "title": "My question list",
+                "description": "These are my questions",
+                "author": "username",
+                "created": "2019-01-16 16:04:20",
+                "url": "url to select the question list"
+            }
+        ],
+        "create": "raw html for a button to create the question list"
+    }
+}}
 <h2>
     {{#str}} question_lists, capquiz {{/str}}
 </h2>

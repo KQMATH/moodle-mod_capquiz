@@ -98,7 +98,7 @@ class instructor_dashboard_renderer {
             $message = get_string('template_no_questions_in_list', 'capquiz');
         }
         return $this->renderer->render_from_template('capquiz/instructor_dashboard_template', [
-            'crate_template' => $this->create_template_button(),
+            'create_template' => $this->create_template_button(),
             'message' => $message ? $message : false
         ]);
     }

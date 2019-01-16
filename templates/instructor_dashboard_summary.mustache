@@ -14,6 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/instructor_dashboard_summary
+
+    Example context:
+    {
+        "published_status": "Published",
+        "question_list_title": "My question list",
+        "question_count": 15,
+        "enrolled_student_count": 40
+    }
+}}
 <h2>{{#str}} dashboard, capquiz {{/str}}</h2>
 <div>
     <table class="capquiz-table">
@@ -51,4 +62,4 @@
         </tr>
     </table>
 </div>
-</br>
+<br>

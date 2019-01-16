@@ -59,7 +59,6 @@ class matchmaking_configuration_renderer {
         return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
             'strategy' => $this->registry->current_strategy_name(),
             'form' => $html
-
         ]);
     }
 

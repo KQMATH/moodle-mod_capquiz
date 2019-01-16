@@ -14,6 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/student_question_metainfo
+
+    Example context:
+    {
+        "metainfo": {
+            "rating": {
+                "student": 1500.0,
+                "question": 1450.0
+            },
+            "question": {
+                "capquiz_id": 46,
+                "moodle_id": 71
+            }
+        }
+    }
+}}
 {{#metainfo}}
     <table class="capquiz-attempt-metainfo">
         <tr>

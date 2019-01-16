@@ -14,6 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/student_question
+
+    Example context:
+    {
+        "attempt": {
+            "url": "submit url",
+            "body": "question body html",
+            "slots: ""
+        }
+    }
+}}
 {{#attempt}}
     <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data"
           accept-charset="utf-8">

@@ -14,6 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/classlist
+
+    Example context:
+    {
+        "users": [
+            {
+                "index": 1,
+                "username": "sebastsg",
+                "firstname": "Sebastian",
+                "lastname": "Gundersen",
+                "rating": 1553.6,
+                "stars": 3
+            }
+        ]
+    }
+}}
 <h2>{{#str}} classlist, capquiz {{/str}}</h2>
 <table class="capquiz-tree">
     <tr>
@@ -24,9 +41,6 @@
         <th>{{#str}} rating, capquiz {{/str}}</th>
         <th>{{#str}} stars, capquiz {{/str}}</th>
     </tr>
-    {{^users}}
-        <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
-    {{/users}}
     {{#users}}
         <tr>
             {{#.}}
@@ -40,3 +54,7 @@
         </tr>
     {{/users}}
 </table>
+
+{{^users}}
+    <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
+{{/users}}
