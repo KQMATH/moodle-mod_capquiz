@@ -165,14 +165,12 @@ class provider implements
         ];
         $params += $contextparams;
 
-
         // Fetch the individual quizzes.
         $quizzes = $DB->get_recordset_sql($sql, $params);
         foreach ($quizzes as $quiz) {
             list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'capquiz');
             // TODO: actually export the data
         }
-
     }
 
     /**
