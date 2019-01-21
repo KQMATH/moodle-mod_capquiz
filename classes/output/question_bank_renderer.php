@@ -59,8 +59,8 @@ class question_bank_renderer {
             $questionpage,
             $questionsperpage,
             $this->pagevars['cat'],
-            true,
-            true,
+            $this->pagevars['recurse'],
+            $this->pagevars['showhidden'],
             true);
         return $html;
     }
