@@ -42,9 +42,6 @@
     background: #fafafa;
 }
 
-.capquiz-attempt-metainfo tr:first-child td {
-}
-
 .capquiz-tree tr td {
     padding: 8px;
 }
@@ -88,7 +85,7 @@
 }
 
 .capquiz-quiz-progress-fill {
-    background: #5599ff;
+    background: #59f;
     text-align: left;
     height: 30px;
     color: #e0e0e0;
@@ -97,8 +94,8 @@
 
 .capquiz-quiz-progress-unfill {
     background: #d9534f;
-    text-align: right ;
-    float: right ;
+    text-align: right;
+    float: right;
     height: 30px;
     color: #f8f9fa;
     max-width: 100%;
