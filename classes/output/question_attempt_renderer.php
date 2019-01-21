@@ -33,7 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_attempt_renderer {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -43,37 +46,36 @@ class question_attempt_renderer {
     }
 
     private function render_question_head_html() {
-        $questionengine = $this->capquiz->question_engine();
-        if ($questionengine === null) {
+        $qengine = $this->capquiz->question_engine();
+        if ($qengine === null) {
             return;
         }
-        $attempt = $questionengine->attempt_for_user($this->capquiz->user());
-        $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
+        $attempt = $qengine->attempt_for_user($this->capquiz->user());
+        if ($attempt !== null) {
+            $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
+        }
     }
 
     public function render() : string {
         if (!$this->capquiz->is_published()) {
             return 'Nothing here yet';
         }
-        $question_engine = $this->capquiz->question_engine();
-        if ($attempt = $question_engine->attempt_for_user($this->capquiz->user())) {
+        $qengine = $this->capquiz->question_engine();
+        $attempt = $qengine->attempt_for_user($this->capquiz->user());
+        if ($attempt) {
             if ($attempt->is_answered()) {
                 return $this->render_review($attempt);
-            } else {
-                if ($attempt->is_pending()) {
-                    return $this->render_attempt($attempt, $this->attempt_display_options());
-                }
+            } else if ($attempt->is_pending()) {
+                return $this->render_attempt($attempt, $this->attempt_display_options());
             }
-        } else {
-            return 'You have finished this quiz!';
         }
+        return 'You have finished this quiz!';
     }
 
-    private function render_attempt(capquiz_question_attempt $attempt, \question_display_options $displayoptions) : string {
+    private function render_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
         $user = $this->capquiz->user();
         $html = $this->render_progress($user);
-        $html .= $this->render_question_attempt($attempt, $displayoptions);
-        //$html .= $this->render_metainfo($user, $attempt);
+        $html .= $this->render_question_attempt($attempt, $options);
         return $html;
     }
 
@@ -92,32 +94,32 @@ class question_attempt_renderer {
     }
 
     private function render_progress(capquiz_user $user) : string {
-        $questionlist = $this->capquiz->question_list();
-        $percent = $questionlist->next_level_percent($user->rating());
+        $qlist = $this->capquiz->question_list();
+        $percent = $qlist->next_level_percent($this->capquiz, $user->rating());
         if ($percent >= 0) {
             $student = [
                 'up' => ['percent' => $percent],
-                'stars' => $this->user_star_progress($user, $questionlist)
+                'stars' => $this->user_star_progress($user, $qlist)
             ];
         } else {
             $student = [
                 'down' => ['percent' => -$percent],
-                'stars' => $this->user_star_progress($user, $questionlist)
+                'stars' => $this->user_star_progress($user, $qlist)
             ];
         }
         return $this->renderer->render_from_template('capquiz/student_progress', [
-	        'progress' => ['student' => $student]
+            'progress' => ['student' => $student]
         ]);
     }
 
-    public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $displayoptions) : string {
+    public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
         global $PAGE;
-        $question_usage = $this->capquiz->question_usage();
+        $quba = $this->capquiz->question_usage();
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),
-                'body' => $question_usage->render_question($attempt->question_slot(), $displayoptions, $attempt->question_id()),
+                'body' => $quba->render_question($attempt->question_slot(), $options, $attempt->question_id()),
                 'slots' => ''
             ]
         ]);
@@ -142,9 +144,9 @@ class question_attempt_renderer {
         ]);
     }
 
-    private function user_star_progress(capquiz_user $user, capquiz_question_list $list) : array {
+    private function user_star_progress(capquiz_user $user, capquiz_question_list $qlist) : array {
         $result = [];
-        for ($star = 1; $star < $list->level_count() + 1; $star++) {
+        for ($star = 1; $star < $qlist->level_count() + 1; $star++) {
             $result[] = $user->highest_level() >= $star;
         }
         return $result;
@@ -159,7 +161,6 @@ class question_attempt_renderer {
         $options->rightanswer = \question_display_options::VISIBLE;
         $options->numpartscorrect = \question_display_options::VISIBLE;
         $options->manualcomment = \question_display_options::HIDDEN;
-        //$options->manualcommentlink = 'insert the link to solve issue #44';
         return $options;
     }
 
@@ -171,7 +172,6 @@ class question_attempt_renderer {
         $options->rightanswer = \question_display_options::HIDDEN;
         $options->numpartscorrect = \question_display_options::HIDDEN;
         $options->manualcomment = \question_display_options::HIDDEN;
-        //$options->manualcommentlink = 'insert the link to solve issue #44';
         return $options;
     }
 

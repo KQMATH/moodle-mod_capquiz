@@ -41,18 +41,21 @@ class rating_system_selection_form extends \moodleform {
         $loader = $this->capquiz->rating_system_loader();
         $registry = $this->capquiz->rating_system_registry();
         $index = 0;
-        $selected_index = -1;
+        $selectedindex = -1;
         $radioarray = [];
-        foreach ($registry->rating_systems() as $rating_system) {
-            if ($loader->current_rating_system_name() === $rating_system) {
-                $selected_index = $index;
+        foreach ($registry->rating_systems() as $ratingsystem) {
+            if ($loader->current_rating_system_name() === $ratingsystem) {
+                $selectedindex = $index;
             }
-            $radioarray[] = $form->createElement('radio', 'rating_system', '', $rating_system, $index++, [$rating_system]);
+            $radioarray[] = $form->createElement('radio', 'rating_system', '', $ratingsystem, $index, [
+                $ratingsystem
+            ]);
+            $index++;
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
         $this->add_action_buttons(false);
-        if ($selected_index > -1) {
-            $form->setDefault('rating_system', $selected_index);
+        if ($selectedindex > -1) {
+            $form->setDefault('rating_system', $selectedindex);
         }
     }
 

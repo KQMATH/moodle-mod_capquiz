@@ -18,11 +18,11 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use mod_capquiz\capquiz_question_list;
 use mod_capquiz\form\view\question_list_create_form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
@@ -32,7 +32,11 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_list_creator_renderer {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -44,17 +48,20 @@ class question_list_creator_renderer {
         global $PAGE;
         $url = $PAGE->url;
         $form = new question_list_create_form($url);
-        if ($form_data = $form->get_data()) {
-            $registry = $this->capquiz->question_registry();
+        $formdata = $form->get_data();
+        if ($formdata) {
             $ratings = [
-                $form_data->level_1_rating,
-                $form_data->level_2_rating,
-                $form_data->level_3_rating,
-                $form_data->level_4_rating,
-                $form_data->level_5_rating
+                $formdata->level_1_rating,
+                $formdata->level_2_rating,
+                $formdata->level_3_rating,
+                $formdata->level_4_rating,
+                $formdata->level_5_rating
             ];
-            if ($registry->create_question_list($form_data->title, $form_data->description, $ratings)) {
-                redirect(capquiz_urls::create_view_url(capquiz_urls::$url_view));
+            $title = $formdata->title;
+            $description = $formdata->description;
+            $qlist = capquiz_question_list::create_new_instance($this->capquiz, $title, $description, $ratings);
+            if ($qlist) {
+                redirect(capquiz_urls::create_view_url(capquiz_urls::$urlview));
             }
             header('Location: /');
             exit;
@@ -63,4 +70,5 @@ class question_list_creator_renderer {
             'form' => $form->render()
         ]);
     }
+
 }

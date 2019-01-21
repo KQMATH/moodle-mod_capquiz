@@ -14,12 +14,32 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/instructor_dashboard_template
+
+    Example context (json):
+    {
+        "create_template": {
+            "id": "id",
+            "primary": true,
+            "method": "post",
+            "url": "#",
+            "label": "Create template",
+            "disabled": false
+        },
+        "message": ""
+    }
+}}
 <h4>{{#str}} template, capquiz {{/str}}</h4>
+
 {{#str}}template_explanation, capquiz {{/str}}
-{{#crate_template}}
+
+{{#create_template}}
     {{>core/single_button}}
-{{/crate_template}}
-</br>
+{{/create_template}}
+
+<br>
+
 {{#message}}
     {{{message}}}
 {{/message}}

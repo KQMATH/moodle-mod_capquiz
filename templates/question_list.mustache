@@ -14,7 +14,32 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/question_list
+
+    Example context (json):
+    {
+        "questions": [
+            {
+                "index": 1,
+                "name": "First question",
+                "rating": 500.0,
+                "question_id": 56,
+                "rating_url": "#",
+                "button": {
+                    "id": "id",
+                    "primary": true,
+                    "method": "post",
+                    "url": "#",
+                    "label": "Remove"
+                }
+            }
+        ],
+        "message": "Message for the user"
+    }
+}}
 <h2>{{#str}}question_list, capquiz{{/str}}</h2>
+
 <table class="capquiz-tree">
     <tr>
         <th>#</th>
@@ -22,13 +47,6 @@
         <th>{{#str}}rating, capquiz{{/str}}</th>
         <th>{{#str}}action, capquiz{{/str}}</th>
     </tr>
-    {{^questions}}
-        {{#str}}no_questions_added_to_list, capquiz{{/str}}
-    {{/questions}}
-
-    {{#message}}
-        {{{message}}}
-    {{/message}}
     {{#questions}}
         <tr>
             {{#.}}
@@ -49,3 +67,11 @@
         </tr>
     {{/questions}}
 </table>
+
+{{^questions}}
+    {{#str}}no_questions_added_to_list, capquiz{{/str}}
+{{/questions}}
+
+{{#message}}
+    {{{message}}}
+{{/message}}

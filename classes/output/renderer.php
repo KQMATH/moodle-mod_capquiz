@@ -19,6 +19,8 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/basic_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/classlist_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer.php');
@@ -31,8 +33,6 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_r
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/badge_rating_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_strategy_selection_renderer.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
@@ -47,18 +47,19 @@ class renderer extends \plugin_renderer_base {
     }
 
     private function tab(string $name, string $title, \moodle_url $link) {
+        $title = get_string($title, 'capquiz');
         return new \tabobject($name, $link, $title);
     }
 
     private function tabs(string $activetab) {
         $tabs = [
-            $this->tab('view_dashboard', get_string('dashboard', 'capquiz'), capquiz_urls::view_url()),
-            $this->tab('view_matchmaking', get_string('matchmaking', 'capquiz'), capquiz_urls::view_matchmaking_configuration_url()),
-            $this->tab('view_rating_system', get_string('rating_system', 'capquiz'), capquiz_urls::view_rating_system_configuration_url()),
-            $this->tab('view_questions', get_string('questions', 'capquiz'), capquiz_urls::view_question_list_url()),
-            $this->tab('view_badges', get_string('badges', 'capquiz'), capquiz_urls::view_badge_configuration_url()),
-            $this->tab('view_capquiz', get_string('pluginname', 'capquiz'), capquiz_urls::view_configuration_url()),
-            $this->tab('view_classlist', get_string('classlist', 'capquiz'), capquiz_urls::view_classlist_url())
+            $this->tab('view_dashboard', 'dashboard', capquiz_urls::view_url()),
+            $this->tab('view_matchmaking', 'matchmaking', capquiz_urls::view_matchmaking_configuration_url()),
+            $this->tab('view_rating_system', 'rating_system', capquiz_urls::view_rating_system_configuration_url()),
+            $this->tab('view_questions', 'questions', capquiz_urls::view_question_list_url()),
+            $this->tab('view_badges', 'badges', capquiz_urls::view_badge_configuration_url()),
+            $this->tab('view_capquiz', 'pluginname', capquiz_urls::view_configuration_url()),
+            $this->tab('view_classlist', 'classlist', capquiz_urls::view_classlist_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
@@ -109,8 +110,8 @@ class renderer extends \plugin_renderer_base {
         $this->display_view(new question_list_creator_renderer($capquiz, $this));
     }
 
-    public function display_choose_question_list_view(capquiz $capquiz) {
-        $this->display_view(new question_list_selection_renderer($capquiz, $this));
+    public function display_choose_question_list_view() {
+        $this->display_view(new question_list_selection_renderer($this));
     }
 
     public function display_unauthorized_view() {

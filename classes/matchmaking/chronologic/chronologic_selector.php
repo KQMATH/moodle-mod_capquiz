@@ -26,29 +26,35 @@ defined('MOODLE_INTERNAL') || die();
  */
 class chronologic_selector extends capquiz_matchmaking_strategy {
 
-    public function configure(\stdClass $configuration) /*: void*/ {
+    public function configure(\stdClass $configuration) {
 
     }
 
-    public function configuration() /*: ?\stdClass*/ {
+    public function configuration() {
         return null;
     }
 
-    public function default_configuration() /*: ?\stdClass*/ {
+    public function default_configuration() {
         return null;
     }
 
-    public function next_question_for_user(capquiz_user $user, capquiz_question_list $question_list, array $inactive_capquiz_attempts) /*: ?capquiz_question*/ {
-        $is_answered = function (capquiz_question $q) use ($inactive_capquiz_attempts) {
-            foreach ($inactive_capquiz_attempts as $attempt) {
+    /**
+     * @param capquiz_user $user
+     * @param capquiz_question_list $qlist
+     * @param array $inactiveattempts
+     * @return capquiz_question|null
+     */
+    public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist, array $inactiveattempts) {
+        $answered = function (capquiz_question $q) use ($inactiveattempts) {
+            foreach ($inactiveattempts as $attempt) {
                 if ($attempt->question_id() === $q->id()) {
                     return true;
                 }
             }
             return false;
         };
-        foreach ($question_list->questions() as $question) {
-            if (!$is_answered($question)) {
+        foreach ($qlist->questions() as $question) {
+            if (!$answered($question)) {
                 return $question;
             }
         }

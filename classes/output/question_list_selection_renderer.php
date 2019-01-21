@@ -16,14 +16,10 @@
 
 namespace mod_capquiz\output;
 
-use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_question_list;
-use mod_capquiz\capquiz_question_registry;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once('../../config.php');
 
 /**
  * @package     mod_capquiz
@@ -33,17 +29,15 @@ require_once('../../config.php');
  */
 class question_list_selection_renderer {
 
-    private $capquiz;
-
+    /** @var renderer $renderer */
     private $renderer;
 
-    public function __construct(capquiz $capquiz, renderer $renderer) {
-        $this->capquiz = $capquiz;
+    public function __construct(renderer $renderer) {
         $this->renderer = $renderer;
     }
 
     public function render() {
-        $templates = capquiz_question_list::load_question_list_templates($this->capquiz);
+        $templates = capquiz_question_list::load_question_list_templates();
         $lists = [];
         foreach ($templates as $template) {
             $lists[] = [
@@ -66,4 +60,5 @@ class question_list_selection_renderer {
             'create' => $create
         ]);
     }
+
 }

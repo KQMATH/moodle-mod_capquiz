@@ -14,35 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-use mod_capquiz\output\renderer;
-
-require_once("../../config.php");
-
-require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function render_error_view(capquiz $capquiz, renderer $renderer) {
-    echo $renderer->output_renderer()->header();
-    if ($capquiz->is_instructor()) {
-        echo 'Something went wrong(instructor)';
-    } else if ($capquiz->is_student()) {
-        echo 'Something went wrong(student)';
-    }
-    echo $renderer->output_renderer()->footer();
+
+namespace mod_capquiz;
+
+require_once("../../config.php");
+require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+
+$capquiz = capquiz::create();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
 }
 
-if ($capquiz = capquiz::create()) {
-    set_page_url($capquiz, capquiz_urls::$url_error);
-    render_error_view($capquiz, $capquiz->renderer());
-} else {
-    redirect_to_front_page();
-}
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlerror);
+
+echo $capquiz->renderer()->output_renderer()->header();
+echo 'Something went wrong.';
+echo $capquiz->renderer()->output_renderer()->footer();

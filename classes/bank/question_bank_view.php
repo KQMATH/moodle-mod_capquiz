@@ -25,6 +25,7 @@ use \core_question\bank\question_type_column;
 use \core_question\bank\search\tag_condition as tag_condition;
 use \core_question\bank\search\hidden_condition as hidden_condition;
 use \core_question\bank\search\category_condition;
+use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -49,7 +50,8 @@ class question_bank_view extends \core_question\bank\view {
         return $this->requiredcolumns;
     }
 
-    public function render(string $tabname, int $page, int $perpage, string $category, bool $show_subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
+    public function render(string $tabname, int $page, int $perpage, string $category,
+            bool $subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
         global $PAGE;
         if ($this->process_actions_needing_ui()) {
             return '';
@@ -62,14 +64,15 @@ class question_bank_view extends \core_question\bank\view {
         $this->display_question_bank_header();
         $this->add_searchcondition(new tag_condition([$catcontext, $thiscontext], $tagids));
         $this->add_searchcondition(new hidden_condition(!$showhidden));
-        $this->add_searchcondition(new category_condition($category, $show_subcategories, $contexts, $this->baseurl, $this->course));
-        $this->display_options_form($showquestiontext, $this->baseurl->get_path());
+        $this->add_searchcondition(new category_condition($category, $subcategories,
+            $contexts, $this->baseurl, $this->course));
+        $this->display_options_form($showquestiontext, $this->baseurl->raw_out());
         $this->display_question_list(
             $contexts,
             $this->baseurl,
             $category,
             $this->cm,
-            false,
+            $subcategories,
             $page,
             $perpage,
             $showhidden,

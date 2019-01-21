@@ -14,13 +14,31 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/instructor_dashboard_publish
+
+    Example context (json):
+    {
+        "publish": {
+            "id": "id",
+            "method": "post",
+            "url": "#",
+            "primary": true,
+            "label": "Publish"
+        },
+        "message": ""
+    }
+}}
 <h4>{{#str}} publish, capquiz {{/str}}</h4>
+
 {{#str}} publish_explanation, capquiz {{/str}}
 
 {{#publish}}
     {{>core/single_button}}
 {{/publish}}
-</br>
+
+<br>
+
 {{#message}}
     {{{message}}}
 {{/message}}

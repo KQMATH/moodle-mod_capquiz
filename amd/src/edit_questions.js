@@ -20,9 +20,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], $ => {
+define(['jquery'], function($) {
 
-    let parameters = {
+    var parameters = {
         capquizId: 0,
     };
 
@@ -44,9 +44,9 @@ define(['jquery'], $ => {
     function submitQuestionRating($input) {
         $input.data('saving', true);
         $input.data('dirty', false);
-        let $indicator = $input.next();
+        var $indicator = $input.next();
         $indicator.css('color', 'blue');
-        sendQuestionRating($input.data('question-id'), $input.val(), () => {
+        sendQuestionRating($input.data('question-id'), $input.val(), function() {
             if ($input.data('dirty') === true) {
                 submitQuestionRating($input);
             } else {
@@ -54,15 +54,15 @@ define(['jquery'], $ => {
                 $input.data('dirty', false);
                 $input.data('saving', false);
             }
-        }, () => {
+        }, function() {
             $indicator.css('color', 'red');
         });
     }
 
     function registerQuestionRatingListeners() {
-        $(document).on('input', '.capquiz-question-rating input', event => {
-            let $input = $(event.target);
-            const isBeingSaved = $input.data('saving');
+        $(document).on('input', '.capquiz-question-rating input', function(event) {
+            var $input = $(event.target);
+            var isBeingSaved = $input.data('saving');
             if (isBeingSaved === true) {
                 $input.data('dirty', true);
                 return;
@@ -72,13 +72,13 @@ define(['jquery'], $ => {
     }
 
     function fixTabIndicesForQuestionRatingInputs() {
-        $('.capquiz-question-rating-submit-wrapper button').each((index, object) => {
+        $('.capquiz-question-rating-submit-wrapper button').each(function(index, object) {
             $(object).attr('tabindex', -1);
         });
     }
 
     return {
-        initialize: (capquizId) => {
+        initialize: function(capquizId) {
             parameters.capquizId = capquizId;
             registerQuestionRatingListeners();
             fixTabIndicesForQuestionRatingInputs();

@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -25,9 +21,13 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+
 class mod_capquiz_mod_form extends moodleform_mod {
 
-    function definition() {
+    public function definition() {
         $form = $this->_form;
         $form->addElement('text', 'name', get_string('name'), ['size' => '64']);
         $form->setType('name', PARAM_TEXT);

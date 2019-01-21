@@ -1,0 +1,44 @@
+{
+  "private": true,
+  "name": "moodle-mod_capquiz",
+  "version": "0.1.2",
+  "description": "Computer adaptive practice activity module for Moodle",
+  "main": "",
+  "dependencies": {
+    "eslint": "^5.12.0",
+    "eslint-plugin-promise": "^4.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/KQMATH/moodle-mod_capquiz.git"
+  },
+  "keywords": [],
+  "contributors": [
+    {
+      "name": "André Storhaug",
+      "email": "andr3.storhaug@gmail.com",
+      "url": "https://github.com/andstor"
+    },
+    {
+      "name": "Sebastian S. Gundersen",
+      "email": "sebastsg@stud.ntnu.no"
+    },
+    {
+      "name": "Aleksander Skrede",
+      "email": "aleksander.skrede@gmail.com"
+    },
+    {
+      "name": "Hans Georg Schaathun",
+      "email": "hasc@ntnu.no"
+    }
+  ],
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/KQMATH/moodle-mod_capquiz/issues"
+  },
+  "homepage": "https://github.com/KQMATH/moodle-mod_capquiz#readme"
+}

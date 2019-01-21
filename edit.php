@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-require_once("../../config.php");
-
-require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->dirroot . '/mod/capquiz/lib.php');
-require_once($CFG->dirroot . '/mod/capquiz/utility.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -29,16 +21,26 @@ require_once($CFG->dirroot . '/mod/capquiz/utility.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_capquiz;
+
+require_once("../../config.php");
+require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+$context = \context_module::instance($cmid);
+require_capability('mod/capquiz:instructor', $context);
+
 try {
     $capquiz = capquiz::create();
-    $capquiz->require_instructor_capability();
-    set_page_url($capquiz, capquiz_urls::$url_view_question_list);
-    $question_page = optional_param(capquiz_urls::$param_question_page, 0, PARAM_INT);
+    capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
     $bankview = $bankrenderer->create_view();
     $bankview->process_actions();
     $renderer = $capquiz->renderer();
     $renderer->display_question_list_view($capquiz);
 } catch (\coding_exception $e) {
-    redirect_to_front_page();
+    capquiz_urls::redirect_to_front_page();
 }

@@ -21,7 +21,6 @@ use mod_capquiz\capquiz_user;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
@@ -32,7 +31,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
  */
 class classlist_renderer {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -59,4 +61,5 @@ class classlist_renderer {
         ]);
         return $leaderboard;
     }
+
 }

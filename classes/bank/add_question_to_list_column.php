@@ -36,7 +36,7 @@ class add_question_to_list_column extends \core_question\bank\action_column_base
         return ['q.id'];
     }
 
-    protected function display_content($question, $css_row_classes) {
+    protected function display_content($question, $rowclasses) {
         $this->print_icon($this->icon_id(), $this->icon_hover_text(), $this->icon_action_url($question));
     }
 

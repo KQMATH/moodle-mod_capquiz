@@ -14,5 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template mod_capquiz/matchmaking_configuration
+
+    Example context (json):
+    {
+        "strategy": "N-closest",
+        "form": "raw html for the form"
+    }
+}}
 <h3>{{#str}} configure, capquiz {{/str}} {{strategy}}</h3>
 {{{ form }}}

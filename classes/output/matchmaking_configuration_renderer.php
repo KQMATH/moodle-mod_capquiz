@@ -21,7 +21,6 @@ use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('../../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
@@ -31,8 +30,14 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matchmaking_configuration_renderer {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
+
+    /** @var \mod_capquiz\capquiz_matchmaking_strategy_loader $registry */
     private $registry;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
@@ -54,7 +59,6 @@ class matchmaking_configuration_renderer {
         return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
             'strategy' => $this->registry->current_strategy_name(),
             'form' => $html
-
         ]);
     }
 
@@ -62,8 +66,9 @@ class matchmaking_configuration_renderer {
         global $PAGE;
         $url = $PAGE->url;
         if ($form = $this->registry->configuration_form($url)) {
-            if ($form_data = $form->get_data()) {
-                $this->registry->configure_current_strategy($form_data);
+            $formdata = $form->get_data();
+            if ($formdata) {
+                $this->registry->configure_current_strategy($formdata);
                 $url = capquiz_urls::view_matchmaking_configuration_url();
                 redirect($url);
             }

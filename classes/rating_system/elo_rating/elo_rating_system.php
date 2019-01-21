@@ -26,49 +26,54 @@ defined('MOODLE_INTERNAL') || die();
  */
 class elo_rating_system extends capquiz_rating_system {
 
-    private $student_k_factor;
-    private $question_k_factor;
+    /** @var float $studentkfactor */
+    private $studentkfactor;
+
+    /** @var float $questionkfactor */
+    private $questionkfactor;
 
     public function configure(\stdClass $configuration) {
-        if ($student_k_factor = $configuration->student_k_factor) {
-            $this->student_k_factor = $student_k_factor;
+        if ($configuration->student_k_factor) {
+            $this->studentkfactor = $configuration->student_k_factor;
         }
-        if ($question_k_factor = $configuration->question_k_factor) {
-            $this->question_k_factor = $question_k_factor;
+        if ($configuration->question_k_factor) {
+            $this->questionkfactor = $configuration->question_k_factor;
         }
     }
 
-    public function configuration() /*: ?\stdClass*/ {
+    public function configuration() {
         $config = new \stdClass;
-        $config->student_k_factor = $this->student_k_factor;
-        $config->question_k_factor = $this->question_k_factor;
+        $config->student_k_factor = $this->studentkfactor;
+        $config->question_k_factor = $this->questionkfactor;
         return $config;
     }
 
-    public function default_configuration() /*: ?\stdClass*/ {
+    public function default_configuration() {
         $config = new \stdClass;
         $config->student_k_factor = 32;
         $config->question_k_factor = 8;
         return $config;
     }
 
-    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) /*: void*/ {
-        $user_rating = $user->rating();
-        $updated_rating = $user_rating + $this->student_k_factor * ($score - $this->expected_result($user_rating, $question->rating()));
-        $user->set_rating($updated_rating);
+    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) {
+        $current = $user->rating();
+        $factor = $this->studentkfactor;
+        $updated = $current + $factor * ($score - $this->expected_result($current, $question->rating()));
+        $user->set_rating($updated);
     }
 
-    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) /*: void*/ {
-        $loser_rating = $loser->rating();
-        $winner_rating = $winner->rating();
-        $updated_loser_rating = $loser_rating + $this->question_k_factor * (0 - $this->expected_result($winner_rating, $loser_rating));
-        $updated_winner_rating = $winner_rating + $this->question_k_factor * (1 - $this->expected_result($loser_rating, $winner_rating));
-        $loser->set_rating($updated_loser_rating);
-        $winner->set_rating($updated_winner_rating);
+    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {
+        $loserating = $loser->rating();
+        $winrating = $winner->rating();
+        $factor = $this->questionkfactor;
+        $newloserating = $loserating + $factor * (0 - $this->expected_result($winrating, $loserating));
+        $newwinrating = $winrating + $factor * (1 - $this->expected_result($loserating, $winrating));
+        $loser->set_rating($newloserating);
+        $winner->set_rating($newwinrating);
     }
 
-    private function expected_result(float $rating_a, float $rating_b) : float {
-        $exponent = ($rating_b - $rating_a) / 400.0;
+    private function expected_result(float $a, float $b) : float {
+        $exponent = ($b - $a) / 400.0;
         return 1.0 / (1.0 + pow(10.0, $exponent));
     }
 

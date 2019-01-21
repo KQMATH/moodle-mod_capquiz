@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -23,17 +21,21 @@ namespace mod_capquiz;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_capquiz;
+
+defined('MOODLE_INTERNAL') || die();
+
 class capquiz_actions {
 
     public static $parameter = 'action';
     public static $redirect = 'redirect';
-    public static $attempt_answered = 'answered';
-    public static $attempt_reviewed = 'reviewed';
-    public static $set_question_list = 'set-question-list';
-    public static $set_question_rating = "set-question-rating";
-    public static $add_question_to_list = 'add-question';
-    public static $publish_question_list = 'publish-question-list';
-    public static $remove_question_from_list = 'remove-question';
-    public static $create_question_list_template = 'create-question-list-template';
+    public static $attemptanswered = 'answered';
+    public static $attemptreviewed = 'reviewed';
+    public static $setquestionlist = 'set-question-list';
+    public static $setquestionrating = "set-question-rating";
+    public static $addquestion = 'add-question';
+    public static $publishquestionlist = 'publish-question-list';
+    public static $removequestion = 'remove-question';
+    public static $createqlisttemplate = 'create-question-list-template';
 
 }

@@ -16,10 +16,10 @@
 
 namespace mod_capquiz;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/elo_rating/elo_rating_system.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/elo_rating/elo_rating_system_form.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
@@ -29,43 +29,37 @@ defined('MOODLE_INTERNAL') || die();
  */
 class capquiz_rating_system_registry {
 
-    /** @var capquiz $capquiz */
-    private $capquiz;
-
     /** @var callable[][] $systems */
     private $systems;
 
-    public function __construct(capquiz $capquiz) {
-        $this->capquiz = $capquiz;
+    public function __construct() {
         $this->register_rating_systems();
     }
 
-    public function rating_system(string $system) /*: ?capquiz_rating_system*/ {
+    public function rating_system(string $system) {
         if ($value = $this->systems[$system]) {
             return array_values($value)[0]();
         }
         $this->throw_rating_system_exception($system);
     }
 
-    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) /*: ?\moodleform*/ {
+    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) {
         if ($value = $this->systems[$system]) {
-            return array_values($value)[1]($url, $configuration);
+            $configfunc = array_values($value)[1];
+            return $configfunc($url, $configuration);
         }
         $this->throw_rating_system_exception($system);
     }
 
     public function has_rating_system(string $system) : bool {
-        if ($value = $this->systems[$system]) {
-            return true;
-        }
-        return false;
+        return isset($this->systems[$system]);
     }
 
     public function default_rating_system() : string {
         // Default rating system is added first.
         // Modify caquiz_rating_system_registry::register_rating_systems() to change this.
-        $rating_systems = $this->rating_systems();
-        return reset($rating_systems);
+        $ratingsystems = $this->rating_systems();
+        return reset($ratingsystems);
     }
 
     /**
@@ -79,13 +73,12 @@ class capquiz_rating_system_registry {
         return $names;
     }
 
-    private function register_rating_systems() /*: void*/ {
-        //The first listed will be selected by default when creating a new activity
-        $capquiz = $this->capquiz;
+    private function register_rating_systems() {
+        // The first listed will be selected by default when creating a new activity.
         $this->systems = [
             'Elo' => [
-                function () use ($capquiz) {
-                    return new elo_rating_system($capquiz);
+                function () {
+                    return new elo_rating_system();
                 },
                 function (\moodle_url $url, \stdClass $configuration) {
                     return new elo_rating_system_form($configuration, $url);
@@ -94,7 +87,7 @@ class capquiz_rating_system_registry {
         ];
     }
 
-    private function throw_rating_system_exception(string $system) /*: void*/ {
+    private function throw_rating_system_exception(string $system) {
         $msg = "The specified rating system '$system' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->rating_systems());
         $msg .= "'}. This issue must be fixed by a programmer";

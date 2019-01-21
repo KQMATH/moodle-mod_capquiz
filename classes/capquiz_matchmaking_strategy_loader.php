@@ -16,12 +16,12 @@
 
 namespace mod_capquiz;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/capquiz_matchmaking_strategy_registry.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/chronologic/chronologic_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_selector.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_configuration_form.php');
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
@@ -34,8 +34,8 @@ class capquiz_matchmaking_strategy_loader {
     /** @var capquiz $capquiz */
     private $capquiz;
 
-    /** @var \stdClass $db_entry */
-    private $db_entry;
+    /** @var \stdClass $record */
+    private $record;
 
     /** @var capquiz_matchmaking_strategy_registry $registry */
     private $registry;
@@ -49,97 +49,96 @@ class capquiz_matchmaking_strategy_loader {
         $this->load_configuration();
     }
 
-    public function selector() /*: ?capquiz_matchmaking_strategy*/ {
-        if ($db_entry = $this->db_entry) {
-            $strategy = $this->registry->selector($db_entry->strategy);
-            if ($config = $this->configuration) {
-                $strategy->configure($config);
-            }
-            return $strategy;
+    public function selector() {
+        if (!$this->record) {
+            return null;
         }
-        return null;
+        $strategy = $this->registry->selector($this->record->strategy);
+        $config = $this->configuration;
+        if ($config) {
+            $strategy->configure($config);
+        }
+        return $strategy;
     }
 
-    public function configuration_form(\moodle_url $url) /*: ?\moodleform*/ {
-        if ($db_entry = $this->db_entry) {
-            if ($config = $this->configuration) {
-                return $this->registry->configuration_form($db_entry->strategy, $config, $url);
-            }
+    public function configuration_form(\moodle_url $url) {
+        if ($this->record && $this->configuration) {
+            return $this->registry->configuration_form($this->record->strategy, $this->configuration, $url);
         }
         return null;
     }
 
     public function has_strategy() : bool {
-        if ($db_entry = $this->db_entry) {
-            return $this->selector() != null;
-        }
-        return false;
+        return $this->selector() != null;
     }
 
     public function current_strategy_name() : string {
-        if ($db_entry = $this->db_entry) {
-            return $db_entry->strategy;
+        if ($this->record) {
+            return $this->record->strategy;
         }
         return 'No strategy specified';
     }
 
-    public function configure_current_strategy(\stdClass $candidate_configuration) /*: void*/ {
-        if ($db_entry = $this->db_entry) {
-            $selector = $this->selector($db_entry->strategy);
-            $selector->configure($candidate_configuration);
-            if ($configuration = $selector->configuration()) {
-                $db_entry->configuration = $this->serialize($configuration);
-            } else {
-                $db_entry->configuration = '';
-            }
-            $this->update_configuration($db_entry);
+    public function configure_current_strategy(\stdClass $candidateconfig) {
+        if (!$this->record) {
+            return;
         }
+        $selector = $this->selector();
+        $selector->configure($candidateconfig);
+        $configuration = $selector->configuration();
+        if ($configuration) {
+            $this->record->configuration = $this->serialize($configuration);
+        } else {
+            $this->record->configuration = '';
+        }
+        $this->update_configuration($this->record);
     }
 
-    public function set_default_strategy() /*: void*/ {
+    public function set_default_strategy() {
         $this->set_strategy($this->registry->default_selection_strategy());
     }
 
-    public function set_strategy(string $strategy) /*: void*/ {
+    public function set_strategy(string $strategy) {
         $selector = $this->registry->selector($strategy);
-        $db_entry = new \stdClass;
-        $db_entry->strategy = $strategy;
-        $db_entry->capquiz_id = $this->capquiz->id();
-        if ($default_configuration = $selector->default_configuration()) {
-            $db_entry->configuration = $this->serialize($default_configuration);
+        $record = new \stdClass;
+        $record->strategy = $strategy;
+        $record->capquiz_id = $this->capquiz->id();
+        $defaultconfig = $selector->default_configuration();
+        if ($defaultconfig) {
+            $record->configuration = $this->serialize($defaultconfig);
         } else {
-            $db_entry->configuration = '';
+            $record->configuration = '';
         }
         global $DB;
-        if ($this->db_entry) {
-            $db_entry->id = $this->db_entry->id;
-            $this->update_configuration($db_entry);
+        if ($this->record) {
+            $record->id = $this->record->id;
+            $this->update_configuration($record);
         } else {
-            $DB->insert_record(database_meta::$table_capquiz_question_selection, $db_entry);
-            $this->set_configuration($db_entry);
+            $DB->insert_record(database_meta::$tablequestionselection, $record);
+            $this->set_configuration($record);
         }
     }
 
-    private function load_configuration() /*: void*/ {
+    private function load_configuration() {
         global $DB;
-        $conditions = [
-            database_meta::$field_capquiz_id => $this->capquiz->id()
-        ];
-        if ($configuration = $DB->get_record(database_meta::$table_capquiz_question_selection, $conditions)) {
+        $conditions = [database_meta::$fieldcapquizid => $this->capquiz->id()];
+        $configuration = $DB->get_record(database_meta::$tablequestionselection, $conditions);
+        if ($configuration) {
             $this->set_configuration($configuration);
         }
     }
 
-    private function update_configuration(\stdClass $configuration) /*: void*/ {
+    private function update_configuration(\stdClass $configuration) {
         global $DB;
-        if ($DB->update_record(database_meta::$table_capquiz_question_selection, $configuration)) {
+        if ($DB->update_record(database_meta::$tablequestionselection, $configuration)) {
             $this->set_configuration($configuration);
         }
     }
 
-    private function set_configuration(\stdClass $database_entry) {
-        $this->db_entry = $database_entry;
-        if ($configuration = $this->deserialize($database_entry->configuration)) {
+    private function set_configuration(\stdClass $record) {
+        $this->record = $record;
+        $configuration = $this->deserialize($record->configuration);
+        if ($configuration) {
             $this->configuration = $configuration;
         } else {
             $this->configuration = null;
@@ -150,7 +149,7 @@ class capquiz_matchmaking_strategy_loader {
         return json_encode($configuration);
     }
 
-    private function deserialize(string $configuration) /*: ?\stdClass*/ {
+    private function deserialize(string $configuration) {
         return json_decode($configuration, false);
     }
 

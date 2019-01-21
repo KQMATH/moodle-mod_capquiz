@@ -31,6 +31,12 @@ $string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to creat
     'Using these ratings CAPQuiz will match questions to individual students based on their skill level.</p>';
 $string['pluginadministration'] = 'CAPQuiz administration';
 
+$string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
+$string['capquiz:attempt'] = 'Attempt an CAPQuiz';
+$string['capquiz:control'] = 'Control a CAPQuiz. (Usually for instructors only)';
+$string['capquiz:editquestions'] = 'Edit questions for an CAPQuiz.';
+$string['capquiz:seeresponses'] = 'View student responses to grade them';
+
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
 $string['add_the_quiz_question'] = 'Add the question to the list';
@@ -153,3 +159,13 @@ $string['publish_already_published'] = "<p>This CAPQuiz is already published</p>
 $string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
 $string['not_published'] = 'Not published';
+
+$string['privacy:metadata:core_question'] = 'The CAPQuiz activity stores question usage information in the core_question subsystem.';
+$string['privacy:metadata:capquiz_attempt'] = 'Details about each attempt on a CAPQuiz.';
+$string['privacy:metadata:capquiz_attempt:userid'] = 'The user who made the attempt.';
+$string['privacy:metadata:capquiz_attempt:time_answered'] = 'The time that the attempt was answered.';
+$string['privacy:metadata:capquiz_attempt:time_reviewed'] = 'The time that the attempt was reviewed.';
+$string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
+$string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
+$string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';
+$string['privacy:metadata:capquiz_user:highest_level'] = "The user's highest achieved level.";

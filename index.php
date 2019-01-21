@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-require('../../config.php');
-
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -25,4 +21,14 @@ require('../../config.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$url_view));
+namespace mod_capquiz;
+
+require_once('../../config.php');
+
+require_login();
+
+$courseid = required_param(capquiz_urls::$paramid, PARAM_INT);
+$course = $DB->get_record('course', ['id' => $courseid]);
+if ($course) {
+    $PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$urlview));
+}
