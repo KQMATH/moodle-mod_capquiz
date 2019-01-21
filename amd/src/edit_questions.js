@@ -46,7 +46,7 @@ define(['jquery'], function($) {
         $input.data('dirty', false);
         var $indicator = $input.next();
         $indicator.css('color', 'blue');
-        sendQuestionRating($input.data('question-id'), $input.val(), function () {
+        sendQuestionRating($input.data('question-id'), $input.val(), function() {
             if ($input.data('dirty') === true) {
                 submitQuestionRating($input);
             } else {
@@ -54,13 +54,13 @@ define(['jquery'], function($) {
                 $input.data('dirty', false);
                 $input.data('saving', false);
             }
-        }, function () {
+        }, function() {
             $indicator.css('color', 'red');
         });
     }
 
     function registerQuestionRatingListeners() {
-        $(document).on('input', '.capquiz-question-rating input', function (event) {
+        $(document).on('input', '.capquiz-question-rating input', function(event) {
             var $input = $(event.target);
             var isBeingSaved = $input.data('saving');
             if (isBeingSaved === true) {
@@ -72,13 +72,13 @@ define(['jquery'], function($) {
     }
 
     function fixTabIndicesForQuestionRatingInputs() {
-        $('.capquiz-question-rating-submit-wrapper button').each(function (index, object) {
+        $('.capquiz-question-rating-submit-wrapper button').each(function(index, object) {
             $(object).attr('tabindex', -1);
         });
     }
 
     return {
-        initialize: function (capquizId) {
+        initialize: function(capquizId) {
             parameters.capquizId = capquizId;
             registerQuestionRatingListeners();
             fixTabIndicesForQuestionRatingInputs();
