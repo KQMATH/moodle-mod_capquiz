@@ -35,7 +35,7 @@ require_capability('mod/capquiz:instructor', $context);
 
 try {
     $capquiz = capquiz::create();
-    capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlviewqlist);
+    capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
     $bankview = $bankrenderer->create_view();
     $bankview->process_actions();

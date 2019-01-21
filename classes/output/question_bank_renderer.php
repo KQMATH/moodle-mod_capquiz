@@ -93,8 +93,7 @@ class question_bank_renderer {
         $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
         $PAGE->set_pagelayout('admin');
         $edittab = 'editq';
-        $baseurl = '/mod/capquiz/edit.php';
-        return question_build_edit_resources($edittab, $baseurl, $params);
+        return question_build_edit_resources($edittab,  capquiz_urls::$urledit, $params);
     }
 
 }

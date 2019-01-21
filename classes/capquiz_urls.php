@@ -42,8 +42,7 @@ class capquiz_urls {
     public static $urlaction = '/mod/capquiz/action.php';
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
     public static $urlviewconfig = '/mod/capquiz/view_configuration.php';
-    // TODO: If Moodle fixes their forms, change this to view_question_list.php.
-    public static $urlviewqlist = '/mod/capquiz/edit.php';
+    public static $urledit = '/mod/capquiz/edit.php';
     public static $urlviewbadgeconfig = '/mod/capquiz/view_badge_configuration.php';
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
     public static $urlviewmatchmakingconfig = '/mod/capquiz/view_matchmaking_configuration.php';
@@ -98,7 +97,7 @@ class capquiz_urls {
     }
 
     public static function view_question_list_url(int $questionpage = 0) {
-        $url = self::create_view_url(self::$urlviewqlist);
+        $url = self::create_view_url(self::$urledit);
         $url->param(self::$paramquestionpage, $questionpage);
         return $url;
     }

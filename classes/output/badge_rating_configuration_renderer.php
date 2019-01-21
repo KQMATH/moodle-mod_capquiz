@@ -61,7 +61,7 @@ class badge_rating_configuration_renderer {
                 $formdata->level_5_rating
             ];
             $qlist->set_level_ratings($ratings);
-            redirect(capquiz_urls::create_view_url(capquiz_urls::$urlviewqlist));
+            redirect(capquiz_urls::create_view_url(capquiz_urls::$urledit));
         }
         return $this->renderer->render_from_template('capquiz/configure_badge_rating', [
             'form' => $form->render()
