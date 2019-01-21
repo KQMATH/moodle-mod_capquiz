@@ -19,7 +19,8 @@
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @copyright   2018 NTNU
+ * @author      Sebastian Søviknes Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,8 +28,11 @@ namespace mod_capquiz\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
-use core_privacy\local\request\context;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\helper;
+use core_privacy\local\request\transform;
+use core_privacy\local\request\writer;
+use mod_capquiz\capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +40,8 @@ defined('MOODLE_INTERNAL') || die();
  * Privacy Subsystem implementation for mod_capquiz.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @copyright   2018 NTNU
+ * @author      Sebastian Søviknes Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
@@ -45,12 +50,13 @@ class provider implements
 
     // This plugin currently implements the original plugin_provider interface.
     \core_privacy\local\request\plugin\provider {
+
     /**
      * Returns meta data about this system.
      * @param   collection $items The initialised collection to add metadata to.
      * @return  collection  A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items): collection {
+    public static function get_metadata(collection $items) : collection {
         // The table 'capquiz' stores a record for each capquiz.
         // It does not contain user personal data, but data is returned from it for contextual requirements.
 
@@ -101,18 +107,14 @@ class provider implements
                   JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {capquiz} cq ON cq.id = cm.instance
-             LEFT JOIN {capquiz_attempt} ca ON ca.userid = :capquizuserid
-             LEFT JOIN {capquiz_user} u ON u.capquiz_id = cq.id AND u.userid = :capquizuserid
-             WHERE (
-                ca.userid = :capquizuserid OR
-                u.id IS NOT NULL
-            )";
+                  JOIN {capquiz_user} u ON u.capquiz_id = cq.id AND u.user_id = :capquizuserid";
 
-        $params = array_merge(
-            [
-                'contextlevel'      => CONTEXT_MODULE,
-                'modname'           => 'capquiz',
-                'capquizuserid'     => $userid,
+        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_capquiz', 'qa.uniqueid', $userid);
+
+        $params = array_merge([
+                'contextlevel' => CONTEXT_MODULE,
+                'modname' => 'capquiz',
+                'capquizuserid' => $userid,
             ],
             $qubaid->from_where_params()
         );
@@ -127,6 +129,9 @@ class provider implements
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param   approved_contextlist $contextlist The approved contexts to export information for.
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
@@ -140,28 +145,27 @@ class provider implements
 
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT
-                    cq.*,
-                    ca.id AS hasgrade,
-                    ca.time_answered AS attempt_timeanswered,
-                    ca.time_reviewed AS attempt_timereviewed,
-                    u.id AS hasoverride,
-                    u.rating AS user_rating,
-                    u.highest_level AS highest_level,
-                    c.id AS contextid,
-                    cm.id AS cmid
+        $sql = 'SELECT cq.*,
+                       ca.id            AS hasgrade,
+                       ca.time_answered AS attempt_timeanswered,
+                       ca.time_reviewed AS attempt_timereviewed,
+                       u.id             AS hasoverride,
+                       u.rating         AS user_rating,
+                       u.highest_level  AS highest_level,
+                       c.id             AS contextid,
+                       cm.id            AS cmid
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {capquiz} cq ON cq.id = cm.instance
-             LEFT JOIN {capquiz_attempt} ca ON ca.userid = :capquizuserid
+             LEFT JOIN {capquiz_attempt} ca ON ca.user_id = :capquizuserid
              LEFT JOIN {capquiz_user} u ON u.capquiz_id = cq.id AND u.userid = :capquizuserid
-                 WHERE c.id {$contextsql}";
+                 WHERE c.id {$contextsql}';
 
         $params = [
-            'contextlevel'      => CONTEXT_MODULE,
-            'modname'           => 'capquiz',
-            'capquizuserid'     => $userid,
+            'contextlevel' => CONTEXT_MODULE,
+            'modname' => 'capquiz',
+            'capquizuserid' => $userid,
         ];
         $params += $contextparams;
 
@@ -169,14 +173,92 @@ class provider implements
         $quizzes = $DB->get_recordset_sql($sql, $params);
         foreach ($quizzes as $quiz) {
             list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'capquiz');
-            // TODO: actually export the data
+            $capquiz = new capquiz($cm->id);
+            $context = $capquiz->context();
+            $data = helper::get_context_data($context, $contextlist->get_user());
+            helper::export_context_files($context, $contextlist->get_user());
+            writer::with_context($context)->export_data([], $data);
         }
+        $quizzes->close();
+        static::export_quiz_attempts($contextlist);
+    }
+
+    private static function get_quiz_attempt_subcontext(\stdClass $attempt, \stdClass $user) {
+        $subcontext = [get_string('questions', 'mod_capquiz')];
+        if ($attempt->userid != $user->id) {
+            $subcontext[] = fullname($user);
+        }
+        $subcontext[] = $attempt->attempt;
+        return $subcontext;
+    }
+
+    protected static function export_quiz_attempts(approved_contextlist $contextlist) {
+        global $DB;
+
+        $userid = $contextlist->get_user()->id;
+        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user('rel', 'mod_capquiz', 'qa.uniqueid', $userid);
+
+        $sql = 'SELECT c.id  AS contextid,
+                       cm.id AS cmid,
+                       qa.*
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = `capquiz`
+                  JOIN {capquiz} cq ON cq.id = cm.instance
+                  JOIN {capquiz_attempt} qa ON qa.quiz = cq.id
+            ' . $qubaid->from . '
+            WHERE (qa.userid = :qauserid OR ' . $qubaid->where() . ') AND qa.answered = 1';
+        $params = array_merge([
+                'contextlevel' => CONTEXT_MODULE,
+                'qauserid' => $userid,
+            ],
+            $qubaid->from_where_params()
+        );
+        $attempts = $DB->get_recordset_sql($sql, $params);
+        foreach ($attempts as $attempt) {
+            $capquizrecord = $DB->get_record('capquiz', ['id' => $attempt->quiz]);
+            $context = \context_module::instance($attempt->cmid);
+            $options = new \question_display_options();
+            $options->context = $context;
+            $attemptsubcontext = static::get_quiz_attempt_subcontext($attempt, $contextlist->get_user());
+            if ($attempt->userid == $userid) {
+                // This attempt was made by the user. They 'own' all data on it. Store the question usage data.
+                \core_question\privacy\provider::export_question_usage($userid,
+                    $context,
+                    $attemptsubcontext,
+                    $attempt->uniqueid,
+                    $options,
+                    true
+                );
+                // Store the quiz attempt data.
+                $data = new \stdClass();
+                if (!empty($attempt->time_reviewed)) {
+                    $data->time_reviewed = transform::datetime($attempt->time_reviewed);
+                }
+                if (!empty($attempt->time_answered)) {
+                    $data->time_answered = transform::datetime($attempt->time_answered);
+                }
+                writer::with_context($context)->export_data($attemptsubcontext, $data);
+            } else {
+                // This attempt was made by another user. The current user may have marked part of the quiz attempt.
+                \core_question\privacy\provider::export_question_usage(
+                    $userid,
+                    $context,
+                    $attemptsubcontext,
+                    $attempt->uniqueid,
+                    $options,
+                    false
+                );
+            }
+        }
+        $attempts->close();
     }
 
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param   context $context The specific context to delete data for.
+     * @param   \context $context The specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // TODO: Implement delete_data_for_all_users_in_context() method.
