@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 - 
 
+## [0.1.3] - 2019-01-21
+* Fixed bugs in question bank
+* Implemented backup API
+* Other bug fixes
+
 ## [0.1.2] - 2018-11-10
 ### Added
 - 
@@ -20,7 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 - 
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.3...HEAD
 
+[0.1.3]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.0...v0.1.1
