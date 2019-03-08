@@ -26,9 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['pluginname'] = 'CAPQuiz';
 $string['modulename'] = 'CAPQuiz';
 $string['modulenameplural'] = 'CAPQuizzes';
-$string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to create quizzes comprising of questions of various types.' .
-    'Questions can be rated to different difficulties while students are given an initial rating. ' .
-    'Using these ratings CAPQuiz will match questions to individual students based on their skill level.</p>';
+$string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to create quizzes comprising of questions of various types. Questions can be rated to different difficulties while students are given an initial rating. Using these ratings CAPQuiz will match questions to individual students based on their skill level.</p>';
 $string['pluginadministration'] = 'CAPQuiz administration';
 
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
@@ -131,30 +129,17 @@ $string['default_rating_numeric_rule'] = 'Default rating must be a numeric value
 $string['student_k_factor'] = 'Student k-factor';
 $string['question_k_factor'] = 'Question k-factor';
 $string['student_k_factor_help'] = 'A higher student k-factor will make ratings change faster. If a student answers correctly, the student will receive a higher rating gain and similarly will lose more rating if the question was answered correctly';
-$string['question_k_factor_help'] = "A higher question k-factor will make question ratings change faster. Question ratings will only change if one question is answered correctly and the other question is answered incorrectly, in no particular order. The question that is answered incorrectly will gain rating, since it 'won' over the question that was answered correctly.";
+$string['question_k_factor_help'] = 'A higher question k-factor will make question ratings change faster. Question ratings will only change if one question is answered correctly and the other question is answered incorrectly, in no particular order. The question that is answered incorrectly will gain rating, since it \'won\' over the question that was answered correctly.';
 
 $string['student_k_factor_specified_rule'] = 'Student k-factor must be specified';
 $string['question_k_factor_specified_rule'] = 'Question k-factor must be specified';
 $string['k_factor_numeric_rule'] = 'K-factor must be a numeric value';
 
-$string['publish_explanation'] =
-    "<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you're still building your question list and modifying question ratings. " .
-    "Similarly, modifying the default student rating before a quiz has been published ensures that all students are given the same initial rating.</p>" .
-    "<p>Students can answer questions once the quiz has been published. " .
-    "After this point you can still modify your question list and assign different rating to questions. " .
-    "However, modifying the default student rating will not influence rating of students that has already entered the quiz, but will influence the initial rating of students that has yet to enter the quiz. </p>" .
-    "<p>Once CAPQuiz has been published, it can not be reverted and will be visible to students.</p>";
-
-$string['template_explanation'] =
-    "<p>A template is a read-only copy of a question list. " .
-    "Templates allow instructors to reuse question lists between courses or semesters, and can be shared with other instructors. " .
-    "Since a template is a copy of it's original question list, instructors can be sure that ratings won't be influenced when sharing between CAPQuiz instances. " .
-    "However, if multiple question lists are created from the same template, any changes made to the original <em>question</em> in the question bank will be visible in all templates and question lists. " .
-    "This includes renaming the question title, changing correct answers, descriptions and marks.<p>";
-
-$string['template_no_questions_in_list'] = "<p>There doesn't seem to be any questions in the question list for this CAPQuiz instance. Creating a template requires questions in the question list. Add some questions and come back to create your template.</p>";
-$string['publish_no_questions_in_list'] = "<p>There doesn't seem to be any questions in the question list for this CAPQuiz instance. You must have at least one question before you can publish</p>";
-$string['publish_already_published'] = "<p>This CAPQuiz is already published</p>";
+$string['publish_explanation'] = '<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you\'re still building your question list and modifying question ratings. Similarly, modifying the default student rating before a quiz has been published ensures that all students are given the same initial rating.</p><p>Students can answer questions once the quiz has been published. After this point you can still modify your question list and assign different rating to questions. However, modifying the default student rating will not influence rating of students that has already entered the quiz, but will influence the initial rating of students that has yet to enter the quiz.</p><p>Once CAPQuiz has been published, it can not be reverted and will be visible to students.</p>';
+$string['template_explanation'] = '<p>A template is a read-only copy of a question list. Templates allow instructors to reuse question lists between courses or semesters, and can be shared with other instructors. Since a template is a copy of it\'s original question list, instructors can be sure that ratings won\'t be influenced when sharing between CAPQuiz instances. However, if multiple question lists are created from the same template, any changes made to the original <em>question</em> in the question bank will be visible in all templates and question lists. This includes renaming the question title, changing correct answers, descriptions and marks.<p>';
+$string['template_no_questions_in_list'] = '<p>There doesn\'t seem to be any questions in the question list for this CAPQuiz instance. Creating a template requires questions in the question list. Add some questions and come back to create your template.</p>';
+$string['publish_no_questions_in_list'] = '<p>There doesn\'t seem to be any questions in the question list for this CAPQuiz instance. You must have at least one question before you can publish</p>';
+$string['publish_already_published'] = '<p>This CAPQuiz is already published</p>';
 
 $string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
@@ -168,4 +153,4 @@ $string['privacy:metadata:capquiz_attempt:time_reviewed'] = 'The time that the a
 $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';
-$string['privacy:metadata:capquiz_user:highest_level'] = "The user's highest achieved level.";
+$string['privacy:metadata:capquiz_user:highest_level'] = 'The user\'s highest achieved level.';

@@ -8,25 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 - 
 
+## [0.1.5] - 2019-03-08
+### Fixed
+* Fix language file to support AMOS translation system.
+
+## [0.1.4] - 2019-01-21
+### Fixed
+* Fix CSS coding style errors.
+
 ## [0.1.3] - 2019-01-21
-* Fixed bugs in question bank
-* Implemented backup API
-* Other bug fixes
+### Added
+* Implementation of the backup API.
+### Fixed
+* Fixed bugs in question bank.
 
 ## [0.1.2] - 2018-11-10
-### Added
-- 
 
 ## [0.1.1] - 2018-10-30
-### Added
-- 
 
 ## 0.1.0 - 2018-09-28
-### Added
-- 
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.5...HEAD
 
+[0.1.5]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.0...v0.1.1
