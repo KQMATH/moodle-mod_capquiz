@@ -9,7 +9,7 @@ moodle-plugin-ci codechecker || EXIT=$?
 moodle-plugin-ci validate || EXIT=$?
 moodle-plugin-ci savepoints || EXIT=$?
 moodle-plugin-ci mustache || EXIT=$?
-moodle-plugin-ci grunt -t eslint:amd || EXIT=$?
+moodle-plugin-ci grunt -t eslint:amd -t stylelint:css || EXIT=$?
 moodle-plugin-ci phpunit --coverage-clover || EXIT=$?
 moodle-plugin-ci behat || EXIT=$?
 
