@@ -20,6 +20,8 @@ The idea of an adaptive learning system at NTNU in Ålesund (then Ålesund Unive
 The first prototype was tested by several lecturers, and was well received by students. There were, however, many problems which we lacked the resources to handle. Most of these problems had already been solved by Moodle and the STACK question type, and it made sense to reimplement the adaptive quiz functionality in Moodle to take advantage of this.
 
 ## Credits:
+CAPQuiz includes the work of [many contributors](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Credits).
+
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
 **Developers:**
