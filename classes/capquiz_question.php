@@ -32,9 +32,7 @@ class capquiz_question {
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
-        $question = $DB->get_record(database_meta::$tablemoodlequestion, [
-            database_meta::$fieldid => $record->question_id
-        ]);
+        $question = $DB->get_record('question', ['id' => $record->question_id]);
         if ($question !== false) {
             $this->record->name = $question->name;
             $this->record->text = $question->questiontext;
@@ -46,7 +44,7 @@ class capquiz_question {
 
     public static function load(int $questionid) {
         global $DB;
-        $record = $DB->get_record(database_meta::$tablequestion, [database_meta::$fieldid => $questionid]);
+        $record = $DB->get_record('capquiz_question', ['id' => $questionid]);
         if ($record === false) {
             return null;
         }
@@ -76,7 +74,7 @@ class capquiz_question {
     public function set_rating(float $rating) : bool {
         global $DB;
         $this->record->rating = $rating;
-        return $DB->update_record(database_meta::$tablequestion, $this->record);
+        return $DB->update_record('capquiz_question', $this->record);
     }
 
     public function name() : string {

@@ -54,12 +54,8 @@ class capquiz {
         $this->context = \context_module::instance($cmid);
         $PAGE->set_context($this->context);
         $this->renderer = $PAGE->get_renderer('mod_capquiz');
-        $this->courserecord = $DB->get_record(database_meta::$tablemoodlecourse, [
-            database_meta::$fieldid => $this->cm->course
-        ], '*', MUST_EXIST);
-        $this->record = $DB->get_record(database_meta::$tablecapquiz, [
-            database_meta::$fieldid => $this->cm->instance
-        ], '*', MUST_EXIST);
+        $this->courserecord = $DB->get_record('course', ['id' => $this->cm->course], '*', MUST_EXIST);
+        $this->record = $DB->get_record('capquiz', ['id' => $this->cm->instance], '*', MUST_EXIST);
         $this->qlist = capquiz_question_list::load_question_list($this);
     }
 
@@ -105,7 +101,7 @@ class capquiz {
         $this->question_list()->create_question_usage($this->context());
         $this->record->published = true;
         try {
-            $DB->update_record(database_meta::$tablecapquiz, $this->record);
+            $DB->update_record('capquiz', $this->record);
         } catch (\dml_exception $e) {
             return false;
         }
@@ -196,7 +192,7 @@ class capquiz {
         if ($configuration->default_user_rating) {
             $this->record->default_user_rating = $configuration->default_user_rating;
         }
-        $DB->update_record(database_meta::$tablecapquiz, $this->record);
+        $DB->update_record('capquiz', $this->record);
     }
 
     public function validate_matchmaking_and_rating_systems() {

@@ -54,11 +54,11 @@ class capquiz_question_attempt {
     public static function active_attempt(capquiz $capquiz, capquiz_user $user) {
         global $DB;
         $criteria = [
-            database_meta::$fielduserid => $user->id(),
-            database_meta::$fieldreviewed => false
+            'user_id' => $user->id(),
+            'reviewed' => false
         ];
         try {
-            $entry = $DB->get_record(database_meta::$tableattempt, $criteria, '*', MUST_EXIST);
+            $entry = $DB->get_record('capquiz_attempt', $criteria, '*', MUST_EXIST);
             return new capquiz_question_attempt($capquiz->question_usage(), $entry);
         } catch (\dml_exception $e) {
             return null;
@@ -68,11 +68,11 @@ class capquiz_question_attempt {
     public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attemptid) {
         global $DB;
         $criteria = [
-            database_meta::$fieldid => $attemptid,
-            database_meta::$fielduserid => $user->id()
+            'id' => $attemptid,
+            'user_id' => $user->id()
         ];
         try {
-            $entry = $DB->get_record(database_meta::$tableattempt, $criteria, '*', MUST_EXIST);
+            $entry = $DB->get_record('capquiz_attempt', $criteria, '*', MUST_EXIST);
             return new capquiz_question_attempt($capquiz->question_usage(), $entry);
         } catch (\dml_exception $e) {
             return null;
@@ -94,11 +94,11 @@ class capquiz_question_attempt {
         global $DB;
         $records = [];
         $criteria = [
-            database_meta::$fielduserid => $user->id(),
-            database_meta::$fieldanswered => true,
-            database_meta::$fieldreviewed => true
+            'user_id' => $user->id(),
+            'answered' => true,
+            'reviewed' => true
         ];
-        foreach ($DB->get_records(database_meta::$tableattempt, $criteria) as $entry) {
+        foreach ($DB->get_records('capquiz_attempt', $criteria) as $entry) {
             array_push($records, new capquiz_question_attempt($capquiz->question_usage(), $entry));
         }
         return $records;
@@ -150,7 +150,7 @@ class capquiz_question_attempt {
         $this->quba->finish_question($this->question_slot(), time());
         \question_engine::save_questions_usage_by_activity($this->quba);
         try {
-            $DB->update_record(database_meta::$tableattempt, $record);
+            $DB->update_record('capquiz_attempt', $record);
             $this->record = $record;
             return true;
         } catch (\dml_exception $e) {
@@ -164,7 +164,7 @@ class capquiz_question_attempt {
         $record->reviewed = true;
         $record->time_reviewed = time();
         try {
-            $DB->update_record(database_meta::$tableattempt, $record);
+            $DB->update_record('capquiz_attempt', $record);
             $this->record = $record;
             return true;
         } catch (\dml_exception $e) {
@@ -179,7 +179,7 @@ class capquiz_question_attempt {
         $record->user_id = $user->id();
         $record->question_id = $question->id();
         try {
-            $DB->insert_record(database_meta::$tableattempt, $record);
+            $DB->insert_record('capquiz_attempt', $record);
             return self::active_attempt($capquiz, $user);
         } catch (\dml_exception $e) {
             return null;

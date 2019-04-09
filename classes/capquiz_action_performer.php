@@ -128,16 +128,16 @@ class capquiz_action_performer {
         $ratedquestion->question_list_id = $list->id();
         $ratedquestion->question_id = $questionid;
         $ratedquestion->rating = $rating;
-        $DB->insert_record(database_meta::$tablequestion, $ratedquestion);
+        $DB->insert_record('capquiz_question', $ratedquestion);
     }
 
     private static function remove_capquiz_question(int $questionid, int $qlistid) {
         global $DB;
         $conditions = [
-            database_meta::$fieldid => $questionid,
-            database_meta::$fieldqlistid => $qlistid
+            'id' => $questionid,
+            'question_list_id' => $qlistid
         ];
-        $DB->delete_records(database_meta::$tablequestion, $conditions);
+        $DB->delete_records('capquiz_question', $conditions);
     }
 
 }

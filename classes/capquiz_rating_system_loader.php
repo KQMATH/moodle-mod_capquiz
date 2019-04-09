@@ -111,15 +111,15 @@ class capquiz_rating_system_loader {
             $record->id = $this->record->id;
             $this->update_configuration($record);
         } else {
-            $DB->insert_record(database_meta::$tableratingsystem, $record);
+            $DB->insert_record('capquiz_rating_system', $record);
             $this->set_configuration($record);
         }
     }
 
     private function load_configuration() {
         global $DB;
-        $conditions = [database_meta::$fieldcapquizid => $this->capquiz->id()];
-        $configuration = $DB->get_record(database_meta::$tableratingsystem, $conditions);
+        $conditions = ['capquiz_id' => $this->capquiz->id()];
+        $configuration = $DB->get_record('capquiz_rating_system', $conditions);
         if ($configuration) {
             $this->set_configuration($configuration);
         }
@@ -127,7 +127,7 @@ class capquiz_rating_system_loader {
 
     private function update_configuration(\stdClass $configuration) {
         global $DB;
-        if ($DB->update_record(database_meta::$tableratingsystem, $configuration)) {
+        if ($DB->update_record('capquiz_rating_system', $configuration)) {
             $this->set_configuration($configuration);
         }
     }

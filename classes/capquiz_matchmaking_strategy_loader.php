@@ -52,9 +52,12 @@ class capquiz_matchmaking_strategy_loader {
     public static function localized_strategy_name($name) {
         // TODO: This is a hack. The database records currently store the names, which makes localization hard.
         switch ($name) {
-            case 'N-closest': return get_string('n_closest', 'capquiz');
-            case 'Chronological': return get_string('chronological', 'capquiz');
-            default: return get_string('no_strategy_specified', 'capquiz');
+            case 'N-closest':
+                return get_string('n_closest', 'capquiz');
+            case 'Chronological':
+                return get_string('chronological', 'capquiz');
+            default:
+                return get_string('no_strategy_specified', 'capquiz');
         }
     }
 
@@ -123,15 +126,15 @@ class capquiz_matchmaking_strategy_loader {
             $record->id = $this->record->id;
             $this->update_configuration($record);
         } else {
-            $DB->insert_record(database_meta::$tablequestionselection, $record);
+            $DB->insert_record('capquiz_question_selection', $record);
             $this->set_configuration($record);
         }
     }
 
     private function load_configuration() {
         global $DB;
-        $conditions = [database_meta::$fieldcapquizid => $this->capquiz->id()];
-        $configuration = $DB->get_record(database_meta::$tablequestionselection, $conditions);
+        $conditions = ['capquiz_id' => $this->capquiz->id()];
+        $configuration = $DB->get_record('capquiz_question_selection', $conditions);
         if ($configuration) {
             $this->set_configuration($configuration);
         }
@@ -139,7 +142,7 @@ class capquiz_matchmaking_strategy_loader {
 
     private function update_configuration(\stdClass $configuration) {
         global $DB;
-        if ($DB->update_record(database_meta::$tablequestionselection, $configuration)) {
+        if ($DB->update_record('capquiz_question_selection', $configuration)) {
             $this->set_configuration($configuration);
         }
     }
