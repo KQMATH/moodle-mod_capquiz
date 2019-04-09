@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_matchmaking_strategy_loader;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
@@ -56,8 +57,10 @@ class matchmaking_configuration_renderer {
 
     private function render_configuration() {
         $html = $this->render_form();
+        $strategy = $this->registry->current_strategy_name();
+        $localized = capquiz_matchmaking_strategy_loader::localized_strategy_name($strategy);
         return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
-            'strategy' => $this->registry->current_strategy_name(),
+            'strategy' => $localized,
             'form' => $html
         ]);
     }
@@ -74,6 +77,6 @@ class matchmaking_configuration_renderer {
             }
             return $form->render();
         }
-        return 'There is nothing to configure for this strategy';
+        return get_string('nothing_to_configure_for_strategy', 'capquiz');
     }
 }

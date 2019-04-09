@@ -49,6 +49,15 @@ class capquiz_matchmaking_strategy_loader {
         $this->load_configuration();
     }
 
+    public static function localized_strategy_name($name) {
+        // TODO: This is a hack. The database records currently store the names, which makes localization hard.
+        switch ($name) {
+            case 'N-closest': return get_string('n_closest', 'capquiz');
+            case 'Chronological': return get_string('chronological', 'capquiz');
+            default: return get_string('no_strategy_specified', 'capquiz');
+        }
+    }
+
     public function selector() {
         if (!$this->record) {
             return null;
@@ -76,7 +85,7 @@ class capquiz_matchmaking_strategy_loader {
         if ($this->record) {
             return $this->record->strategy;
         }
-        return 'No strategy specified';
+        return get_string('no_strategy_specified', 'capquiz');
     }
 
     public function configure_current_strategy(\stdClass $candidateconfig) {

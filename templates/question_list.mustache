@@ -40,6 +40,10 @@
 }}
 <h2>{{#str}}question_list, capquiz{{/str}}</h2>
 
+{{#message}}
+    {{{message}}}
+{{/message}}
+
 <table class="capquiz-tree">
     <tr>
         <th>#</th>
@@ -71,7 +75,3 @@
 {{^questions}}
     {{#str}}no_questions_added_to_list, capquiz{{/str}}
 {{/questions}}
-
-{{#message}}
-    {{{message}}}
-{{/message}}

@@ -17,6 +17,7 @@
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_matchmaking_strategy_loader;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -50,7 +51,8 @@ class matchmaking_strategy_selection_form extends \moodleform {
             if ($loader->current_strategy_name() === $strategy) {
                 $selectedindex = $index;
             }
-            $radioarray[] = $form->createElement('radio', 'strategy', '', $strategy, $index, [$strategy]);
+            $localized = capquiz_matchmaking_strategy_loader::localized_strategy_name($strategy);
+            $radioarray[] = $form->createElement('radio', 'strategy', '', $localized, $index, [$strategy]);
             $index++;
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);

@@ -92,9 +92,13 @@ $string['no_questions'] = 'No questions';
 $string['no_enrolled_students'] = 'No students are enrolled';
 $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['no_matchmaking_strategy_selected'] = 'No selection strategy has been specified';
+$string['nothing_to_configure_for_strategy'] = 'There is nothing to configure for this strategy';
 
 $string['update_rating_explanation'] = '<p>The question ratings can be edited below. Changes are saved automatically.</p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
+$string['n_closest'] = 'N-closest';
+$string['chronological'] = 'Chronological';
+$string['no_strategy_specified'] = 'No strategy specified';
 
 $string['one_star'] = '1 Star';
 $string['level_stars'] = '{$a} Stars';
