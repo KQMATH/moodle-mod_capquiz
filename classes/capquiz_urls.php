@@ -171,6 +171,13 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function set_default_question_rating_url(int $qlistid) {
+        $url = self::create_view_url(self::$urlaction);
+        $url->param(self::$paramqlistid, $qlistid);
+        $url->param(capquiz_actions::$parameter, capquiz_actions::$setdefaultqrating);
+        return $url;
+    }
+
     public static function response_submit_url(capquiz_question_attempt $attempt) {
         $url = self::create_view_url(self::$urlasync);
         $url->param(self::$paramattempt, $attempt->id());

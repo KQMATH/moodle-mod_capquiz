@@ -50,6 +50,9 @@ class capquiz_action_performer {
             case capquiz_actions::$setquestionrating:
                 self::set_question_rating($capquiz);
                 break;
+            case capquiz_actions::$setdefaultqrating:
+                self::set_default_question_rating($capquiz);
+                break;
             case capquiz_actions::$createqlisttemplate:
                 self::create_question_list_template($capquiz);
                 break;
@@ -104,6 +107,14 @@ class capquiz_action_performer {
         $rating = optional_param(capquiz_urls::$paramrating, null, PARAM_FLOAT);
         if ($rating !== null) {
             $question->set_rating($rating);
+        }
+        capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
+    }
+
+    public static function set_default_question_rating(capquiz $capquiz) {
+        $rating = optional_param(capquiz_urls::$paramrating, null, PARAM_FLOAT);
+        if ($rating !== null) {
+            $capquiz->question_list()->set_default_question_rating($rating);
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }

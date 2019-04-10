@@ -33,6 +33,7 @@ class capquiz_actions {
     public static $attemptreviewed = 'reviewed';
     public static $setquestionlist = 'set-question-list';
     public static $setquestionrating = "set-question-rating";
+    public static $setdefaultqrating = "set-default-question-rating";
     public static $addquestion = 'add-question';
     public static $publishquestionlist = 'publish-question-list';
     public static $removequestion = 'remove-question';

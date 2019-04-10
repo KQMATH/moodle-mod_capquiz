@@ -43,10 +43,7 @@ class question_list_renderer {
 
     public function render() {
         $qlist = $this->capquiz->question_list();
-        if (!$qlist) {
-            return 'question list error';
-        }
-        if ($qlist->has_questions()) {
+        if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);
         }
         $title = get_string('question_list', 'capquiz');
@@ -82,8 +79,11 @@ class question_list_renderer {
             $message = get_string('update_rating_explanation', 'capquiz');
         }
         return $this->renderer->render_from_template('capquiz/question_list', [
+            'default_rating' => $qlist->default_question_rating(),
+            'update_default_rating_url' => capquiz_urls::set_default_question_rating_url($qlist->id()),
             'questions' => $rows,
             'message' => $message ? $message : false
         ]);
     }
+
 }

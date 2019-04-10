@@ -76,6 +76,12 @@ class capquiz_question_list {
         return $this->record->default_question_rating;
     }
 
+    public function set_default_question_rating(float $rating) {
+        global $DB;
+        $this->record->default_question_rating = $rating;
+        $DB->update_record('capquiz_question_list', $this->record);
+    }
+
     public function title() : string {
         return $this->record->title;
     }

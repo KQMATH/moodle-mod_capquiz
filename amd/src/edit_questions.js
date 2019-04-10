@@ -27,39 +27,66 @@ define(['jquery'], function($) {
     };
 
     /**
-     * Send the new rating for the question to the server.
-     * @param {number} questionId
-     * @param {number} rating
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * Send an action to the server.
+     * @param data
+     * @param onSuccess
+     * @param onError
      */
-    function sendQuestionRating(questionId, rating, onSuccess, onError) {
+    function sendAction(data, onSuccess, onError) {
         $.ajax({
             type: 'post',
             url: 'action.php',
-            data: {
-                'action': 'set-question-rating',
-                'id': parameters.capquizId,
-                'question-id': questionId,
-                'rating': rating,
-            },
+            data: data,
             success: onSuccess,
             error: onError
         });
     }
 
     /**
-     * Send the new rating for the question, and avoid race condition.
-     * @param $input
+     * Send the new default rating for the question list to the server.
+     * @param {object} data
+     * @param {number} rating
+     * @param {callback} onSuccess
+     * @param {callback} onError
      */
-    function submitQuestionRating($input) {
+    function sendDefaultQuestionRating(data, rating, onSuccess, onError) {
+        sendAction({
+            'action': 'set-default-question-rating',
+            'id': parameters.capquizId,
+            'rating': rating,
+        }, onSuccess, onError);
+    }
+
+    /**
+     * Send the new rating for the question to the server.
+     * @param {object} data
+     * @param {number} rating
+     * @param {callback} onSuccess
+     * @param {callback} onError
+     */
+    function sendQuestionRating(data, rating, onSuccess, onError) {
+        sendAction({
+            'action': 'set-question-rating',
+            'id': parameters.capquizId,
+            'question-id': data.questionId,
+            'rating': rating,
+        }, onSuccess, onError);
+    }
+
+    /**
+     * Send the new value, and avoid race condition.
+     * @param {object} $input
+     * @param {callback} sendInput
+     * @param {object} data
+     */
+    function submitInput($input, sendInput, data) {
         $input.data('saving', true);
         $input.data('dirty', false);
         var $indicator = $input.next();
         $indicator.css('color', 'blue');
-        sendQuestionRating($input.data('question-id'), $input.val(), function() {
+        sendInput(data, $input.val(), function() {
             if ($input.data('dirty') === true) {
-                submitQuestionRating($input);
+                submitInput($input, sendInput, data);
             } else {
                 $indicator.css('color', 'green');
                 $input.data('dirty', false);
@@ -71,17 +98,35 @@ define(['jquery'], function($) {
     }
 
     /**
-     * Register the input event listener for question rating fields.
+     * Send the new rating for the question, and avoid race condition.
+     * @param $input
      */
-    function registerQuestionRatingListeners() {
-        $(document).on('input', '.capquiz-question-rating input', function(event) {
+    function submitQuestionRating($input) {
+        submitInput($input, sendQuestionRating, {questionId: $input.data('question-id')});
+    }
+
+    /**
+     * Send the new default rating for the question list, and avoid race condition.
+     * @param $input
+     */
+    function submitDefaultQuestionRating($input) {
+        submitInput($input, sendDefaultQuestionRating, null);
+    }
+
+    /**
+     * Register an input event listener for submission.
+     * @param {string} query
+     * @param {callback} submit
+     */
+    function registerListener(query, submit) {
+        $(document).on('input', query, function(event) {
             var $input = $(event.target);
             var isBeingSaved = $input.data('saving');
             if (isBeingSaved === true) {
                 $input.data('dirty', true);
                 return;
             }
-            submitQuestionRating($input);
+            submit($input);
         });
     }
 
@@ -97,7 +142,8 @@ define(['jquery'], function($) {
     return {
         initialize: function(capquizId) {
             parameters.capquizId = capquizId;
-            registerQuestionRatingListeners();
+            registerListener('.capquiz-question-rating input', submitQuestionRating);
+            registerListener('.capquiz-default-question-rating input', submitDefaultQuestionRating);
             fixTabIndicesForQuestionRatingInputs();
         }
     };

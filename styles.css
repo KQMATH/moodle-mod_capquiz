@@ -128,3 +128,11 @@
 .capquiz-response-form .content .im-controls .submit {
     border: 1px solid #bbb;
 }
+
+.capquiz-default-question-rating {
+    display: inline-block;
+}
+
+.capquiz-default-question-rating + hr {
+    width: 80%;
+}
