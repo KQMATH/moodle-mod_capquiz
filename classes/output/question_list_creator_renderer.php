@@ -63,8 +63,7 @@ class question_list_creator_renderer {
             if ($qlist) {
                 redirect(capquiz_urls::create_view_url(capquiz_urls::$urlview));
             }
-            header('Location: /');
-            exit;
+            capquiz_urls::redirect_to_front_page();
         }
         return $this->renderer->render_from_template('capquiz/create_question_list', [
             'form' => $form->render()

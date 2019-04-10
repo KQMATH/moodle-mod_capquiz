@@ -56,8 +56,8 @@ class capquiz_urls {
     }
 
     public static function redirect_to_front_page() {
-        header('Location: /');
-        exit;
+        global $CFG;
+        redirect(new \moodle_url($CFG->wwwroot));
     }
 
     public static function redirect_to_url(\moodle_url $url) {
