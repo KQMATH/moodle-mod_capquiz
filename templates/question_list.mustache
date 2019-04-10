@@ -41,7 +41,7 @@
 <h2>{{#str}}question_list, capquiz{{/str}}</h2>
 
 {{#str}} default_question_rating, capquiz {{/str}}:
-<form method="post" class="capquiz-default-question-rating" name="default_question_rating" action="{{ update_default_rating_url }}">
+<form method="post" class="capquiz-default-question-rating" name="default_question_rating">
     <input type="number" name="rating" value="{{ default_rating }}">
     {{#pix}} t/check, core {{/pix}}
 </form>
