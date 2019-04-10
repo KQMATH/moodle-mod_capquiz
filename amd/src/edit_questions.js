@@ -26,6 +26,13 @@ define(['jquery'], function($) {
         capquizId: 0,
     };
 
+    /**
+     * Send the new rating for the question to the server.
+     * @param {number} questionId
+     * @param {number} rating
+     * @param {callback} onSuccess
+     * @param {callback} onError
+     */
     function sendQuestionRating(questionId, rating, onSuccess, onError) {
         $.ajax({
             type: 'post',
@@ -41,6 +48,10 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     * Send the new rating for the question, and avoid race condition.
+     * @param $input
+     */
     function submitQuestionRating($input) {
         $input.data('saving', true);
         $input.data('dirty', false);
@@ -59,6 +70,9 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     * Register the input event listener for question rating fields.
+     */
     function registerQuestionRatingListeners() {
         $(document).on('input', '.capquiz-question-rating input', function(event) {
             var $input = $(event.target);
@@ -71,6 +85,9 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     * Set the tab indices for the question rating elements to be more user friendly.
+     */
     function fixTabIndicesForQuestionRatingInputs() {
         $('.capquiz-question-rating-submit-wrapper button').each(function(index, object) {
             $(object).attr('tabindex', -1);
