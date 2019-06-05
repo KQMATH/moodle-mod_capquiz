@@ -186,7 +186,6 @@ class provider implements
         if ($userid != $user->id) {
             $subcontext[] = fullname($user);
         }
-        //$subcontext[] = $attempt->attempt;
         return $subcontext;
     }
 
@@ -213,9 +212,7 @@ class provider implements
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {capquiz_question_list} cql ON cql.capquiz_id = cm.instance
                   JOIN {capquiz_user} cu ON cu.user_id = :userid AND cu.capquiz_id = cm.instance
-                  JOIN {capquiz_attempt} ca ON ca.user_id = cu.id
-            ' . $qubaid->from . ' WHERE (' . $qubaid->where() . ') AND ca.answered = 1';
-
+                  JOIN {capquiz_attempt} ca ON ca.user_id = cu.id ' . $qubaid->from . ' WHERE (' . $qubaid->where() . ') AND ca.answered = 1';
         $params = array_merge([
             'contextlevel' => CONTEXT_MODULE,
             'userid' => $userid,
