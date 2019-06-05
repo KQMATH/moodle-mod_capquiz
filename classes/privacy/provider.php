@@ -198,7 +198,7 @@ class provider implements
             'cql.question_usage_id',
             $userid
         );
-        $sql = 'SELECT DISTINCT 
+        $sql = 'SELECT DISTINCT
                        cx.id AS contextid,
                        cm.id AS cmid,
                        ca.id AS capattemptid,
