@@ -57,7 +57,7 @@
         <th>#</th>
         <th>{{#str}}title, capquiz{{/str}}</th>
         <th>{{#str}}rating, capquiz{{/str}}</th>
-        <th>{{#str}}action, capquiz{{/str}}</th>
+        <th colspan="3">{{#str}}action, capquiz{{/str}}</th>
     </tr>
     {{#questions}}
         <tr>
@@ -71,9 +71,19 @@
                     </form>
                 </td>
                 <td class="capquiz-question-rating-submit-wrapper">
-                    {{#button}}
-                        {{>core/single_button}}
-                    {{/button}}
+                    {{#delete}}
+                        {{>core/action_link}}
+                    {{/delete}}
+                </td>
+                <td>
+                    {{#edit}}
+                        {{>core/action_link}}
+                    {{/edit}}
+                </td>
+                <td>
+                    {{#preview}}
+                        {{>core/action_link}}
+                    {{/preview}}
                 </td>
             {{/.}}
         </tr>

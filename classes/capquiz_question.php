@@ -85,4 +85,18 @@ class capquiz_question {
         return $this->record->text;
     }
 
+    public function course_id() : int {
+        global $DB;
+        $sql = 'SELECT c.id AS id
+                  FROM {capquiz_question} cq
+                  JOIN {question} q ON q.id = cq.question_id
+                  JOIN {question_categories} qc ON qc.id = q.category
+                  JOIN {context} ctx ON ctx.id = qc.contextid
+             LEFT JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = 70
+                  JOIN {course} c ON (ctx.contextlevel = 50 AND c.id = ctx.instanceid)
+                       OR (ctx.contextlevel = 70 AND c.id = cm.course)
+                 WHERE cq.id = :questionid';
+        return $DB->get_record_sql($sql, ['questionid' => $this->id()], MUST_EXIST)->id;
+    }
+
 }

@@ -52,7 +52,7 @@ class question_list_renderer {
     }
 
     private function render_questions(capquiz_question_list $qlist) {
-        global $PAGE;
+        global $PAGE, $CFG;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [
             $this->capquiz->course_module_id()
         ]);
@@ -60,17 +60,34 @@ class question_list_renderer {
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
+            $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
+                'courseid' => $question->course_id(),
+                'id' => $question->question_id()
+            ]);
+            $previewurl = new \moodle_url($CFG->wwwroot . '/question/preview.php', [
+                'courseid' => $question->course_id(),
+                'id' => $question->question_id()
+            ]);
             $rows[] = [
                 'index' => $i + 1,
                 'name' => $question->name(),
                 'rating' => $question->rating(),
                 'question_id' => $question->id(),
                 'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out(false),
-                'button' => [
-                    'primary' => true,
-                    'method' => 'post',
+                'delete' => [
                     'url' => capquiz_urls::remove_question_from_list_url($question->id())->out(false),
-                    'label' => get_string('remove', 'capquiz')
+                    'label' => get_string('remove', 'capquiz'),
+                    'classes' => 'fa fa-trash'
+                ],
+                'edit' => [
+                    'url' => $editurl->out(false),
+                    'label' => get_string('edit'),
+                    'classes' => 'fa fa-edit'
+                ],
+                'preview' => [
+                    'url' => $previewurl->out(false),
+                    'label' => get_string('preview'),
+                    'classes' => 'fa fa-search-plus'
                 ]
             ];
         }
