@@ -108,10 +108,6 @@ class capquiz_question_attempt {
         return $this->record->id;
     }
 
-    public function moodle_attempt_id() : int {
-        return $this->record->attempt_id;
-    }
-
     public function question_id() : int {
         return $this->record->question_id;
     }
