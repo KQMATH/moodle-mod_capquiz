@@ -109,21 +109,12 @@ class provider implements
                   JOIN {capquiz_question_list} cql ON cql.capquiz_id = cq.id
                   JOIN {capquiz_user} cu ON cu.capquiz_id = cq.id
                  WHERE cu.user_id = :userid';
-
-        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user(
-            'rel',
-            'mod_capquiz',
-            'cql.question_usage_id',
-            $userid
-        );
-        $params = array_merge([
+        $contextlist = new contextlist();
+        $contextlist->add_from_sql($sql, [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'capquiz',
-            'userid' => $userid,
-        ], $qubaid->from_where_params());
-
-        $contextlist = new contextlist();
-        $contextlist->add_from_sql($sql, $params);
+            'userid' => $userid
+        ]);
         return $contextlist;
     }
 
@@ -181,7 +172,7 @@ class provider implements
         static::export_quiz_attempts($contextlist);
     }
 
-    private static function get_quiz_attempt_subcontext($userid, \stdClass $attempt, \stdClass $user) {
+    private static function get_quiz_attempt_subcontext($userid, \stdClass $user) {
         $subcontext = [get_string('questions', 'mod_capquiz')];
         if ($userid != $user->id) {
             $subcontext[] = fullname($user);
@@ -224,7 +215,7 @@ class provider implements
             $context = \context_module::instance($attempt->cmid);
             $options = new \question_display_options();
             $options->context = $context;
-            $attemptsubcontext = static::get_quiz_attempt_subcontext($userid, $attempt, $contextlist->get_user());
+            $attemptsubcontext = static::get_quiz_attempt_subcontext($userid, $contextlist->get_user());
             // This attempt was made by the user. They 'own' all data on it. Store the question usage data.
             \core_question\privacy\provider::export_question_usage(
                 $userid,
@@ -266,6 +257,7 @@ class provider implements
             $DB->delete_records('capquiz_attempt', ['user_id' => $user->user_id]);
         }
         $DB->delete_records('capquiz_user', ['capquiz_id' => $cm->instance]);
+        \core_question\privacy\provider::delete_data_for_all_users_in_context($context);
     }
 
     /**
@@ -287,6 +279,7 @@ class provider implements
                 $DB->delete_records('capquiz_user', ['capquiz_id' => $cm->instance, 'user_id' => $userid]);
             }
         }
+        \core_question\privacy\provider::delete_data_for_user($contextlist);
     }
 
 }
