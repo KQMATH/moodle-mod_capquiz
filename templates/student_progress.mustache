@@ -34,20 +34,18 @@
         {{#student}}
             <div class="capquiz-quiz-progress">
                 {{#up}}
-                  <div class="capquiz-quiz-progress-fill"
-                     style="width:{{ percent }}%">
-                      <div class="capquiz-quiz-progress-percent">
-                    {{ percent }}%
-                      </div>
-                  </div>
+                    <div class="capquiz-quiz-progress-fill" style="width:{{ percent }}%">
+                        <div class="capquiz-quiz-progress-percent">
+                            {{ percent }}%
+                        </div>
+                    </div>
                 {{/up}}
                 {{#down}}
-                  <div class="capquiz-quiz-progress-unfill"
-                     style="width:{{ percent }}%">
-                      <div class="capquiz-quiz-progress-percent">
-                          -{{ percent }}%
-                      </div>
-                  </div>
+                    <div class="capquiz-quiz-progress-unfill" style="width:{{ percent }}%">
+                        <div class="capquiz-quiz-progress-percent">
+                            -{{ percent }}%
+                        </div>
+                    </div>
                 {{/down}}
             </div>
             <div class="capquiz-quiz-stars">
@@ -55,10 +53,17 @@
                     {{#.}}
                         {{#pix}} star, capquiz {{/pix}}
                     {{/.}}
-                    {{^.}}
+                {{/stars}}
+                {{#blankstars}}
+                    {{#.}}
                         {{#pix}} blank-star, capquiz {{/pix}}
                     {{/.}}
-                {{/stars}}
+                {{/blankstars}}
+                {{#nostars}}
+                    {{#.}}
+                        {{#pix}} no-star, capquiz {{/pix}}
+                    {{/.}}
+                {{/nostars}}
             </div>
         {{/student}}
     </div>

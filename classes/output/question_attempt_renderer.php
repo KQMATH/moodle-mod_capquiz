@@ -96,17 +96,13 @@ class question_attempt_renderer {
     private function render_progress(capquiz_user $user) : string {
         $qlist = $this->capquiz->question_list();
         $percent = $qlist->next_level_percent($this->capquiz, $user->rating());
-        if ($percent >= 0) {
-            $student = [
-                'up' => ['percent' => $percent],
-                'stars' => $this->user_star_progress($user, $qlist)
-            ];
-        } else {
-            $student = [
-                'down' => ['percent' => -$percent],
-                'stars' => $this->user_star_progress($user, $qlist)
-            ];
-        }
+        list($stars, $blankstars, $nostars) = $this->user_star_progress($user, $qlist);
+        $student = [
+            'up' => ['percent' => ($percent >= 0 ? $percent : -$percent)],
+            'stars' => $stars,
+            'blankstars' => $blankstars,
+            'nostars' => $nostars
+        ];
         return $this->renderer->render_from_template('capquiz/student_progress', [
             'progress' => ['student' => $student]
         ]);
@@ -145,11 +141,21 @@ class question_attempt_renderer {
     }
 
     private function user_star_progress(capquiz_user $user, capquiz_question_list $qlist) : array {
-        $result = [];
+        $stars = [];
+        $blankstars = [];
+        $nostars = [];
         for ($star = 1; $star < $qlist->level_count() + 1; $star++) {
-            $result[] = $user->highest_level() >= $star;
+            if ($user->highest_level() >= $star) {
+                if ($user->rating() >= $qlist->required_rating_for_level($star)) {
+                    $stars[] = true;
+                } else {
+                    $blankstars[] = true;
+                }
+            } else {
+                $nostars[] = true;
+            }
         }
-        return $result;
+        return [$stars, $blankstars, $nostars];
     }
 
     private function review_display_options() : \question_display_options {
