@@ -131,6 +131,68 @@ define(['jquery'], function($) {
     }
 
     /**
+     * Sorts a table by the respective column based on $header.
+     * It searches for an element of class "capquiz-sortable-item" inside the <td>, and if found,
+     * the value attribute is used if it exists. Otherwise, the inner html is used to sort by.
+     *
+     * The <td> tag may not have the item class, as it has no effect on the sorting.
+     * Their children elements are not required to have the class either. The inner html of <td> will be used then.
+     *
+     * The first column in the table must be an index of the row.
+     *
+     * @param $header The header column for which to sort the table by.
+     */
+    function sortTable($header) {
+        console.log('Sorting by ' + $header.text());
+        var column = $header.index();
+        var $table = $header.parent().parent();
+        $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
+            var $colA = $(rowA).children('td').eq(0);
+            var $colB = $(rowB).children('td').eq(0);
+            return parseInt($colA.text()) - parseInt($colB.text());
+        });
+        $table.append($rows);
+        $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
+            var $colA = $(rowA).children('td').eq(column);
+            var $colB = $(rowB).children('td').eq(column);
+            var $itemA = $colA.find('.capquiz-sortable-item');
+            var $itemB = $colB.find('.capquiz-sortable-item');
+            var valA = ($itemA.length === 0 ? $colA.html() : ($itemA.val().length === 0 ? $itemA.html() : $itemA.val()));
+            var valB = ($itemB.length === 0 ? $colB.html() : ($itemB.val().length === 0 ? $itemB.html() : $itemB.val()));
+            if ($.isNumeric(valA) && $.isNumeric(valB)) {
+                return valA - valB;
+            } else {
+                return valA.toString().localeCompare(valB);
+            }
+        });
+        var ascending = ($table.data('asc') === 'true');
+        $table.data('asc', ascending ? 'false' : 'true');
+        var iconName = (ascending ? 'fa-arrow-up' : 'fa-arrow-down');
+        $.each($table.find('.capquiz-sortable'), function () {
+            $(this).find('.fa').remove();
+        });
+        $header.prepend('<i class="fa ' + iconName + '"></i>');
+        if (!ascending) {
+            $rows = $rows.reverse();
+        }
+        $table.append($rows);
+        var i = 1;
+        $table.find('tr:gt(0)').each(function () {
+            $(this).find('td:first-child').html(i);
+            i++;
+        });
+    }
+
+    /**
+     * Register click event listeners for the sortable table columns.
+     */
+    function registerSortListener() {
+        $(document).on('click', '.capquiz-sortable', function() {
+            sortTable($(this));
+        });
+    }
+
+    /**
      * Set the tab indices for the question rating elements to be more user friendly.
      */
     function fixTabIndicesForQuestionRatingInputs() {
@@ -145,6 +207,7 @@ define(['jquery'], function($) {
             registerListener('.capquiz-question-rating input', submitQuestionRating);
             registerListener('.capquiz-default-question-rating input', submitDefaultQuestionRating);
             fixTabIndicesForQuestionRatingInputs();
+            registerSortListener();
         }
     };
 

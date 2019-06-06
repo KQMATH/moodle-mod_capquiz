@@ -136,3 +136,8 @@
 .capquiz-default-question-rating + hr {
     width: 80%;
 }
+
+.capquiz-sortable {
+    cursor: pointer;
+    user-select: none;
+}
