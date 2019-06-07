@@ -15,25 +15,16 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_capquiz/student_question_attempt
+    @template mod_capquiz/student_comment
 
     Example context (json):
     {
-        "attempt": {
-            "url": "#",
-            "body": "raw html to render the question",
-            "slots": "",
-            "comment": "Student comment for this attempt"
-        }
+        "comment": "The default comment"
     }
 }}
-{{#attempt}}
-    <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data" accept-charset="utf-8">
-        <div>
-            <input type="hidden" name="slots" value="{{ slots }}">
-            <input type="hidden" name="scrollpos" value="">
-            {{{ body }}}
-        </div>
-        {{>capquiz/student_comment}}
-    </form>
-{{/attempt}}
+<details class="capquiz-student-comment">
+    <summary>{{#str}} problem_with_question_header, capquiz {{/str}}</summary>
+    <p>{{#str}} problem_with_question_details, capquiz {{/str}}</p>
+    <textarea name="studentcomment" rows="4" cols="80" placeholder="{{#str}} enter_comment_here, capquiz {{/str}}"
+    >{{ comment }}</textarea>
+</details>

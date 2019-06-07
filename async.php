@@ -33,6 +33,7 @@ require_capability('mod/capquiz:student', $context);
 
 $action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
 $attemptid = optional_param(capquiz_urls::$paramattempt, null, PARAM_INT);
+$comment = optional_param('studentcomment', '', PARAM_TEXT);
 $capquiz = capquiz::create();
 
 capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
@@ -40,6 +41,7 @@ capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
 if ($attemptid !== null) {
     $user = $capquiz->user();
     $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
+    $attempt->update_student_comment($comment);
     if ($action === capquiz_actions::$attemptanswered) {
         $capquiz->question_engine()->attempt_answered($user, $attempt);
     } else if ($action === capquiz_actions::$attemptreviewed) {

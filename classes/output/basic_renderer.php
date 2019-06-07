@@ -44,12 +44,13 @@ class basic_renderer {
      * @param string $label
      * @param string $httpmethod The HTTP method to use for the form
      * @param string[] $params The keys are used as names
+     * @param string $id
      * @return string
      * @throws \coding_exception
      * @throws \moodle_exception
      */
     public static function render_action_button(renderer $renderer, \moodle_url $url,
-            string $label, string $httpmethod = 'post', array $params = []) {
+            string $label, string $httpmethod = 'post', array $params = [], string $id = '') {
         $paramobjects = [];
         foreach ($params as $name => $value) {
             $paramobjects = [
@@ -63,7 +64,8 @@ class basic_renderer {
                 'method' => $httpmethod,
                 'url' => $url->out(false),
                 'label' => $label,
-                'params' => $paramobjects
+                'params' => $paramobjects,
+                'id' => $id
             ]
         ]);
         return $html;

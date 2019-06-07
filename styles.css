@@ -141,3 +141,14 @@
     cursor: pointer;
     user-select: none;
 }
+
+.capquiz-student-comment {
+    background: #eee;
+    padding: 8px;
+    margin-bottom: 24px;
+}
+
+.capquiz-student-comment summary {
+    outline: none;
+    user-select: none;
+}

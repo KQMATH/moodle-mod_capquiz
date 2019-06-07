@@ -149,11 +149,16 @@ $string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
 $string['not_published'] = 'Not published';
 
+$string['problem_with_question_header'] = 'Is there a problem with this question? Send feedback to your instructor here.';
+$string['problem_with_question_details'] = 'If you have feedback for this question, please type it below. The text will be sent to your instructor. You will be able to continue editing this when you have submitted your answer.';
+$string['enter_comment_here'] = 'Enter your comment here...';
+
 $string['privacy:metadata:core_question'] = 'The CAPQuiz activity stores question usage information in the core_question subsystem.';
 $string['privacy:metadata:capquiz_attempt'] = 'Details about each attempt on a CAPQuiz.';
 $string['privacy:metadata:capquiz_attempt:userid'] = 'The user who made the attempt.';
 $string['privacy:metadata:capquiz_attempt:time_answered'] = 'The time that the attempt was answered.';
 $string['privacy:metadata:capquiz_attempt:time_reviewed'] = 'The time that the attempt was reviewed.';
+$string['privacy:metadata:capquiz_attempt:feedback'] = 'The feedback comment provided by the student to the instructor.';
 $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';

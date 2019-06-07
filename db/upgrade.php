@@ -23,5 +23,15 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 function xmldb_capquiz_upgrade($oldversion) {
+    global $DB;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2019060705) {
+        $table = new xmldb_table('capquiz_attempt');
+        $field = new xmldb_field('feedback', XMLDB_TYPE_TEXT);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2019060705, 'capquiz');
+    }
     return true;
 }

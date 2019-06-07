@@ -66,6 +66,7 @@ class provider implements
             'userid' => 'privacy:metadata:capquiz_attempt:userid',
             'time_answered' => 'privacy:metadata:capquiz_attempt:time_answered',
             'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed',
+            'feedback' => 'privacy:metadata:capquiz_attempt:feedback'
         ], 'privacy:metadata:capquiz_attempt');
 
         // The 'capquiz_question' table is used to map the usage of a question used in a CAPQuiz activity.
@@ -197,6 +198,7 @@ class provider implements
                        ca.answered AS answered,
                        ca.time_reviewed AS timereviewed,
                        ca.time_answered AS timeanswered,
+                       ca.feedback AS feedback,
                        cql.question_usage_id AS qubaid
                   FROM {context} cx
                   JOIN {course_modules} cm ON cm.id = cx.instanceid AND cx.contextlevel = :contextlevel
@@ -233,6 +235,7 @@ class provider implements
             if (!empty($attempt->timeanswered)) {
                 $data->timeanswered = transform::datetime($attempt->timeanswered);
             }
+            $data->feedback = $attempt->feedback;
             writer::with_context($context)->export_data($attemptsubcontext, $data);
         }
         $attempts->close();

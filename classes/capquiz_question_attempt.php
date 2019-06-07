@@ -136,8 +136,11 @@ class capquiz_question_attempt {
         return !$this->is_reviewed();
     }
 
+    public function student_comment() : string {
+        return isset($this->record->feedback) ? $this->record->feedback : '';
+    }
+
     public function mark_as_answered() : bool {
-        global $DB;
         $submitteddata = $this->quba->extract_responses($this->question_slot());
         $this->quba->process_action($this->question_slot(), $submitteddata);
         $record = $this->record;
@@ -145,27 +148,20 @@ class capquiz_question_attempt {
         $record->time_answered = time();
         $this->quba->finish_question($this->question_slot(), time());
         \question_engine::save_questions_usage_by_activity($this->quba);
-        try {
-            $DB->update_record('capquiz_attempt', $record);
-            $this->record = $record;
-            return true;
-        } catch (\dml_exception $e) {
-            return false;
-        }
+        return $this->update_record($record);
     }
 
     public function mark_as_reviewed() : bool {
-        global $DB;
         $record = $this->record;
         $record->reviewed = true;
         $record->time_reviewed = time();
-        try {
-            $DB->update_record('capquiz_attempt', $record);
-            $this->record = $record;
-            return true;
-        } catch (\dml_exception $e) {
-            return false;
-        }
+        return $this->update_record($record);
+    }
+
+    public function update_student_comment(string $feedback) {
+        $record = $this->record;
+        $record->feedback = ($feedback !== '' ? $feedback : null);
+        $this->update_record($record);
     }
 
     private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) {
@@ -179,6 +175,17 @@ class capquiz_question_attempt {
             return self::active_attempt($capquiz, $user);
         } catch (\dml_exception $e) {
             return null;
+        }
+    }
+
+    private function update_record($record) : bool {
+        global $DB;
+        try {
+            $DB->update_record('capquiz_attempt', $record);
+            $this->record = $record;
+            return true;
+        } catch (\dml_exception $e) {
+            return false;
         }
     }
 
