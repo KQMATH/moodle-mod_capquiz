@@ -182,3 +182,22 @@
     text-align: right;
     border-bottom: 1px solid #999;
 }
+
+.capquiz-quiz-stars {
+    position: relative;
+}
+
+.capquiz-star, .capquiz-lost-star, .capquiz-no-star, .capquiz-help-stars {
+    cursor: pointer;
+}
+
+.capquiz-star-tooltip {
+    position: fixed;
+    padding: 8px;
+    border: 1px solid #555;
+    background: #333;
+    color: #dbdbdb;
+    display: none;
+    z-index: 1000;
+    border-radius: 6px;
+}

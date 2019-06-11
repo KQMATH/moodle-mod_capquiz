@@ -120,6 +120,11 @@ $string['prevent_question_n_times_help'] = 'This will prevent a student from bei
 
 $string['available_questions'] = 'Available questions';
 
+$string['tooltip_achieved_star'] = 'You have achieved this star!';
+$string['tooltip_lost_star'] = 'You have achieved this star, but your rating is currently below the star\'s threshold.';
+$string['tooltip_no_star'] = 'You have yet to achieve this star.';
+$string['tooltip_help_star'] = 'Here is some useful advice for how the rating system works.';
+
 $string['select_template'] = 'Select one of these templates for your quiz';
 $string['no_templates_created'] = 'No templates have been created.';
 $string['create_own_template'] = 'You can also create your own';
