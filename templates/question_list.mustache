@@ -46,7 +46,7 @@
     {{#pix}} t/check, core {{/pix}}
 </form>
 
-<hr>
+<hr class="capquiz-reduced-width">
 
 {{#message}}
     {{{message}}}
@@ -93,3 +93,22 @@
 {{^questions}}
     {{#str}}no_questions_added_to_list, capquiz{{/str}}
 {{/questions}}
+
+<hr class="capquiz-reduced-width">
+
+<div class="capquiz-student-comment-list">
+    <h2>Feedback from students</h2>
+    {{#question_comments}}
+        <div>
+            <h3>{{question}}</h3>
+            {{#comments}}
+                {{#.}}
+                    <div>
+                        <p>{{comment}}</p>
+                        <i>posted by {{student}} at {{#userdate}}{{time_submitted}}, %A, %d %B %Y, %I:%M %p{{/userdate}}</i>
+                    </div>
+                {{/.}}
+            {{/comments}}
+        </div>
+    {{/question_comments}}
+</div>

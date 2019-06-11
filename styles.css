@@ -84,6 +84,10 @@
     }
 }
 
+.capquiz-reduced-width {
+    width: 80%;
+}
+
 .capquiz-quiz-progress-fill {
     background: #59f;
     text-align: left;
@@ -133,10 +137,6 @@
     display: inline-block;
 }
 
-.capquiz-default-question-rating + hr {
-    width: 80%;
-}
-
 .capquiz-sortable {
     cursor: pointer;
     user-select: none;
@@ -151,4 +151,34 @@
 .capquiz-student-comment summary {
     outline: none;
     user-select: none;
+}
+
+.capquiz-student-comment-list {
+    padding: 8px;
+}
+
+.capquiz-student-comment-list h3 {
+    font-weight: bold;
+}
+
+.capquiz-student-comment-list > div {
+    padding: 8px;
+    margin: 16px 0;
+}
+
+.capquiz-student-comment-list > div > div {
+    margin-bottom: 1rem;
+    background: #fafafa;
+    border: 1px solid #999;
+}
+
+.capquiz-student-comment-list > div > div p {
+    margin-bottom: 0;
+    padding: 8px;
+}
+
+.capquiz-student-comment-list > div > div i {
+    display: block;
+    text-align: right;
+    border-bottom: 1px solid #999;
 }

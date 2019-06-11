@@ -164,6 +164,26 @@ class capquiz_question_attempt {
         $this->update_record($record);
     }
 
+    public static function all_comments_for_question(int $questionid) {
+        global $DB;
+        $sql = "SELECT ca.feedback AS comment,
+                       ca.time_answered AS time_submitted,
+                       CONCAT(u.firstname, ' ', u.lastname) AS student
+                  FROM {question} q
+                  JOIN {capquiz_question} cq
+                    ON cq.question_id = q.id
+                  JOIN {capquiz_attempt} ca
+                    ON ca.question_id = cq.id
+                   AND ca.feedback IS NOT NULL
+                   AND ca.feedback <> ''
+                  JOIN {capquiz_user} cu
+                    ON cu.id = ca.user_id
+                  JOIN {user} u
+                    ON u.id = cu.user_id
+                 WHERE q.id = :qid";
+        return $DB->get_recordset_sql($sql, ['qid' => $questionid]);
+    }
+
     private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) {
         global $DB;
         $record = new \stdClass();

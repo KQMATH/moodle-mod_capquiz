@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_question_attempt;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question_list;
 
@@ -58,6 +59,7 @@ class question_list_renderer {
         ]);
         $rows = [];
         $questions = $qlist->questions();
+        $comments = [];
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
             $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
@@ -90,6 +92,13 @@ class question_list_renderer {
                     'classes' => 'fa fa-search-plus'
                 ]
             ];
+            $qcomments = capquiz_question_attempt::all_comments_for_question($question->question_id());
+            if ($qcomments->valid()) {
+                $comments[] = [
+                    'question' => $question->name(),
+                    'comments' => $qcomments
+                ];
+            }
         }
         $message = null;
         if ($qlist->has_questions()) {
@@ -98,7 +107,9 @@ class question_list_renderer {
         return $this->renderer->render_from_template('capquiz/question_list', [
             'default_rating' => $qlist->default_question_rating(),
             'questions' => $rows,
-            'message' => $message ? $message : false
+            'question_comments' => $comments,
+            'message' => $message ? $message : false,
+            'comments' => $comments
         ]);
     }
 
