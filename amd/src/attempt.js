@@ -20,7 +20,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery'], function($) {
+define(['jquery', 'core/str'], function($, mString) {
 
     /**
      *
@@ -34,12 +34,53 @@ define(['jquery'], function($) {
         $form.prepend($comment);
     }
 
+    function showTooltip($element, text) {
+        var $tooltip = $('.capquiz-star-tooltip');
+        $tooltip.html(text);
+        $tooltip.css('display', 'block');
+        var x = $element.offset().left - $tooltip.width() / 2;
+        var y = $element.offset().top + 32;
+        $tooltip.css('left', x + 'px');
+        $tooltip.css('top', y + 'px');
+    }
+
+    function hideTooltip() {
+        $('.capquiz-star-tooltip').css('display', 'none');
+    }
+
+    function enableTooltips() {
+        $(document).on('mouseover', '.capquiz-quiz-stars span', function () {
+            var $self = $(this);
+            if ($self.hasClass('capquiz-star')) {
+                $.when(mString.get_string('tooltip_achieved_star', 'capquiz')).done(function (text) {
+                    showTooltip($self, text);
+                });
+            } else if ($self.hasClass('capquiz-lost-star')) {
+                $.when(mString.get_string('tooltip_lost_star', 'capquiz')).done(function (text) {
+                    showTooltip($self, text);
+                });
+            } else if ($self.hasClass('capquiz-no-star')) {
+                $.when(mString.get_string('tooltip_no_star', 'capquiz')).done(function (text) {
+                    showTooltip($self, text);
+                });
+            } else if ($self.hasClass('capquiz-help-stars')) {
+                $.when(mString.get_string('tooltip_help_star', 'capquiz')).done(function (text) {
+                    showTooltip($self, text);
+                });
+            }
+        });
+        $(document).on('mouseleave', '.capquiz-quiz-stars span', function () {
+            hideTooltip();
+        });
+    }
+
     return {
         initialize: function() {
             var $nextButton = $('#capquiz_review_next');
             if ($nextButton.length) {
                 moveCommentFieldToForm($nextButton.parent());
             }
+            enableTooltips();
         }
     };
 
