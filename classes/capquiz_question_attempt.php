@@ -136,6 +136,22 @@ class capquiz_question_attempt {
         return !$this->is_reviewed();
     }
 
+    public function is_question_valid() : bool {
+        global $DB;
+        $sql = 'SELECT cq.id
+                  FROM {capquiz_attempt} ca
+                  JOIN {capquiz_question} cq
+                    ON ca.question_id = cq.id
+                 WHERE ca.id = :attemptid';
+        $result = $DB->get_record_sql($sql, ['attemptid' => $this->id()]);
+        return $result !== false;
+    }
+
+    public function delete() {
+        global $DB;
+        $DB->execute('DELETE FROM {capquiz_attempt} WHERE id = :id', ['id' => $this->id()]);
+    }
+
     public function student_comment() : string {
         return isset($this->record->feedback) ? $this->record->feedback : '';
     }
