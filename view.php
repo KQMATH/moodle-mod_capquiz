@@ -45,5 +45,6 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
         $capquiz->renderer()->display_choose_question_list_view();
     }
 } else if (has_capability('mod/capquiz:student', $capquiz->context())) {
+    $capquiz->question_engine()->delete_invalid_attempt($capquiz->user());
     $capquiz->renderer()->display_question_attempt_view($capquiz);
 }

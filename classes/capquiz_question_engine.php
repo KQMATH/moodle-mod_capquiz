@@ -68,7 +68,17 @@ class capquiz_question_engine {
         return $this->attempt_for_user($this->capquiz->user());
     }
 
+    public function delete_invalid_attempt(capquiz_user $user) {
+        $attempt = $this->attempt_for_user($user);
+        if (!$attempt->is_question_valid()) {
+            $attempt->delete();
+        }
+    }
+
     public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) {
+        if (!$attempt->is_question_valid()) {
+            return;
+        }
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $attempt->mark_as_answered();
         $question = $this->capquiz->question_list()->question($attempt->question_id());
