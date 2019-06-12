@@ -120,6 +120,11 @@ $string['prevent_question_n_times_help'] = 'This will prevent a student from bei
 
 $string['available_questions'] = 'Available questions';
 
+$string['tooltip_achieved_star'] = 'You have achieved this star!';
+$string['tooltip_lost_star'] = 'You have achieved this star, but your rating is currently below the star\'s threshold.';
+$string['tooltip_no_star'] = 'You have yet to achieve this star.';
+$string['tooltip_help_star'] = 'Every student has a proficiency rating in the CAPQuiz activity.  This increases when successfully answering a question, and decreases with wrong answers.  Stars are achieved at certain rating levels, and never lost. I.e. a student can sometimes lose rating points and fall below a star's threshold, without losing the star.  It is suggested that a certain number of stars are required for a compulsory assignment.  Hover your mouse over a star to see rating details.';
+
 $string['select_template'] = 'Select one of these templates for your quiz';
 $string['no_templates_created'] = 'No templates have been created.';
 $string['create_own_template'] = 'You can also create your own';
