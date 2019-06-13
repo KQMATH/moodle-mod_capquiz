@@ -143,10 +143,9 @@ define(['jquery'], function($) {
      * @param $header The header column for which to sort the table by.
      */
     function sortTable($header) {
-        console.log('Sorting by ' + $header.text());
         var column = $header.index();
         var $table = $header.parent().parent();
-        $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
+        var $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
             var $colA = $(rowA).children('td').eq(0);
             var $colB = $(rowB).children('td').eq(0);
             return parseInt($colA.text()) - parseInt($colB.text());

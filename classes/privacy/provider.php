@@ -101,15 +101,21 @@ class provider implements
      * @return  contextlist  $contextlist The contextlist containing the list of contexts used in this plugin.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        // Select the context of any quiz attempt where a user has an attempt, plus the related usages.
         $sql = 'SELECT cx.id
                   FROM {context} cx
-                  JOIN {course_modules} cm ON cm.id = cx.instanceid AND cx.contextlevel = :contextlevel
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {capquiz} cq ON cq.id = cm.instance
-                  JOIN {capquiz_question_list} cql ON cql.capquiz_id = cq.id
-                  JOIN {capquiz_user} cu ON cu.capquiz_id = cq.id
-                 WHERE cu.user_id = :userid';
+                  JOIN {course_modules} cm
+                    ON cm.id = cx.instanceid
+                   AND cx.contextlevel = :contextlevel
+                  JOIN {modules} m
+                    ON m.id = cm.module
+                   AND m.name = :modname
+                  JOIN {capquiz} cq
+                    ON cq.id = cm.instance
+                  JOIN {capquiz_question_list} cql
+                    ON cql.capquiz_id = cq.id
+                  JOIN {capquiz_user} cu
+                    ON cu.capquiz_id = cq.id
+                   AND cu.user_id = :userid';
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, [
             'contextlevel' => CONTEXT_MODULE,
@@ -133,112 +139,63 @@ class provider implements
             return;
         }
         $user = $contextlist->get_user();
-        $userid = $user->id;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT cq.*,
-                       ca.id            AS hasgrade,
-                       ca.time_answered AS attempt_timeanswered,
-                       ca.time_reviewed AS attempt_timereviewed,
-                       cu.id            AS hasoverride,
-                       cu.rating        AS user_rating,
-                       cu.highest_level AS highest_level,
-                       cx.id            AS contextid,
-                       cm.id            AS cmid
+        $sql = "SELECT cx.id                 AS contextid,
+                       cm.id                 AS cmid,
+                       ca.id                 AS capattemptid,
+                       ca.question_id        AS questionid,
+                       ca.answered           AS answered,
+                       ca.time_reviewed      AS timereviewed,
+                       ca.time_answered      AS timeanswered,
+                       ca.feedback           AS feedback,
+                       cql.question_usage_id AS qubaid
                   FROM {context} cx
-            INNER JOIN {course_modules} cm ON cm.id = cx.instanceid AND cx.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {capquiz} cq ON cq.id = cm.instance
-             LEFT JOIN {capquiz_attempt} ca ON ca.user_id = :userid
-             LEFT JOIN {capquiz_user} cu ON cu.capquiz_id = cq.id AND cu.user_id = ca.user_id
+                  JOIN {course_modules} cm
+                    ON cm.id = cx.instanceid
+                   AND cx.contextlevel = :contextlevel
+                  JOIN {modules} m
+                    ON m.id = cm.module
+                   AND m.name = :modname
+                  JOIN {capquiz} cq
+                    ON cq.id = cm.instance
+                  JOIN {capquiz_question_list} cql
+                    ON cql.capquiz_id = cq.id
+                  JOIN {capquiz_user} cu
+                    ON cu.capquiz_id = cq.id
+                   AND cu.user_id = :userid
+                  JOIN {capquiz_attempt} ca
+                    ON ca.user_id = ca.user_id
                  WHERE cx.id {$contextsql}";
-
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'capquiz',
-            'userid' => $userid,
+            'userid' => $user->id
         ];
         $params += $contextparams;
-
-        // Fetch the individual quizzes.
-        $quizzes = $DB->get_recordset_sql($sql, $params);
-        foreach ($quizzes as $quiz) {
-            list($course, $cm) = get_course_and_cm_from_cmid($quiz->cmid, 'capquiz');
-            $capquiz = new capquiz($cm->id);
-            $context = $capquiz->context();
-            $data = helper::get_context_data($context, $contextlist->get_user());
-            helper::export_context_files($context, $contextlist->get_user());
-            writer::with_context($context)->export_data([], $data);
-        }
-        $quizzes->close();
-        static::export_quiz_attempts($contextlist);
-    }
-
-    private static function get_quiz_attempt_subcontext($userid, \stdClass $user) {
-        $subcontext = [get_string('questions', 'mod_capquiz')];
-        if ($userid != $user->id) {
-            $subcontext[] = fullname($user);
-        }
-        return $subcontext;
-    }
-
-    protected static function export_quiz_attempts(approved_contextlist $contextlist) {
-        global $DB;
-        $userid = $contextlist->get_user()->id;
-        $qubaid = \core_question\privacy\provider::get_related_question_usages_for_user(
-            'rel',
-            'mod_capquiz',
-            'cql.question_usage_id',
-            $userid
-        );
-        $sql = 'SELECT DISTINCT
-                       cx.id AS contextid,
-                       cm.id AS cmid,
-                       ca.id AS capattemptid,
-                       ca.question_id AS questionid,
-                       ca.answered AS answered,
-                       ca.time_reviewed AS timereviewed,
-                       ca.time_answered AS timeanswered,
-                       ca.feedback AS feedback,
-                       cql.question_usage_id AS qubaid
-                  FROM {context} cx
-                  JOIN {course_modules} cm ON cm.id = cx.instanceid AND cx.contextlevel = :contextlevel
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {capquiz_question_list} cql ON cql.capquiz_id = cm.instance
-                  JOIN {capquiz_user} cu ON cu.user_id = :userid AND cu.capquiz_id = cm.instance
-                  JOIN {capquiz_attempt} ca ON ca.user_id = cu.id ' . $qubaid->from . ' WHERE (' . $qubaid->where() . ') AND ca.answered = 1';
-        $params = array_merge([
-            'contextlevel' => CONTEXT_MODULE,
-            'userid' => $userid,
-            'modname' => 'capquiz'
-        ],  $qubaid->from_where_params());
-
+        $qubaidforcontext = [];
         $attempts = $DB->get_recordset_sql($sql, $params);
         foreach ($attempts as $attempt) {
             $context = \context_module::instance($attempt->cmid);
-            $options = new \question_display_options();
-            $options->context = $context;
-            $attemptsubcontext = static::get_quiz_attempt_subcontext($userid, $contextlist->get_user());
-            // This attempt was made by the user. They 'own' all data on it. Store the question usage data.
-            \core_question\privacy\provider::export_question_usage(
-                $userid,
-                $context,
-                $attemptsubcontext,
-                $attempt->qubaid,
-                $options,
-                true
-            );
+            $qubaidforcontext[$context->id] = $attempt->qubaid;
             // Store the quiz attempt data.
             $data = new \stdClass();
-            if (!empty($attempt->timereviewed)) {
-                $data->timereviewed = transform::datetime($attempt->timereviewed);
-            }
-            if (!empty($attempt->timeanswered)) {
-                $data->timeanswered = transform::datetime($attempt->timeanswered);
-            }
+            $data->timereviewed = transform::datetime($attempt->timereviewed);
+            $data->timeanswered = transform::datetime($attempt->timeanswered);
             $data->feedback = $attempt->feedback;
-            writer::with_context($context)->export_data($attemptsubcontext, $data);
+            $subcontext = [$attempt->capattemptid];
+            writer::with_context($context)->export_data($subcontext, $data);
         }
         $attempts->close();
+
+        foreach ($contextlist as $context) {
+            $options = new \question_display_options();
+            $options->context = $context;
+            $data = helper::get_context_data($context, $user);
+            helper::export_context_files($context, $user);
+            writer::with_context($context)->export_data([], $data);
+            // This attempt was made by the user. They 'own' all data on it. Store the question usage data.
+            \core_question\privacy\provider::export_question_usage($user->id, $context, [], $qubaidforcontext[$context->id], $options, true);
+        }
     }
 
     /**
