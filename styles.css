@@ -187,7 +187,10 @@
     position: relative;
 }
 
-.capquiz-star, .capquiz-lost-star, .capquiz-no-star, .capquiz-help-stars {
+.capquiz-star,
+.capquiz-lost-star,
+.capquiz-no-star,
+.capquiz-help-stars {
     cursor: pointer;
 }
 
