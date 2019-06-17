@@ -54,12 +54,10 @@ class question_list_renderer {
 
     private function render_questions(capquiz_question_list $qlist) {
         global $PAGE, $CFG;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [
-            $this->capquiz->course_module_id()
-        ]);
+        $cmid = $this->capquiz->course_module_id();
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $rows = [];
         $questions = $qlist->questions();
-        $comments = [];
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
             $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
@@ -92,13 +90,6 @@ class question_list_renderer {
                     'classes' => 'fa fa-search-plus'
                 ]
             ];
-            $qcomments = capquiz_question_attempt::all_comments_for_question($question->question_id());
-            if ($qcomments->valid()) {
-                $comments[] = [
-                    'question' => $question->name(),
-                    'comments' => $qcomments
-                ];
-            }
         }
         $message = null;
         if ($qlist->has_questions()) {
@@ -107,9 +98,7 @@ class question_list_renderer {
         return $this->renderer->render_from_template('capquiz/question_list', [
             'default_rating' => $qlist->default_question_rating(),
             'questions' => $rows,
-            'question_comments' => $comments,
-            'message' => $message ? $message : false,
-            'comments' => $comments
+            'message' => $message ? $message : false
         ]);
     }
 

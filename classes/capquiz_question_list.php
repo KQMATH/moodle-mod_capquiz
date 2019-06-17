@@ -179,6 +179,34 @@ class capquiz_question_list {
         return null;
     }
 
+    public function has_question(int $questionid) {
+        foreach ($this->questions as $question) {
+            if ($question->question_id() === $questionid) {
+                return $question;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The questions from $that will be imported to this question list.
+     *
+     * @param capquiz_question_list $that The question list to import questions from.
+     * @throws \dml_exception
+     */
+    public function merge(capquiz_question_list $that) {
+        global $DB;
+        foreach ($that->questions as $question) {
+            if ($this->has_question($question->question_id()) === null) {
+                $newquestion = new \stdClass();
+                $newquestion->question_list_id = $this->id();
+                $newquestion->question_id = $question->question_id();
+                $newquestion->rating = $question->rating();
+                $DB->insert_record('capquiz_question', $newquestion);
+            }
+        }
+    }
+
     public function create_instance_copy(int $capquizid) {
         return $this->create_copy($capquizid, false);
     }

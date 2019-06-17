@@ -180,10 +180,17 @@ class capquiz_question_attempt {
         $this->update_record($record);
     }
 
+    /**
+     * Important: Close the record set that is returned when you are done.
+     *
+     * @param int $questionid
+     * @return array
+     * @throws \dml_exception
+     */
     public static function all_comments_for_question(int $questionid) {
         global $DB;
-        $sql = "SELECT ca.feedback AS comment,
-                       ca.time_answered AS time_submitted,
+        $sql = "SELECT ca.feedback                          AS comment,
+                       ca.time_answered                     AS time_submitted,
                        CONCAT(u.firstname, ' ', u.lastname) AS student
                   FROM {question} q
                   JOIN {capquiz_question} cq
@@ -197,7 +204,13 @@ class capquiz_question_attempt {
                   JOIN {user} u
                     ON u.id = cu.user_id
                  WHERE q.id = :qid";
-        return $DB->get_recordset_sql($sql, ['qid' => $questionid]);
+        $result = $DB->get_recordset_sql($sql, ['qid' => $questionid]);
+        $comments = [];
+        foreach ($result as $row) {
+            $comments[] = $row;
+        }
+        $result->close();
+        return $comments;
     }
 
     private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) {

@@ -56,6 +56,9 @@ class capquiz_action_performer {
             case capquiz_actions::$createqlisttemplate:
                 self::create_question_list_template($capquiz);
                 break;
+            case 'merge_qlist':
+                self::merge_question_list($capquiz);
+                break;
             default:
                 break;
         }
@@ -149,6 +152,16 @@ class capquiz_action_performer {
             'question_list_id' => $qlistid
         ];
         $DB->delete_records('capquiz_question', $conditions);
+    }
+
+    private static function merge_question_list(capquiz $capquiz) {
+        global $DB;
+        $srcqlistid = required_param('qlistid', PARAM_INT);
+        $srcqlistrecord = $DB->get_record('capquiz_question_list', ['id' => $srcqlistid]);
+        if ($srcqlistrecord) {
+            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord));
+        }
+        capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }
 
 }

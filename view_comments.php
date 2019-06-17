@@ -21,11 +21,23 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_capquiz;
 
-$plugin->version = 2019060758;
-$plugin->requires = 2016120500;
-$plugin->cron = 0;
-$plugin->component = 'mod_capquiz';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.1.6 (Build: 2019060708)';
+require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
+
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+$context = \context_module::instance($cmid);
+require_capability('mod/capquiz:instructor', $context);
+
+$capquiz = capquiz::create();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
+}
+
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
+$renderer = $capquiz->renderer();
+$renderer->display_comments($capquiz);

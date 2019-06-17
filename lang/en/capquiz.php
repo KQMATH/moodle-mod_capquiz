@@ -43,9 +43,12 @@ $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
 $string['configure_badge_rating'] = 'Configure badge rating';
 
+$string['comments'] = 'Comments';
+$string['import'] = 'Import';
 $string['home'] = 'Home';
 $string['name'] = 'Name';
 $string['next'] = 'Next';
+$string['merge'] = 'Merge';
 $string['stars'] = 'Stars';
 $string['title'] = 'Title';
 $string['author'] = 'Author';

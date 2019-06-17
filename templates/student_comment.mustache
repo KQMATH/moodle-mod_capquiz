@@ -22,9 +22,11 @@
         "comment": "The default comment"
     }
 }}
-<details class="capquiz-student-comment">
+<details class="capquiz-student-comment capquiz-details">
     <summary>{{#str}} problem_with_question_header, capquiz {{/str}}</summary>
-    <p>{{#str}} problem_with_question_details, capquiz {{/str}}</p>
-    <textarea name="studentcomment" rows="4" cols="80" placeholder="{{#str}} enter_comment_here, capquiz {{/str}}"
-    >{{ comment }}</textarea>
+    <div class="capquiz-details-content">
+        <p>{{#str}} problem_with_question_details, capquiz {{/str}}</p>
+        <textarea name="studentcomment" rows="4" cols="80" placeholder="{{#str}} enter_comment_here, capquiz {{/str}}"
+        >{{ comment }}</textarea>
+    </div>
 </details>

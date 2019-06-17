@@ -143,14 +143,29 @@
 }
 
 .capquiz-student-comment {
-    background: #eee;
-    padding: 8px;
     margin-bottom: 24px;
 }
 
-.capquiz-student-comment summary {
+.capquiz-details {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    transition: 0.2s ease all;
+}
+
+.capquiz-details:hover {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.capquiz-details summary {
     outline: none;
     user-select: none;
+    padding: 8px;
+}
+
+.capquiz-details-content {
+    background: #fdfdfd;
+    padding: 8px;
 }
 
 .capquiz-student-comment-list {
