@@ -76,7 +76,7 @@ class capquiz_action_performer {
         $qlist = capquiz_question_list::load_any($qlistid);
         if ($qlist) {
             $capquiz->validate_matchmaking_and_rating_systems();
-            $qlist->create_instance_copy($capquiz->id());
+            $qlist->create_instance_copy($capquiz);
         }
     }
 
@@ -129,7 +129,7 @@ class capquiz_action_performer {
         } else if (!$qlist->has_questions()) {
             throw new \Exception('Attempted to create template without questions.');
         }
-        $qlistcopy = $qlist->create_template_copy();
+        $qlistcopy = $qlist->create_template_copy($capquiz);
         if ($qlistcopy === null) {
             throw new \Exception('Failed to create a template from this question list.');
         }

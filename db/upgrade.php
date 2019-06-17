@@ -33,5 +33,13 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019060705, 'capquiz');
     }
+    if ($oldversion < 2019061700) {
+        $table = new xmldb_table('capquiz_question_list');
+        $field = new xmldb_field('context_id', XMLDB_TYPE_INTEGER, 10);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2019061700, 'capquiz');
+    }
     return true;
 }

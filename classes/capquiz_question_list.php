@@ -207,8 +207,8 @@ class capquiz_question_list {
         }
     }
 
-    public function create_instance_copy(int $capquizid) {
-        return $this->create_copy($capquizid, false);
+    public function create_instance_copy(capquiz $capquiz) {
+        return $this->create_copy($capquiz, false);
     }
 
     public function convert_to_instance(int $capquizid) : bool {
@@ -222,8 +222,8 @@ class capquiz_question_list {
         return true;
     }
 
-    public function create_template_copy() {
-        return $this->create_copy(null, true);
+    public function create_template_copy(capquiz $capquiz) {
+        return $this->create_copy($capquiz, true);
     }
 
     public function create_question_usage($context) {
@@ -253,14 +253,12 @@ class capquiz_question_list {
         }
     }
 
-    private function create_copy($capquizid, bool $template) {
+    private function create_copy(capquiz $capquiz, bool $template) {
         global $DB;
-        if (!$capquizid && !$template) {
-            return null;
-        }
         $record = $this->record;
         $record->id = null;
-        $record->capquiz_id = $capquizid;
+        $record->capquiz_id = $template ? null : $capquiz->id();
+        $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         $record->question_usage_id = null;
         $record->is_template = $template;
         $transaction = $DB->start_delegated_transaction();
@@ -294,6 +292,7 @@ class capquiz_question_list {
         $record->is_template = 0;
         $record->time_created = time();
         $record->time_modified = time();
+        $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         try {
             $qlistid = $DB->insert_record('capquiz_question_list', $record);
             $qlist = self::load_any($qlistid);

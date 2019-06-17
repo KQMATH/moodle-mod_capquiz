@@ -40,10 +40,8 @@ class import_renderer {
         $this->renderer = $renderer;
     }
 
-    public function render() {
+    private function get_questions_in_list(int $qlistid) : array {
         global $DB;
-        $srcqlists = $DB->get_records('capquiz_question_list', ['is_template' => 1]);
-        $qlists = [];
         $sql = 'SELECT cq.id     AS id,
                        cq.rating AS rating,
                        q.name    AS name
@@ -51,8 +49,26 @@ class import_renderer {
                   JOIN {question} q
                     ON q.id = cq.question_id
                  WHERE cq.question_list_id = :qlistid';
+        return $DB->get_records_sql($sql, ['qlistid' => $qlistid]);
+    }
+
+    private function get_question_lists() : array {
+        global $DB;
+        $path = \context_course::instance($this->capquiz->course()->id)->path;
+        $sql = 'SELECT DISTINCT cql.*
+                  FROM {capquiz_question_list} cql
+                  JOIN {context} ctx
+                    ON (ctx.id = cql.context_id AND ctx.path LIKE :pathpart)
+                    OR cql.context_id IS NULL
+                 WHERE cql.is_template = 1';
+        return $DB->get_records_sql($sql, ['pathpart' => $path . '%']);
+    }
+
+    public function render() {
+        $srcqlists = $this->get_question_lists();
+        $qlists = [];
         foreach ($srcqlists as $srcqlist) {
-            $questions = $DB->get_records_sql($sql, ['qlistid' => $srcqlist->id]);
+            $questions = $this->get_questions_in_list($srcqlist->id);
             $qlists[] = [
                 'title' => $srcqlist->title,
                 'description' => $srcqlist->description,

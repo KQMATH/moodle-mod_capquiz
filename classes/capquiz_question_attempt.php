@@ -181,8 +181,6 @@ class capquiz_question_attempt {
     }
 
     /**
-     * Important: Close the record set that is returned when you are done.
-     *
      * @param int $questionid
      * @return array
      * @throws \dml_exception
