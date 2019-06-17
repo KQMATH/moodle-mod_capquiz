@@ -220,3 +220,7 @@
     border-radius: 6px;
     max-width: 600px;
 }
+
+.capquiz-question-rating input {
+    width: 80px;
+}

@@ -71,7 +71,7 @@ class question_list_renderer {
             $rows[] = [
                 'index' => $i + 1,
                 'name' => $question->name(),
-                'rating' => $question->rating(),
+                'rating' => round($question->rating(), 3),
                 'question_id' => $question->id(),
                 'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out(false),
                 'delete' => [
