@@ -44,7 +44,8 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     } else {
         $capquiz->renderer()->display_choose_question_list_view();
     }
-} else if (has_capability('mod/capquiz:student', $capquiz->context())) {
+} else {
+    require_capability('mod/capquiz:student', $capquiz->context());
     // Question engine is null if the quiz is not published.
     $qengine = $capquiz->question_engine();
     if ($qengine) {
