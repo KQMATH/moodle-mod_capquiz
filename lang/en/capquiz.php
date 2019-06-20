@@ -30,10 +30,8 @@ $string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to creat
 $string['pluginadministration'] = 'CAPQuiz administration';
 
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
-$string['capquiz:attempt'] = 'Attempt an CAPQuiz';
-$string['capquiz:control'] = 'Control a CAPQuiz. (Usually for instructors only)';
-$string['capquiz:editquestions'] = 'Edit questions for an CAPQuiz.';
-$string['capquiz:seeresponses'] = 'View student responses to grade them';
+$string['capquiz:instructor'] = 'Edit CAPQuiz instances';
+$string['capquiz:student'] = 'Attempt CAPQuiz instances';
 
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
