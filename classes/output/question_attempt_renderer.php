@@ -103,7 +103,8 @@ class question_attempt_renderer {
         $percent = $qlist->next_level_percent($this->capquiz, $user->rating());
         list($stars, $blankstars, $nostars) = $this->user_star_progress($user, $qlist);
         $student = [
-            'up' => ['percent' => ($percent >= 0 ? $percent : -$percent)],
+            'up' => $percent >= 0 ? ['percent' => $percent] : false,
+            'down' => $percent < 0 ? ['percent' => -$percent] : false,
             'stars' => $stars,
             'blankstars' => $blankstars,
             'nostars' => $nostars

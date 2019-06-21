@@ -48,9 +48,6 @@ class capquiz_rating_system_loader {
     }
 
     public function rating_system() {
-        if (!$this->record) {
-            return null;
-        }
         $system = $this->registry->rating_system($this->record->rating_system);
         if ($this->configuration) {
             $system->configure($this->configuration);
@@ -134,12 +131,7 @@ class capquiz_rating_system_loader {
 
     private function set_configuration(\stdClass $record) {
         $this->record = $record;
-        $configuration = $this->deserialize($record->configuration);
-        if ($configuration) {
-            $this->configuration = $configuration;
-        } else {
-            $this->configuration = null;
-        }
+        $this->configuration = $this->deserialize($record->configuration);
     }
 
     private function serialize(\stdClass $configuration) : string {

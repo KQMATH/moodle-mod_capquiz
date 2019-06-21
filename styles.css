@@ -97,10 +97,13 @@
 }
 
 .capquiz-quiz-progress-unfill {
+    position: absolute;
+    top: -1px;
+    right: 0;
+    height: 32px;
     background: #d9534f;
     text-align: right;
     float: right;
-    height: 30px;
     color: #f8f9fa;
     max-width: 100%;
 }
