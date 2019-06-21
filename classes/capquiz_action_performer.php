@@ -59,6 +59,9 @@ class capquiz_action_performer {
             case 'merge_qlist':
                 self::merge_question_list($capquiz);
                 break;
+            case 'delete_qlist':
+                self::delete_question_list();
+                break;
             default:
                 break;
         }
@@ -147,11 +150,7 @@ class capquiz_action_performer {
 
     private static function remove_capquiz_question(int $questionid, int $qlistid) {
         global $DB;
-        $conditions = [
-            'id' => $questionid,
-            'question_list_id' => $qlistid
-        ];
-        $DB->delete_records('capquiz_question', $conditions);
+        $DB->delete_records('capquiz_question', ['id' => $questionid, 'question_list_id' => $qlistid]);
     }
 
     private static function merge_question_list(capquiz $capquiz) {
@@ -162,6 +161,14 @@ class capquiz_action_performer {
             $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord));
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
+    }
+
+    private static function delete_question_list() {
+        global $DB;
+        $srcqlistid = required_param('qlistid', PARAM_INT);
+        $DB->delete_records('capquiz_question', ['question_list_id' => $srcqlistid]);
+        $DB->delete_records('capquiz_question_list', ['id' => $srcqlistid]);
+        capquiz_urls::redirect_to_url(capquiz_urls::view_import_url());
     }
 
 }

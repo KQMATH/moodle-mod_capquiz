@@ -48,7 +48,8 @@ class import_renderer {
                   FROM {capquiz_question} cq
                   JOIN {question} q
                     ON q.id = cq.question_id
-                 WHERE cq.question_list_id = :qlistid';
+                 WHERE cq.question_list_id = :qlistid
+              ORDER BY cq.rating';
         return $DB->get_records_sql($sql, ['qlistid' => $qlistid]);
     }
 
@@ -60,7 +61,8 @@ class import_renderer {
                   JOIN {context} ctx
                     ON (ctx.id = cql.context_id AND ctx.path LIKE :pathpart)
                     OR cql.context_id IS NULL
-                 WHERE cql.is_template = 1';
+                 WHERE cql.is_template = 1
+              ORDER BY cql.time_created DESC';
         return $DB->get_records_sql($sql, ['pathpart' => $path . '%']);
     }
 
@@ -68,16 +70,26 @@ class import_renderer {
         $srcqlists = $this->get_question_lists();
         $qlists = [];
         foreach ($srcqlists as $srcqlist) {
-            $questions = $this->get_questions_in_list($srcqlist->id);
+            $questions = [];
+            foreach ($this->get_questions_in_list($srcqlist->id) as $question) {
+                $questions[] = $question;
+            }
             $qlists[] = [
                 'title' => $srcqlist->title,
+                'time_created' => $srcqlist->time_created,
                 'description' => $srcqlist->description,
-                'questions' => reset($questions),
+                'questions' => $questions,
                 'merge' => [
                     'primary' => true,
                     'method' => 'post',
                     'url' => capquiz_urls::merge_qlist($srcqlist->id)->out(false),
                     'label' => get_string('merge', 'capquiz')
+                ],
+                'delete' => [
+                    'primary' => false,
+                    'method' => 'post',
+                    'url' => capquiz_urls::delete_qlist($srcqlist->id)->out(false),
+                    'label' => get_string('delete')
                 ]
             ];
         }

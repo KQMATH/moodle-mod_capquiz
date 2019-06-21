@@ -38,12 +38,22 @@
 
 {{#lists}}
     <details class="capquiz-details">
-        <summary>{{ title }}</summary>
+        <summary>
+            {{ title }}
+            <span style="float:right;">
+                {{#userdate}}{{time_created}}, %A, %d %B %Y, %I:%M %p{{/userdate}}
+            </span>
+        </summary>
         <div class="capquiz-details-content">
             <p>{{ description }}</p>
                 {{#merge}}
                     {{>core/single_button}}
                 {{/merge}}
+                {{#delete}}
+                    <span style="float:right;">
+                        {{>core/single_button}}
+                    </span>
+                {{/delete}}
                 <table>
                 <tr>
                     <th>{{#str}} rating, capquiz {{/str}}</th>

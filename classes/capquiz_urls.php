@@ -188,6 +188,13 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function delete_qlist(int $qlistid) {
+        $url = self::create_view_url(self::$urlaction);
+        $url->param('qlistid', $qlistid);
+        $url->param(capquiz_actions::$parameter, 'delete_qlist');
+        return $url;
+    }
+
     public static function response_submit_url(capquiz_question_attempt $attempt) {
         $url = self::create_view_url(self::$urlasync);
         $url->param(self::$paramattempt, $attempt->id());

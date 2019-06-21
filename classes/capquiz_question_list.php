@@ -261,6 +261,8 @@ class capquiz_question_list {
         $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         $record->question_usage_id = null;
         $record->is_template = $template;
+        $record->time_created = time();
+        $record->time_modified = time();
         $transaction = $DB->start_delegated_transaction();
         try {
             $newid = $DB->insert_record('capquiz_question_list', $record);
