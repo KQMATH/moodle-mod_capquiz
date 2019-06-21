@@ -17,7 +17,6 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_question_attempt;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question_list;
 
@@ -57,17 +56,41 @@ class question_list_renderer {
         $cmid = $this->capquiz->course_module_id();
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $rows = [];
+        $quba = $this->capquiz->question_usage();
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
+            $courseid = $question->course_id();
             $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
-                'courseid' => $question->course_id(),
+                'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
             $previewurl = new \moodle_url($CFG->wwwroot . '/question/preview.php', [
-                'courseid' => $question->course_id(),
+                'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
+            $edit = $courseid === 0 ? false : [
+                'url' => $editurl->out(false),
+                'label' => get_string('edit'),
+                'classes' => 'fa fa-edit',
+                'attributes' => [
+                    [
+                        'name' => 'target',
+                        'value' => '_blank'
+                    ]
+                ]
+            ];
+            $preview = $courseid === 0 ? false : [
+                'url' => $previewurl->out(false),
+                'label' => get_string('preview'),
+                'classes' => 'fa fa-search-plus',
+                'attributes' => [
+                    [
+                        'name' => 'target',
+                        'value' => '_blank'
+                    ]
+                ]
+            ];
             $rows[] = [
                 'index' => $i + 1,
                 'name' => $question->name(),
@@ -79,16 +102,8 @@ class question_list_renderer {
                     'label' => get_string('remove', 'capquiz'),
                     'classes' => 'fa fa-trash'
                 ],
-                'edit' => [
-                    'url' => $editurl->out(false),
-                    'label' => get_string('edit'),
-                    'classes' => 'fa fa-edit'
-                ],
-                'preview' => [
-                    'url' => $previewurl->out(false),
-                    'label' => get_string('preview'),
-                    'classes' => 'fa fa-search-plus'
-                ]
+                'edit' => $edit,
+                'preview' => $preview
             ];
         }
         $message = null;

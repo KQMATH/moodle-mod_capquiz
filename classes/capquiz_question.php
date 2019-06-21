@@ -37,8 +37,8 @@ class capquiz_question {
             $this->record->name = $question->name;
             $this->record->text = $question->questiontext;
         } else {
-            $this->record->name = 'Missing question';
-            $this->record->text = 'This question is missing.';
+            $this->record->name = get_string('missing_question', 'capquiz');
+            $this->record->text = $this->record->name;
         }
     }
 
@@ -96,7 +96,8 @@ class capquiz_question {
                   JOIN {course} c ON (ctx.contextlevel = 50 AND c.id = ctx.instanceid)
                        OR (ctx.contextlevel = 70 AND c.id = cm.course)
                  WHERE cq.id = :questionid';
-        return $DB->get_record_sql($sql, ['questionid' => $this->id()], MUST_EXIST)->id;
+        $course = $DB->get_record_sql($sql, ['questionid' => $this->id()]);
+        return $course ? $course->id : 0;
     }
 
 }

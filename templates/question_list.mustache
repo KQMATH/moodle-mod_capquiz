@@ -63,7 +63,7 @@
         <tr>
             {{#.}}
                 <td>{{ index }}</td>
-                <td>{{ name }}</td>
+                <td>{{{ name }}}</td>
                 <td>
                     <form method="post" class="capquiz-question-rating" name="question_rating_form" action="{{ rating_url }}">
                         <input class="capquiz-sortable-item" type="number" name="rating" value="{{ rating }}" data-question-id="{{ question_id }}">

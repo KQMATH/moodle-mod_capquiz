@@ -78,6 +78,8 @@ $string['enrolled_students'] = 'Enrolled students';
 $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
 
+$string['missing_question'] = '<b>This question is missing.</b>';
+
 $string['field_required'] = 'This field is required';
 $string['description_required'] = 'Description is required.';
 $string['student_k_factor_required'] = 'Student k-factor is required.';
