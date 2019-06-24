@@ -77,6 +77,7 @@ $string['create_template'] = 'Make template';
 $string['enrolled_students'] = 'Enrolled students';
 $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
+$string['other_question_lists'] = 'Other question lists';
 
 $string['missing_question'] = '<b>This question is missing.</b>';
 

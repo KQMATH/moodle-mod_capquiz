@@ -61,7 +61,7 @@ class renderer extends \plugin_renderer_base {
             $this->tab('view_capquiz', 'pluginname', capquiz_urls::view_configuration_url()),
             $this->tab('view_classlist', 'classlist', capquiz_urls::view_classlist_url()),
             $this->tab('view_comments', 'comments', capquiz_urls::view_comments_url()),
-            $this->tab('view_import', 'import', capquiz_urls::view_import_url())
+            $this->tab('view_import', 'other_question_lists', capquiz_urls::view_import_url())
         ];
         return print_tabs([$tabs], $activetab, null, null, true);
     }
