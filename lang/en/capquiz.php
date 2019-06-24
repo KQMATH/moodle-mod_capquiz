@@ -30,10 +30,8 @@ $string['modulename_help'] = '<p>The CAPQuiz activity enables a teacher to creat
 $string['pluginadministration'] = 'CAPQuiz administration';
 
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
-$string['capquiz:attempt'] = 'Attempt an CAPQuiz';
-$string['capquiz:control'] = 'Control a CAPQuiz. (Usually for instructors only)';
-$string['capquiz:editquestions'] = 'Edit questions for an CAPQuiz.';
-$string['capquiz:seeresponses'] = 'View student responses to grade them';
+$string['capquiz:instructor'] = 'Edit CAPQuiz instances';
+$string['capquiz:student'] = 'Attempt CAPQuiz instances';
 
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
@@ -43,9 +41,12 @@ $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
 $string['configure_badge_rating'] = 'Configure badge rating';
 
+$string['comments'] = 'Comments';
+$string['import'] = 'Import';
 $string['home'] = 'Home';
 $string['name'] = 'Name';
 $string['next'] = 'Next';
+$string['merge'] = 'Merge';
 $string['stars'] = 'Stars';
 $string['title'] = 'Title';
 $string['author'] = 'Author';
@@ -76,6 +77,9 @@ $string['create_template'] = 'Make template';
 $string['enrolled_students'] = 'Enrolled students';
 $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
+$string['other_question_lists'] = 'Other question lists';
+
+$string['missing_question'] = '<b>This question is missing.</b>';
 
 $string['field_required'] = 'This field is required';
 $string['description_required'] = 'Description is required.';
@@ -92,9 +96,13 @@ $string['no_questions'] = 'No questions';
 $string['no_enrolled_students'] = 'No students are enrolled';
 $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['no_matchmaking_strategy_selected'] = 'No selection strategy has been specified';
+$string['nothing_to_configure_for_strategy'] = 'There is nothing to configure for this strategy';
 
 $string['update_rating_explanation'] = '<p>The question ratings can be edited below. Changes are saved automatically.</p>';
 $string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
+$string['n_closest'] = 'N-closest';
+$string['chronological'] = 'Chronological';
+$string['no_strategy_specified'] = 'No strategy specified';
 
 $string['one_star'] = '1 Star';
 $string['level_stars'] = '{$a} Stars';
@@ -115,6 +123,11 @@ $string['prevent_question_n_times'] = 'Prevent the same question to be used for 
 $string['prevent_question_n_times_help'] = 'This will prevent a student from being matched with the same question for the specified number of attempts.';
 
 $string['available_questions'] = 'Available questions';
+
+$string['tooltip_achieved_star'] = 'You have achieved this star!';
+$string['tooltip_lost_star'] = 'You have achieved this star, but your rating is currently below the star\'s threshold.';
+$string['tooltip_no_star'] = 'You have yet to achieve this star.';
+$string['tooltip_help_star'] = 'Every student has a proficiency rating in the CAPQuiz activity.  This increases when successfully answering a question, and decreases with wrong answers.  Stars are achieved at certain rating levels, and never lost. I.e. a student can sometimes lose rating points and fall below a star\'s threshold, without losing the star.  It is suggested that a certain number of stars are required for a compulsory assignment.  Hover your mouse over a star to see rating details.';
 
 $string['select_template'] = 'Select one of these templates for your quiz';
 $string['no_templates_created'] = 'No templates have been created.';
@@ -145,11 +158,16 @@ $string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
 $string['not_published'] = 'Not published';
 
+$string['problem_with_question_header'] = 'Is there a problem with this question? Send feedback to your instructor here.';
+$string['problem_with_question_details'] = 'If you have feedback for this question, please type it below. The text will be sent to your instructor. You will be able to continue editing this when you have submitted your answer.';
+$string['enter_comment_here'] = 'Enter your comment here...';
+
 $string['privacy:metadata:core_question'] = 'The CAPQuiz activity stores question usage information in the core_question subsystem.';
 $string['privacy:metadata:capquiz_attempt'] = 'Details about each attempt on a CAPQuiz.';
 $string['privacy:metadata:capquiz_attempt:userid'] = 'The user who made the attempt.';
 $string['privacy:metadata:capquiz_attempt:time_answered'] = 'The time that the attempt was answered.';
 $string['privacy:metadata:capquiz_attempt:time_reviewed'] = 'The time that the attempt was reviewed.';
+$string['privacy:metadata:capquiz_attempt:feedback'] = 'The feedback comment provided by the student to the instructor.';
 $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';

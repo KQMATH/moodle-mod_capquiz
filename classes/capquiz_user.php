@@ -46,8 +46,8 @@ class capquiz_user {
 
     public static function user_count(capquiz $capquiz) : int {
         global $DB;
-        $criteria = [ database_meta::$fieldcapquizid => $capquiz->id()];
-        $count = $DB->count_records(database_meta::$tableuser, $criteria);
+        $criteria = ['capquiz_id' => $capquiz->id()];
+        $count = $DB->count_records('capquiz_user', $criteria);
         return $count;
     }
 
@@ -58,9 +58,9 @@ class capquiz_user {
      */
     public static function list_users(capquiz $capquiz) : array {
         global $DB;
-        $criteria = [database_meta::$fieldcapquizid => $capquiz->id()];
+        $criteria = ['capquiz_id' => $capquiz->id()];
         $users = [];
-        foreach ($DB->get_records(database_meta::$tableuser, $criteria) as $user) {
+        foreach ($DB->get_records('capquiz_user', $criteria) as $user) {
             $users[] = new capquiz_user($user);
         }
         return $users;
@@ -107,7 +107,7 @@ class capquiz_user {
         global $DB;
         $record = $this->record;
         $record->highest_level = $highestlevel;
-        if ($DB->update_record(database_meta::$tableuser, $record)) {
+        if ($DB->update_record('capquiz_user', $record)) {
             $this->record = $record;
         }
     }
@@ -116,15 +116,15 @@ class capquiz_user {
         global $DB;
         $record = $this->record;
         $record->rating = $rating;
-        if ($DB->update_record(database_meta::$tableuser, $record)) {
+        if ($DB->update_record('capquiz_user', $record)) {
             $this->record = $record;
         }
     }
 
     private function load_moodle_entry() {
         global $DB;
-        $criteria = [database_meta::$fieldid => $this->moodle_user_id()];
-        $record = $DB->get_record(database_meta::$tablemoodleuser, $criteria);
+        $criteria = ['id' => $this->moodle_user_id()];
+        $record = $DB->get_record('user', $criteria);
         if ($record) {
             $this->moodlerecord = $record;
         } else {
@@ -139,10 +139,10 @@ class capquiz_user {
     private static function load_db_entry(capquiz $capquiz, int $moodleuserid) {
         global $DB;
         $criteria = [
-            database_meta::$fielduserid => $moodleuserid,
-            database_meta::$fieldcapquizid => $capquiz->id()
+            'user_id' => $moodleuserid,
+            'capquiz_id' => $capquiz->id()
         ];
-        if ($entry = $DB->get_record(database_meta::$tableuser, $criteria)) {
+        if ($entry = $DB->get_record('capquiz_user', $criteria)) {
             return new capquiz_user($entry);
         }
         return null;
@@ -155,7 +155,7 @@ class capquiz_user {
         $record->capquiz_id = $capquiz->id();
         $record->rating = $capquiz->default_user_rating();
         try {
-            if ($DB->insert_record(database_meta::$tableuser, $record)) {
+            if ($DB->insert_record('capquiz_user', $record)) {
                 return self::load_db_entry($capquiz, $moodleuserid);
             } else {
                 throw new \Exception('Unable to persist capquiz user');

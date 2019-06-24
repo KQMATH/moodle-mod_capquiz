@@ -43,7 +43,7 @@
 }
 
 .capquiz-tree tr td {
-    padding: 8px;
+    padding: 2px 4px;
 }
 
 .capquiz-quiz-top {
@@ -84,6 +84,10 @@
     }
 }
 
+.capquiz-reduced-width {
+    width: 80%;
+}
+
 .capquiz-quiz-progress-fill {
     background: #59f;
     text-align: left;
@@ -93,10 +97,13 @@
 }
 
 .capquiz-quiz-progress-unfill {
+    position: absolute;
+    top: -1px;
+    right: 0;
+    height: 32px;
     background: #d9534f;
     text-align: right;
     float: right;
-    height: 30px;
     color: #f8f9fa;
     max-width: 100%;
 }
@@ -127,4 +134,100 @@
 
 .capquiz-response-form .content .im-controls .submit {
     border: 1px solid #bbb;
+}
+
+.capquiz-default-question-rating {
+    display: inline-block;
+}
+
+.capquiz-sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.capquiz-student-comment {
+    margin-bottom: 24px;
+}
+
+.capquiz-details {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    transition: 0.2s ease all;
+}
+
+.capquiz-details:hover {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.capquiz-details summary {
+    outline: none;
+    user-select: none;
+    padding: 8px;
+}
+
+.capquiz-details-content {
+    background: #fdfdfd;
+    padding: 8px;
+}
+
+.capquiz-student-comment-list {
+    padding: 8px;
+}
+
+.capquiz-student-comment-list h3 {
+    font-weight: bold;
+}
+
+.capquiz-student-comment-list > div {
+    padding: 8px;
+    margin: 16px 0;
+}
+
+.capquiz-student-comment-list > div > div {
+    margin-bottom: 1rem;
+    background: #fafafa;
+    border: 1px solid #999;
+}
+
+.capquiz-student-comment-list > div > div p {
+    margin-bottom: 0;
+    padding: 8px;
+}
+
+.capquiz-student-comment-list > div > div i {
+    display: block;
+    text-align: right;
+    border-bottom: 1px solid #999;
+}
+
+.capquiz-quiz-stars {
+    position: relative;
+}
+
+.capquiz-star,
+.capquiz-lost-star,
+.capquiz-no-star,
+.capquiz-help-stars {
+    cursor: pointer;
+}
+
+.capquiz-star-tooltip {
+    position: fixed;
+    padding: 8px;
+    border: 1px solid #555;
+    background: #333;
+    color: #dbdbdb;
+    display: none;
+    z-index: 1000;
+    border-radius: 6px;
+    max-width: 600px;
+}
+
+.capquiz-question-rating {
+    width: 112px;
+}
+
+.capquiz-question-rating input {
+    width: 80px;
 }

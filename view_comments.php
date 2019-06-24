@@ -24,30 +24,20 @@
 namespace mod_capquiz;
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
 $cmid = capquiz_urls::require_course_module_id_param();
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
-require_capability('mod/capquiz:student', $context);
+require_capability('mod/capquiz:instructor', $context);
 
-$action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-$attemptid = optional_param(capquiz_urls::$paramattempt, null, PARAM_INT);
-$comment = optional_param('studentcomment', '', PARAM_TEXT);
 $capquiz = capquiz::create();
-
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
-
-if ($attemptid !== null) {
-    $user = $capquiz->user();
-    $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
-    $attempt->update_student_comment($comment);
-    if ($action === capquiz_actions::$attemptanswered) {
-        $capquiz->question_engine()->attempt_answered($user, $attempt);
-    } else if ($action === capquiz_actions::$attemptreviewed) {
-        $capquiz->question_engine()->attempt_reviewed($attempt);
-    }
-    capquiz_urls::redirect_to_dashboard();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
 }
 
-capquiz_urls::redirect_to_front_page();
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
+$renderer = $capquiz->renderer();
+$renderer->display_comments($capquiz);

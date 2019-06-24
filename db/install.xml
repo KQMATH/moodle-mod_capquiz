@@ -38,12 +38,14 @@
         <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="default_question_rating" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="600" SEQUENCE="false" COMMENT="Default question for users"/>
+        <FIELD NAME="context_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="capquiz_id" TYPE="foreign-unique" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
         <KEY NAME="question_usage_id" TYPE="foreign-unique" FIELDS="question_usage_id" REFTABLE="question_usages" REFFIELDS="id"/>
         <KEY NAME="author" TYPE="foreign" FIELDS="author" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="context_id" TYPE="foreign" FIELDS="context_id" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="capquiz_question" COMMENT="Table holding a references to a question and the question list, as well as the rating of that question for that specific list">
@@ -83,6 +85,7 @@
         <FIELD NAME="answered" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_answered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_reviewed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

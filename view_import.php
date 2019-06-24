@@ -14,33 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz\form\view;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/formslib.php');
-
 /**
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_rating_form extends \moodleform {
 
-    public function definition() {
-        $form = $this->_form;
-        $form->addElement('rating', 'rating', get_string('rating', 'capquiz'));
-        $form->setType('rating', PARAM_FLOAT);
-        $form->addRule('rating', get_string('rating_required', 'capquiz'), 'required', null, 'client');
-    }
+namespace mod_capquiz;
 
-    public function validations($data, $files) {
-        $errors = [];
-        if (empty($data['rating'])) {
-            $errors['rating'] = get_string('rating_required', 'capquiz');
-        }
-        return $errors;
-    }
+require_once('../../config.php');
+require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
+$cmid = capquiz_urls::require_course_module_id_param();
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+$context = \context_module::instance($cmid);
+require_capability('mod/capquiz:instructor', $context);
+
+$capquiz = capquiz::create();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
 }
+
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
+$renderer = $capquiz->renderer();
+$renderer->display_import($capquiz);

@@ -43,10 +43,7 @@ class question_list_renderer {
 
     public function render() {
         $qlist = $this->capquiz->question_list();
-        if (!$qlist) {
-            return 'question list error';
-        }
-        if ($qlist->has_questions()) {
+        if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);
         }
         $title = get_string('question_list', 'capquiz');
@@ -55,26 +52,58 @@ class question_list_renderer {
     }
 
     private function render_questions(capquiz_question_list $qlist) {
-        global $PAGE;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [
-            $this->capquiz->course_module_id()
-        ]);
+        global $PAGE, $CFG;
+        $cmid = $this->capquiz->course_module_id();
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $rows = [];
+        $quba = $this->capquiz->question_usage();
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
+            $courseid = $question->course_id();
+            $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
+                'courseid' => $courseid,
+                'id' => $question->question_id()
+            ]);
+            $previewurl = new \moodle_url($CFG->wwwroot . '/question/preview.php', [
+                'courseid' => $courseid,
+                'id' => $question->question_id()
+            ]);
+            $edit = $courseid === 0 ? false : [
+                'url' => $editurl->out(false),
+                'label' => get_string('edit'),
+                'classes' => 'fa fa-edit',
+                'attributes' => [
+                    [
+                        'name' => 'target',
+                        'value' => '_blank'
+                    ]
+                ]
+            ];
+            $preview = $courseid === 0 ? false : [
+                'url' => $previewurl->out(false),
+                'label' => get_string('preview'),
+                'classes' => 'fa fa-search-plus',
+                'attributes' => [
+                    [
+                        'name' => 'target',
+                        'value' => '_blank'
+                    ]
+                ]
+            ];
             $rows[] = [
                 'index' => $i + 1,
                 'name' => $question->name(),
-                'rating' => $question->rating(),
+                'rating' => round($question->rating(), 3),
                 'question_id' => $question->id(),
                 'rating_url' => capquiz_urls::set_question_rating_url($question->id())->out(false),
-                'button' => [
-                    'primary' => true,
-                    'method' => 'post',
+                'delete' => [
                     'url' => capquiz_urls::remove_question_from_list_url($question->id())->out(false),
-                    'label' => get_string('remove', 'capquiz')
-                ]
+                    'label' => get_string('remove', 'capquiz'),
+                    'classes' => 'fa fa-trash'
+                ],
+                'edit' => $edit,
+                'preview' => $preview
             ];
         }
         $message = null;
@@ -82,8 +111,10 @@ class question_list_renderer {
             $message = get_string('update_rating_explanation', 'capquiz');
         }
         return $this->renderer->render_from_template('capquiz/question_list', [
+            'default_rating' => $qlist->default_question_rating(),
             'questions' => $rows,
             'message' => $message ? $message : false
         ]);
     }
+
 }

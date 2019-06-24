@@ -40,28 +40,50 @@
 }}
 <h2>{{#str}}question_list, capquiz{{/str}}</h2>
 
+{{#str}} default_question_rating, capquiz {{/str}}:
+<form method="post" class="capquiz-default-question-rating" name="default_question_rating">
+    <input type="number" name="rating" value="{{ default_rating }}">
+    {{#pix}} t/check, core {{/pix}}
+</form>
+
+<hr class="capquiz-reduced-width">
+
+{{#message}}
+    {{{message}}}
+{{/message}}
+
 <table class="capquiz-tree">
     <tr>
         <th>#</th>
-        <th>{{#str}}title, capquiz{{/str}}</th>
-        <th>{{#str}}rating, capquiz{{/str}}</th>
-        <th>{{#str}}action, capquiz{{/str}}</th>
+        <th class="capquiz-sortable">{{#str}}title, capquiz{{/str}}</th>
+        <th class="capquiz-sortable">{{#str}}rating, capquiz{{/str}}</th>
+        <th colspan="3">{{#str}}action, capquiz{{/str}}</th>
     </tr>
     {{#questions}}
         <tr>
             {{#.}}
                 <td>{{ index }}</td>
-                <td>{{ name }}</td>
+                <td>{{{ name }}}</td>
                 <td>
                     <form method="post" class="capquiz-question-rating" name="question_rating_form" action="{{ rating_url }}">
-                        <input type="number" name="rating" value="{{ rating }}" data-question-id="{{ question_id }}">
+                        <input class="capquiz-sortable-item" type="number" name="rating" value="{{ rating }}" data-question-id="{{ question_id }}">
                         {{#pix}} t/check, core {{/pix}}
                     </form>
                 </td>
                 <td class="capquiz-question-rating-submit-wrapper">
-                    {{#button}}
-                        {{>core/single_button}}
-                    {{/button}}
+                    {{#delete}}
+                        {{>core/action_link}}
+                    {{/delete}}
+                </td>
+                <td>
+                    {{#edit}}
+                        {{>core/action_link}}
+                    {{/edit}}
+                </td>
+                <td>
+                    {{#preview}}
+                        {{>core/action_link}}
+                    {{/preview}}
                 </td>
             {{/.}}
         </tr>
@@ -71,7 +93,3 @@
 {{^questions}}
     {{#str}}no_questions_added_to_list, capquiz{{/str}}
 {{/questions}}
-
-{{#message}}
-    {{{message}}}
-{{/message}}

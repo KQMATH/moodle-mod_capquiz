@@ -42,6 +42,8 @@ class capquiz_urls {
     public static $urlaction = '/mod/capquiz/action.php';
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
     public static $urlviewconfig = '/mod/capquiz/view_configuration.php';
+    public static $urlviewcomments = '/mod/capquiz/view_comments.php';
+    public static $urlviewimport = '/mod/capquiz/view_import.php';
     public static $urledit = '/mod/capquiz/edit.php';
     public static $urlviewbadgeconfig = '/mod/capquiz/view_badge_configuration.php';
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
@@ -56,8 +58,8 @@ class capquiz_urls {
     }
 
     public static function redirect_to_front_page() {
-        header('Location: /');
-        exit;
+        global $CFG;
+        redirect(new \moodle_url($CFG->wwwroot));
     }
 
     public static function redirect_to_url(\moodle_url $url) {
@@ -129,6 +131,14 @@ class capquiz_urls {
         return self::create_view_url(self::$urlviewcreateqlist);
     }
 
+    public static function view_comments_url() {
+        return self::create_view_url(self::$urlviewcomments);
+    }
+
+    public static function view_import_url() {
+        return self::create_view_url(self::$urlviewimport);
+    }
+
     public static function add_question_to_list_url(int $questionid) {
         $url = self::create_view_url(self::$urlaction);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$addquestion);
@@ -168,6 +178,20 @@ class capquiz_urls {
         $url = self::create_view_url(self::$urlaction);
         $url->param(self::$paramquestionid, $questionid);
         $url->param(capquiz_actions::$parameter, capquiz_actions::$setquestionrating);
+        return $url;
+    }
+
+    public static function merge_qlist(int $qlistid) {
+        $url = self::create_view_url(self::$urlaction);
+        $url->param('qlistid', $qlistid);
+        $url->param(capquiz_actions::$parameter, 'merge_qlist');
+        return $url;
+    }
+
+    public static function delete_qlist(int $qlistid) {
+        $url = self::create_view_url(self::$urlaction);
+        $url->param('qlistid', $qlistid);
+        $url->param(capquiz_actions::$parameter, 'delete_qlist');
         return $url;
     }
 

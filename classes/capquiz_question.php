@@ -32,21 +32,19 @@ class capquiz_question {
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
-        $question = $DB->get_record(database_meta::$tablemoodlequestion, [
-            database_meta::$fieldid => $record->question_id
-        ]);
+        $question = $DB->get_record('question', ['id' => $record->question_id]);
         if ($question !== false) {
             $this->record->name = $question->name;
             $this->record->text = $question->questiontext;
         } else {
-            $this->record->name = 'Missing question';
-            $this->record->text = 'This question is missing.';
+            $this->record->name = get_string('missing_question', 'capquiz');
+            $this->record->text = $this->record->name;
         }
     }
 
     public static function load(int $questionid) {
         global $DB;
-        $record = $DB->get_record(database_meta::$tablequestion, [database_meta::$fieldid => $questionid]);
+        $record = $DB->get_record('capquiz_question', ['id' => $questionid]);
         if ($record === false) {
             return null;
         }
@@ -76,7 +74,7 @@ class capquiz_question {
     public function set_rating(float $rating) : bool {
         global $DB;
         $this->record->rating = $rating;
-        return $DB->update_record(database_meta::$tablequestion, $this->record);
+        return $DB->update_record('capquiz_question', $this->record);
     }
 
     public function name() : string {
@@ -85,6 +83,21 @@ class capquiz_question {
 
     public function text() : string {
         return $this->record->text;
+    }
+
+    public function course_id() : int {
+        global $DB;
+        $sql = 'SELECT c.id AS id
+                  FROM {capquiz_question} cq
+                  JOIN {question} q ON q.id = cq.question_id
+                  JOIN {question_categories} qc ON qc.id = q.category
+                  JOIN {context} ctx ON ctx.id = qc.contextid
+             LEFT JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = 70
+                  JOIN {course} c ON (ctx.contextlevel = 50 AND c.id = ctx.instanceid)
+                       OR (ctx.contextlevel = 70 AND c.id = cm.course)
+                 WHERE cq.id = :questionid';
+        $course = $DB->get_record_sql($sql, ['questionid' => $this->id()]);
+        return $course ? $course->id : 0;
     }
 
 }

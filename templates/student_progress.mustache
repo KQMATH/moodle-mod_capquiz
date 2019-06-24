@@ -34,31 +34,40 @@
         {{#student}}
             <div class="capquiz-quiz-progress">
                 {{#up}}
-                  <div class="capquiz-quiz-progress-fill"
-                     style="width:{{ percent }}%">
-                      <div class="capquiz-quiz-progress-percent">
-                    {{ percent }}%
-                      </div>
-                  </div>
+                    <div class="capquiz-quiz-progress-fill" style="width:{{ percent }}%">
+                        <div class="capquiz-quiz-progress-percent">
+                            {{ percent }}%
+                        </div>
+                    </div>
                 {{/up}}
                 {{#down}}
-                  <div class="capquiz-quiz-progress-unfill"
-                     style="width:{{ percent }}%">
-                      <div class="capquiz-quiz-progress-percent">
-                          -{{ percent }}%
-                      </div>
-                  </div>
+                    <div class="capquiz-quiz-progress-unfill" style="width:{{ percent }}%">
+                        <div class="capquiz-quiz-progress-percent">
+                            -{{ percent }}%
+                        </div>
+                    </div>
                 {{/down}}
             </div>
             <div class="capquiz-quiz-stars">
                 {{#stars}}
                     {{#.}}
-                        {{#pix}} star, capquiz {{/pix}}
-                    {{/.}}
-                    {{^.}}
-                        {{#pix}} blank-star, capquiz {{/pix}}
+                        <span class="capquiz-star">{{#pix}} star, capquiz {{/pix}}</span>
                     {{/.}}
                 {{/stars}}
+                {{#blankstars}}
+                    {{#.}}
+                        <span class="capquiz-lost-star">{{#pix}} blank-star, capquiz {{/pix}}</span>
+                    {{/.}}
+                {{/blankstars}}
+                {{#nostars}}
+                    {{#.}}
+                        <span class="capquiz-no-star">{{#pix}} no-star, capquiz {{/pix}}</span>
+                    {{/.}}
+                {{/nostars}}
+                <span class="capquiz-help-stars">
+                    {{#pix}} help{{/pix}}
+                </span>
+                <div class="capquiz-star-tooltip"></div>
             </div>
         {{/student}}
     </div>

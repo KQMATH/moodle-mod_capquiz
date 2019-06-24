@@ -50,8 +50,17 @@ class capquiz_action_performer {
             case capquiz_actions::$setquestionrating:
                 self::set_question_rating($capquiz);
                 break;
+            case capquiz_actions::$setdefaultqrating:
+                self::set_default_question_rating($capquiz);
+                break;
             case capquiz_actions::$createqlisttemplate:
                 self::create_question_list_template($capquiz);
+                break;
+            case 'merge_qlist':
+                self::merge_question_list($capquiz);
+                break;
+            case 'delete_qlist':
+                self::delete_question_list();
                 break;
             default:
                 break;
@@ -70,7 +79,7 @@ class capquiz_action_performer {
         $qlist = capquiz_question_list::load_any($qlistid);
         if ($qlist) {
             $capquiz->validate_matchmaking_and_rating_systems();
-            $qlist->create_instance_copy($capquiz->id());
+            $qlist->create_instance_copy($capquiz);
         }
     }
 
@@ -108,6 +117,14 @@ class capquiz_action_performer {
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }
 
+    public static function set_default_question_rating(capquiz $capquiz) {
+        $rating = optional_param(capquiz_urls::$paramrating, null, PARAM_FLOAT);
+        if ($rating !== null) {
+            $capquiz->question_list()->set_default_question_rating($rating);
+        }
+        capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
+    }
+
     public static function create_question_list_template(capquiz $capquiz) {
         $qlist = $capquiz->question_list();
         if (!$qlist) {
@@ -115,7 +132,7 @@ class capquiz_action_performer {
         } else if (!$qlist->has_questions()) {
             throw new \Exception('Attempted to create template without questions.');
         }
-        $qlistcopy = $qlist->create_template_copy();
+        $qlistcopy = $qlist->create_template_copy($capquiz);
         if ($qlistcopy === null) {
             throw new \Exception('Failed to create a template from this question list.');
         }
@@ -128,16 +145,30 @@ class capquiz_action_performer {
         $ratedquestion->question_list_id = $list->id();
         $ratedquestion->question_id = $questionid;
         $ratedquestion->rating = $rating;
-        $DB->insert_record(database_meta::$tablequestion, $ratedquestion);
+        $DB->insert_record('capquiz_question', $ratedquestion);
     }
 
     private static function remove_capquiz_question(int $questionid, int $qlistid) {
         global $DB;
-        $conditions = [
-            database_meta::$fieldid => $questionid,
-            database_meta::$fieldqlistid => $qlistid
-        ];
-        $DB->delete_records(database_meta::$tablequestion, $conditions);
+        $DB->delete_records('capquiz_question', ['id' => $questionid, 'question_list_id' => $qlistid]);
+    }
+
+    private static function merge_question_list(capquiz $capquiz) {
+        global $DB;
+        $srcqlistid = required_param('qlistid', PARAM_INT);
+        $srcqlistrecord = $DB->get_record('capquiz_question_list', ['id' => $srcqlistid]);
+        if ($srcqlistrecord) {
+            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord));
+        }
+        capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
+    }
+
+    private static function delete_question_list() {
+        global $DB;
+        $srcqlistid = required_param('qlistid', PARAM_INT);
+        $DB->delete_records('capquiz_question', ['question_list_id' => $srcqlistid]);
+        $DB->delete_records('capquiz_question_list', ['id' => $srcqlistid]);
+        capquiz_urls::redirect_to_url(capquiz_urls::view_import_url());
     }
 
 }

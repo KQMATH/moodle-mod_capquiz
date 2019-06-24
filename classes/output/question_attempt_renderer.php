@@ -57,9 +57,11 @@ class question_attempt_renderer {
     }
 
     public function render() : string {
+        global $PAGE;
         if (!$this->capquiz->is_published()) {
             return 'Nothing here yet';
         }
+        $PAGE->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
         $qengine = $this->capquiz->question_engine();
         $attempt = $qengine->attempt_for_user($this->capquiz->user());
         if ($attempt) {
@@ -89,24 +91,24 @@ class question_attempt_renderer {
         return basic_renderer::render_action_button(
             $this->renderer,
             capquiz_urls::response_reviewed_url($attempt),
-            get_string('next', 'capquiz')
+            get_string('next', 'capquiz'),
+            'post',
+            [],
+            'capquiz_review_next'
         );
     }
 
     private function render_progress(capquiz_user $user) : string {
         $qlist = $this->capquiz->question_list();
         $percent = $qlist->next_level_percent($this->capquiz, $user->rating());
-        if ($percent >= 0) {
-            $student = [
-                'up' => ['percent' => $percent],
-                'stars' => $this->user_star_progress($user, $qlist)
-            ];
-        } else {
-            $student = [
-                'down' => ['percent' => -$percent],
-                'stars' => $this->user_star_progress($user, $qlist)
-            ];
-        }
+        list($stars, $blankstars, $nostars) = $this->user_star_progress($user, $qlist);
+        $student = [
+            'up' => $percent >= 0 ? ['percent' => $percent] : false,
+            'down' => $percent < 0 ? ['percent' => -$percent] : false,
+            'stars' => $stars,
+            'blankstars' => $blankstars,
+            'nostars' => $nostars
+        ];
         return $this->renderer->render_from_template('capquiz/student_progress', [
             'progress' => ['student' => $student]
         ]);
@@ -120,7 +122,8 @@ class question_attempt_renderer {
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),
                 'body' => $quba->render_question($attempt->question_slot(), $options, $attempt->question_id()),
-                'slots' => ''
+                'slots' => '',
+                'comment' => $attempt->student_comment()
             ]
         ]);
     }
@@ -145,11 +148,21 @@ class question_attempt_renderer {
     }
 
     private function user_star_progress(capquiz_user $user, capquiz_question_list $qlist) : array {
-        $result = [];
+        $stars = [];
+        $blankstars = [];
+        $nostars = [];
         for ($star = 1; $star < $qlist->level_count() + 1; $star++) {
-            $result[] = $user->highest_level() >= $star;
+            if ($user->highest_level() >= $star) {
+                if ($user->rating() >= $qlist->required_rating_for_level($star)) {
+                    $stars[] = true;
+                } else {
+                    $blankstars[] = true;
+                }
+            } else {
+                $nostars[] = true;
+            }
         }
-        return $result;
+        return [$stars, $blankstars, $nostars];
     }
 
     private function review_display_options() : \question_display_options {

@@ -38,9 +38,7 @@ class capquiz_question_list {
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
-        $entries = $DB->get_records(database_meta::$tablequestion, [
-            database_meta::$fieldqlistid => $this->record->id
-        ]);
+        $entries = $DB->get_records('capquiz_question', ['question_list_id' => $this->record->id]);
         $this->questions = [];
         foreach ($entries as $entry) {
             $this->questions[] = new capquiz_question($entry);
@@ -60,8 +58,8 @@ class capquiz_question_list {
 
     public function author() {
         global $DB;
-        $criteria = [database_meta::$fieldid => $this->record->author];
-        $record = $DB->get_record(database_meta::$tablemoodleuser, $criteria);
+        $criteria = ['id' => $this->record->author];
+        $record = $DB->get_record('user', $criteria);
         // Returning null instead of false on failure.
         return $record ? $record : null;
     }
@@ -76,6 +74,12 @@ class capquiz_question_list {
 
     public function default_question_rating() : float {
         return $this->record->default_question_rating;
+    }
+
+    public function set_default_question_rating(float $rating) {
+        global $DB;
+        $this->record->default_question_rating = $rating;
+        $DB->update_record('capquiz_question_list', $this->record);
     }
 
     public function title() : string {
@@ -114,7 +118,7 @@ class capquiz_question_list {
             $this->record->{$field} = $rating;
             $level++;
         }
-        $DB->update_record(database_meta::$tablequestionlist, $this->record);
+        $DB->update_record('capquiz_question_list', $this->record);
     }
 
     public function user_level(capquiz_user $user) : int {
@@ -175,8 +179,36 @@ class capquiz_question_list {
         return null;
     }
 
-    public function create_instance_copy(int $capquizid) {
-        return $this->create_copy($capquizid, false);
+    public function has_question(int $questionid) {
+        foreach ($this->questions as $question) {
+            if ($question->question_id() === $questionid) {
+                return $question;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The questions from $that will be imported to this question list.
+     *
+     * @param capquiz_question_list $that The question list to import questions from.
+     * @throws \dml_exception
+     */
+    public function merge(capquiz_question_list $that) {
+        global $DB;
+        foreach ($that->questions as $question) {
+            if ($this->has_question($question->question_id()) === null) {
+                $newquestion = new \stdClass();
+                $newquestion->question_list_id = $this->id();
+                $newquestion->question_id = $question->question_id();
+                $newquestion->rating = $question->rating();
+                $DB->insert_record('capquiz_question', $newquestion);
+            }
+        }
+    }
+
+    public function create_instance_copy(capquiz $capquiz) {
+        return $this->create_copy($capquiz, false);
     }
 
     public function convert_to_instance(int $capquizid) : bool {
@@ -186,12 +218,12 @@ class capquiz_question_list {
         }
         $this->record->capquiz_id = $capquizid;
         $this->record->is_template = 0;
-        $DB->update_record(database_meta::$tablequestionlist, $this->record);
+        $DB->update_record('capquiz_question_list', $this->record);
         return true;
     }
 
-    public function create_template_copy() {
-        return $this->create_copy(null, true);
+    public function create_template_copy(capquiz $capquiz) {
+        return $this->create_copy($capquiz, true);
     }
 
     public function create_question_usage($context) {
@@ -204,7 +236,7 @@ class capquiz_question_list {
         // TODO: Don't suppress the error if it becomes possible to save QUBAs without slots.
         @\question_engine::save_questions_usage_by_activity($quba);
         $this->record->question_usage_id = $quba->get_id();
-        $DB->update_record(database_meta::$tablequestionlist, $this->record);
+        $DB->update_record('capquiz_question_list', $this->record);
     }
 
     private function has_question_usage() : bool {
@@ -217,23 +249,23 @@ class capquiz_question_list {
             $record = $question->entry();
             $record->id = null;
             $record->question_list_id = $qlistid;
-            $DB->insert_record(database_meta::$tablequestion, $record);
+            $DB->insert_record('capquiz_question', $record);
         }
     }
 
-    private function create_copy($capquizid, bool $template) {
+    private function create_copy(capquiz $capquiz, bool $template) {
         global $DB;
-        if (!$capquizid && !$template) {
-            return null;
-        }
         $record = $this->record;
         $record->id = null;
-        $record->capquiz_id = $capquizid;
+        $record->capquiz_id = $template ? null : $capquiz->id();
+        $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         $record->question_usage_id = null;
         $record->is_template = $template;
+        $record->time_created = time();
+        $record->time_modified = time();
         $transaction = $DB->start_delegated_transaction();
         try {
-            $newid = $DB->insert_record(database_meta::$tablequestionlist, $record);
+            $newid = $DB->insert_record('capquiz_question_list', $record);
             $this->copy_questions_to_list($newid);
             $DB->commit_delegated_transaction($transaction);
             $record->id = $newid;
@@ -262,8 +294,9 @@ class capquiz_question_list {
         $record->is_template = 0;
         $record->time_created = time();
         $record->time_modified = time();
+        $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         try {
-            $qlistid = $DB->insert_record(database_meta::$tablequestionlist, $record);
+            $qlistid = $DB->insert_record('capquiz_question_list', $record);
             $qlist = self::load_any($qlistid);
             if (!$qlist) {
                 return null;
@@ -277,8 +310,8 @@ class capquiz_question_list {
 
     public static function load_question_list(capquiz $capquiz) {
         global $DB;
-        $conditions = [database_meta::$fieldcapquizid => $capquiz->id()];
-        $record = $DB->get_record(database_meta::$tablequestionlist, $conditions);
+        $conditions = ['capquiz_id' => $capquiz->id()];
+        $record = $DB->get_record('capquiz_question_list', $conditions);
         if ($record) {
             return new capquiz_question_list($record);
         }
@@ -287,8 +320,8 @@ class capquiz_question_list {
 
     public static function load_any(int $qlistid) {
         global $DB;
-        $conditions = [database_meta::$fieldid => $qlistid];
-        $record = $DB->get_record(database_meta::$tablequestionlist, $conditions);
+        $conditions = ['id' => $qlistid];
+        $record = $DB->get_record('capquiz_question_list', $conditions);
         if ($record) {
             return new capquiz_question_list($record);
         }
@@ -297,9 +330,7 @@ class capquiz_question_list {
 
     public static function load_question_list_templates() : array {
         global $DB;
-        $records = $DB->get_records(database_meta::$tablequestionlist, [
-            database_meta::$fieldistemplate => 1
-        ]);
+        $records = $DB->get_records('capquiz_question_list', ['is_template' => 1]);
         $qlists = [];
         foreach ($records as $record) {
             $qlists[] = new capquiz_question_list($record);
