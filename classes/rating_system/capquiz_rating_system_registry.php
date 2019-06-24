@@ -36,14 +36,14 @@ class capquiz_rating_system_registry {
         $this->register_rating_systems();
     }
 
-    public function rating_system(string $system) {
+    public function rating_system($system) {
         if ($value = $this->systems[$system]) {
             return array_values($value)[0]();
         }
         $this->throw_rating_system_exception($system);
     }
 
-    public function configuration_form(string $system, \stdClass $configuration, \moodle_url $url) {
+    public function configuration_form($system, \stdClass $configuration, \moodle_url $url) {
         if ($value = $this->systems[$system]) {
             $configfunc = array_values($value)[1];
             return $configfunc($url, $configuration);
@@ -51,7 +51,7 @@ class capquiz_rating_system_registry {
         $this->throw_rating_system_exception($system);
     }
 
-    public function has_rating_system(string $system) : bool {
+    public function has_rating_system($system) : bool {
         return isset($this->systems[$system]);
     }
 
@@ -87,7 +87,7 @@ class capquiz_rating_system_registry {
         ];
     }
 
-    private function throw_rating_system_exception(string $system) {
+    private function throw_rating_system_exception($system) {
         $msg = "The specified rating system '$system' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->rating_systems());
         $msg .= "'}. This issue must be fixed by a programmer";

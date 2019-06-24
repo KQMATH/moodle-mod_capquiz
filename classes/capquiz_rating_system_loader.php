@@ -48,6 +48,9 @@ class capquiz_rating_system_loader {
     }
 
     public function rating_system() {
+        if (!$this->record) {
+            return null;
+        }
         $system = $this->registry->rating_system($this->record->rating_system);
         if ($this->configuration) {
             $system->configure($this->configuration);

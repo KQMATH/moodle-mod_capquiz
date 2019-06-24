@@ -114,6 +114,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $data = $this->currentquestionlist;
         $oldid = $data->id;
         $data->question_usage_id = $newusageid;
+        $data->context_id = \context_course::instance($this->get_courseid())->id;
         $data->capquiz_id = $this->get_new_parentid('capquiz');
         $newitemid = $DB->insert_record('capquiz_question_list', $data);
         $this->set_mapping('capquiz_question_list', $oldid, $newitemid);
