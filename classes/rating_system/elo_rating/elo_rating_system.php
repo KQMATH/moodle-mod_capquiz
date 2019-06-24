@@ -62,7 +62,7 @@ class elo_rating_system extends capquiz_rating_system {
         $user->set_rating($updated);
     }
 
-    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {
+    public function question_victory_ratings($winner, $loser) {
         $loserating = $loser->rating();
         $winrating = $winner->rating();
         $factor = $this->questionkfactor;
