@@ -131,12 +131,13 @@ class capquiz_question_engine {
         $previouscorrect = $previous->is_correctly_answered();
         $currentquestion = $this->capquiz->question_list()->question($current->question_id());
         $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
+        if (!$currentquestion || !$previousquestion) {
+            return;
+        }
         if ($previouscorrect && !$currentcorrect) {
             $ratingsystem->question_victory_ratings($currentquestion, $previousquestion);
-        } else {
-            if (!$previouscorrect && $currentcorrect) {
-                $ratingsystem->question_victory_ratings($previousquestion, $currentquestion);
-            }
+        } else if (!$previouscorrect && $currentcorrect) {
+            $ratingsystem->question_victory_ratings($previousquestion, $currentquestion);
         }
     }
 
