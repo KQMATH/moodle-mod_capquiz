@@ -161,6 +161,8 @@ $string['not_published'] = 'Not published';
 $string['problem_with_question_header'] = 'Is there a problem with this question? Send feedback to your instructor here.';
 $string['problem_with_question_details'] = 'If you have feedback for this question, please type it below. The text will be sent to your instructor. You will be able to continue editing this when you have submitted your answer.';
 $string['enter_comment_here'] = 'Enter your comment here...';
+$string['feedback_from_students'] = 'Feedback from students';
+$string['posted_by_student'] = 'Posted by {$a}';
 
 $string['deleted_grades'] = 'Deleted grades';
 $string['deleted_attempts'] = 'Deleted attempts';

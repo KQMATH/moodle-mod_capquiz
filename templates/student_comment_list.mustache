@@ -34,14 +34,21 @@
     }
 }}
 <div class="capquiz-student-comment-list">
-    <h2>Feedback from students</h2>
+    <h2>{{#str}} feedback_from_students, capquiz {{/str}}</h2>
     {{#questions}}
         <div>
             <h3>{{question}}</h3>
             {{#comments}}
                 <div>
                     <p>{{comment}}</p>
-                    <i>posted by {{student}} at {{#userdate}}{{time_submitted}}, %A, %d %B %Y, %I:%M %p{{/userdate}}</i>
+                    <i>{{#str}}
+                        posted_by_student,
+                        capquiz,
+                        {{student}},
+                        {{#userdate}}
+                            {{time_submitted}}, %A, %d %B %Y, %I:%M %p
+                        {{/userdate}}
+                    {{/str}}</i>
                 </div>
             {{/comments}}
         </div>
