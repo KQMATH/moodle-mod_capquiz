@@ -42,7 +42,7 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($capquiz->has_question_list()) {
         $capquiz->renderer()->display_instructor_dashboard($capquiz);
     } else {
-        $capquiz->renderer()->display_choose_question_list_view();
+        $capquiz->renderer()->display_choose_question_list_view($capquiz);
     }
 } else {
     require_capability('mod/capquiz:student', $capquiz->context());
@@ -51,5 +51,6 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($qengine) {
         $qengine->delete_invalid_attempt($capquiz->user());
     }
+    $capquiz->update_grades();
     $capquiz->renderer()->display_question_attempt_view($capquiz);
 }

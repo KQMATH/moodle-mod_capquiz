@@ -32,12 +32,16 @@ class question_list_selection_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
-    public function __construct(renderer $renderer) {
+    /** @var $context */
+    private $context;
+
+    public function __construct(renderer $renderer, $context) {
         $this->renderer = $renderer;
+        $this->context = $context;
     }
 
     public function render() {
-        $templates = capquiz_question_list::load_question_list_templates();
+        $templates = capquiz_question_list::load_question_list_templates($this->context);
         $lists = [];
         foreach ($templates as $template) {
             $lists[] = [

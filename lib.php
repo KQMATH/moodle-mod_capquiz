@@ -25,6 +25,8 @@ use mod_capquiz\capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/lib/gradelib.php');
+
 function capquiz_add_instance(stdClass $modformdata) {
     global $DB;
     $modformdata->time_modified = time();
@@ -39,6 +41,7 @@ function capquiz_update_instance(stdClass $capquiz) {
     global $DB;
     $capquiz->id = $capquiz->instance;
     $DB->update_record('capquiz', $capquiz);
+    capquiz_update_grades($capquiz);
     return true;
 }
 
@@ -50,19 +53,114 @@ function capquiz_delete_instance(int $id) {
     }
 }
 
+function capquiz_reset_userdata($data) {
+    global $DB;
+    $status = [];
+    $strmodname = get_string('modulenameplural', 'capquiz');
+    $strdeletegrades = get_string('deleted_grades', 'capquiz');
+    $strdeleteattempts = get_string('deleted_attempts', 'capquiz');
+
+    capquiz_reset_gradebook($data->courseid);
+    $status[] = ['component' => $strmodname, 'item' => $strdeletegrades, 'error' => false];
+
+    $instances = $DB->get_records('capquiz', ['course' => $data->courseid]);
+    foreach ($instances as $instance) {
+        $qlist = $DB->get_record('capquiz_question_list', ['capquiz_id' => $instance->id]);
+        if (!$qlist) {
+            continue;
+        }
+        \question_engine::delete_questions_usage_by_activity($qlist->question_usage_id);
+        $users = $DB->get_records('capquiz_user', ['capquiz_id' => $instance->id]);
+        foreach ($users as $user) {
+            $DB->delete_records('capquiz_attempt', ['user_id' => $user->id]);
+        }
+        $DB->delete_records('capquiz_user', ['capquiz_id' => $instance->id]);
+        $qlist->question_usage_id = null;
+        $DB->update_record('capquiz_question_list', $qlist);
+    }
+    $status[] = ['component' => $strmodname, 'item' => $strdeleteattempts, 'error' => false];
+    return $status;
+}
+
 function capquiz_cron() {
     return true;
+}
+
+function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
+    global $DB;
+    $params = ['capquiz_id' => $capquiz->id];
+    if ($userid > 0) {
+        $params['user_id'] = $userid;
+    }
+    $users = $DB->get_records('capquiz_user', $params);
+    if (!$users) {
+        return [];
+    }
+    $grades = [];
+    foreach ($users as $user) {
+        $grade = new stdClass();
+        $grade->userid = $user->user_id;
+        $grade->rawgrade = $user->highest_level;
+        $grade->dategraded = time();
+        $grade->datesubmitted = time();
+        $grades[$user->user_id] = $grade;
+    }
+    return $grades;
+}
+
+function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
+    $capquiz->cmidnumber = get_coursemodule_from_instance('capquiz', $capquiz->id)->id;
+    $params = [
+        'itemname' => $capquiz->name,
+        'idnumber' => $capquiz->cmidnumber
+    ];
+    $params['gradetype'] = GRADE_TYPE_VALUE;
+    $params['grademax'] = 5;
+    $params['grademin'] = 0;
+    if ($grades === 'reset') {
+        $params['reset'] = true;
+        $grades = null;
+    }
+    return grade_update('mod/capquiz', $capquiz->course, 'mod', 'capquiz', $capquiz->id, 0, $grades, $params);
+}
+
+function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone = true) {
+    $grades = capquiz_get_user_grades($capquiz, $userid);
+    if ($grades) {
+        capquiz_grade_item_update($capquiz, $grades);
+    } else if ($userid && $nullifnone) {
+        $grade = new stdClass();
+        $grade->userid = $userid;
+        $grade->rawgrade = null;
+        capquiz_grade_item_update($capquiz, [$userid => $grade]);
+    } else {
+        capquiz_grade_item_update($capquiz);
+    }
+}
+
+function capquiz_reset_gradebook($courseid, $type = '') {
+    global $DB;
+    $instances = $DB->get_records_sql("
+            SELECT cq.*
+              FROM {modules} m
+              JOIN {course_modules} cm
+                ON cm.module = m.id
+               AND cm.course = :courseid
+              JOIN {capquiz} cq
+                ON cq.id = cm.instance
+             WHERE m.name = 'capquiz'", ['courseid' => $courseid]);
+    foreach ($instances as $instance) {
+        capquiz_grade_item_update($instance, 'reset');
+    }
 }
 
 function capquiz_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_INTRO:
-            return true;
         case FEATURE_BACKUP_MOODLE2:
-            return true;
         case FEATURE_SHOW_DESCRIPTION:
-            return true;
         case FEATURE_USES_QUESTIONS:
+        case FEATURE_GRADE_HAS_GRADE:
             return true;
         default:
             return false;

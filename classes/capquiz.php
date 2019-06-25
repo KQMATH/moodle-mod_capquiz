@@ -66,6 +66,10 @@ class capquiz {
         return self::create_from_id(capquiz_urls::require_course_module_id_param());
     }
 
+    public function update_grades() {
+        capquiz_update_grades($this->record);
+    }
+
     public static function create_from_id(int $id) : capquiz {
         return new capquiz($id);
     }

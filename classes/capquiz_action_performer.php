@@ -76,7 +76,7 @@ class capquiz_action_performer {
 
     public static function assign_question_list(capquiz $capquiz) {
         $qlistid = optional_param(capquiz_urls::$paramqlistid, 0, PARAM_INT);
-        $qlist = capquiz_question_list::load_any($qlistid);
+        $qlist = capquiz_question_list::load_any($qlistid, $capquiz->context());
         if ($qlist) {
             $capquiz->validate_matchmaking_and_rating_systems();
             $qlist->create_instance_copy($capquiz);
@@ -158,7 +158,7 @@ class capquiz_action_performer {
         $srcqlistid = required_param('qlistid', PARAM_INT);
         $srcqlistrecord = $DB->get_record('capquiz_question_list', ['id' => $srcqlistid]);
         if ($srcqlistrecord) {
-            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord));
+            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord, $capquiz->context()));
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }

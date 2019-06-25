@@ -16,16 +16,30 @@
 
 /**
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_capquiz;
 
-$plugin->version = 2019062501;
-$plugin->requires = 2016120500;
-$plugin->cron = 0;
-$plugin->component = 'mod_capquiz';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.2.1 (Build: 2019062501)';
+require_once('../../config.php');
+
+require_login();
+
+$cmid = required_param('id', PARAM_INT);
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
+
+$capquiz = capquiz::create();
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
+}
+
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlview);
+
+if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
+    redirect(capquiz_urls::view_classlist_url());
+}
+
+redirect(capquiz_urls::view_url());
