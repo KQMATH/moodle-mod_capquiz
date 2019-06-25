@@ -121,7 +121,17 @@ function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
         $params['reset'] = true;
         $grades = null;
     }
-    return grade_update('mod/capquiz', $capquiz->course, 'mod', 'capquiz', $capquiz->id, 0, $grades, $params);
+    $status = grade_update('mod/capquiz', $capquiz->course, 'mod', 'capquiz', $capquiz->id, 0, $grades, $params);
+    $item = grade_item::fetch([
+        'courseid' => $capquiz->course,
+        'itemtype' => 'mod',
+        'itemmodule' => 'capquiz',
+        'iteminstance' => $capquiz->id,
+        'outcomeid' => null
+    ]);
+    $item->gradepass = 3;
+    $item->update();
+    return $status;
 }
 
 function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone = true) {
