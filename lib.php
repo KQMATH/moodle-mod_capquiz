@@ -140,15 +140,7 @@ function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone =
 
 function capquiz_reset_gradebook($courseid, $type = '') {
     global $DB;
-    $instances = $DB->get_records_sql("
-            SELECT cq.*
-              FROM {modules} m
-              JOIN {course_modules} cm
-                ON cm.module = m.id
-               AND cm.course = :courseid
-              JOIN {capquiz} cq
-                ON cq.id = cm.instance
-             WHERE m.name = 'capquiz'", ['courseid' => $courseid]);
+    $instances = $DB->get_records('capquiz', ['course' => $courseid]);
     foreach ($instances as $instance) {
         capquiz_grade_item_update($instance, 'reset');
     }
