@@ -32,14 +32,14 @@
     }
 }}
 <h2>{{#str}} classlist, capquiz {{/str}}</h2>
-<table class="capquiz-tree">
+<table class="capquiz-tree capquiz-classlist">
     <tr>
         <th>#</th>
-        <th>{{#str}} username, capquiz {{/str}}</th>
-        <th>{{#str}} firstname, capquiz {{/str}}</th>
-        <th>{{#str}} lastname, capquiz {{/str}}</th>
-        <th>{{#str}} rating, capquiz {{/str}}</th>
-        <th>{{#str}} stars, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} username, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} firstname, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} lastname, capquiz {{/str}}</th>
+        <th class="capquiz-sortable capquiz-sortable-default">{{#str}} rating, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} stars, capquiz {{/str}}</th>
     </tr>
     {{#users}}
         <tr>

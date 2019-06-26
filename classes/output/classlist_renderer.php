@@ -43,6 +43,9 @@ class classlist_renderer {
     }
 
     public function render() {
+        global $PAGE;
+        $cmid = $this->capquiz->course_module_id();
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $users = capquiz_user::list_users($this->capquiz);
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {

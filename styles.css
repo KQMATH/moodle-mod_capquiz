@@ -21,6 +21,11 @@
     width: 50%;
 }
 
+.capquiz-tree tr td,
+.capquiz-tree tr th {
+    padding: 6px;
+}
+
 .capquiz-tree tr:first-child {
     background: #fafafa;
 }
@@ -42,7 +47,7 @@
     background: #fafafa;
 }
 
-.capquiz-tree tr td {
+.capquiz-qlist-questions tr td {
     padding: 2px 4px;
 }
 
@@ -230,4 +235,13 @@
 
 .capquiz-question-rating input {
     width: 80px;
+}
+
+.capquiz-classlist tr td,
+.capquiz-classlist tr th {
+    padding: 4px 16px;
+}
+
+.capquiz-classlist tr:nth-child(odd) td {
+    background: #fafafa;
 }

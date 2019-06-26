@@ -18,7 +18,6 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\user_configuration_form;
 use mod_capquiz\form\view\star_configuration_form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,8 +26,8 @@ require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grading_configuration_renderer {

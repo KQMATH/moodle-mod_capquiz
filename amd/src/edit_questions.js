@@ -15,8 +15,8 @@
 
 /**
  * @package    mod_capquiz
- * @author     Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
- * @copyright  2018 NTNU
+ * @author     Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright  2019 NTNU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -187,6 +187,9 @@ define(['jquery'], function($) {
      */
     function registerSortListener() {
         $(document).on('click', '.capquiz-sortable', function() {
+            sortTable($(this));
+        });
+        $('.capquiz-sortable-default').each(function () {
             sortTable($(this));
         });
     }
