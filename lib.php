@@ -45,8 +45,8 @@ function capquiz_update_instance(stdClass $capquiz) {
     return true;
 }
 
-function capquiz_delete_instance(int $id) {
-    $capquiz = capquiz::create_from_id($id);
+function capquiz_delete_instance(int $cmid) {
+    $capquiz = new capquiz($cmid);
     if ($capquiz) {
         $quba = $capquiz->question_usage();
         \question_engine::delete_questions_usage_by_activity($quba->get_id());

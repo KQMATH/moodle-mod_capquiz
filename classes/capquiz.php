@@ -59,21 +59,10 @@ class capquiz {
         $this->qlist = capquiz_question_list::load_question_list($this);
     }
 
-    /**
-     * @throws \coding_exception if no id/cmid param
-     */
-    public static function create() : capquiz {
-        return self::create_from_id(capquiz_urls::require_course_module_id_param());
-    }
-
     public function update_grades() {
         if (!$this->is_grading_completed()) {
             capquiz_update_grades($this->record);
         }
-    }
-
-    public static function create_from_id(int $id) : capquiz {
-        return new capquiz($id);
     }
 
     public function id() : int {

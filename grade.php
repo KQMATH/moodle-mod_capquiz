@@ -31,7 +31,8 @@ $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
 
-$capquiz = capquiz::create();
+$cmid = capquiz_urls::require_course_module_id_param();
+$capquiz = new capquiz($cmid);
 if (!$capquiz) {
     capquiz_urls::redirect_to_front_page();
 }

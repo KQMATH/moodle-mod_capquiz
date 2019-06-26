@@ -34,7 +34,8 @@ require_capability('mod/capquiz:student', $context);
 $action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
 $attemptid = optional_param(capquiz_urls::$paramattempt, null, PARAM_INT);
 $comment = optional_param('studentcomment', '', PARAM_TEXT);
-$capquiz = capquiz::create();
+$cmid = capquiz_urls::require_course_module_id_param();
+$capquiz = new capquiz($cmid);
 
 capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
 
