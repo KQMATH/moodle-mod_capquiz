@@ -17,6 +17,7 @@
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_question_list;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -28,7 +29,9 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquiz_configuration_form extends \moodleform {
+class star_configuration_form extends \moodleform {
+
+    /** @var capquiz $capquiz */
     private $capquiz;
 
     public function __construct(capquiz $capquiz, \moodle_url $url) {
@@ -37,30 +40,37 @@ class capquiz_configuration_form extends \moodleform {
     }
 
     public function definition() {
+        $qlist = $this->capquiz->question_list();
         $form = $this->_form;
-
-        $form->addElement('text', 'name', get_string('name', 'capquiz'));
-        $form->setType('name', PARAM_TEXT);
-        $form->setDefault('name', $this->capquiz->name());
-        $form->addRule('name', get_string('name_required', 'capquiz'), 'required', null, 'client');
-
         $form->addElement('text', 'default_user_rating', get_string('default_user_rating', 'capquiz'));
         $form->setType('default_user_rating', PARAM_INT);
         $form->setDefault('default_user_rating', $this->capquiz->default_user_rating());
         $form->addRule('default_user_rating', get_string('default_user_rating_required', 'capquiz'), 'required', null, 'client');
-        $this->add_action_buttons(false);
+        for ($i = 0; $i < $qlist->level_count(); $i++) {
+            $level = $i + $qlist->first_level();
+            $element = "level_{$level}_rating";
+            $text = get_string('level_rating', 'capquiz', $level);
+            $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+            $form->addElement('text', $element, $text);
+            $form->setType($element, PARAM_INT);
+            $form->addRule($element, $requiredtext, 'required', null, 'client');
+            $form->setDefault($element, $qlist->required_rating_for_level($level));
+        }
+        $form->addElement('submit', 'submitbutton', get_string('savechanges'));
     }
 
     public function validations($data, $files) {
         $errors = [];
-        if (empty($data['name'])) {
-            $errors['name'] = get_string('name_required', 'capquiz');
-        }
-        if (empty($data['description'])) {
-            $errors['description'] = get_string('description_required', 'capquiz');
-        }
         if (empty($data['default_user_rating'])) {
             $errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
+        }
+        for ($i = 0; $i < $qlist->level_count(); $i++) {
+            $level = $i + $qlist->first_level();
+            $element = "level_{$level}_rating";
+            if (empty($data[$element])) {
+                $requiredtext = get_string('level_rating_required', 'capquiz', $level);
+                $errors[$element] = $requiredtext;
+            }
         }
         return $errors;
     }

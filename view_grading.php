@@ -38,6 +38,6 @@ if (!$capquiz) {
     capquiz_urls::redirect_to_front_page();
 }
 
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlviewratingsystemconfig);
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlviewgrading);
 $renderer = $capquiz->renderer();
-$renderer->display_rating_system_configuration($capquiz);
+$renderer->display_grading_configuration($capquiz);

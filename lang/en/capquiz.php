@@ -39,7 +39,7 @@ $string['add_the_quiz_question'] = 'Add the question to the list';
 
 $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
-$string['configure_badge_rating'] = 'Configure badge rating';
+$string['configure_grading'] = 'Configure grading';
 
 $string['comments'] = 'Comments';
 $string['import'] = 'Import';
@@ -51,7 +51,7 @@ $string['stars'] = 'Stars';
 $string['title'] = 'Title';
 $string['author'] = 'Author';
 $string['created'] = 'Created';
-$string['badges'] = 'Badges';
+$string['grading'] = 'Grading';
 $string['remove'] = 'Remove';
 $string['rating'] = 'Rating';
 $string['action'] = 'Action';

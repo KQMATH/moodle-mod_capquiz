@@ -18,7 +18,8 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\badge_rating_configuration_form;
+use mod_capquiz\form\view\user_configuration_form;
+use mod_capquiz\form\view\star_configuration_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -30,7 +31,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class badge_rating_configuration_renderer {
+class grading_configuration_renderer {
 
     /** @var capquiz $capquiz */
     private $capquiz;
@@ -44,15 +45,20 @@ class badge_rating_configuration_renderer {
     }
 
     public function render() {
+        return $this->renderer->render_from_template('capquiz/configure_grading', [
+            'rating_form' => $this->get_rating_configuration()
+        ]);
+    }
+
+    private function get_rating_configuration() {
         global $PAGE;
         $url = $PAGE->url;
-        $qlist = $this->capquiz->question_list();
-        if (!$qlist) {
-            return 'question list error';
-        }
-        $form = new badge_rating_configuration_form($qlist, $url);
+        $form = new star_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {
+            if ($formdata->default_user_rating) {
+                $this->capquiz->set_default_user_rating($formdata->default_user_rating);
+            }
             $ratings = [
                 $formdata->level_1_rating,
                 $formdata->level_2_rating,
@@ -60,12 +66,10 @@ class badge_rating_configuration_renderer {
                 $formdata->level_4_rating,
                 $formdata->level_5_rating
             ];
-            $qlist->set_level_ratings($ratings);
-            redirect(capquiz_urls::create_view_url(capquiz_urls::$urledit));
+            $this->capquiz->question_list()->set_level_ratings($ratings);
+            redirect(capquiz_urls::view_grading_url());
         }
-        return $this->renderer->render_from_template('capquiz/configure_badge_rating', [
-            'form' => $form->render()
-        ]);
+        return $form->render();
     }
 
 }

@@ -42,7 +42,7 @@ class rating_system_selection_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->url = capquiz_urls::view_rating_system_configuration_url();
+        $this->url = capquiz_urls::view_matchmaking_configuration_url();
     }
 
     public function set_redirect_url(\moodle_url $url) {

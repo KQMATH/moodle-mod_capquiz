@@ -188,14 +188,9 @@ class capquiz {
         return $this->courserecord;
     }
 
-    public function configure(\stdClass $configuration) {
+    public function set_default_user_rating(float $rating) {
         global $DB;
-        if ($configuration->name) {
-            $this->record->name = $configuration->name;
-        }
-        if ($configuration->default_user_rating) {
-            $this->record->default_user_rating = $configuration->default_user_rating;
-        }
+        $this->record->default_user_rating = $rating;
         $DB->update_record('capquiz', $this->record);
     }
 

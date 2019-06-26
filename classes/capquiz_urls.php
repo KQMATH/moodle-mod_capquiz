@@ -41,14 +41,12 @@ class capquiz_urls {
     public static $urlerror = '/mod/capquiz/error.php';
     public static $urlaction = '/mod/capquiz/action.php';
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
-    public static $urlviewconfig = '/mod/capquiz/view_configuration.php';
+    public static $urlviewgrading = '/mod/capquiz/view_grading.php';
     public static $urlviewcomments = '/mod/capquiz/view_comments.php';
     public static $urlviewimport = '/mod/capquiz/view_import.php';
     public static $urledit = '/mod/capquiz/edit.php';
-    public static $urlviewbadgeconfig = '/mod/capquiz/view_badge_configuration.php';
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
     public static $urlviewmatchmakingconfig = '/mod/capquiz/view_matchmaking_configuration.php';
-    public static $urlviewratingsystemconfig = '/mod/capquiz/view_rating_system_configuration.php';
 
     public static function redirect(\moodle_url $target) {
         $url = self::create_view_url(self::$urlaction);
@@ -109,22 +107,13 @@ class capquiz_urls {
         return $url;
     }
 
-    public static function view_rating_system_configuration_url() {
-        $url = self::create_view_url(self::$urlviewratingsystemconfig);
-        return $url;
-    }
-
-    public static function view_badge_configuration_url() {
-        $url = self::create_view_url(self::$urlviewbadgeconfig);
+    public static function view_grading_url() {
+        $url = self::create_view_url(self::$urlviewgrading);
         return $url;
     }
 
     public static function view_classlist_url() {
         return self::create_view_url(self::$urlviewclasslist);
-    }
-
-    public static function view_configuration_url() {
-        return self::create_view_url(self::$urlviewconfig);
     }
 
     public static function view_create_question_list_url() {

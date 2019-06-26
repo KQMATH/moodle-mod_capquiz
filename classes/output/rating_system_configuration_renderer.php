@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rating_system_configuration_renderer {
+
     private $capquiz;
     private $renderer;
     private $registry;
@@ -63,7 +64,7 @@ class rating_system_configuration_renderer {
             $formdata = $form->get_data();
             if ($formdata) {
                 $this->registry->configure_current_rating_system($formdata);
-                redirect(capquiz_urls::view_rating_system_configuration_url());
+                redirect(capquiz_urls::view_matchmaking_configuration_url());
             }
             return $form->render();
         }

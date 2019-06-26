@@ -27,11 +27,10 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_renderer
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_bank_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_attempt_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/unauthorized_view_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/capquiz_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/question_list_creator_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/instructor_dashboard_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_configuration_renderer.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/output/badge_rating_configuration_renderer.php');
+require_once($CFG->dirroot . '/mod/capquiz/classes/output/grading_configuration_renderer.php');
 require_once($CFG->dirroot . '/mod/capquiz/classes/output/matchmaking_strategy_selection_renderer.php');
 
 /**
@@ -55,10 +54,8 @@ class renderer extends \plugin_renderer_base {
         $tabs = [
             $this->tab('view_dashboard', 'dashboard', capquiz_urls::view_url()),
             $this->tab('view_matchmaking', 'matchmaking', capquiz_urls::view_matchmaking_configuration_url()),
-            $this->tab('view_rating_system', 'rating_system', capquiz_urls::view_rating_system_configuration_url()),
             $this->tab('view_questions', 'questions', capquiz_urls::view_question_list_url()),
-            $this->tab('view_badges', 'badges', capquiz_urls::view_badge_configuration_url()),
-            $this->tab('view_capquiz', 'pluginname', capquiz_urls::view_configuration_url()),
+            $this->tab('view_grading', 'grading', capquiz_urls::view_grading_url()),
             $this->tab('view_classlist', 'classlist', capquiz_urls::view_classlist_url()),
             $this->tab('view_comments', 'comments', capquiz_urls::view_comments_url()),
             $this->tab('view_import', 'other_question_lists', capquiz_urls::view_import_url())
@@ -145,15 +142,10 @@ class renderer extends \plugin_renderer_base {
     public function display_matchmaking_configuration(capquiz $capquiz) {
         $this->display_tabbed_views([
             new matchmaking_strategy_selection_renderer($capquiz, $this),
-            new matchmaking_configuration_renderer($capquiz, $this)
-        ], 'view_matchmaking');
-    }
-
-    public function display_rating_system_configuration(capquiz $capquiz) {
-        $this->display_tabbed_views([
+            new matchmaking_configuration_renderer($capquiz, $this),
             new rating_system_selection_renderer($capquiz, $this),
             new rating_system_configuration_renderer($capquiz, $this)
-        ], 'view_rating_system');
+        ], 'view_matchmaking');
     }
 
     public function display_leaderboard(capquiz $capquiz) {
@@ -168,12 +160,8 @@ class renderer extends \plugin_renderer_base {
         $this->display_tabbed_view(new import_renderer($capquiz, $this), 'view_import');
     }
 
-    public function display_capquiz_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new capquiz_configuration_renderer($capquiz, $this), 'view_capquiz');
-    }
-
-    public function display_badge_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new badge_rating_configuration_renderer($capquiz, $this), 'view_badges');
+    public function display_grading_configuration(capquiz $capquiz) {
+        $this->display_tabbed_view(new grading_configuration_renderer($capquiz, $this), 'view_grading');
     }
 
 }
