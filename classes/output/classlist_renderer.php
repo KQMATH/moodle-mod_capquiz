@@ -55,7 +55,7 @@ class classlist_renderer {
                 'username' => $user->username(),
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),
-                'rating' => $user->rating(),
+                'rating' => round($user->rating(), 2),
                 'stars' => $user->highest_level(),
                 'graded_stars' => $user->stars_graded(),
                 'passing_grade' => $user->stars_graded() >= $this->capquiz->stars_to_pass()
