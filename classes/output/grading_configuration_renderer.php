@@ -18,7 +18,7 @@ namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
-use mod_capquiz\form\view\star_configuration_form;
+use mod_capquiz\form\view\grading_configuration_form;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -52,7 +52,7 @@ class grading_configuration_renderer {
     private function get_rating_configuration() {
         global $PAGE;
         $url = $PAGE->url;
-        $form = new star_configuration_form($this->capquiz, $url);
+        $form = new grading_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {
             if ($formdata->default_user_rating) {
@@ -66,6 +66,12 @@ class grading_configuration_renderer {
                 $formdata->level_5_rating
             ];
             $this->capquiz->question_list()->set_level_ratings($ratings);
+            if ($formdata->starstopass) {
+                $this->capquiz->set_stars_to_pass($formdata->starstopass);
+            }
+            if ($formdata->timedue) {
+                $this->capquiz->set_time_due($formdata->timedue);
+            }
             redirect(capquiz_urls::view_grading_url());
         }
         return $form->render();

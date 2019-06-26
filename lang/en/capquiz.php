@@ -41,6 +41,17 @@ $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
 $string['configure_grading'] = 'Configure grading';
 
+$string['stars_to_pass'] = 'Number of stars required for passing grade';
+$string['stars_to_pass_required'] = 'Stars for passing grade is required (0-5)';
+$string['due_time_grading'] = 'Time for final grading';
+$string['grading_is_completed'] = 'Grading is completed.';
+$string['grade_has_been_set_pass'] = 'You achieved {$a} stars, which is a <b>passing</b> grade.';
+$string['grade_has_been_set_fail'] = 'You achieved {$a} stars, which is a <b>failing</b> grade.';
+$string['graded_stars'] = 'Grade';
+$string['pass_or_fail'] = 'Pass / Fail';
+$string['grade_pass'] = 'Passed';
+$string['grade_fail'] = 'Failed';
+
 $string['comments'] = 'Comments';
 $string['import'] = 'Import';
 $string['home'] = 'Home';
@@ -108,8 +119,8 @@ $string['one_star'] = '1 Star';
 $string['level_stars'] = '{$a} Stars';
 $string['earned_first_star'] = 'You earned your first star in this activity!';
 $string['earned_level_star'] = 'You earned {$a} stars in this activity!';
-$string['level_rating'] = 'Level {$a} rating';
-$string['level_rating_required'] = 'Rating for level {$a} is required';
+$string['level_rating'] = 'Rating required for {$a} stars';
+$string['level_rating_required'] = 'Rating required for {$a} stars is a required field';
 
 $string['user_win_probability'] = 'Desired user win probability';
 $string['user_win_probability_required'] = 'Desired user win probability is required';
@@ -176,4 +187,4 @@ $string['privacy:metadata:capquiz_attempt:feedback'] = 'The feedback comment pro
 $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';
-$string['privacy:metadata:capquiz_user:highest_level'] = 'The user\'s highest achieved level.';
+$string['privacy:metadata:capquiz_user:highest_level'] = 'The user\'s highest number of stars achieved.';

@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class star_configuration_form extends \moodleform {
+class grading_configuration_form extends \moodleform {
 
     /** @var capquiz $capquiz */
     private $capquiz;
@@ -56,6 +56,19 @@ class star_configuration_form extends \moodleform {
             $form->addRule($element, $requiredtext, 'required', null, 'client');
             $form->setDefault($element, $qlist->required_rating_for_level($level));
         }
+
+        $strstarstopass = get_string('stars_to_pass', 'capquiz');
+        $strstarstopassrequired = get_string('stars_to_pass_required', 'capquiz');
+        $form->addElement('text', 'starstopass', $strstarstopass);
+        $form->setType('starstopass', PARAM_INT);
+        $form->setDefault('starstopass', $this->capquiz->stars_to_pass());
+        $form->addRule('starstopass', $strstarstopassrequired, 'required', null, 'client');
+
+        $strduedate = get_string('due_time_grading', 'capquiz');
+        $form->addElement('date_time_selector', 'timedue', $strduedate);
+        $form->setType('timedue', PARAM_INT);
+        $form->setDefault('timedue', $this->capquiz->time_due());
+
         $form->addElement('submit', 'submitbutton', get_string('savechanges'));
     }
 
@@ -64,6 +77,7 @@ class star_configuration_form extends \moodleform {
         if (empty($data['default_user_rating'])) {
             $errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
         }
+        $qlist = $this->capquiz->question_list();
         for ($i = 0; $i < $qlist->level_count(); $i++) {
             $level = $i + $qlist->first_level();
             $element = "level_{$level}_rating";
@@ -71,6 +85,9 @@ class star_configuration_form extends \moodleform {
                 $requiredtext = get_string('level_rating_required', 'capquiz', $level);
                 $errors[$element] = $requiredtext;
             }
+        }
+        if (empty($data['starstopass']) || $data['starstopass'] < 0 || $data['starstopass'] > 5) {
+            $errors['starstopass'] = get_string('stars_to_pass_required', 'capquiz');
         }
         return $errors;
     }

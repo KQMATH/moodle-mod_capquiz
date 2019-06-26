@@ -27,6 +27,16 @@
         }
     }
 }}
+{{#gradingdone}}
+    <p>{{#str}} grading_is_completed, capquiz {{/str}}</p>
+    {{#gradingpass}}
+        <p>{{#str}} grade_has_been_set_pass, capquiz, {{finalgrade}} {{/str}}</p>
+    {{/gradingpass}}
+    {{^gradingpass}}
+        <p>{{#str}} grade_has_been_set_fail, capquiz, {{finalgrade}} {{/str}}</p>
+    {{/gradingpass}}
+{{/gradingdone}}
+
 {{#attempt}}
     <form class="capquiz-response-form" method="post" action="{{{ url }}}" enctype="multipart/form-data" accept-charset="utf-8">
         <div>

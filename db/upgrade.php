@@ -41,5 +41,22 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019061700, 'capquiz');
     }
+    if ($oldversion < 2019062550) {
+        $table = new xmldb_table('capquiz');
+        $field = new xmldb_field('stars_to_pass', XMLDB_TYPE_INTEGER, 10, null, true, null, 3);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('timedue', XMLDB_TYPE_INTEGER, 10, null, true, null, 0);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $table = new xmldb_table('capquiz_user');
+        $field = new xmldb_field('stars_graded', XMLDB_TYPE_INTEGER, 10, null, true, null, 0);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2019062550, 'capquiz');
+    }
     return true;
 }

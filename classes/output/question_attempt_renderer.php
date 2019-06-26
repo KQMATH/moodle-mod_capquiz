@@ -124,7 +124,10 @@ class question_attempt_renderer {
                 'body' => $quba->render_question($attempt->question_slot(), $options, $attempt->question_id()),
                 'slots' => '',
                 'comment' => $attempt->student_comment()
-            ]
+            ],
+            'gradingdone' => $this->capquiz->is_grading_completed(),
+            'finalgrade' => $this->capquiz->user()->stars_graded(),
+            'gradingpass' => $this->capquiz->user()->stars_graded() >= $this->capquiz->stars_to_pass()
         ]);
     }
 

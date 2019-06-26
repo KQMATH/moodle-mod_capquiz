@@ -67,7 +67,9 @@ class capquiz {
     }
 
     public function update_grades() {
-        capquiz_update_grades($this->record);
+        if (!$this->is_grading_completed()) {
+            capquiz_update_grades($this->record);
+        }
     }
 
     public static function create_from_id(int $id) : capquiz {
@@ -78,16 +80,32 @@ class capquiz {
         return $this->record->id;
     }
 
-    public function name() : string {
-        return $this->record->name;
-    }
-
-    public function description() : string {
-        return $this->record->description;
-    }
-
     public function is_published() : bool {
         return $this->record->published;
+    }
+
+    public function stars_to_pass() : int {
+        return $this->record->stars_to_pass;
+    }
+
+    public function set_stars_to_pass(int $stars) {
+        global $DB;
+        $this->record->stars_to_pass = $stars;
+        $DB->update_record('capquiz', $this->record);
+    }
+
+    public function time_due() : int {
+        return $this->record->timedue;
+    }
+
+    public function set_time_due(int $time) {
+        global $DB;
+        $this->record->timedue = $time;
+        $DB->update_record('capquiz', $this->record);
+    }
+
+    public function is_grading_completed() : bool {
+        return $this->record->timedue < time() && $this->record->timedue > 0;
     }
 
     public function can_publish() : bool {
@@ -104,11 +122,7 @@ class capquiz {
         }
         $this->question_list()->create_question_usage($this->context());
         $this->record->published = true;
-        try {
-            $DB->update_record('capquiz', $this->record);
-        } catch (\dml_exception $e) {
-            return false;
-        }
+        $DB->update_record('capquiz', $this->record);
         return $this->is_published();
     }
 
@@ -138,14 +152,10 @@ class capquiz {
 
     public function question_engine() {
         $quba = $this->question_usage();
-        if ($quba) {
-            return new capquiz_question_engine($this, $quba, $this->selection_strategy_loader(), $this->rating_system_loader());
+        if (!$quba) {
+            return null;
         }
-        return null;
-    }
-
-    public function question_registry() : capquiz_question_registry {
-        return new capquiz_question_registry($this);
+        return new capquiz_question_engine($this, $quba, $this->selection_strategy_loader(), $this->rating_system_loader());
     }
 
     public function has_question_list() : bool {

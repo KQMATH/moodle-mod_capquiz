@@ -109,6 +109,7 @@ function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
 }
 
 function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
+    global $DB;
     $capquiz->cmidnumber = get_coursemodule_from_instance('capquiz', $capquiz->id)->id;
     $params = [
         'itemname' => $capquiz->name,
@@ -129,8 +130,13 @@ function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
         'iteminstance' => $capquiz->id,
         'outcomeid' => null
     ]);
-    $item->gradepass = 3;
+    $item->gradepass = $capquiz->stars_to_pass;
     $item->update();
+    $users = $DB->get_records('capquiz_user', ['capquiz_id' => $capquiz->id]);
+    foreach ($users as $user) {
+        $user->stars_graded = $user->highest_level;
+        $DB->update_record('capquiz_user', $user);
+    }
     return $status;
 }
 

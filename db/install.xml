@@ -14,7 +14,9 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates whether or not the question list is published, if it has one"/>
-        <FIELD NAME="default_user_rating" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" COMMENT="Default rating for users"/>
+        <FIELD NAME="default_user_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" COMMENT="Default rating for users"/>
+        <FIELD NAME="stars_to_pass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="How many stars are required for a passing grade"/>
+        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -67,7 +69,8 @@
         <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
-        <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest level / number of stars attained by this user"/>
+        <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest number of stars attained by this user"/>
+        <FIELD NAME="stars_graded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of stars for the final grade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

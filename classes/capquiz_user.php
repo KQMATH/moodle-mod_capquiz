@@ -91,16 +91,16 @@ class capquiz_user {
         return $this->moodlerecord->lastname;
     }
 
-    public function capquiz_id() : int {
-        return $this->record->capquiz_id;
-    }
-
     public function rating() : float {
         return $this->record->rating;
     }
 
     public function highest_level() : int {
         return $this->record->highest_level;
+    }
+
+    public function stars_graded() : int {
+        return $this->record->stars_graded;
     }
 
     public function set_highest_level(int $highestlevel) {
