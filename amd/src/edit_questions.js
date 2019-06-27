@@ -204,8 +204,7 @@ define(['jquery'], function($) {
     }
 
     /**
-     *
-     * @param courseModuleId
+     * Register click event listener for "Add to quiz" button.
      */
     function listenAddToQuiz() {
         $('.capquiz-add-selected-questions').on('click', function () {
