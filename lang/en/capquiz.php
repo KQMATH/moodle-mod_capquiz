@@ -36,6 +36,7 @@ $string['capquiz:student'] = 'Attempt CAPQuiz instances';
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
 $string['add_the_quiz_question'] = 'Add the question to the list';
+$string['add_to_quiz'] = 'Add to quiz';
 
 $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';

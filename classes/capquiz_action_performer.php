@@ -86,9 +86,10 @@ class capquiz_action_performer {
 
     public static function add_question_to_list(capquiz $capquiz) {
         $qlist = $capquiz->question_list();
-        $questionid = optional_param('question-id', 0, PARAM_INT);
-        if ($questionid) {
-            self::create_capquiz_question($questionid, $qlist, $qlist->default_question_rating());
+        $questionids = required_param('question-id', PARAM_TEXT);
+        $questionids = explode(',', $questionids);
+        foreach ($questionids as $questionid) {
+            self::create_capquiz_question((int)$questionid, $qlist, $qlist->default_question_rating());
         }
         capquiz_urls::redirect_to_previous();
     }
@@ -142,6 +143,9 @@ class capquiz_action_performer {
 
     private static function create_capquiz_question(int $questionid, capquiz_question_list $list, float $rating) {
         global $DB;
+        if ($questionid === 0){
+            return;
+        }
         $ratedquestion = new \stdClass();
         $ratedquestion->question_list_id = $list->id();
         $ratedquestion->question_id = $questionid;

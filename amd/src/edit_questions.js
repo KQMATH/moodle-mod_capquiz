@@ -23,7 +23,7 @@
 define(['jquery'], function($) {
 
     var parameters = {
-        capquizId: 0,
+        courseModuleId: 0,
     };
 
     /**
@@ -52,7 +52,7 @@ define(['jquery'], function($) {
     function sendDefaultQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
             'action': 'set-default-question-rating',
-            'id': parameters.capquizId,
+            'id': parameters.courseModuleId,
             'rating': rating,
         }, onSuccess, onError);
     }
@@ -67,7 +67,7 @@ define(['jquery'], function($) {
     function sendQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
             'action': 'set-question-rating',
-            'id': parameters.capquizId,
+            'id': parameters.courseModuleId,
             'question-id': data.questionId,
             'rating': rating,
         }, onSuccess, onError);
@@ -203,13 +203,34 @@ define(['jquery'], function($) {
         });
     }
 
+    /**
+     *
+     * @param courseModuleId
+     */
+    function listenAddToQuiz() {
+        $('.capquiz-add-selected-questions').on('click', function () {
+            var questionIds = '';
+            $('#categoryquestions td input[type=checkbox]:checked').each(function () {
+                questionIds += $(this).attr('name').slice(1) + ',';
+            });
+            $.post('action.php', {
+                'action': 'add-question',
+                'id': parameters.courseModuleId,
+                'question-id': questionIds,
+            }, function () {
+                location.reload();
+            });
+        });
+    }
+
     return {
-        initialize: function(capquizId) {
-            parameters.capquizId = capquizId;
+        initialize: function(courseModuleId) {
+            parameters.courseModuleId = courseModuleId;
             registerListener('.capquiz-question-rating input', submitQuestionRating);
             registerListener('.capquiz-default-question-rating input', submitDefaultQuestionRating);
             fixTabIndicesForQuestionRatingInputs();
             registerSortListener();
+            listenAddToQuiz();
         }
     };
 

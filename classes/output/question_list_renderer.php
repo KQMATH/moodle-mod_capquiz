@@ -43,6 +43,9 @@ class question_list_renderer {
     }
 
     public function render() {
+        global $PAGE;
+        $cmid = $this->capquiz->course_module()->id;
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $qlist = $this->capquiz->question_list();
         if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);
@@ -53,9 +56,7 @@ class question_list_renderer {
     }
 
     private function render_questions(capquiz_question_list $qlist) {
-        global $PAGE, $CFG;
-        $cmid = $this->capquiz->course_module()->id;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        global $CFG;
         $rows = [];
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
@@ -69,27 +70,18 @@ class question_list_renderer {
                 'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
+            $targetblank = ['name' => 'target', 'value' => '_blank'];
             $edit = $courseid === 0 ? false : [
                 'url' => $editurl->out(false),
                 'label' => get_string('edit'),
                 'classes' => 'fa fa-edit',
-                'attributes' => [
-                    [
-                        'name' => 'target',
-                        'value' => '_blank'
-                    ]
-                ]
+                'attributes' => [$targetblank]
             ];
             $preview = $courseid === 0 ? false : [
                 'url' => $previewurl->out(false),
                 'label' => get_string('preview'),
                 'classes' => 'fa fa-search-plus',
-                'attributes' => [
-                    [
-                        'name' => 'target',
-                        'value' => '_blank'
-                    ]
-                ]
+                'attributes' => [$targetblank]
             ];
             $rows[] = [
                 'index' => $i + 1,

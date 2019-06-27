@@ -245,3 +245,7 @@
 .capquiz-classlist tr:nth-child(odd) td {
     background: #fafafa;
 }
+
+.capquiz-add-selected-questions {
+    margin: 4px;
+}

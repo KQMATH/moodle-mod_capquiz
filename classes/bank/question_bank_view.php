@@ -79,8 +79,14 @@ class question_bank_view extends \core_question\bank\view {
             $showquestiontext,
             $this->contexts->having_cap('moodle/question:add')
         );
+        $this->display_add_selected_questions_button();
         $PAGE->requires->js_call_amd('core_question/edit_tags', 'init', ['#questionscontainer']);
         return ob_get_clean();
+    }
+
+    private function display_add_selected_questions_button() {
+        $straddtoquiz = get_string('add_to_quiz', 'capquiz');
+        echo '<button class="btn btn-secondary capquiz-add-selected-questions">' . $straddtoquiz . '</button>';
     }
 
 }
