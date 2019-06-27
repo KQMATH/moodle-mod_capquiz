@@ -26,7 +26,8 @@ require_once($CFG->dirroot . '/question/editlib.php');
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class classlist_renderer {
@@ -44,9 +45,9 @@ class classlist_renderer {
 
     public function render() {
         global $PAGE;
-        $cmid = $this->capquiz->course_module_id();
+        $cmid = $this->capquiz->course_module()->id;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
-        $users = capquiz_user::list_users($this->capquiz);
+        $users = capquiz_user::list_users($this->capquiz->id());
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];

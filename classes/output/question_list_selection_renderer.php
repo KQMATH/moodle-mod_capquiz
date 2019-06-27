@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

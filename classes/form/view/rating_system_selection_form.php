@@ -17,6 +17,8 @@
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_rating_system_loader;
+use mod_capquiz\capquiz_rating_system_registry;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,8 +40,8 @@ class rating_system_selection_form extends \moodleform {
 
     public function definition() {
         $form = $this->_form;
-        $loader = $this->capquiz->rating_system_loader();
-        $registry = $this->capquiz->rating_system_registry();
+        $loader = new capquiz_rating_system_loader($this->capquiz);
+        $registry = new capquiz_rating_system_registry();
         $index = 0;
         $selectedindex = -1;
         $radioarray = [];

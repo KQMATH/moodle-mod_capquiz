@@ -26,7 +26,7 @@ CAPQuiz includes the work of many [contributors](https://github.com/KQMATH/moodl
 
 **Developers:**
 * Aleksander Skrede <aleksander.skrede@gmail.com>
-* Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+* Sebastian S. Gundersen <<sebastian@sgundersen.com>>
 * [André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
 
 **Original idea:**

@@ -32,11 +32,22 @@ class capquiz_question_attempt {
     /** @var \question_usage_by_activity $quba */
     private $quba;
 
+    /**
+     * capquiz_question_attempt constructor.
+     * @param \question_usage_by_activity $quba
+     * @param \stdClass $record
+     */
     public function __construct(\question_usage_by_activity $quba, \stdClass $record) {
         $this->record = $record;
         $this->quba = $quba;
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @param capquiz_question $question
+     * @return capquiz_question_attempt|null
+     */
     public static function create_attempt(capquiz $capquiz, capquiz_user $user, capquiz_question $question) {
         $quba = $capquiz->question_usage();
         $questions = question_load_questions([$question->question_id()]);
@@ -51,54 +62,78 @@ class capquiz_question_attempt {
         return self::insert_attempt_entry($capquiz, $user, $question, $slot);
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @return capquiz_question_attempt|null
+     */
     public static function active_attempt(capquiz $capquiz, capquiz_user $user) {
         global $DB;
-        $criteria = [
-            'user_id' => $user->id(),
-            'reviewed' => false
-        ];
         try {
-            $entry = $DB->get_record('capquiz_attempt', $criteria, '*', MUST_EXIST);
+            $entry = $DB->get_record('capquiz_attempt', [
+                'user_id' => $user->id(),
+                'reviewed' => false
+            ], '*', MUST_EXIST);
             return new capquiz_question_attempt($capquiz->question_usage(), $entry);
         } catch (\dml_exception $e) {
             return null;
         }
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @param int $attemptid
+     * @return capquiz_question_attempt|null
+     */
     public static function load_attempt(capquiz $capquiz, capquiz_user $user, int $attemptid) {
         global $DB;
-        $criteria = [
-            'id' => $attemptid,
-            'user_id' => $user->id()
-        ];
         try {
-            $entry = $DB->get_record('capquiz_attempt', $criteria, '*', MUST_EXIST);
+            $entry = $DB->get_record('capquiz_attempt', [
+                'id' => $attemptid,
+                'user_id' => $user->id()
+            ], '*', MUST_EXIST);
             return new capquiz_question_attempt($capquiz->question_usage(), $entry);
         } catch (\dml_exception $e) {
             return null;
         }
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @return capquiz_question_attempt|null
+     */
     public static function previous_attempt(capquiz $capquiz, capquiz_user $user) {
         global $DB;
         try {
-            $sql = 'SELECT * FROM {capquiz_attempt} WHERE user_id = ? ORDER BY time_reviewed DESC LIMIT 1';
-            $attempt = $DB->get_record_sql($sql, [$user->id()], MUST_EXIST);
+            $sql = 'SELECT *
+                      FROM {capquiz_attempt}
+                     WHERE user_id = :userid
+                  ORDER BY time_reviewed DESC
+                     LIMIT 1';
+            $attempt = $DB->get_record_sql($sql, ['userid' => $user->id()], MUST_EXIST);
             return new capquiz_question_attempt($capquiz->question_usage(), $attempt);
         } catch (\dml_exception $e) {
             return null;
         }
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @return capquiz_question_attempt[]
+     * @throws \dml_exception
+     */
     public static function inactive_attempts(capquiz $capquiz, capquiz_user $user) : array {
         global $DB;
-        $records = [];
-        $criteria = [
+        $entries = $DB->get_records('capquiz_attempt', [
             'user_id' => $user->id(),
             'answered' => true,
             'reviewed' => true
-        ];
-        foreach ($DB->get_records('capquiz_attempt', $criteria) as $entry) {
+        ]);
+        $records = [];
+        foreach ($entries as $entry) {
             array_push($records, new capquiz_question_attempt($capquiz->question_usage(), $entry));
         }
         return $records;
@@ -156,28 +191,28 @@ class capquiz_question_attempt {
         return isset($this->record->feedback) ? $this->record->feedback : '';
     }
 
-    public function mark_as_answered() : bool {
+    public function mark_as_answered() {
+        global $DB;
         $submitteddata = $this->quba->extract_responses($this->question_slot());
         $this->quba->process_action($this->question_slot(), $submitteddata);
-        $record = $this->record;
-        $record->answered = true;
-        $record->time_answered = time();
+        $this->record->answered = true;
+        $this->record->time_answered = time();
         $this->quba->finish_question($this->question_slot(), time());
         \question_engine::save_questions_usage_by_activity($this->quba);
-        return $this->update_record($record);
+        $DB->update_record('capquiz_attempt', $this->record);
     }
 
-    public function mark_as_reviewed() : bool {
-        $record = $this->record;
-        $record->reviewed = true;
-        $record->time_reviewed = time();
-        return $this->update_record($record);
+    public function mark_as_reviewed() {
+        global $DB;
+        $this->record->reviewed = true;
+        $this->record->time_reviewed = time();
+        $DB->update_record('capquiz_attempt', $this->record);
     }
 
     public function update_student_comment(string $feedback) {
-        $record = $this->record;
-        $record->feedback = ($feedback !== '' ? $feedback : null);
-        $this->update_record($record);
+        global $DB;
+        $this->record->feedback = ($feedback !== '' ? $feedback : null);
+        $DB->update_record('capquiz_attempt', $this->record);
     }
 
     /**
@@ -211,6 +246,13 @@ class capquiz_question_attempt {
         return $comments;
     }
 
+    /**
+     * @param capquiz $capquiz
+     * @param capquiz_user $user
+     * @param capquiz_question $question
+     * @param int $slot
+     * @return capquiz_question_attempt|null
+     */
     private static function insert_attempt_entry(capquiz $capquiz, capquiz_user $user, capquiz_question $question, int $slot) {
         global $DB;
         $record = new \stdClass();
@@ -222,17 +264,6 @@ class capquiz_question_attempt {
             return self::active_attempt($capquiz, $user);
         } catch (\dml_exception $e) {
             return null;
-        }
-    }
-
-    private function update_record($record) : bool {
-        global $DB;
-        try {
-            $DB->update_record('capquiz_attempt', $record);
-            $this->record = $record;
-            return true;
-        } catch (\dml_exception $e) {
-            return false;
         }
     }
 

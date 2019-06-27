@@ -21,7 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_question_list {
@@ -327,6 +328,11 @@ class capquiz_question_list {
         return null;
     }
 
+    /**
+     * @param $context
+     * @return capquiz_question_list[]
+     * @throws \dml_exception
+     */
     public static function load_question_list_templates($context) : array {
         global $DB;
         $records = $DB->get_records('capquiz_question_list', ['is_template' => 1]);

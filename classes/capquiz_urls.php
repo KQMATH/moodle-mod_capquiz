@@ -21,20 +21,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_urls {
-
-    public static $paramid = 'id';
-    public static $paramcmid = 'cmid';
-    public static $paramrating = 'rating';
-    public static $paramattempt = 'attempt';
-    public static $paramtargeturl = 'target-url';
-    public static $paramquestionid = 'question-id';
-    public static $paramquestionpage = 'qpage';
-    public static $paramdeleteselected = 'deleteselected';
-    public static $paramqlistid = 'question-list-id';
 
     public static $urlview = '/mod/capquiz/view.php';
     public static $urlasync = '/mod/capquiz/async.php';
@@ -48,10 +39,10 @@ class capquiz_urls {
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
     public static $urlviewmatchmakingconfig = '/mod/capquiz/view_matchmaking_configuration.php';
 
-    public static function redirect(\moodle_url $target) {
+    public static function redirect(\moodle_url $target) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$redirect);
-        $url->param(self::$paramtargeturl, $target->out_as_local_url());
+        $url->param('action', 'redirect');
+        $url->param('target-url', $target->out_as_local_url());
         return $url;
     }
 
@@ -82,126 +73,125 @@ class capquiz_urls {
     }
 
     /**
+     * @return int
      * @throws \coding_exception
      */
-    public static function require_course_module_id_param() {
-        $id = optional_param(self::$paramid, 0, PARAM_INT);
+    public static function require_course_module_id_param() : int {
+        $id = optional_param('id', 0, PARAM_INT);
         if ($id !== 0) {
             return $id;
         }
-        return required_param(self::$paramcmid, PARAM_INT);
+        return required_param('cmid', PARAM_INT);
     }
 
-    public static function view_url() {
+    public static function view_url() : \moodle_url {
         return self::create_view_url(self::$urlview);
     }
 
-    public static function view_question_list_url(int $questionpage = 0) {
+    public static function view_question_list_url(int $questionpage = 0) : \moodle_url {
         $url = self::create_view_url(self::$urledit);
-        $url->param(self::$paramquestionpage, $questionpage);
+        $url->param('qpage', $questionpage);
         return $url;
     }
 
-    public static function view_matchmaking_configuration_url() {
-        $url = self::create_view_url(self::$urlviewmatchmakingconfig);
-        return $url;
+    public static function view_matchmaking_configuration_url() : \moodle_url {
+        return self::create_view_url(self::$urlviewmatchmakingconfig);
     }
 
-    public static function view_grading_url() {
-        $url = self::create_view_url(self::$urlviewgrading);
-        return $url;
+    public static function view_grading_url() : \moodle_url {
+        return self::create_view_url(self::$urlviewgrading);
     }
 
-    public static function view_classlist_url() {
+    public static function view_classlist_url() : \moodle_url {
         return self::create_view_url(self::$urlviewclasslist);
     }
 
-    public static function view_create_question_list_url() {
+    public static function view_create_question_list_url() : \moodle_url {
         return self::create_view_url(self::$urlviewcreateqlist);
     }
 
-    public static function view_comments_url() {
+    public static function view_comments_url() : \moodle_url {
         return self::create_view_url(self::$urlviewcomments);
     }
 
-    public static function view_import_url() {
+    public static function view_import_url() : \moodle_url {
         return self::create_view_url(self::$urlviewimport);
     }
 
-    public static function add_question_to_list_url(int $questionid) {
+    public static function add_question_to_list_url(int $questionid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$addquestion);
-        $url->param(self::$paramquestionid, $questionid);
+        $url->param('action', 'add-question');
+        $url->param('question-id', $questionid);
         return $url;
     }
 
-    public static function remove_question_from_list_url(int $questionid) {
+    public static function remove_question_from_list_url(int $questionid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$removequestion);
-        $url->param(self::$paramquestionid, $questionid);
+        $url->param('action', 'remove-question');
+        $url->param('question-id', $questionid);
         return $url;
     }
 
-    public static function question_list_publish_url(capquiz_question_list $qlist) {
+    public static function question_list_publish_url(capquiz_question_list $qlist) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramqlistid, $qlist->id());
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$publishquestionlist);
+        $url->param('action', 'publish-question-list');
+        $url->param('question-list-id', $qlist->id());
         return $url;
     }
 
-    public static function question_list_create_template_url(capquiz_question_list $qlist) {
+    public static function question_list_create_template_url(capquiz_question_list $qlist) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramqlistid, $qlist->id());
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$createqlisttemplate);
+        $url->param('action', 'create-question-list-template');
+        $url->param('question-list-id', $qlist->id());
         return $url;
     }
 
-    public static function question_list_select_url(capquiz_question_list $qlist) {
+    public static function question_list_select_url(capquiz_question_list $qlist) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$setquestionlist);
-        $url->param(self::$paramqlistid, $qlist->id());
+        $url->param('action', 'set-question-list');
+        $url->param('question-list-id', $qlist->id());
         return $url;
     }
 
-    public static function set_question_rating_url(int $questionid) {
+    public static function set_question_rating_url(int $questionid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
-        $url->param(self::$paramquestionid, $questionid);
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$setquestionrating);
+        $url->param('action', 'set-question-rating');
+        $url->param('question-id', $questionid);
         return $url;
     }
 
-    public static function merge_qlist(int $qlistid) {
+    public static function merge_qlist(int $qlistid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
+        $url->param('action', 'merge_qlist');
         $url->param('qlistid', $qlistid);
-        $url->param(capquiz_actions::$parameter, 'merge_qlist');
         return $url;
     }
 
-    public static function delete_qlist(int $qlistid) {
+    public static function delete_qlist(int $qlistid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
+        $url->param('action', 'delete_qlist');
         $url->param('qlistid', $qlistid);
-        $url->param(capquiz_actions::$parameter, 'delete_qlist');
         return $url;
     }
 
-    public static function response_submit_url(capquiz_question_attempt $attempt) {
+    public static function response_submit_url(capquiz_question_attempt $attempt) : \moodle_url {
         $url = self::create_view_url(self::$urlasync);
-        $url->param(self::$paramattempt, $attempt->id());
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$attemptanswered);
+        $url->param('action', 'answered');
+        $url->param('attempt', $attempt->id());
         return $url;
     }
 
-    public static function response_reviewed_url(capquiz_question_attempt $attempt) {
+    public static function response_reviewed_url(capquiz_question_attempt $attempt) : \moodle_url {
         $url = self::create_view_url(self::$urlasync);
-        $url->param(self::$paramattempt, $attempt->id());
-        $url->param(capquiz_actions::$parameter, capquiz_actions::$attemptreviewed);
+        $url->param('action', 'reviewed');
+        $url->param('attempt', $attempt->id());
         return $url;
     }
 
-    public static function create_view_url(string $relativeurl) {
+    public static function create_view_url(string $relativeurl) : \moodle_url {
         global $CFG;
         $url = new \moodle_url($CFG->wwwroot . $relativeurl);
-        $url->param(self::$paramid, self::require_course_module_id_param());
+        $url->param('id', self::require_course_module_id_param());
         return $url;
     }
 

@@ -34,7 +34,7 @@ require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
-$action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
+$action = required_param('action', PARAM_TEXT);
 
 $cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);

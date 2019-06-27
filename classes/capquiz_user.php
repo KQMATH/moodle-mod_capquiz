@@ -21,7 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_user {
@@ -29,38 +30,53 @@ class capquiz_user {
     /** @var \stdClass $record */
     private $record;
 
-    /** @var \stdClass $moodlerecord  */
-    private $moodlerecord;
+    /** @var \stdClass $user  */
+    private $user;
 
+    /**
+     * capquiz_user constructor.
+     * @param \stdClass $record
+     * @throws \dml_exception
+     */
     public function __construct(\stdClass $record) {
-        $this->record = $record;
-        $this->moodlerecord = null;
-    }
-
-    public static function load_user(capquiz $capquiz, int $moodleuserid) {
-        if ($user = self::load_db_entry($capquiz, $moodleuserid)) {
-            return $user;
-        }
-        return self::insert_db_entry($capquiz, $moodleuserid);
-    }
-
-    public static function user_count(capquiz $capquiz) : int {
         global $DB;
-        $criteria = ['capquiz_id' => $capquiz->id()];
-        $count = $DB->count_records('capquiz_user', $criteria);
-        return $count;
+        $this->record = $record;
+        $this->user = $DB->get_record('user', ['id' => $this->record->user_id]);
     }
 
     /**
      * @param capquiz $capquiz
+     * @param int $moodleuserid
+     * @return capquiz_user|null
+     * @throws \Exception
+     */
+    public static function load_user(capquiz $capquiz, int $moodleuserid) {
+        global $DB;
+        if ($user = self::load_db_entry($capquiz, $moodleuserid)) {
+            return $user;
+        }
+        $record = new \stdClass();
+        $record->user_id = $moodleuserid;
+        $record->capquiz_id = $capquiz->id();
+        $record->rating = $capquiz->default_user_rating();
+        $DB->insert_record('capquiz_user', $record);
+        return self::load_db_entry($capquiz, $moodleuserid);
+    }
+
+    public static function user_count(int $capquizid) : int {
+        global $DB;
+        return $DB->count_records('capquiz_user', ['capquiz_id' => $capquizid]);
+    }
+
+    /**
+     * @param int $capquizid
      * @return capquiz_user[]
      * @throws \dml_exception
      */
-    public static function list_users(capquiz $capquiz) : array {
+    public static function list_users(int $capquizid) : array {
         global $DB;
-        $criteria = ['capquiz_id' => $capquiz->id()];
         $users = [];
-        foreach ($DB->get_records('capquiz_user', $criteria) as $user) {
+        foreach ($DB->get_records('capquiz_user', ['capquiz_id' => $capquizid]) as $user) {
             $users[] = new capquiz_user($user);
         }
         return $users;
@@ -71,24 +87,15 @@ class capquiz_user {
     }
 
     public function username() : string {
-        if ($this->moodlerecord === null) {
-            $this->load_moodle_entry();
-        }
-        return $this->moodlerecord->username;
+        return $this->user->username;
     }
 
     public function first_name() : string {
-        if ($this->moodlerecord === null) {
-            $this->load_moodle_entry();
-        }
-        return $this->moodlerecord->firstname;
+        return $this->user->firstname;
     }
 
     public function last_name() : string {
-        if ($this->moodlerecord === null) {
-            $this->load_moodle_entry();
-        }
-        return $this->moodlerecord->lastname;
+        return $this->user->lastname;
     }
 
     public function rating() : float {
@@ -105,64 +112,29 @@ class capquiz_user {
 
     public function set_highest_level(int $highestlevel) {
         global $DB;
-        $record = $this->record;
-        $record->highest_level = $highestlevel;
-        if ($DB->update_record('capquiz_user', $record)) {
-            $this->record = $record;
-        }
+        $this->record->highest_level = $highestlevel;
+        $DB->update_record('capquiz_user', $this->record);
     }
 
     public function set_rating(float $rating) {
         global $DB;
-        $record = $this->record;
-        $record->rating = $rating;
-        if ($DB->update_record('capquiz_user', $record)) {
-            $this->record = $record;
-        }
+        $this->record->rating = $rating;
+        $DB->update_record('capquiz_user', $this->record);
     }
 
-    private function load_moodle_entry() {
-        global $DB;
-        $criteria = ['id' => $this->moodle_user_id()];
-        $record = $DB->get_record('user', $criteria);
-        if ($record) {
-            $this->moodlerecord = $record;
-        } else {
-            throw new \Exception('Unable to load user with id ' . $this->moodle_user_id());
-        }
-    }
-
-    private function moodle_user_id() : int {
-        return $this->record->user_id;
-    }
-
+    /**
+     * @param capquiz $capquiz
+     * @param int $moodleuserid
+     * @return capquiz_user|null
+     * @throws \dml_exception
+     */
     private static function load_db_entry(capquiz $capquiz, int $moodleuserid) {
         global $DB;
-        $criteria = [
+        $entry = $entry = $DB->get_record('capquiz_user', [
             'user_id' => $moodleuserid,
             'capquiz_id' => $capquiz->id()
-        ];
-        if ($entry = $DB->get_record('capquiz_user', $criteria)) {
-            return new capquiz_user($entry);
-        }
-        return null;
-    }
-
-    private static function insert_db_entry(capquiz $capquiz, int $moodleuserid) {
-        global $DB;
-        $record = new \stdClass();
-        $record->user_id = $moodleuserid;
-        $record->capquiz_id = $capquiz->id();
-        $record->rating = $capquiz->default_user_rating();
-        try {
-            if ($DB->insert_record('capquiz_user', $record)) {
-                return self::load_db_entry($capquiz, $moodleuserid);
-            } else {
-                throw new \Exception('Unable to persist capquiz user');
-            }
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        ]);
+        return $entry ? new capquiz_user($entry) : null;
     }
 
 }

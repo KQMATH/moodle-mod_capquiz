@@ -44,7 +44,7 @@ class matchmaking_configuration_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->selection_strategy_loader();
+        $this->registry = new capquiz_matchmaking_strategy_loader($this->capquiz);
     }
 
     public function render() {

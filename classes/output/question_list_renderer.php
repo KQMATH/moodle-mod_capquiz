@@ -25,7 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_list_renderer {
@@ -53,10 +54,9 @@ class question_list_renderer {
 
     private function render_questions(capquiz_question_list $qlist) {
         global $PAGE, $CFG;
-        $cmid = $this->capquiz->course_module_id();
+        $cmid = $this->capquiz->course_module()->id;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $rows = [];
-        $quba = $this->capquiz->question_usage();
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];

@@ -18,6 +18,7 @@ namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_matchmaking_strategy_loader;
+use mod_capquiz\capquiz_matchmaking_strategy_registry;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,8 +42,8 @@ class matchmaking_strategy_selection_form extends \moodleform {
 
     public function definition() {
         $form = $this->_form;
-        $loader = $this->capquiz->selection_strategy_loader();
-        $registry = $this->capquiz->selection_strategy_registry();
+        $loader = new capquiz_matchmaking_strategy_loader($this->capquiz);
+        $registry = new capquiz_matchmaking_strategy_registry($this->capquiz);
         $strategies = $registry->selection_strategies();
         $index = 0;
         $selectedindex = -1;

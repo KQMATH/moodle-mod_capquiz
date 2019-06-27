@@ -42,6 +42,11 @@ class capquiz_matchmaking_strategy_registry {
         $this->register_selection_strategies();
     }
 
+    /**
+     * @param string $strategy
+     * @return capquiz_matchmaking_strategy
+     * @throws \Exception
+     */
     public function selector(string $strategy) {
         if ($value = $this->strategies[$strategy]) {
             return array_values($value)[0]();

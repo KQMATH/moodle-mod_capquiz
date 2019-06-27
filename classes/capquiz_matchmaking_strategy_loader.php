@@ -61,6 +61,10 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    /**
+     * @return capquiz_matchmaking_strategy|null
+     * @throws \Exception
+     */
     public function selector() {
         if (!$this->record) {
             return null;

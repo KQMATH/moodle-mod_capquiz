@@ -31,8 +31,8 @@ require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:student', $context);
 
-$action = required_param(capquiz_actions::$parameter, PARAM_TEXT);
-$attemptid = optional_param(capquiz_urls::$paramattempt, null, PARAM_INT);
+$action = required_param('action', PARAM_TEXT);
+$attemptid = optional_param('attempt', null, PARAM_INT);
 $comment = optional_param('studentcomment', '', PARAM_TEXT);
 $cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);
@@ -43,9 +43,9 @@ if ($attemptid !== null) {
     $user = $capquiz->user();
     $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
     $attempt->update_student_comment($comment);
-    if ($action === capquiz_actions::$attemptanswered) {
+    if ($action === 'answered') {
         $capquiz->question_engine()->attempt_answered($user, $attempt);
-    } else if ($action === capquiz_actions::$attemptreviewed) {
+    } else if ($action === 'reviewed') {
         $capquiz->question_engine()->attempt_reviewed($attempt);
     }
     capquiz_urls::redirect_to_dashboard();

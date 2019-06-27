@@ -17,6 +17,8 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_rating_system_loader;
+use mod_capquiz\capquiz_rating_system_registry;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\rating_system_selection_form;
 
@@ -55,8 +57,8 @@ class rating_system_selection_renderer {
         $form = new rating_system_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {
-            $loader = $this->capquiz->rating_system_loader();
-            $registry = $this->capquiz->rating_system_registry();
+            $registry = new capquiz_rating_system_registry();
+            $loader = new capquiz_rating_system_loader($this->capquiz);
             $loader->set_rating_system($registry->rating_systems()[$formdata->rating_system]);
             redirect($this->url);
         }

@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_rating_system_loader;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,12 +34,14 @@ class rating_system_configuration_renderer {
 
     private $capquiz;
     private $renderer;
+
+    /** @var capquiz_rating_system_loader $registry */
     private $registry;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->rating_system_loader();
+        $this->registry = new capquiz_rating_system_loader($capquiz);
     }
 
     public function render() {
