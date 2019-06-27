@@ -21,7 +21,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_question_list {
@@ -35,7 +36,7 @@ class capquiz_question_list {
     /** @var \question_usage_by_activity $quba */
     private $quba;
 
-    public function __construct(\stdClass $record) {
+    public function __construct(\stdClass $record, $context) {
         global $DB;
         $this->record = $record;
         $entries = $DB->get_records('capquiz_question', ['question_list_id' => $this->record->id]);
@@ -43,9 +44,52 @@ class capquiz_question_list {
         foreach ($entries as $entry) {
             $this->questions[] = new capquiz_question($entry);
         }
-        if ($this->has_question_usage()) {
-            $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+        $this->create_question_usage($context);
+        $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+    }
+
+    public function star_ratings_array() {
+        $ratings = explode(',', $this->record->star_ratings);
+        foreach ($ratings as &$rating) {
+            $rating = (int)$rating;
         }
+        return $ratings;
+    }
+
+    public function max_stars() {
+        return count($this->star_ratings_array());
+    }
+
+    public function star_rating(int $star) {
+        $stars = $this->star_ratings_array();
+        return $stars[$star - 1];
+    }
+
+    /**
+     * @param int[] $ratings
+     * @throws \dml_exception
+     */
+    public function set_star_ratings(array $ratings) {
+        global $DB;
+        $starratings = implode(',', $ratings);
+        if (strlen($starratings) < 250) {
+            $this->record->star_ratings = $starratings;
+            $DB->update_record('capquiz_question_list', $this->record);
+        }
+    }
+
+    public function next_level_percent(capquiz $capquiz, int $rating) : int {
+        $goal = 0;
+        for ($star = 1; $star <= $this->max_stars(); $star++) {
+            $goal = $this->star_rating($star);
+            if ($goal > $rating) {
+                $previous = $star > 1 ? $this->star_rating($star - 1) : $capquiz->default_user_rating();
+                $rating -= $previous;
+                $goal -= $previous;
+                break;
+            }
+        }
+        return $goal >= 1 ? (int)($rating / $goal * 100) : 0;
     }
 
     public function question_usage() {
@@ -58,9 +102,7 @@ class capquiz_question_list {
 
     public function author() {
         global $DB;
-        $criteria = ['id' => $this->record->author];
-        $record = $DB->get_record('user', $criteria);
-        // Returning null instead of false on failure.
+        $record = $DB->get_record('user', ['id' => $this->record->author]);
         return $record ? $record : null;
     }
 
@@ -88,67 +130,6 @@ class capquiz_question_list {
 
     public function description() : string {
         return $this->record->description;
-    }
-
-    public function first_level() : int {
-        return 1;
-    }
-
-    public function level_count() : int {
-        return 5;
-    }
-
-    public function required_rating_for_level(int $level) {
-        $field = "level_{$level}_rating";
-        if (!isset($this->record->{$field})) {
-            return null;
-        }
-        return (int)$this->record->{$field};
-    }
-
-    public function set_level_ratings(array $ratings) {
-        global $DB;
-        $numratings = count($ratings);
-        if ($numratings !== $this->level_count()) {
-            throw new \Exception("$numratings ratings given. " . $this->level_count() . ' required.');
-        }
-        $level = $this->first_level();
-        foreach ($ratings as $rating) {
-            $field = "level_{$level}_rating";
-            $this->record->{$field} = $rating;
-            $level++;
-        }
-        $DB->update_record('capquiz_question_list', $this->record);
-    }
-
-    public function user_level(capquiz_user $user) : int {
-        $stars = 0;
-        for ($level = 1; $level < 6; $level++) {
-            if ($user->rating() >= $this->required_rating_for_level($level)) {
-                $stars++;
-            }
-        }
-        return $stars;
-    }
-
-    public function next_level_percent(capquiz $capquiz, int $rating) : int {
-        $goal = 0;
-        for ($level = 1; $level < 6; $level++) {
-            $goal = $this->required_rating_for_level($level);
-            if ($goal > $rating) {
-                $previous = $capquiz->default_user_rating();
-                if ($level > 1) {
-                    $previous = $this->required_rating_for_level($level - 1);
-                }
-                $rating -= $previous;
-                $goal -= $previous;
-                break;
-            }
-        }
-        if ($goal < 1) {
-            return 0;
-        }
-        return (int)($rating / $goal * 100);
     }
 
     public function time_created() : string {
@@ -269,7 +250,7 @@ class capquiz_question_list {
             $this->copy_questions_to_list($newid);
             $DB->commit_delegated_transaction($transaction);
             $record->id = $newid;
-            return new capquiz_question_list($record);
+            return new capquiz_question_list($record, $capquiz->context());
         } catch (\dml_exception $exception) {
             $DB->rollback_delegated_transaction($transaction, $exception);
             return null;
@@ -285,11 +266,7 @@ class capquiz_question_list {
         $record->capquiz_id = $capquiz->id();
         $record->title = $title;
         $record->description = $description;
-        $record->level_1_rating = $ratings[0];
-        $record->level_2_rating = $ratings[1];
-        $record->level_3_rating = $ratings[2];
-        $record->level_4_rating = $ratings[3];
-        $record->level_5_rating = $ratings[4];
+        $record->star_ratings = implode(',', $ratings);
         $record->author = $USER->id;
         $record->is_template = 0;
         $record->time_created = time();
@@ -297,7 +274,7 @@ class capquiz_question_list {
         $record->context_id = \context_course::instance($capquiz->course()->id)->id;
         try {
             $qlistid = $DB->insert_record('capquiz_question_list', $record);
-            $qlist = self::load_any($qlistid);
+            $qlist = self::load_any($qlistid, $capquiz->context());
             if (!$qlist) {
                 return null;
             }
@@ -310,30 +287,27 @@ class capquiz_question_list {
 
     public static function load_question_list(capquiz $capquiz) {
         global $DB;
-        $conditions = ['capquiz_id' => $capquiz->id()];
-        $record = $DB->get_record('capquiz_question_list', $conditions);
-        if ($record) {
-            return new capquiz_question_list($record);
-        }
-        return null;
+        $record = $DB->get_record('capquiz_question_list', ['capquiz_id' => $capquiz->id()]);
+        return $record ? new capquiz_question_list($record, $capquiz->context()) : null;
     }
 
-    public static function load_any(int $qlistid) {
+    public static function load_any(int $qlistid, $context) {
         global $DB;
-        $conditions = ['id' => $qlistid];
-        $record = $DB->get_record('capquiz_question_list', $conditions);
-        if ($record) {
-            return new capquiz_question_list($record);
-        }
-        return null;
+        $record = $DB->get_record('capquiz_question_list', ['id' => $qlistid]);
+        return $record ? new capquiz_question_list($record, $context) : null;
     }
 
-    public static function load_question_list_templates() : array {
+    /**
+     * @param $context
+     * @return capquiz_question_list[]
+     * @throws \dml_exception
+     */
+    public static function load_question_list_templates($context) : array {
         global $DB;
         $records = $DB->get_records('capquiz_question_list', ['is_template' => 1]);
         $qlists = [];
         foreach ($records as $record) {
-            $qlists[] = new capquiz_question_list($record);
+            $qlists[] = new capquiz_question_list($record, $context);
         }
         return $qlists;
     }

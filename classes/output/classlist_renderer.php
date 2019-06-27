@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,7 +27,8 @@ require_once($CFG->dirroot . '/question/editlib.php');
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class classlist_renderer {
@@ -43,7 +45,10 @@ class classlist_renderer {
     }
 
     public function render() {
-        $users = capquiz_user::list_users($this->capquiz);
+        global $PAGE;
+        $cmid = $this->capquiz->course_module()->id;
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        $users = capquiz_user::list_users($this->capquiz->id());
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];
@@ -52,12 +57,22 @@ class classlist_renderer {
                 'username' => $user->username(),
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),
-                'rating' => $user->rating(),
-                'stars' => $user->highest_level()
+                'rating' => round($user->rating(), 2),
+                'stars' => $user->highest_stars_achieved(),
+                'graded_stars' => $user->highest_stars_graded(),
+                'passing_grade' => $user->highest_stars_graded() >= $this->capquiz->stars_to_pass()
             ];
         }
         $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [
-            'users' => $rows
+            'users' => $rows,
+            'regrade' => [
+                'method' => 'post',
+                'classes' => 'capquiz-regrade-all',
+                'url' => capquiz_urls::regrade_all_url()->out(false),
+                'primary' => true,
+                'label' => get_string('regrade_all', 'capquiz'),
+                'disabled' => !$this->capquiz->is_grading_completed()
+            ]
         ]);
         return $leaderboard;
     }

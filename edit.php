@@ -34,7 +34,8 @@ $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
 try {
-    $capquiz = capquiz::create();
+    $cmid = capquiz_urls::require_course_module_id_param();
+    $capquiz = new capquiz($cmid);
     capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
     $bankview = $bankrenderer->create_view();

@@ -36,6 +36,11 @@ class capquiz_rating_system_registry {
         $this->register_rating_systems();
     }
 
+    /**
+     * @param $system
+     * @return capquiz_rating_system
+     * @throws \Exception
+     */
     public function rating_system($system) {
         if ($value = $this->systems[$system]) {
             return array_values($value)[0]();

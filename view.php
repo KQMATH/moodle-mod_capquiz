@@ -31,7 +31,8 @@ $cmid = capquiz_urls::require_course_module_id_param();
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
 
-$capquiz = capquiz::create();
+$cmid = capquiz_urls::require_course_module_id_param();
+$capquiz = new capquiz($cmid);
 if (!$capquiz) {
     capquiz_urls::redirect_to_front_page();
 }
@@ -42,7 +43,7 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($capquiz->has_question_list()) {
         $capquiz->renderer()->display_instructor_dashboard($capquiz);
     } else {
-        $capquiz->renderer()->display_choose_question_list_view();
+        $capquiz->renderer()->display_choose_question_list_view($capquiz);
     }
 } else {
     require_capability('mod/capquiz:student', $capquiz->context());
@@ -51,5 +52,6 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($qengine) {
         $qengine->delete_invalid_attempt($capquiz->user());
     }
+    $capquiz->update_grades();
     $capquiz->renderer()->display_question_attempt_view($capquiz);
 }

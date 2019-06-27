@@ -16,7 +16,7 @@
 
 /**
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastsg@stud.ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,8 @@ require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
-$capquiz = capquiz::create();
+$cmid = capquiz_urls::require_course_module_id_param();
+$capquiz = new capquiz($cmid);
 if (!$capquiz) {
     capquiz_urls::redirect_to_front_page();
 }

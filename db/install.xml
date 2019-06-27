@@ -14,7 +14,9 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates whether or not the question list is published, if it has one"/>
-        <FIELD NAME="default_user_rating" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" COMMENT="Default rating for users"/>
+        <FIELD NAME="default_user_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" COMMENT="Default rating for users"/>
+        <FIELD NAME="stars_to_pass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="How many stars are required for a passing grade"/>
+        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -29,11 +31,7 @@
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this question list"/>
         <FIELD NAME="author" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
-        <FIELD NAME="level_1_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1300" SEQUENCE="false"/>
-        <FIELD NAME="level_2_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1450" SEQUENCE="false"/>
-        <FIELD NAME="level_3_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1600" SEQUENCE="false"/>
-        <FIELD NAME="level_4_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1800" SEQUENCE="false"/>
-        <FIELD NAME="level_5_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
+        <FIELD NAME="star_ratings" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="1300,1450,1600,1800,2000" SEQUENCE="false"/>
         <FIELD NAME="is_template" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -67,7 +65,8 @@
         <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
-        <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest level / number of stars attained by this user"/>
+        <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest number of stars attained by this user"/>
+        <FIELD NAME="stars_graded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of stars for the final grade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

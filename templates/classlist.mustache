@@ -25,21 +25,33 @@
                 "username": "sebastsg",
                 "firstname": "Sebastian",
                 "lastname": "Gundersen",
-                "rating": 1553.6,
-                "stars": 3
+                "rating": 1653.6,
+                "stars": 4,
+                "graded_stars": 3,
+                "passing_grade": true
             }
-        ]
+        ],
+        "regrade": {
+            "method": "post",
+            "classes": "capquiz-regrade-all",
+            "url": "",
+            "primary": true,
+            "label": "Regrade all",
+            "diabled": false
+        }
     }
 }}
 <h2>{{#str}} classlist, capquiz {{/str}}</h2>
-<table class="capquiz-tree">
+<table class="capquiz-tree capquiz-classlist">
     <tr>
         <th>#</th>
-        <th>{{#str}} username, capquiz {{/str}}</th>
-        <th>{{#str}} firstname, capquiz {{/str}}</th>
-        <th>{{#str}} lastname, capquiz {{/str}}</th>
-        <th>{{#str}} rating, capquiz {{/str}}</th>
-        <th>{{#str}} stars, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} username, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} firstname, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} lastname, capquiz {{/str}}</th>
+        <th class="capquiz-sortable capquiz-sortable-default-desc">{{#str}} rating, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} stars, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} graded_stars, capquiz {{/str}}</th>
+        <th class="capquiz-sortable">{{#str}} pass_or_fail, capquiz {{/str}}</th>
     </tr>
     {{#users}}
         <tr>
@@ -50,6 +62,11 @@
                 <td>{{ lastname }}</td>
                 <td>{{ rating }}</td>
                 <td>{{ stars }}</td>
+                <td>{{ graded_stars }}</td>
+                <td>
+                    {{#passing_grade}}{{#str}} grade_pass, capquiz {{/str}}{{/passing_grade}}
+                    {{^passing_grade}}{{#str}} grade_fail, capquiz {{/str}}{{/passing_grade}}
+                </td>
             {{/.}}
         </tr>
     {{/users}}
@@ -58,3 +75,7 @@
 {{^users}}
     <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
 {{/users}}
+
+{{#regrade}}
+    {{>core/single_button}}
+{{/regrade}}

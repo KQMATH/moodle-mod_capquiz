@@ -124,7 +124,10 @@ class question_attempt_renderer {
                 'body' => $quba->render_question($attempt->question_slot(), $options, $attempt->question_id()),
                 'slots' => '',
                 'comment' => $attempt->student_comment()
-            ]
+            ],
+            'gradingdone' => $this->capquiz->is_grading_completed(),
+            'finalgrade' => $this->capquiz->user()->highest_stars_graded(),
+            'gradingpass' => $this->capquiz->user()->highest_stars_graded() >= $this->capquiz->stars_to_pass()
         ]);
     }
 
@@ -151,9 +154,9 @@ class question_attempt_renderer {
         $stars = [];
         $blankstars = [];
         $nostars = [];
-        for ($star = 1; $star < $qlist->level_count() + 1; $star++) {
-            if ($user->highest_level() >= $star) {
-                if ($user->rating() >= $qlist->required_rating_for_level($star)) {
+        for ($star = 1; $star <= $qlist->max_stars(); $star++) {
+            if ($user->highest_stars_achieved() >= $star) {
+                if ($user->rating() >= $qlist->star_rating($star)) {
                     $stars[] = true;
                 } else {
                     $blankstars[] = true;

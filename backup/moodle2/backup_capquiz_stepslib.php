@@ -27,8 +27,7 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         ]);
         $questionlist = new backup_nested_element('questionlist', null, [
             'id', 'capquiz_id', 'question_usage_id', 'title', 'author', 'description',
-            'level_1_rating', 'level_2_rating', 'level_3_rating', 'level_4_rating', 'level_5_rating',
-            'is_template', 'time_created', 'time_modified', 'default_question_rating'
+            'star_ratings', 'is_template', 'time_created', 'time_modified', 'default_question_rating'
         ]);
         $this->add_question_usages($questionlist, 'question_usage_id');
         $questions = new backup_nested_element('questions');

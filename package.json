@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "moodle-mod_capquiz",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "description": "Computer adaptive practice activity module for Moodle",
   "main": "",
   "dependencies": {
@@ -25,7 +25,8 @@
     },
     {
       "name": "Sebastian S. Gundersen",
-      "email": "sebastsg@stud.ntnu.no"
+      "email": "sebastian@sgundersen.com",
+      "url": "https://github.com/sebastsg"
     },
     {
       "name": "Aleksander Skrede",

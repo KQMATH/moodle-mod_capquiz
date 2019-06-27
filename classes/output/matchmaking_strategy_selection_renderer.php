@@ -17,6 +17,8 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_matchmaking_strategy_loader;
+use mod_capquiz\capquiz_matchmaking_strategy_registry;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\matchmaking_strategy_selection_form;
 
@@ -42,7 +44,7 @@ class matchmaking_strategy_selection_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->url = capquiz_urls::view_matchmaking_configuration_url();
+        $this->url = capquiz_urls::view_rating_system_url();
     }
 
     public function set_redirect_url(\moodle_url $url) {
@@ -55,8 +57,8 @@ class matchmaking_strategy_selection_renderer {
         $form = new matchmaking_strategy_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {
-            $loader = $this->capquiz->selection_strategy_loader();
-            $registry = $this->capquiz->selection_strategy_registry();
+            $loader = new capquiz_matchmaking_strategy_loader($this->capquiz);
+            $registry = new capquiz_matchmaking_strategy_registry($this->capquiz);
             $strategy = $registry->selection_strategies()[$formdata->strategy];
             $loader->set_strategy($strategy);
             redirect($this->url);

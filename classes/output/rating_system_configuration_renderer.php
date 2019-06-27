@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_rating_system_loader;
 use mod_capquiz\capquiz_urls;
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,14 +31,17 @@ require_once($CFG->dirroot . '/question/editlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rating_system_configuration_renderer {
+
     private $capquiz;
     private $renderer;
+
+    /** @var capquiz_rating_system_loader $registry */
     private $registry;
 
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->registry = $this->capquiz->rating_system_loader();
+        $this->registry = new capquiz_rating_system_loader($capquiz);
     }
 
     public function render() {
@@ -63,7 +67,7 @@ class rating_system_configuration_renderer {
             $formdata = $form->get_data();
             if ($formdata) {
                 $this->registry->configure_current_rating_system($formdata);
-                redirect(capquiz_urls::view_rating_system_configuration_url());
+                redirect(capquiz_urls::view_rating_system_url());
             }
             return $form->render();
         }

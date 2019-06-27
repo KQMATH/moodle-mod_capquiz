@@ -63,7 +63,7 @@ class instructor_dashboard_renderer {
             'published_status' => $this->capquiz->is_published() ? $strpublished : $strnotpublished,
             'question_list_title' => $qlist ? $qlist->title() : $strnoqlistassigned,
             'question_count' => $qlist ? $qlist->question_count() : $strnoquestions,
-            'enrolled_student_count' => capquiz_user::user_count($this->capquiz)
+            'enrolled_student_count' => capquiz_user::user_count($this->capquiz->id())
         ]);
     }
 

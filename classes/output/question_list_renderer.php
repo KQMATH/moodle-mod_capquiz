@@ -25,7 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_list_renderer {
@@ -42,6 +43,9 @@ class question_list_renderer {
     }
 
     public function render() {
+        global $PAGE;
+        $cmid = $this->capquiz->course_module()->id;
+        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $qlist = $this->capquiz->question_list();
         if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);
@@ -52,11 +56,8 @@ class question_list_renderer {
     }
 
     private function render_questions(capquiz_question_list $qlist) {
-        global $PAGE, $CFG;
-        $cmid = $this->capquiz->course_module_id();
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        global $CFG;
         $rows = [];
-        $quba = $this->capquiz->question_usage();
         $questions = $qlist->questions();
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
@@ -69,27 +70,18 @@ class question_list_renderer {
                 'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
+            $targetblank = ['name' => 'target', 'value' => '_blank'];
             $edit = $courseid === 0 ? false : [
                 'url' => $editurl->out(false),
                 'label' => get_string('edit'),
                 'classes' => 'fa fa-edit',
-                'attributes' => [
-                    [
-                        'name' => 'target',
-                        'value' => '_blank'
-                    ]
-                ]
+                'attributes' => [$targetblank]
             ];
             $preview = $courseid === 0 ? false : [
                 'url' => $previewurl->out(false),
                 'label' => get_string('preview'),
                 'classes' => 'fa fa-search-plus',
-                'attributes' => [
-                    [
-                        'name' => 'target',
-                        'value' => '_blank'
-                    ]
-                ]
+                'attributes' => [$targetblank]
             ];
             $rows[] = [
                 'index' => $i + 1,

@@ -21,6 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,6 +33,7 @@ class capquiz_question {
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
+        // TODO: This query should probably be done in question list.
         $question = $DB->get_record('question', ['id' => $record->question_id]);
         if ($question !== false) {
             $this->record->name = $question->name;

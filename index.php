@@ -27,7 +27,7 @@ require_once('../../config.php');
 
 require_login();
 
-$courseid = required_param(capquiz_urls::$paramid, PARAM_INT);
+$courseid = required_param('id', PARAM_INT);
 $course = $DB->get_record('course', ['id' => $courseid]);
 if ($course) {
     $PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$urlview));

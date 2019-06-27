@@ -14,36 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_capquiz;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquiz_question_registry {
 
-    /** @var capquiz $capquiz */
-    private $capquiz;
+namespace mod_capquiz;
 
-    public function __construct(capquiz $capquiz) {
-        $this->capquiz = $capquiz;
-    }
+require_once('../../config.php');
 
-    public function capquiz_instance() : capquiz {
-        return $this->capquiz;
-    }
+require_login();
 
-    public function question_ids() : array {
-        $questions = $this->capquiz->question_list()->questions();
-        $ret = [];
-        foreach ($questions as $question) {
-            $ret[] = $question->id();
-        }
-        return $ret;
-    }
+$cmid = required_param('id', PARAM_INT);
+$cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
+require_login($cm->course, false, $cm);
 
+$cmid = capquiz_urls::require_course_module_id_param();
+$capquiz = new capquiz($cmid);
+if (!$capquiz) {
+    capquiz_urls::redirect_to_front_page();
 }
+
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlview);
+
+if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
+    redirect(capquiz_urls::view_classlist_url());
+}
+
+redirect(capquiz_urls::view_url());

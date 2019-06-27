@@ -23,7 +23,6 @@
 define(['jquery', 'core/str'], function($, mString) {
 
     /**
-     *
      * @param $form
      */
     function moveCommentFieldToForm($form) {
@@ -34,6 +33,11 @@ define(['jquery', 'core/str'], function($, mString) {
         $form.prepend($comment);
     }
 
+    /**
+     * Show star tooltip.
+     * @param $element
+     * @param text
+     */
     function showTooltip($element, text) {
         var $tooltip = $('.capquiz-star-tooltip');
         $tooltip.html(text);
@@ -44,10 +48,16 @@ define(['jquery', 'core/str'], function($, mString) {
         $tooltip.css('top', y + 'px');
     }
 
+    /**
+     * Hide star tooltip.
+     */
     function hideTooltip() {
         $('.capquiz-star-tooltip').css('display', 'none');
     }
 
+    /**
+     * Register event listeners for showing tooltips on the stars.
+     */
     function enableTooltips() {
         $(document).on('mouseover', '.capquiz-quiz-stars span', function () {
             var $self = $(this);
