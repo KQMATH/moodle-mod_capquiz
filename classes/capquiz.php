@@ -60,8 +60,8 @@ class capquiz {
         $this->qlist = capquiz_question_list::load_question_list($this);
     }
 
-    public function update_grades() {
-        if (!$this->is_grading_completed()) {
+    public function update_grades(bool $force = false) {
+        if (!$this->is_grading_completed() || $force) {
             capquiz_update_grades($this->record);
         }
     }

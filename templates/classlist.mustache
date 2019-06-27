@@ -30,7 +30,15 @@
                 "graded_stars": 3,
                 "passing_grade": true
             }
-        ]
+        ],
+        "regrade": {
+            "method:" "post",
+            "classes": "capquiz-regrade-all",
+            "url": "",
+            "primary": true,
+            "label": "Regrade all",
+            "diabled": false
+        }
     }
 }}
 <h2>{{#str}} classlist, capquiz {{/str}}</h2>
@@ -67,3 +75,7 @@
 {{^users}}
     <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
 {{/users}}
+
+{{#regrade}}
+    {{>core/single_button}}
+{{/regrade}}

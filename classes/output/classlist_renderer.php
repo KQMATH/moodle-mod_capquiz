@@ -17,6 +17,7 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -63,7 +64,15 @@ class classlist_renderer {
             ];
         }
         $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [
-            'users' => $rows
+            'users' => $rows,
+            'regrade' => [
+                'method' => 'post',
+                'classes' => 'capquiz-regrade-all',
+                'url' => capquiz_urls::regrade_all_url()->out(false),
+                'primary' => true,
+                'label' => get_string('regrade_all', 'capquiz'),
+                'disabled' => !$this->capquiz->is_grading_completed()
+            ]
         ]);
         return $leaderboard;
     }

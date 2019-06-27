@@ -63,6 +63,9 @@ class capquiz_action_performer {
             case 'delete_qlist':
                 self::delete_question_list();
                 break;
+            case 'regrade-all':
+                $capquiz->update_grades(true);
+                break;
             default:
                 break;
         }
@@ -143,7 +146,7 @@ class capquiz_action_performer {
 
     private static function create_capquiz_question(int $questionid, capquiz_question_list $list, float $rating) {
         global $DB;
-        if ($questionid === 0){
+        if ($questionid === 0) {
             return;
         }
         $ratedquestion = new \stdClass();

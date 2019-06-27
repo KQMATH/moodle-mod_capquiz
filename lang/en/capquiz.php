@@ -52,6 +52,7 @@ $string['graded_stars'] = 'Grade';
 $string['pass_or_fail'] = 'Pass / Fail';
 $string['grade_pass'] = 'Passed';
 $string['grade_fail'] = 'Failed';
+$string['regrade_all'] = 'Regrade all';
 
 $string['comments'] = 'Comments';
 $string['import'] = 'Import';

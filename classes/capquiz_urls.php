@@ -160,6 +160,12 @@ class capquiz_urls {
         return $url;
     }
 
+    public static function regrade_all_url() : \moodle_url {
+        $url = self::create_view_url(self::$urlaction);
+        $url->param('action', 'regrade-all');
+        return $url;
+    }
+
     public static function merge_qlist(int $qlistid) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'merge_qlist');
