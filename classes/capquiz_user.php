@@ -102,17 +102,17 @@ class capquiz_user {
         return $this->record->rating;
     }
 
-    public function highest_level() : int {
+    public function highest_stars_achieved() : int {
         return $this->record->highest_level;
     }
 
-    public function stars_graded() : int {
+    public function highest_stars_graded() : int {
         return $this->record->stars_graded;
     }
 
-    public function set_highest_level(int $highestlevel) {
+    public function set_highest_star(int $higheststar) {
         global $DB;
-        $this->record->highest_level = $highestlevel;
+        $this->record->highest_level = $higheststar;
         $DB->update_record('capquiz_user', $this->record);
     }
 

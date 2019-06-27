@@ -31,11 +31,7 @@
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this question list"/>
         <FIELD NAME="author" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
-        <FIELD NAME="level_1_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1300" SEQUENCE="false"/>
-        <FIELD NAME="level_2_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1450" SEQUENCE="false"/>
-        <FIELD NAME="level_3_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1600" SEQUENCE="false"/>
-        <FIELD NAME="level_4_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1800" SEQUENCE="false"/>
-        <FIELD NAME="level_5_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="2000" SEQUENCE="false"/>
+        <FIELD NAME="star_ratings" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="1300,1450,1600,1800,2000" SEQUENCE="false"/>
         <FIELD NAME="is_template" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

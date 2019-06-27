@@ -84,7 +84,7 @@ class capquiz_question_engine {
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $ratingsystem->update_user_rating($user, $question, 1);
-            $this->set_new_highest_level_if_attained($user);
+            $this->set_new_highest_star_if_attained($user);
         } else {
             $ratingsystem->update_user_rating($user, $question, 0);
         }
@@ -94,15 +94,13 @@ class capquiz_question_engine {
         }
     }
 
-    private function set_new_highest_level_if_attained(capquiz_user $user) {
-        $list = $this->capquiz->question_list();
-        for ($level = $list->level_count(); $level > 0; $level--) {
-            $required = $list->required_rating_for_level($level);
-            if ($user->rating() >= $required) {
-                if ($user->highest_level() < $level) {
-                    $user->set_highest_level($level);
-                    break;
-                }
+    private function set_new_highest_star_if_attained(capquiz_user $user) {
+        $qlist = $this->capquiz->question_list();
+        for ($star = $qlist->max_stars(); $star > 0; $star--) {
+            $required = $qlist->star_rating($star);
+            if ($user->rating() >= $required && $user->highest_stars_achieved() < $star) {
+                $user->set_highest_star($star);
+                break;
             }
         }
     }
@@ -112,10 +110,8 @@ class capquiz_question_engine {
     }
 
     private function new_attempt_for_user(capquiz_user $user) {
-        if ($question = $this->find_question_for_user($user)) {
-            return capquiz_question_attempt::create_attempt($this->capquiz, $user, $question);
-        }
-        return null;
+        $question = $this->find_question_for_user($user);
+        return $question ? capquiz_question_attempt::create_attempt($this->capquiz, $user, $question) : null;
     }
 
     private function find_question_for_user(capquiz_user $user) {

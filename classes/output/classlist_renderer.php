@@ -58,9 +58,9 @@ class classlist_renderer {
                 'firstname' => $user->first_name(),
                 'lastname' => $user->last_name(),
                 'rating' => round($user->rating(), 2),
-                'stars' => $user->highest_level(),
-                'graded_stars' => $user->stars_graded(),
-                'passing_grade' => $user->stars_graded() >= $this->capquiz->stars_to_pass()
+                'stars' => $user->highest_stars_achieved(),
+                'graded_stars' => $user->highest_stars_graded(),
+                'passing_grade' => $user->highest_stars_graded() >= $this->capquiz->stars_to_pass()
             ];
         }
         $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [

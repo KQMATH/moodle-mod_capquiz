@@ -46,16 +46,21 @@ class grading_configuration_form extends \moodleform {
         $form->setType('default_user_rating', PARAM_INT);
         $form->setDefault('default_user_rating', $this->capquiz->default_user_rating());
         $form->addRule('default_user_rating', get_string('default_user_rating_required', 'capquiz'), 'required', null, 'client');
-        for ($i = 0; $i < $qlist->level_count(); $i++) {
-            $level = $i + $qlist->first_level();
-            $element = "level_{$level}_rating";
-            $text = get_string('level_rating', 'capquiz', $level);
-            $requiredtext = get_string('level_rating_required', 'capquiz', $level);
-            $form->addElement('text', $element, $text);
-            $form->setType($element, PARAM_INT);
-            $form->addRule($element, $requiredtext, 'required', null, 'client');
-            $form->setDefault($element, $qlist->required_rating_for_level($level));
+        for ($star = 1; $star <= $qlist->max_stars(); $star++) {
+            $groupname = "star_group_$star";
+            $input = "star_rating_$star";
+            $text = get_string('level_rating', 'capquiz', $star);
+            $elements = [];
+            $elements[] = $form->createElement('text', $input, $text);
+            if ($star > 1) {
+                $elements[] = $form->createElement('submit', "delstarbutton$star", 'Delete star');
+            }
+            $form->addGroup($elements, $groupname, $text, [''], false);
+            $form->setType($input, PARAM_INT);
+            $form->setDefault($input, $qlist->star_rating($star));
         }
+
+        $form->addElement('submit', 'addstarbutton', 'Add star');
 
         $strstarstopass = get_string('stars_to_pass', 'capquiz');
         $strstarstopassrequired = get_string('stars_to_pass_required', 'capquiz');
@@ -76,15 +81,6 @@ class grading_configuration_form extends \moodleform {
         $errors = [];
         if (empty($data['default_user_rating'])) {
             $errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');
-        }
-        $qlist = $this->capquiz->question_list();
-        for ($i = 0; $i < $qlist->level_count(); $i++) {
-            $level = $i + $qlist->first_level();
-            $element = "level_{$level}_rating";
-            if (empty($data[$element])) {
-                $requiredtext = get_string('level_rating_required', 'capquiz', $level);
-                $errors[$element] = $requiredtext;
-            }
         }
         if (empty($data['starstopass']) || $data['starstopass'] < 0 || $data['starstopass'] > 5) {
             $errors['starstopass'] = get_string('stars_to_pass_required', 'capquiz');

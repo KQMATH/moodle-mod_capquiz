@@ -55,26 +55,34 @@ class grading_configuration_renderer {
         $form = new grading_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {
-            if ($formdata->default_user_rating) {
-                $this->capquiz->set_default_user_rating($formdata->default_user_rating);
-            }
-            $ratings = [
-                $formdata->level_1_rating,
-                $formdata->level_2_rating,
-                $formdata->level_3_rating,
-                $formdata->level_4_rating,
-                $formdata->level_5_rating
-            ];
-            $this->capquiz->question_list()->set_level_ratings($ratings);
-            if ($formdata->starstopass) {
-                $this->capquiz->set_stars_to_pass($formdata->starstopass);
-            }
-            if ($formdata->timedue) {
-                $this->capquiz->set_time_due($formdata->timedue);
-            }
-            redirect(capquiz_urls::view_grading_url());
+            $this->process_rating_configuration($formdata);
         }
         return $form->render();
+    }
+
+    private function process_rating_configuration($formdata) {
+        $star = 1;
+        $ratings = [];
+        while (isset($formdata->{"star_rating_$star"})) {
+            if (!isset($formdata->{"delstarbutton$star"})) {
+                $ratings[] = (int)$formdata->{"star_rating_$star"};
+            }
+            $star++;
+        }
+        if (isset($formdata->addstarbutton)) {
+            $ratings[] = end($ratings) + 100;
+        }
+        if ($formdata->default_user_rating) {
+            $this->capquiz->set_default_user_rating($formdata->default_user_rating);
+        }
+        $this->capquiz->question_list()->set_star_ratings($ratings);
+        if ($formdata->starstopass) {
+            $this->capquiz->set_stars_to_pass($formdata->starstopass);
+        }
+        if ($formdata->timedue) {
+            $this->capquiz->set_time_due($formdata->timedue);
+        }
+        redirect(capquiz_urls::view_grading_url());
     }
 
 }

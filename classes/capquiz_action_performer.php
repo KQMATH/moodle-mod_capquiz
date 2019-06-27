@@ -65,6 +65,7 @@ class capquiz_action_performer {
                 break;
             case 'regrade-all':
                 $capquiz->update_grades(true);
+                capquiz_urls::redirect_to_url(capquiz_urls::view_classlist_url());
                 break;
             default:
                 break;

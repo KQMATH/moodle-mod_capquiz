@@ -58,5 +58,31 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019062550, 'capquiz');
     }
+    if ($oldversion < 2019062553) {
+        $table = new xmldb_table('capquiz_question_list');
+        $default = '1300,1450,1600,1800,2000';
+        $field = new xmldb_field('star_ratings', XMLDB_TYPE_CHAR, 255, null, true, null, $default);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $qlists = $DB->get_records('capquiz_question_list');
+        foreach ($qlists as $qlist) {
+            $qlist->star_ratings = implode(',', [
+                $qlist->level_1_rating,
+                $qlist->level_2_rating,
+                $qlist->level_3_rating,
+                $qlist->level_4_rating,
+                $qlist->level_5_rating
+            ]);
+            $DB->update_record('capquiz_question_list', $qlist);
+        }
+        for ($i = 1; $i <= 5; $i++) {
+            $field = new xmldb_field("level_{$i}_rating", XMLDB_TYPE_INTEGER, 10);
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+        }
+        upgrade_mod_savepoint(true, 2019062553, 'capquiz');
+    }
     return true;
 }
