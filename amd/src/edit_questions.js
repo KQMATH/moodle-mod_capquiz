@@ -189,7 +189,11 @@ define(['jquery'], function($) {
         $(document).on('click', '.capquiz-sortable', function() {
             sortTable($(this));
         });
-        $('.capquiz-sortable-default').each(function () {
+        $('.capquiz-sortable-default-asc').each(function () {
+            sortTable($(this));
+            sortTable($(this));
+        });
+        $('.capquiz-sortable-default-desc').each(function () {
             sortTable($(this));
         });
     }
