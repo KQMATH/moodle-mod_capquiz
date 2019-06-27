@@ -72,7 +72,9 @@ class grading_configuration_form extends \moodleform {
         $strduedate = get_string('due_time_grading', 'capquiz');
         $form->addElement('date_time_selector', 'timedue', $strduedate);
         $form->setType('timedue', PARAM_INT);
-        $form->setDefault('timedue', $this->capquiz->time_due());
+        $timedue =  $this->capquiz->time_due();
+        $oneweek = 60 * 60 * 24 * 7;
+        $form->setDefault('timedue', $timedue ? $timedue : time() + $oneweek);
 
         $form->addElement('submit', 'submitbutton', get_string('savechanges'));
     }
