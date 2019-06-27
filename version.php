@@ -28,4 +28,4 @@ $plugin->requires = 2016120500;
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.2.1 (Build: 2019062700)';
+$plugin->release = '0.3.0 (Build: 2019062700)';
