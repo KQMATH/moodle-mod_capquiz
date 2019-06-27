@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Changed
 - 
 
+## [0.3.0] - 2019-06-27
+### Added
+- Added support for Moodle grading system
+- Added button to add all selected (checked) questions to question list
+- Number of stars is now configurable
+- Class list is improved (sorting by columns)
+
+### Changed
+- Merged some tabs to simplify user interface
+- Rounded user ratings in class list
+
+### Fixed
+- Add some missing language strings
+
 ## [0.2.0] - 2019-06-24
 ### Added
 * Questions can now be sorted by name and rating
@@ -45,8 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## 0.1.0 - 2018-09-28
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.0...HEAD
 
+[0.3.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.5...v0.2.0
 [0.1.5]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.1.3...v0.1.4
