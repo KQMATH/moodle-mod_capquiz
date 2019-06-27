@@ -67,7 +67,7 @@ class rating_system_configuration_renderer {
             $formdata = $form->get_data();
             if ($formdata) {
                 $this->registry->configure_current_rating_system($formdata);
-                redirect(capquiz_urls::view_matchmaking_configuration_url());
+                redirect(capquiz_urls::view_rating_system_url());
             }
             return $form->render();
         }

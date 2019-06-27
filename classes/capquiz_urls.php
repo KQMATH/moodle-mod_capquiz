@@ -37,7 +37,7 @@ class capquiz_urls {
     public static $urlviewimport = '/mod/capquiz/view_import.php';
     public static $urledit = '/mod/capquiz/edit.php';
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
-    public static $urlviewmatchmakingconfig = '/mod/capquiz/view_matchmaking_configuration.php';
+    public static $urlviewratingsystemconfig = '/mod/capquiz/view_rating_system.php';
 
     public static function redirect(\moodle_url $target) : \moodle_url {
         $url = self::create_view_url(self::$urlaction);
@@ -94,8 +94,8 @@ class capquiz_urls {
         return $url;
     }
 
-    public static function view_matchmaking_configuration_url() : \moodle_url {
-        return self::create_view_url(self::$urlviewmatchmakingconfig);
+    public static function view_rating_system_url() : \moodle_url {
+        return self::create_view_url(self::$urlviewratingsystemconfig);
     }
 
     public static function view_grading_url() : \moodle_url {

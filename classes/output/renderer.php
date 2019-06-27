@@ -53,7 +53,7 @@ class renderer extends \plugin_renderer_base {
     private function tabs(string $activetab) {
         $tabs = [
             $this->tab('view_dashboard', 'dashboard', capquiz_urls::view_url()),
-            $this->tab('view_matchmaking', 'matchmaking', capquiz_urls::view_matchmaking_configuration_url()),
+            $this->tab('view_rating_system', 'rating_system', capquiz_urls::view_rating_system_url()),
             $this->tab('view_questions', 'questions', capquiz_urls::view_question_list_url()),
             $this->tab('view_grading', 'grading', capquiz_urls::view_grading_url()),
             $this->tab('view_classlist', 'classlist', capquiz_urls::view_classlist_url()),
@@ -139,13 +139,13 @@ class renderer extends \plugin_renderer_base {
         $this->display_tabbed_view($render, 'view_questions');
     }
 
-    public function display_matchmaking_configuration(capquiz $capquiz) {
+    public function display_rating_system_configuration(capquiz $capquiz) {
         $this->display_tabbed_views([
             new matchmaking_strategy_selection_renderer($capquiz, $this),
             new matchmaking_configuration_renderer($capquiz, $this),
             new rating_system_selection_renderer($capquiz, $this),
             new rating_system_configuration_renderer($capquiz, $this)
-        ], 'view_matchmaking');
+        ], 'view_rating_system');
     }
 
     public function display_leaderboard(capquiz $capquiz) {

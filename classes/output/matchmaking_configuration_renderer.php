@@ -72,7 +72,7 @@ class matchmaking_configuration_renderer {
             $formdata = $form->get_data();
             if ($formdata) {
                 $this->registry->configure_current_strategy($formdata);
-                $url = capquiz_urls::view_matchmaking_configuration_url();
+                $url = capquiz_urls::view_rating_system_url();
                 redirect($url);
             }
             return $form->render();
