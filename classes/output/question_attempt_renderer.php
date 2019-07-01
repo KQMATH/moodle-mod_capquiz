@@ -59,7 +59,7 @@ class question_attempt_renderer {
     public function render() : string {
         global $PAGE;
         if (!$this->capquiz->is_published()) {
-            return 'Nothing here yet';
+            return get_string('nothing_here_yet', 'capquiz');
         }
         $PAGE->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
         $qengine = $this->capquiz->question_engine();

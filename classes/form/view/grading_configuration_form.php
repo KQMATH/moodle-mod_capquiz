@@ -53,14 +53,14 @@ class grading_configuration_form extends \moodleform {
             $elements = [];
             $elements[] = $form->createElement('text', $input, $text);
             if ($star > 1) {
-                $elements[] = $form->createElement('submit', "delstarbutton$star", 'Delete star');
+                $elements[] = $form->createElement('submit', "delstarbutton$star", get_string('delete_star', 'capquiz'));
             }
             $form->addGroup($elements, $groupname, $text, [''], false);
             $form->setType($input, PARAM_INT);
             $form->setDefault($input, $qlist->star_rating($star));
         }
 
-        $form->addElement('submit', 'addstarbutton', 'Add star');
+        $form->addElement('submit', 'addstarbutton', get_string('add_star', 'capquiz'));
 
         $strstarstopass = get_string('stars_to_pass', 'capquiz');
         $strstarstopassrequired = get_string('stars_to_pass_required', 'capquiz');

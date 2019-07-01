@@ -42,6 +42,8 @@ $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
 $string['configure_grading'] = 'Configure grading';
 
+$string['add_star'] = 'Add star';
+$string['delete_star'] = 'Delete star';
 $string['stars_to_pass'] = 'Number of stars required for passing grade';
 $string['stars_to_pass_required'] = 'Stars for passing grade is required (0-5)';
 $string['due_time_grading'] = 'Time for final grading';
@@ -91,6 +93,7 @@ $string['enrolled_students'] = 'Enrolled students';
 $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
 $string['other_question_lists'] = 'Other question lists';
+$string['nothing_here_yet'] = 'Nothing here yet';
 
 $string['missing_question'] = '<b>This question is missing.</b>';
 
