@@ -92,6 +92,44 @@
         <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="capquiz_question_rating" COMMENT="Stores a rating for a CAPQuiz question.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="capquiz_question_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="capquiz_attempt_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified question for the specified CAPQuiz question list"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The user who set the question rating"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="capquiz_question_id" TYPE="foreign" FIELDS="attempt_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
+        <KEY NAME="capquiz_attempt_id" TYPE="foreign" FIELDS="capquiz_attempt_id" REFTABLE="capquiz_attempt" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="capquiz_user_rating" COMMENT="Stores a rating for a CAPQuiz user.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="capquiz_user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="capquiz_attempt_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The user who set the user rating"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="capquiz_user_id" TYPE="foreign" FIELDS="capquiz_user_id" REFTABLE="capquiz_user" REFFIELDS="id"/>
+        <KEY NAME="capquiz_attempt_id" TYPE="foreign" FIELDS="capquiz_attempt_id" REFTABLE="capquiz_attempt" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="capquiz_question_selection" COMMENT="Question selection table.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
