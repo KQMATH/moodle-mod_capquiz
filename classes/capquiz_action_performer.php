@@ -118,7 +118,8 @@ class capquiz_action_performer {
         }
         $rating = optional_param('rating', null, PARAM_FLOAT);
         if ($rating !== null) {
-            $question->set_rating($rating);
+            $questionrating = capquiz_question_rating::create_question_rating($question, $rating);
+            $question->set_rating($questionrating);
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }
@@ -154,7 +155,8 @@ class capquiz_action_performer {
         $ratedquestion->question_list_id = $list->id();
         $ratedquestion->question_id = $questionid;
         $ratedquestion->rating = $rating;
-        $DB->insert_record('capquiz_question', $ratedquestion);
+        $capquizquestionid = $DB->insert_record('capquiz_question', $ratedquestion, true);
+        capquiz_question_rating::insert_question_rating_entry($capquizquestionid, $rating);
     }
 
     private static function remove_capquiz_question(int $questionid, int $qlistid) {

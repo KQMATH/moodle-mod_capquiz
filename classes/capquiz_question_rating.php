@@ -51,23 +51,21 @@ class capquiz_question_rating {
     }
 
     public static function create_question_rating(capquiz_question $question, $rating, capquiz_question_attempt $attempt = null) {
-        return self::insert_question_rating_entry($question, $rating, $attempt);
+        $attemptid = $attempt ? $attempt->id() : $attempt;
+        return self::insert_question_rating_entry($question->id(), $rating, $attemptid);
     }
 
     /**
-     * @param capquiz $capquiz
-     * @param capquiz_question_attempt $attempt
-     * @param capquiz_question $question
-     * @param capquiz_question $question
+     * @param int $questionid
      * @param float $rating
+     * @param int|null $attemptid
      * @return capquiz_question_rating|null
      */
-    private static function insert_question_rating_entry(capquiz_question $question, float $rating, capquiz_question_attempt $attempt = null) {
+    public static function insert_question_rating_entry(int $questionid, float $rating, int $attemptid = null) {
         global $DB, $USER;
-        $attemptid = $attempt ? $attempt->id() : $attempt;
 
         $record = new stdClass();
-        $record->capquiz_question_id = $question->id();
+        $record->capquiz_question_id = $questionid;
         $record->capquiz_attempt_id = $attemptid;
         $record->rating = $rating;
         $record->timecreated = time();

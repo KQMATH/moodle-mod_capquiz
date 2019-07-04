@@ -73,10 +73,10 @@ class capquiz_question {
         return $this->record->rating;
     }
 
-    public function set_rating(float $rating) : bool {
+    public function set_rating(capquiz_question_rating $questionrating) {
         global $DB;
-        $this->record->rating = $rating;
-        return $DB->update_record('capquiz_question', $this->record);
+        $this->record->rating = $questionrating->rating();
+        $DB->update_record('capquiz_question', $this->record);
     }
 
     public function name() : string {

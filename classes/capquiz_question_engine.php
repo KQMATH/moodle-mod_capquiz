@@ -131,9 +131,9 @@ class capquiz_question_engine {
             return;
         }
         if ($previouscorrect && !$currentcorrect) {
-            $ratingsystem->question_victory_ratings($currentquestion, $previousquestion);
+            $ratingsystem->question_victory_ratings($current, $currentquestion, $previousquestion);
         } else if (!$previouscorrect && $currentcorrect) {
-            $ratingsystem->question_victory_ratings($previousquestion, $currentquestion);
+            $ratingsystem->question_victory_ratings($current, $previousquestion, $currentquestion);
         }
     }
 
