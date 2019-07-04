@@ -84,5 +84,57 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019062553, 'capquiz');
     }
+    if ($oldversion < 2019070400) {
+        // Define table capquiz_user_rating to be created.
+        $utable = new xmldb_table('capquiz_user_rating');
+
+        // Adding fields to table capquiz_user_rating.
+        $utable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $utable->add_field('capquiz_user_id', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $utable->add_field('capquiz_attempt_id', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
+        $utable->add_field('rating', XMLDB_TYPE_FLOAT, '11', null, XMLDB_NOTNULL, null, null);
+        $utable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $utable->add_field('user_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table capquiz_user_rating.
+        $utable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $utable->add_key('capquiz_user_id', XMLDB_KEY_FOREIGN, array('capquiz_user_id'), 'capquiz_user', array('id'));
+        $utable->add_key('capquiz_attempt_id', XMLDB_KEY_FOREIGN, array('capquiz_attempt_id'), 'capquiz_attempt', array('id'));
+        $utable->add_key('user_id', XMLDB_KEY_FOREIGN, array('capquiz_attempt_id'), 'user', array('id'));
+
+        // Adding indexes to table capquiz_user_rating.
+        $utable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+
+        // Conditionally launch create table for enrol_lti_lti2_consumer.
+        if (!$dbman->table_exists($utable)) {
+            $dbman->create_table($utable);
+        }
+
+        // Define table capquiz_question_rating to be created.
+        $qtable = new xmldb_table('capquiz_question_rating');
+
+        // Adding fields to table capquiz_question_rating.
+        $qtable->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $qtable->add_field('capquiz_question_id', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
+        $qtable->add_field('capquiz_attempt_id', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
+        $qtable->add_field('rating', XMLDB_TYPE_FLOAT, '11', null, XMLDB_NOTNULL, null, 0);
+        $qtable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $qtable->add_field('user_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table capquiz_question_rating.
+        $qtable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $qtable->add_key('capquiz_question_id', XMLDB_KEY_FOREIGN, array('capquiz_question_id'), 'capquiz_question', array('id'));
+        $qtable->add_key('capquiz_attempt_id', XMLDB_KEY_FOREIGN, array('capquiz_attempt_id'), 'capquiz_attempt', array('id'));
+        $qtable->add_key('user_id', XMLDB_KEY_FOREIGN, array('capquiz_attempt_id'), 'user', array('id'));
+
+        // Adding indexes to table capquiz_question_rating.
+        $qtable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+
+        // Conditionally launch create table for enrol_lti_lti2_consumer.
+        if (!$dbman->table_exists($qtable)) {
+            $dbman->create_table($qtable);
+        }
+        upgrade_mod_savepoint(true, 2019070400, 'capquiz');
+    }
     return true;
 }
