@@ -51,23 +51,21 @@ class capquiz_user_rating {
     }
 
     public static function create_user_rating(capquiz_user $user, $rating, capquiz_question_attempt $attempt = null) {
-        return self::insert_user_rating_entry($user, $rating, $attempt);
+        return self::insert_user_rating_entry($user->id(), $rating, $attempt->id());
     }
 
     /**
-     * @param capquiz $capquiz
-     * @param capquiz_question_attempt $attempt
-     * @param capquiz_user $user
-     * @param capquiz_question $question
+     * @param int $userid capquiz_user id
      * @param float $rating
+     * @param null $attemptid
      * @return capquiz_user_rating|null
      */
-    private static function insert_user_rating_entry(capquiz_user $user, float $rating, capquiz_question_attempt $attempt = null) {
+    public static function insert_user_rating_entry(int $userid, float $rating, $attemptid = null) {
         global $DB, $USER;
 
         $record = new stdClass();
-        $record->capquiz_user_id = $user->id();
-        $record->capquiz_attempt_id = $attempt->id();
+        $record->capquiz_user_id = $userid;
+        $record->capquiz_attempt_id = $attemptid;
         $record->rating = $rating;
         $record->timecreated = time();
         $record->user_id = $USER->id;

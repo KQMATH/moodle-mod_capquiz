@@ -59,7 +59,8 @@ class capquiz_user {
         $record->user_id = $moodleuserid;
         $record->capquiz_id = $capquiz->id();
         $record->rating = $capquiz->default_user_rating();
-        $DB->insert_record('capquiz_user', $record);
+        $capquizuserid = $DB->insert_record('capquiz_user', $record, true);
+        capquiz_user_rating::insert_user_rating_entry($capquizuserid, $record->rating);
         return self::load_db_entry($capquiz, $moodleuserid);
     }
 
@@ -116,9 +117,9 @@ class capquiz_user {
         $DB->update_record('capquiz_user', $this->record);
     }
 
-    public function set_rating(float $rating) {
+    public function set_rating(capquiz_user_rating $userrating) {
         global $DB;
-        $this->record->rating = $rating;
+        $this->record->rating = $userrating->rating();
         $DB->update_record('capquiz_user', $this->record);
     }
 
@@ -136,5 +137,7 @@ class capquiz_user {
         ]);
         return $entry ? new capquiz_user($entry) : null;
     }
+
+
 
 }
