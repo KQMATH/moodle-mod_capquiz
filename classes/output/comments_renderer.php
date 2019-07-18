@@ -45,9 +45,11 @@ class comments_renderer {
         $questions = [];
         foreach ($qlist->questions() as $question) {
             $comments = capquiz_question_attempt::all_comments_for_question($question->question_id());
+            $questionurl = question_preview_url($question->question_id())->out(false);
             if (count($comments) > 0) {
                 $questions[] = [
                     'question' => $question->name(),
+                    'questionurl' => $questionurl,
                     'comments' => $comments
                 ];
             }
