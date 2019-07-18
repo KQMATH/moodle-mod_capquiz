@@ -5,8 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
+### Added
+- Framework for CAPQuiz **report** sub-plugins
+- New **Attempts** report sub-plugin where one can view/generate reports on CAPQuiz attempts made within the activity.
+- Ability to manage the question bank in the context of the CAPQuiz activity, via new link in the navigation menu.
+- Check out the commented question in the comments pane (teacher view) by providing link to question preview.
+
 ### Changed
-- 
+- Minor styling changes
+
+### Fixed
+- Add some missing language strings
+- Wrong contexts were exported when exporting user data through the Privacy API (GDPR)
+
 
 ## [0.3.2] - 2019-07-01
 
