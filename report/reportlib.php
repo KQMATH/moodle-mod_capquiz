@@ -136,7 +136,7 @@ function capquiz_num_attempt_summary(capquiz $capquiz, $returnzero = false) {
 }
 
 /**
- * Returns the number of answered CAPQuiz attempts.
+ * Returns the number of CAPQuiz attempts.
  *
  * @param capquiz $capquiz
  * @return int number of answered CAPQuiz attempts
@@ -149,8 +149,7 @@ function capquiz_report_num_attempt(capquiz $capquiz) : int {
               JOIN {capquiz_question_list} cql ON cql.capquiz_id = :capquizid AND cql.is_template = 0
               JOIN {question_usages} qu ON qu.id = cql.question_usage_id
               JOIN {question_attempts} qa ON qa.questionusageid = qu.id AND qa.slot = ca.slot
-              JOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id
-             WHERE ca.answered = 1';
+              JOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id';
     $attempts = $DB->count_records_sql($sql, ['capquizid' => $capquiz->id()]);
     return $attempts;
 }

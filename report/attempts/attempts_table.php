@@ -150,13 +150,10 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         }
 
         $state = $this->slot_state($attempt, $attempt->slot);
-        $iscorrect = ($state->is_correct()) ? 'correct' : 'wrong';
-        $answerstate = get_string($iscorrect, 'capquizreport_attempts');
-
         if ($this->is_downloading()) {
-            return $answerstate;
+            return $state;
         } else {
-            return $this->make_review_link($answerstate, $attempt, $attempt->slot);
+            return $this->make_review_link($state, $attempt, $attempt->slot);
         }
     }
 
@@ -226,9 +223,11 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
      * @return string HTML content to go inside the td.
      */
     public function col_prevquestionratingmanual($attempt) {
+        if (is_null($attempt->manualprevqrating)) {
+            return '-';
+        }
         $ismanual = ($attempt->manualprevqrating) ? 'true' : 'false';
         $manualprevqrating = get_string($ismanual, 'capquiz');
-
         return $manualprevqrating;
     }
 
@@ -259,10 +258,10 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
                     pcur.rating AS prevuserrating,
                     pcur.rating AS manualprevurating';
 
-        $from .= "\nJOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
-        $from .= "\nJOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.previous_question_rating_id";
-        $from .= "\nJOIN {capquiz_user_rating} cur ON cur.id = ca.user_rating_id";
-        $from .= "\nJOIN {capquiz_user_rating} pcur ON pcur.id = ca.previous_user_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.previous_question_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_user_rating} cur ON cur.id = ca.user_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_user_rating} pcur ON pcur.id = ca.previous_user_rating_id";
 
         return [$fields, $from, $where, $params];
     }
