@@ -71,7 +71,7 @@ class question_attempt_renderer {
                 return $this->render_attempt($attempt, $this->attempt_display_options());
             }
         }
-        return 'You have finished this quiz!';
+        return get_string('you_finished_capquiz', 'capquiz');
     }
 
     private function render_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
