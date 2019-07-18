@@ -230,6 +230,16 @@ class capquiz_question_attempt {
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
+    public function set_user_rating(capquiz_user_rating $rating, $previous = false) {
+        global $DB;
+        if (!$previous) {
+            $this->record->user_rating_id = $rating->id();
+        } else {
+            $this->record->previous_user_rating_id = $rating->id();
+        }
+        $DB->update_record('capquiz_attempt', $this->record);
+    }
+
     /**
      * @param int $questionid
      * @return array

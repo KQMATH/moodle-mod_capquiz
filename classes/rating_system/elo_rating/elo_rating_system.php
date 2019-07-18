@@ -55,12 +55,11 @@ class elo_rating_system extends capquiz_rating_system {
         return $config;
     }
 
-    public function update_user_rating(capquiz_question_attempt $attempt, capquiz_user $user, capquiz_question $question, float $score) {
+    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) {
         $current = $user->rating();
         $factor = $this->studentkfactor;
         $newrating = $current + $factor * ($score - $this->expected_result($current, $question->rating()));
-        $userrating = capquiz_user_rating::create_user_rating($user, $newrating, $attempt);
-        $user->set_rating($userrating);
+        $user->set_rating($newrating);
     }
 
     public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {

@@ -81,13 +81,15 @@ class capquiz_question_engine {
         }
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $attempt->mark_as_answered();
+        $attempt->set_user_rating($user->get_capquiz_user_rating(), true);
         $question = $this->capquiz->question_list()->question($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
-            $ratingsystem->update_user_rating($attempt, $user, $question, 1);
+            $ratingsystem->update_user_rating($user, $question, 1);
             $this->set_new_highest_star_if_attained($user);
         } else {
-            $ratingsystem->update_user_rating($attempt, $user, $question, 0);
+            $ratingsystem->update_user_rating($user, $question, 0);
         }
+        $attempt->set_user_rating($user->get_capquiz_user_rating());
         $previousattempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user);
         if ($previousattempt) {
             $this->update_question_rating($previousattempt, $attempt);

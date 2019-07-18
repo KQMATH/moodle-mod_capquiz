@@ -50,8 +50,32 @@ class capquiz_user_rating {
         return new capquiz_user_rating($record);
     }
 
-    public static function create_user_rating(capquiz_user $user, $rating, capquiz_question_attempt $attempt = null) {
-        return self::insert_user_rating_entry($user->id(), $rating, $attempt->id());
+    public static function create_user_rating(capquiz_user $user, $rating, bool $manual = false) {
+        return self::insert_user_rating_entry($user->id(), $rating, $manual);
+    }
+
+    /**
+     * Load information about the latest user rating for an capquiz user from the database.
+     *
+     * @param int $attemptid
+     * @return capquiz_user_rating
+     * @throws dml_exception
+     */
+    public static function latest_user_rating_by_user($userid) {
+        global $DB;
+        $sql = "SELECT cur.*
+                  FROM {capquiz_user_rating} cur
+                  JOIN {capquiz_user} cu ON cu.id = cur.capquiz_user_id
+                 WHERE cur.id = (
+                    SELECT MAX(cur2.id)
+                    FROM {capquiz_user_rating} cur2
+                    JOIN {capquiz_user} cu2 ON cu2.id = cur2.capquiz_user_id
+                    WHERE cu2.id = cu.id
+                    )
+                AND cu.id = :user_id";
+        $record = $DB->get_record_sql($sql, ['user_id' => $userid]);
+
+        return $record ? new capquiz_user_rating($record) : null;
     }
 
     /**
@@ -60,48 +84,22 @@ class capquiz_user_rating {
      * @param null $attemptid
      * @return capquiz_user_rating|null
      */
-    public static function insert_user_rating_entry(int $userid, float $rating, $attemptid = null) {
+    public static function insert_user_rating_entry(int $userid, float $rating, bool $manual = false) {
         global $DB, $USER;
 
         $record = new stdClass();
         $record->capquiz_user_id = $userid;
-        $record->capquiz_attempt_id = $attemptid;
         $record->rating = $rating;
+        $record->manual = $manual;
         $record->timecreated = time();
         $record->user_id = $USER->id;
         try {
-            $DB->insert_record('capquiz_user_rating', $record);
+            $ratingid = $DB->insert_record('capquiz_user_rating', $record);
+            $record->id = $ratingid;
             return new capquiz_user_rating($record);
         } catch (dml_exception $e) {
             return null;
         }
-    }
-
-    /**
-     * Load information about the latest user rating for an attempt from the database.
-     *
-     * @param int $attemptid
-     * @return capquiz_user_rating
-     * @throws dml_exception
-     */
-    public static function latest_user_rating_by_attempt(int $attemptid) {
-        global $DB;
-        $sql = "SELECT cur.id AS id,
-                  FROM {capquiz_user_rating} cur
-                  JOIN {capquiz_attempt} ca ON cur.capquiz_attempt_id = ca.id
-                 WHERE cur.timecreated = {".self::latest_user_rating_for_user_subquery()."}
-                   AND ca.id = :attemptid";
-        $userrating = $DB->get_record_sql($sql, ['attemptid' => $attemptid]);
-        return $userrating ? new capquiz_user_rating($userrating) : null;
-    }
-
-    protected static function latest_user_rating_subquery($userratingid = 'cur.id') {
-        $sql = "(
-                SELECT MAX(timecreated)
-                FROM {capquiz_user_rating}
-                WHERE id = $userratingid
-                )";
-        return $sql;
     }
 
     public function id(): int {

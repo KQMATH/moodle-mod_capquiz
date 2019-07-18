@@ -33,6 +33,9 @@ class capquiz_user {
     /** @var \stdClass $user  */
     private $user;
 
+    /** @var capquiz_user_rating $rating */
+    private $rating;
+
     /**
      * capquiz_user constructor.
      * @param \stdClass $record
@@ -42,6 +45,13 @@ class capquiz_user {
         global $DB;
         $this->record = $record;
         $this->user = $DB->get_record('user', ['id' => $this->record->user_id]);
+
+        $rating = capquiz_user_rating::latest_user_rating_by_user($record->id);
+        if (is_null($rating)) {
+            $this->rating = capquiz_user_rating::insert_user_rating_entry($this->id(), $this->rating());
+        } else {
+            $this->rating = $rating;
+        }
     }
 
     /**
@@ -103,6 +113,10 @@ class capquiz_user {
         return $this->record->rating;
     }
 
+    public function get_capquiz_user_rating() : capquiz_user_rating {
+        return $this->rating;
+    }
+
     public function highest_stars_achieved() : int {
         return $this->record->highest_level;
     }
@@ -117,10 +131,13 @@ class capquiz_user {
         $DB->update_record('capquiz_user', $this->record);
     }
 
-    public function set_rating(capquiz_user_rating $userrating) {
+    public function set_rating($rating, bool $manual = false) {
         global $DB;
-        $this->record->rating = $userrating->rating();
+        $this->record->rating = $rating;
         $DB->update_record('capquiz_user', $this->record);
+
+        $userrating = capquiz_user_rating::create_user_rating($this, $rating, $manual);
+        $this->rating = $userrating;
     }
 
     /**
