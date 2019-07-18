@@ -105,7 +105,6 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
             return $summary;
         }
 
-
         if ($field === 'responsesummary') {
             return $this->make_review_link($summary, $attempt, $slot);
 

@@ -30,7 +30,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->add_question_usages($questionlist, $paths);
         $paths[] = $questionlist;
         $paths[] = new restore_path_element('capquiz_question', '/activity/capquiz/questionlist/questions/question');
-        $paths[] = new restore_path_element('capquiz_question_rating', '/activity/capquiz/questionlist/questions/question/questionratings/question_rating');
+        $paths[] = new restore_path_element(
+            'capquiz_question_rating', '/activity/capquiz/questionlist/questions/question/questionratings/question_rating');
         $paths[] = new restore_path_element('capquiz_question_selection', '/activity/capquiz/questionselections/questionselection');
         $paths[] = new restore_path_element('capquiz_rating_system', '/activity/capquiz/ratingsystems/ratingsystem');
         if ($this->get_setting_value('userinfo')) {

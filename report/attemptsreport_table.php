@@ -504,7 +504,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         echo '&nbsp;&nbsp;';
 
         // TODO enable when support for attempt deletion is added {@link delete_selected_attempts}.
-//        $this->submit_buttons();
+        // $this->submit_buttons();
         echo '</div>';
 
         // Close the form.

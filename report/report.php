@@ -79,6 +79,8 @@ class report {
         $PAGE->set_title($capquiz->name());
         $PAGE->set_heading($course->fullname);
         $context = context_module::instance($cm->id);
-        echo $OUTPUT->heading(format_string(get_string('pluginname', 'capquizreport_' . $reportmode) . ' ' . get_string('report', 'capquiz'), true, array('context' => $context)));
+        echo $OUTPUT->heading(format_string(
+            get_string('pluginname', 'capquizreport_' . $reportmode) . ' ' . get_string('report', 'capquiz'),
+            true, array('context' => $context)));
     }
 }

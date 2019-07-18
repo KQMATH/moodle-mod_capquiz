@@ -44,7 +44,14 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (!($data['urating'] || $data['uprevrating'] || $data['qrating'] || $data['qprevrating'] || $data['ansstate'] || $data['qtext'] || $data['resp'] || $data['right'])) {
+        if (!($data['urating']
+            || $data['uprevrating']
+            || $data['qrating']
+            || $data['qprevrating']
+            || $data['ansstate']
+            || $data['qtext']
+            || $data['resp']
+            || $data['right'])) {
             $errors['coloptions'] = get_string('reportmustselectstate', 'quiz');
         }
 

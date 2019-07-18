@@ -88,9 +88,9 @@ function capquiz_has_questions($capquizid) {
  *      ->slot, ->id, ->qtype, ->length.
  */
 function capquiz_report_get_questions(capquiz $capquiz) {
-        global $DB;
-        $qsbyslot = $DB->get_records_sql("
-            SELECT DISTINCT 
+    global $DB;
+    $qsbyslot = $DB->get_records_sql("
+            SELECT DISTINCT
                    ca.slot,
                    q.id,
                    q.qtype,
@@ -108,14 +108,14 @@ function capquiz_report_get_questions(capquiz $capquiz) {
 
           ORDER BY ca.slot", array($capquiz->id()));
 
-        $number = 1;
-        foreach ($qsbyslot as $question) {
-            $question->number = $number;
-            $number += $question->length;
-            $question->type = $question->qtype;
-        }
+    $number = 1;
+    foreach ($qsbyslot as $question) {
+        $question->number = $number;
+        $number += $question->length;
+        $question->type = $question->qtype;
+    }
 
-        return $qsbyslot;
+    return $qsbyslot;
 }
 
 /**
@@ -142,7 +142,7 @@ function capquiz_num_attempt_summary(capquiz $capquiz, $returnzero = false) {
  * @return int number of answered CAPQuiz attempts
  * @throws dml_exception
  */
-function capquiz_report_num_attempt(capquiz $capquiz) : int {
+function capquiz_report_num_attempt(capquiz $capquiz): int {
     global $DB;
     $sql = 'SELECT COUNT(ca.id)
               FROM {capquiz_attempt} ca

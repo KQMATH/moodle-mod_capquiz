@@ -118,8 +118,10 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
 
             $this->add_user_columns($table, $columns, $headers);
 
-            if ($table->is_downloading()) $this->add_uesrid_column($columns, $headers);
-            if ($table->is_downloading()) $this->add_questionid_column($columns, $headers);
+            if ($table->is_downloading()) {
+                $this->add_uesrid_column($columns, $headers);
+                $this->add_questionid_column($columns, $headers);
+            }
 
             if ($this->options->showansstate) {
                 $columns[] = 'answerstate';
@@ -133,7 +135,9 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
                 $headers[] = get_string('prevquestionratingmanual', 'capquizreport_attempts');
             }
 
-            if ($table->is_downloading()) $this->add_time_columns($columns, $headers);
+            if ($table->is_downloading()) {
+                $this->add_time_columns($columns, $headers);
+            }
 
             if ($this->options->showqtext) {
                 $columns[] = 'question';
@@ -172,13 +176,17 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
     }
 
     protected function add_rating_columns(array &$columns, array &$headers) {
-        if ($this->options->showurating) $this->add_user_rating_column($columns, $headers);
+        if ($this->options->showurating) {
+            $this->add_user_rating_column($columns, $headers);
+        }
         if ($this->options->showuprevrating) {
             $columns[] = 'prevuserrating';
             $headers[] = get_string('prevuserrating', 'capquizreport_attempts');
         }
 
-        if ($this->options->showqrating) $this->add_question_rating_column($columns, $headers);
+        if ($this->options->showqrating) {
+            $this->add_question_rating_column($columns, $headers);
+        }
         if ($this->options->showqprevrating) {
             $columns[] = 'prevquestionrating';
             $headers[] = get_string('prevquestionrating', 'capquizreport_attempts');
