@@ -93,7 +93,7 @@ class capquiz_attempts_report_options {
             'id'         => $this->cm->id,
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
-    );
+        );
 
         return $params;
     }
