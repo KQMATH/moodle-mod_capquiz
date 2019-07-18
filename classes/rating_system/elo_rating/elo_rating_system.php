@@ -63,18 +63,14 @@ class elo_rating_system extends capquiz_rating_system {
         $user->set_rating($userrating);
     }
 
-    public function question_victory_ratings(capquiz_question_attempt $attempt, capquiz_question $winner, capquiz_question $loser) {
+    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {
         $loserating = $loser->rating();
         $winrating = $winner->rating();
         $factor = $this->questionkfactor;
         $newloserating = $loserating + $factor * (0 - $this->expected_result($winrating, $loserating));
         $newwinrating = $winrating + $factor * (1 - $this->expected_result($loserating, $winrating));
-
-        $loserquestionrating = capquiz_question_rating::create_question_rating($loser, $newloserating, $attempt);
-        $loser->set_rating($loserquestionrating);
-
-        $winnerquestionrating = capquiz_question_rating::create_question_rating($winner, $newwinrating, $attempt);
-        $winner->set_rating($winnerquestionrating);
+        $loser->set_rating($newloserating);
+        $winner->set_rating($newwinrating);
     }
 
     private function expected_result(float $a, float $b) : float {

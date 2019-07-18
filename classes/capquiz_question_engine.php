@@ -127,14 +127,19 @@ class capquiz_question_engine {
         $previouscorrect = $previous->is_correctly_answered();
         $currentquestion = $this->capquiz->question_list()->question($current->question_id());
         $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
+
+        $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);
+
         if (!$currentquestion || !$previousquestion) {
             return;
         }
         if ($previouscorrect && !$currentcorrect) {
-            $ratingsystem->question_victory_ratings($current, $currentquestion, $previousquestion);
+            $ratingsystem->question_victory_ratings($currentquestion, $previousquestion);
         } else if (!$previouscorrect && $currentcorrect) {
-            $ratingsystem->question_victory_ratings($current, $previousquestion, $currentquestion);
+            $ratingsystem->question_victory_ratings($previousquestion, $currentquestion);
         }
+
+        $current->set_question_rating($currentquestion->get_capquiz_question_rating());
     }
 
 }

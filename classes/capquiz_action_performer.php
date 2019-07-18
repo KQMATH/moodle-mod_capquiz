@@ -118,8 +118,7 @@ class capquiz_action_performer {
         }
         $rating = optional_param('rating', null, PARAM_FLOAT);
         if ($rating !== null) {
-            $questionrating = capquiz_question_rating::create_question_rating($question, $rating);
-            $question->set_rating($questionrating);
+            $question->set_rating($rating, true);
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }

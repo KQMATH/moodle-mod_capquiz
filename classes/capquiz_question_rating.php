@@ -50,9 +50,8 @@ class capquiz_question_rating {
         return new capquiz_question_rating($record);
     }
 
-    public static function create_question_rating(capquiz_question $question, $rating, capquiz_question_attempt $attempt = null) {
-        $attemptid = $attempt ? $attempt->id() : $attempt;
-        return self::insert_question_rating_entry($question->id(), $rating, $attemptid);
+    public static function create_question_rating(capquiz_question $question, float $rating, bool $manual = false) {
+        return self::insert_question_rating_entry($question->id(), $rating, $manual);
     }
 
     /**
@@ -61,17 +60,17 @@ class capquiz_question_rating {
      * @param int|null $attemptid
      * @return capquiz_question_rating|null
      */
-    public static function insert_question_rating_entry(int $questionid, float $rating, int $attemptid = null) {
-        global $DB, $USER;
+    public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
+        global $DB;
 
         $record = new stdClass();
         $record->capquiz_question_id = $questionid;
-        $record->capquiz_attempt_id = $attemptid;
         $record->rating = $rating;
+        $record->manual = $manual;
         $record->timecreated = time();
-        $record->user_id = $USER->id;
         try {
-            $DB->insert_record('capquiz_question_rating', $record);
+            $ratingid = $DB->insert_record('capquiz_question_rating', $record);
+            $record->id = $ratingid;
             return new capquiz_question_rating($record);
         } catch (dml_exception $e) {
             return null;
@@ -85,24 +84,21 @@ class capquiz_question_rating {
      * @return capquiz_question_rating
      * @throws dml_exception
      */
-    public static function latest_question_rating_by_attempt(int $attemptid) {
+    public static function latest_question_rating_by_question($questionid) {
         global $DB;
-        $sql = "SELECT cqr.id AS id,
+        $sql = "SELECT cqr.*
                   FROM {capquiz_question_rating} cqr
-                  JOIN {capquiz_attempt} ca ON cur.capquiz_attempt_id = ca.id
-                 WHERE cur.timecreated = {".self::latest_question_rating_subquery()."}
-                   AND ca.id = :attemptid";
-        $questionrating = $DB->get_record_sql($sql, ['attemptid' => $attemptid]);
-        return $questionrating ? new capquiz_question_rating($questionrating) : null;
-    }
+                  JOIN {capquiz_question} cq ON cq.id = cqr.capquiz_question_id
+                 WHERE cqr.id = (
+                    SELECT MAX(cqr2.id)
+                    FROM {capquiz_question_rating} cqr2
+                    JOIN {capquiz_question} cq2 ON cq2.id = cqr2.capquiz_question_id
+                    WHERE cq2.id = cq.id
+                    )
+                AND cq.id = :question_id";
+        $record = $DB->get_record_sql($sql, ['question_id' => $questionid]);
 
-    protected static function latest_question_rating_subquery($questionratingid = 'cqr.id') {
-        $sql = "(
-                SELECT MAX(timecreated)
-                FROM {capquiz_question_rating}
-                WHERE id = $questionratingid
-                )";
-        return $sql;
+        return $record ? new capquiz_question_rating($record) : null;
     }
 
     public function id(): int {
@@ -110,7 +106,7 @@ class capquiz_question_rating {
     }
 
     public function timecreated(): string {
-        return $this->question->timecreated;
+        return $this->record->timecreated;
     }
 
     public function rating(): float {

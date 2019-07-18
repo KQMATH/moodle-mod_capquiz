@@ -30,6 +30,9 @@ class capquiz_question {
     /** @var \stdClass $record */
     private $record;
 
+    /** @var capquiz_question_rating $rating */
+    private $rating;
+
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
@@ -41,6 +44,12 @@ class capquiz_question {
         } else {
             $this->record->name = get_string('missing_question', 'capquiz');
             $this->record->text = $this->record->name;
+        }
+        $rating = capquiz_question_rating::latest_question_rating_by_question($record->id);
+        if (is_null($rating)) {
+            $this->rating = capquiz_question_rating::insert_question_rating_entry($this->id(), $this->rating());
+        } else {
+            $this->rating = $rating;
         }
     }
 
@@ -73,10 +82,18 @@ class capquiz_question {
         return $this->record->rating;
     }
 
-    public function set_rating(capquiz_question_rating $questionrating) {
+    public function get_capquiz_question_rating() : capquiz_question_rating {
+        return $this->rating;
+    }
+
+    public function set_rating($rating, bool $manual = false) {
         global $DB;
-        $this->record->rating = $questionrating->rating();
+        $this->record->rating = $rating;
         $DB->update_record('capquiz_question', $this->record);
+
+        $questionrating = capquiz_question_rating::create_question_rating($this, $rating, $manual);
+        $this->rating = $questionrating;
+
     }
 
     public function name() : string {
