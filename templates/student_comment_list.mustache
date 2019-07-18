@@ -22,7 +22,7 @@
         "questions": [
             {
                 "question": "Question name",
-                "questionurl": "Question preview url",
+                "questionurl": "#",
                 "comments": [
                     {
                         "comment": "This is a comment.",
@@ -38,7 +38,7 @@
     <h2>{{#str}} feedback_from_students, capquiz {{/str}}</h2>
     {{#questions}}
         <div>
-            <h4><a href="{{questionurl}}">{{question}}</a></h4>
+            <h4><a href="{{{questionurl}}}">{{question}}</a></h4>
             {{#comments}}
                 <div>
                     <p>{{comment}}</p>
