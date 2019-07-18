@@ -132,8 +132,8 @@ function xmldb_capquiz_upgrade($oldversion) {
         $atable = new xmldb_table('capquiz_attempt');
         $aqrfield = new xmldb_field('question_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aqrkey = new xmldb_key('question_rating_id', XMLDB_KEY_FOREIGN, array('question_rating_id'), 'capquiz_question_rating', array('id'));
-        $aprevqrfield = new xmldb_field('prev_question_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
-        $aprevqrkey = new xmldb_key('prev_question_rating_id', XMLDB_KEY_FOREIGN, array('prev_question_rating_id'), 'capquiz_question_rating', array('id'));
+        $aprevqrfield = new xmldb_field('previous_question_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
+        $aprevqrkey = new xmldb_key('previous_question_rating_id', XMLDB_KEY_FOREIGN, array('previous_question_rating_id'), 'capquiz_question_rating', array('id'));
 
         if (!$dbman->field_exists($atable, $aqrfield)) {
             $dbman->add_field($atable, $aqrfield);
@@ -146,8 +146,8 @@ function xmldb_capquiz_upgrade($oldversion) {
 
         $aurfield = new xmldb_field('user_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aurkey = new xmldb_key('user_rating_id', XMLDB_KEY_FOREIGN, array('user_rating_id'), 'capquiz_user_rating', array('id'));
-        $aprevurfield = new xmldb_field('prev_user_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
-        $aprevurkey = new xmldb_key('prev_user_rating_id', XMLDB_KEY_FOREIGN, array('prev_user_rating_id'), 'capquiz_user_rating', array('id'));
+        $aprevurfield = new xmldb_field('previous_user_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
+        $aprevurkey = new xmldb_key('previous_user_rating_id', XMLDB_KEY_FOREIGN, array('previous_user_rating_id'), 'capquiz_user_rating', array('id'));
 
         if (!$dbman->field_exists($atable, $aurfield)) {
             $dbman->add_field($atable, $aurfield);
