@@ -32,11 +32,14 @@ $string['pluginadministration'] = 'CAPQuiz administration';
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
 $string['capquiz:instructor'] = 'Edit CAPQuiz instances';
 $string['capquiz:student'] = 'Attempt CAPQuiz instances';
+$string['capquiz:viewreports'] = 'View capquiz reports';
+$string['capquiz:deleteattempts'] = 'Delete capquiz attempts';
+$string['capquiz:manage'] = 'Manage capquizzes';
 
 $string['questions_in_list'] = 'Questions in the list';
 $string['add_a_quiz_question'] = 'Add a question to the list';
 $string['add_the_quiz_question'] = 'Add the question to the list';
-$string['add_to_quiz'] = 'Add to quiz';
+$string['add_to_quiz'] = 'Add to capquiz';
 
 $string['question_list'] = 'Question list';
 $string['question_lists'] = 'Question lists';
@@ -94,6 +97,9 @@ $string['configure_capquiz'] = 'Configure CAPQuiz';
 $string['create_question_list'] = 'Create question list';
 $string['other_question_lists'] = 'Other question lists';
 $string['nothing_here_yet'] = 'Nothing here yet';
+$string['reports'] = 'Reports';
+$string['attempts'] = 'Attempts';
+$string['attempt'] = 'Attempt';
 
 $string['missing_question'] = '<b>This question is missing.</b>';
 
@@ -115,7 +121,7 @@ $string['no_matchmaking_strategy_selected'] = 'No selection strategy has been sp
 $string['nothing_to_configure_for_strategy'] = 'There is nothing to configure for this strategy';
 
 $string['update_rating_explanation'] = '<p>The question ratings can be edited below. Changes are saved automatically.</p>';
-$string['question_list_no_questions'] = 'This quiz has no questions. Add some questions from the list to the right';
+$string['question_list_no_questions'] = 'This capquiz has no questions. Add some questions from the list to the right';
 $string['n_closest'] = 'N-closest';
 $string['chronological'] = 'Chronological';
 $string['no_strategy_specified'] = 'No strategy specified';
@@ -145,7 +151,7 @@ $string['tooltip_lost_star'] = 'You have achieved this star, but your rating is 
 $string['tooltip_no_star'] = 'You have yet to achieve this star.';
 $string['tooltip_help_star'] = 'Every student has a proficiency rating in the CAPQuiz activity.  This increases when successfully answering a question, and decreases with wrong answers.  Stars are achieved at certain rating levels, and never lost. I.e. a student can sometimes lose rating points and fall below a star\'s threshold, without losing the star.  It is suggested that a certain number of stars are required for a compulsory assignment.  Hover your mouse over a star to see rating details.';
 
-$string['select_template'] = 'Select one of these templates for your quiz';
+$string['select_template'] = 'Select one of these templates for your capquiz';
 $string['no_templates_created'] = 'No templates have been created.';
 $string['create_own_template'] = 'You can also create your own';
 
@@ -164,7 +170,7 @@ $string['student_k_factor_specified_rule'] = 'Student k-factor must be specified
 $string['question_k_factor_specified_rule'] = 'Question k-factor must be specified';
 $string['k_factor_numeric_rule'] = 'K-factor must be a numeric value';
 
-$string['publish_explanation'] = '<p>Students are unable to answer questions as long as the quiz is not published. This is useful if you\'re still building your question list and modifying question ratings. Similarly, modifying the default student rating before a quiz has been published ensures that all students are given the same initial rating.</p><p>Students can answer questions once the quiz has been published. After this point you can still modify your question list and assign different rating to questions. However, modifying the default student rating will not influence rating of students that has already entered the quiz, but will influence the initial rating of students that has yet to enter the quiz.</p><p>Once CAPQuiz has been published, it can not be reverted and will be visible to students.</p>';
+$string['publish_explanation'] = '<p>Students are unable to answer questions as long as the capquiz is not published. This is useful if you\'re still building your question list and modifying question ratings. Similarly, modifying the default student rating before a capquiz has been published ensures that all students are given the same initial rating.</p><p>Students can answer questions once the capquiz has been published. After this point you can still modify your question list and assign different rating to questions. However, modifying the default student rating will not influence rating of students that has already entered the capquiz, but will influence the initial rating of students that has yet to enter the capquiz.</p><p>Once CAPQuiz has been published, it can not be reverted and will be visible to students.</p>';
 $string['template_explanation'] = '<p>A template is a read-only copy of a question list. Templates allow instructors to reuse question lists between courses or semesters, and can be shared with other instructors. Since a template is a copy of it\'s original question list, instructors can be sure that ratings won\'t be influenced when sharing between CAPQuiz instances. However, if multiple question lists are created from the same template, any changes made to the original <em>question</em> in the question bank will be visible in all templates and question lists. This includes renaming the question title, changing correct answers, descriptions and marks.<p>';
 $string['template_no_questions_in_list'] = '<p>There doesn\'t seem to be any questions in the question list for this CAPQuiz instance. Creating a template requires questions in the question list. Add some questions and come back to create your template.</p>';
 $string['publish_no_questions_in_list'] = '<p>There doesn\'t seem to be any questions in the question list for this CAPQuiz instance. You must have at least one question before you can publish</p>';
@@ -173,6 +179,10 @@ $string['publish_already_published'] = '<p>This CAPQuiz is already published</p>
 $string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
 $string['not_published'] = 'Not published';
+$string['question_list_not_published'] = 'The question list is not yet published';
+
+$string['question_list_settings'] = 'Question list settings';
+$string['you_finished_capquiz'] = 'You have finished this capquiz!';
 
 $string['problem_with_question_header'] = 'Is there a problem with this question? Send feedback to your instructor here.';
 $string['problem_with_question_details'] = 'If you have feedback for this question, please type it below. The text will be sent to your instructor. You will be able to continue editing this when you have submitted your answer.';
@@ -193,3 +203,21 @@ $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the 
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';
 $string['privacy:metadata:capquiz_user:highest_level'] = 'The user\'s highest number of stars achieved.';
+
+$string['privacy:metadata:capquiz_user_rating'] = 'Details about each user rating created in a CAPQuiz.';
+$string['privacy:metadata:capquiz_user_rating:capquiz_user_id'] = 'The user who\'s rating it is.';
+$string['privacy:metadata:capquiz_user_rating:rating'] = 'The user\'s rating.';
+$string['privacy:metadata:capquiz_user_rating:manual'] = 'Whether or not the user rating was created manually';
+$string['privacy:metadata:capquiz_user_rating:timecreated'] = 'The time that the user rating was created';
+
+$string['userratings'] = 'User ratings';
+$string['userrating'] = 'User rating';
+$string['questionrating'] = 'Question rating';
+$string['report'] = 'report';
+
+$string['subplugintype_capquizreport'] = 'Report';
+$string['subplugintype_capquizreport_plural'] = 'Reports';
+$string['erroraccessingreport'] = 'You cannot access this report';
+
+$string['true'] = 'True';
+$string['false'] = 'False';

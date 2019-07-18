@@ -70,6 +70,10 @@ class capquiz {
         return $this->record->id;
     }
 
+    public function name() : string {
+        return $this->record->name;
+    }
+
     public function is_published() : bool {
         return $this->record->published;
     }

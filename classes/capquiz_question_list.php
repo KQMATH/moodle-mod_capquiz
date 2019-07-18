@@ -183,7 +183,8 @@ class capquiz_question_list {
                 $newquestion->question_list_id = $this->id();
                 $newquestion->question_id = $question->question_id();
                 $newquestion->rating = $question->rating();
-                $DB->insert_record('capquiz_question', $newquestion);
+                $capquizquestionid = $DB->insert_record('capquiz_question', $newquestion, true);
+                capquiz_question_rating::insert_question_rating_entry($capquizquestionid, $newquestion->rating);
             }
         }
     }
@@ -230,7 +231,8 @@ class capquiz_question_list {
             $record = $question->entry();
             $record->id = null;
             $record->question_list_id = $qlistid;
-            $DB->insert_record('capquiz_question', $record);
+            $capquizquestionid = $DB->insert_record('capquiz_question', $record, true);
+            capquiz_question_rating::insert_question_rating_entry($capquizquestionid, $record->rating);
         }
     }
 
