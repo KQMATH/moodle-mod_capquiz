@@ -17,6 +17,7 @@
 /**
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -84,6 +85,23 @@ function capquiz_reset_userdata($data) {
 
 function capquiz_cron() {
     return true;
+}
+
+/**
+ * This function extends the settings navigation block for the site.
+ *
+ * @param settings_navigation $settings
+ * @param navigation_node $capquiznode
+ * @return void
+ */
+function capquiz_extend_settings_navigation($settings, $capquiznode) {
+    global $PAGE, $CFG;
+
+    // Require {@link questionlib.php}
+    // Included here as we only ever want to include this file if we really need to.
+    require_once($CFG->libdir . '/questionlib.php');
+
+    question_extend_settings_navigation($capquiznode, $PAGE->cm->context)->trim_if_empty();
 }
 
 function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
