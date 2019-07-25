@@ -84,7 +84,7 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019062553, 'capquiz');
     }
-    if ($oldversion < 2019071800) {
+    if ($oldversion < 2019072500) {
         // Define table capquiz_user_rating to be created.
         $utable = new xmldb_table('capquiz_user_rating');
 
@@ -130,24 +130,47 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
 
         $atable = new xmldb_table('capquiz_attempt');
+
         $aqrfield = new xmldb_field(
             'question_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aqrkey = new xmldb_key(
             'question_rating_id', XMLDB_KEY_FOREIGN, array('question_rating_id'), 'capquiz_question_rating', array('id'));
+        $aqprevrfield = new xmldb_field(
+            'question_prev_rating_id',
+            XMLDB_TYPE_INTEGER, 11, null, null, null, null);
+        $aqprevrkey = new xmldb_key(
+            'question_prev_rating_id',
+            XMLDB_KEY_FOREIGN, array('question_prev_rating_id'), 'capquiz_question_rating', array('id'));
+
         $aprevqrfield = new xmldb_field(
-            'previous_question_rating_id',
+            'prev_question_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aprevqrkey = new xmldb_key(
-            'previous_question_rating_id',
-            XMLDB_KEY_FOREIGN, array('previous_question_rating_id'), 'capquiz_question_rating', array('id'));
+            'prev_question_rating_id',
+            XMLDB_KEY_FOREIGN, array('prev_question_rating_id'), 'capquiz_question_rating', array('id'));
+
+        $aprevqprevrfield = new xmldb_field(
+            'prev_question_prev_rating_id',
+            XMLDB_TYPE_INTEGER, 11, null, null, null, null);
+        $aprevqprevrkey = new xmldb_key(
+            'prev_question_prev_rating_id',
+            XMLDB_KEY_FOREIGN, array('prev_question_prev_rating_id'), 'capquiz_question_rating', array('id'));
 
         if (!$dbman->field_exists($atable, $aqrfield)) {
             $dbman->add_field($atable, $aqrfield);
             $dbman->add_key($atable, $aqrkey);
         }
+        if (!$dbman->field_exists($atable, $aqprevrfield)) {
+            $dbman->add_field($atable, $aqprevrfield);
+            $dbman->add_key($atable, $aqprevrkey);
+        }
         if (!$dbman->field_exists($atable, $aprevqrfield)) {
             $dbman->add_field($atable, $aprevqrfield);
             $dbman->add_key($atable, $aprevqrkey);
+        }
+        if (!$dbman->field_exists($atable, $aprevqprevrfield)) {
+            $dbman->add_field($atable, $aprevqprevrfield);
+            $dbman->add_key($atable, $aprevqprevrkey);
         }
 
         $aurfield = new xmldb_field(
@@ -155,11 +178,11 @@ function xmldb_capquiz_upgrade($oldversion) {
         $aurkey = new xmldb_key(
             'user_rating_id', XMLDB_KEY_FOREIGN, array('user_rating_id'), 'capquiz_user_rating', array('id'));
         $aprevurfield = new xmldb_field(
-            'previous_user_rating_id',
+            'user_prev_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aprevurkey = new xmldb_key(
-            'previous_user_rating_id',
-            XMLDB_KEY_FOREIGN, array('previous_user_rating_id'), 'capquiz_user_rating', array('id'));
+            'user_prev_rating_id',
+            XMLDB_KEY_FOREIGN, array('user_prev_rating_id'), 'capquiz_user_rating', array('id'));
 
         if (!$dbman->field_exists($atable, $aurfield)) {
             $dbman->add_field($atable, $aurfield);
@@ -170,7 +193,7 @@ function xmldb_capquiz_upgrade($oldversion) {
             $dbman->add_key($atable, $aprevurkey);
         }
 
-        upgrade_mod_savepoint(true, 2019071800, 'capquiz');
+        upgrade_mod_savepoint(true, 2019072500, 'capquiz');
     }
     return true;
 }

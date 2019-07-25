@@ -85,9 +85,11 @@
         <FIELD NAME="time_answered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="time_reviewed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="question_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the question used in this attempt"/>
-        <FIELD NAME="previous_question_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the question used in this attempt"/>
+        <FIELD NAME="question_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the question used in this attempt"/>
+        <FIELD NAME="prev_question_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the previous question used in this attempt"/>
+        <FIELD NAME="prev_question_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the previous question used in this attempt"/>
         <FIELD NAME="user_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_user_rating for the user used in this attempt"/>
-        <FIELD NAME="previous_user_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_user_rating for the user used in this attempt"/>
+        <FIELD NAME="user_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_user_rating for the user used in this attempt"/>
         <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -95,9 +97,11 @@
         <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
         <KEY NAME="question_rating_id" TYPE="foreign" FIELDS="question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
-        <KEY NAME="previous_question_rating_id" TYPE="foreign" FIELDS="previous_question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+        <KEY NAME="question_prev_rating_id" TYPE="foreign" FIELDS="question_prev_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+        <KEY NAME="prev_question_rating_id" TYPE="foreign" FIELDS="prev_question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+        <KEY NAME="prev_question_prev_rating_id" TYPE="foreign" FIELDS="prev_question_prev_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
         <KEY NAME="user_rating_id" TYPE="foreign" FIELDS="user_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
-        <KEY NAME="previous_user_rating_id" TYPE="foreign" FIELDS="previous_question_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
+        <KEY NAME="user_previous_rating_id" TYPE="foreign" FIELDS="prev_question_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="capquiz_question_rating" COMMENT="Stores a rating for a CAPQuiz question.">
