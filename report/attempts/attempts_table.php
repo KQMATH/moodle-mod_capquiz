@@ -111,7 +111,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         } else if ($field === 'questionsummary') {
             return $this->make_preview_link($summary, $attempt, $slot);
 
-        }else {
+        } else {
             return $summary;
         }
     }
