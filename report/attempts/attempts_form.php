@@ -46,7 +46,6 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
 
         if (!($data['urating']
             || $data['uprevrating']
-            || $data['qrating']
             || $data['qprevrating']
             || $data['ansstate']
             || $data['qtext']
@@ -66,8 +65,6 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
                 get_string('urating', 'capquizreport_attempts')),
             $mform->createElement('advcheckbox', 'uprevrating', '',
                 get_string('uprevrating', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'qrating', '',
-                get_string('qrating', 'capquizreport_attempts')),
             $mform->createElement('advcheckbox', 'qprevrating', '',
                 get_string('qprevrating', 'capquizreport_attempts')),
             $mform->createElement('advcheckbox', 'qtext', '',

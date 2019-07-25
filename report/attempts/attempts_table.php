@@ -67,7 +67,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
             return;
         }
 
-        $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
+        $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetimeseconds', 'capquiz'));
         parent::build_table();
     }
 
@@ -108,7 +108,10 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         if ($field === 'responsesummary') {
             return $this->make_review_link($summary, $attempt, $slot);
 
-        } else {
+        } else if ($field === 'questionsummary') {
+            return $this->make_preview_link($summary, $attempt, $slot);
+
+        }else {
             return $summary;
         }
     }
@@ -183,11 +186,11 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Generate the display of the previous user rating column.
+     * Generate the display of the users's previous rating column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_prevuserrating($attempt) {
+    public function col_userprevrating($attempt) {
         if ($attempt->userrating) {
             return $attempt->prevuserrating;
         } else {
@@ -196,11 +199,11 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Generate the display of the previous question rating column.
+     * Generate the display of the question's previous rating column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_prevquestionrating($attempt) {
+    public function col_questionprevrating($attempt) {
         global $OUTPUT;
         if ($attempt->prevquestionrating) {
             $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_attempts'),
@@ -217,11 +220,11 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Generate the display of the previous question manual rating column.
+     * Generate the display of the question's previous rating manual column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_prevquestionratingmanual($attempt) {
+    public function col_questionprevratingmanual($attempt) {
         if (is_null($attempt->manualprevqrating)) {
             return '-';
         }
@@ -258,9 +261,9 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
                     pcur.rating AS manualprevurating';
 
         $from .= "\nLEFT JOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
-        $from .= "\nLEFT JOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.previous_question_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.question_prev_rating_id";
         $from .= "\nLEFT JOIN {capquiz_user_rating} cur ON cur.id = ca.user_rating_id";
-        $from .= "\nLEFT JOIN {capquiz_user_rating} pcur ON pcur.id = ca.previous_user_rating_id";
+        $from .= "\nLEFT JOIN {capquiz_user_rating} pcur ON pcur.id = ca.user_prev_rating_id";
 
         return [$fields, $from, $where, $params];
     }
