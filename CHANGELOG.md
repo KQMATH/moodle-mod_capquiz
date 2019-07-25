@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Added
 - Framework for CAPQuiz **report** sub-plugins
 - New **Attempts** report sub-plugin where one can view/generate reports on CAPQuiz attempts made within the activity.
+- New **Questions** report sub-plugin where one can view/generate reports on the development of CAPQuiz question ratings over time.
 - Ability to manage the question bank in the context of the CAPQuiz activity, via new link in the navigation menu.
 - Check out the commented question in the comments pane (teacher view) by providing link to question preview.
 
