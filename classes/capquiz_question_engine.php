@@ -70,6 +70,7 @@ class capquiz_question_engine {
 
     public function delete_invalid_attempt(capquiz_user $user) {
         $attempt = $this->attempt_for_user($user);
+
         if (!$attempt->is_question_valid()) {
             $attempt->delete();
         }
@@ -130,6 +131,7 @@ class capquiz_question_engine {
         $currentquestion = $this->capquiz->question_list()->question($current->question_id());
         $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
 
+        $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating(), true);
         $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);
 
         if (!$currentquestion || !$previousquestion) {
@@ -139,8 +141,12 @@ class capquiz_question_engine {
             $ratingsystem->question_victory_ratings($currentquestion, $previousquestion);
         } else if (!$previouscorrect && $currentcorrect) {
             $ratingsystem->question_victory_ratings($previousquestion, $currentquestion);
+        } else {
+            $previousquestion->set_rating($previousquestion->rating());
+            $currentquestion->set_rating($currentquestion->rating());
         }
 
+        $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating());
         $current->set_question_rating($currentquestion->get_capquiz_question_rating());
     }
 

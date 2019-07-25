@@ -225,7 +225,17 @@ class capquiz_question_attempt {
         if (!$previous) {
             $this->record->question_rating_id = $rating->id();
         } else {
-            $this->record->previous_question_rating_id = $rating->id();
+            $this->record->question_prev_rating_id = $rating->id();
+        }
+        $DB->update_record('capquiz_attempt', $this->record);
+    }
+
+    public function set_previous_question_rating(capquiz_question_rating $rating, $previous = false) {
+        global $DB;
+        if (!$previous) {
+            $this->record->prev_question_rating_id = $rating->id();
+        } else {
+            $this->record->prev_question_prev_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
     }
@@ -235,7 +245,7 @@ class capquiz_question_attempt {
         if (!$previous) {
             $this->record->user_rating_id = $rating->id();
         } else {
-            $this->record->previous_user_rating_id = $rating->id();
+            $this->record->user_prev_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
     }
