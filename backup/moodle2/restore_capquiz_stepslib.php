@@ -128,9 +128,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $data->user_id = $this->get_new_parentid('capquiz_user');
         $data->question_id = $this->get_mappingid('capquiz_question', $data->question_id);
         $data->question_rating_id = $this->get_mappingid('capquiz_question_rating', $data->question_rating_id);
-        $data->previous_question_rating_id = $this->get_mappingid('capquiz_question_rating', $data->previous_question_rating_id);
+        $data->question_prev_rating_id = $this->get_mappingid('capquiz_question_rating', $data->question_prev_rating_id);
+        $data->prev_question_rating_id = $this->get_mappingid('capquiz_question_rating', $data->prev_question_rating_id);
+        $data->prev_question_prev_rating_id = $this->get_mappingid('capquiz_question_rating', $data->prev_question_prev_rating_id);
         $data->user_rating_id = $this->get_mappingid('capquiz_user_rating', $data->user_rating_id);
-        $data->previous_user_rating_id = $this->get_mappingid('capquiz_user_rating', $data->previous_user_rating_id);
+        $data->user_prev_rating_id = $this->get_mappingid('capquiz_user_rating', $data->user_prev_rating_id);
         $newitemid = $DB->insert_record('capquiz_attempt', $data);
         $this->set_mapping('capquiz_attempt', $oldid, $newitemid);
     }
