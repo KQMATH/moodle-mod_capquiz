@@ -26,6 +26,7 @@
 namespace capquizreport_questions;
 
 use core\dml\sql_join;
+use mod_capquiz\report\capquiz_attempts_report;
 use mod_capquiz\report\capquiz_attempts_report_options;
 use mod_capquiz\report\capquiz_attempts_report_table;
 use moodle_url;
@@ -278,12 +279,12 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
                     cqr.rating AS questionrating,
                     pcqr.rating AS questionprevrating,
                     pcqr.manual AS manualprevqrating,
-                    cqr2.id AS questionid,
-                    cqr2.question_id AS moodlequestionid';
+                    cq2.id AS questionid,
+                    cq2.question_id AS moodlequestionid';
 
         $from1 = "\nJOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
         $from1 .= "\nJOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.question_prev_rating_id";
-        $from1 .= "\nJOIN {capquiz_question} cqr2 ON cqr2.id = cqr.capquiz_question_id";
+        $from1 .= "\nJOIN {capquiz_question} cq2 ON cq2.id = cqr.capquiz_question_id";
 
         $sql1 = "SELECT {$fields}{$fields1}
                  \nFROM ({$from}{$from1})
@@ -307,8 +308,8 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
                  \nWHERE {$where}";
 
         $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier') . ' AS uniqueidquestion,';
-        $fields .= "*";
-        $from = "(\n{$sql1}\nUNION\n{$sql2} ) AS test";
+        $fields .= "ratings.*";
+        $from = "(\n{$sql1} \nUNION ALL\n {$sql2}) AS ratings";
 
         list($from, $params) = uniquify_sql_params($from, $params);
         return [$fields, $from, '1=1', $params];

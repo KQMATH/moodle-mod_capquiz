@@ -363,8 +363,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 u.email' . $extrafields . ',
                 ca.slot,
                 ca.time_answered AS timeanswered,
-                ca.time_reviewed AS timereviewed,
-                cq.question_id AS moodlequestionid';
+                ca.time_reviewed AS timereviewed';
 
         // This part is the same for all cases. Join the users and capquiz_attempts tables.
         $from = " {user} u";
@@ -377,7 +376,6 @@ abstract class capquiz_attempts_report_table extends table_sql {
         $from .= "\nJOIN {question_attempts} qa ON qa.questionusageid = qu.id";
 
         $from .= "\nJOIN {capquiz_attempt} ca ON ca.user_id = cu.id AND ca.slot = qa.slot";
-        $from .= "\nJOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id";
 
         $params = array('capquizid' => $this->capquiz->id());
 
