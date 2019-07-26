@@ -17,7 +17,7 @@
 /**
  * CAPQuiz attempts report version information.
  *
- * @package     capquizreport_attempts
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2019072500;
 $plugin->requires  = 2016120500;
-$plugin->component = 'capquizreport_attempts';
+$plugin->component = 'capquizreport_questions';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = 'v0.1.0';
 $plugin->dependencies = array(

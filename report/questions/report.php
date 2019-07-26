@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CAPQuiz attempts report class.
+ * CAPQuiz questions report class.
  *
- * @package     capquizreport_attempts
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace capquizreport_attempts;
+namespace capquizreport_questions;
 
 use context_course;
 use mod_capquiz\report\capquiz_attempts_report;
@@ -31,27 +31,27 @@ use mod_capquiz\report\capquiz_attempts_report;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport.php');
-require_once(__DIR__ . '/attempts_form.php');
-require_once(__DIR__ . '/attempts_table.php');
-require_once(__DIR__ . '/attempts_options.php');
+require_once(__DIR__ . '/questions_form.php');
+require_once(__DIR__ . '/questions_table.php');
+require_once(__DIR__ . '/questions_options.php');
 
 /**
- * The capquiz attempts report provides summary information about each attempt in
- * a capquiz.
+ * The capquiz questions report provides summary information about the questions in
+ * a capquiz (mainly ratings).
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquizreport_attempts_report extends capquiz_attempts_report {
+class capquizreport_questions_report extends capquiz_attempts_report {
 
     public function display($capquiz, $cm, $course, $download) {
         global $OUTPUT, $DB;
 
         list($studentsjoins) = $this->init(
-            'attempts', 'capquizreport_attempts\capquizreport_attempts_settings_form', $capquiz, $cm, $course);
+            'questions', 'capquizreport_questions\capquizreport_questions_settings_form', $capquiz, $cm, $course);
 
-        $this->options = new capquizreport_attempts_options('attempts', $capquiz, $cm, $course);
+        $this->options = new capquizreport_questions_options('questions', $capquiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
             $this->options->process_settings_from_form($fromform);
@@ -69,9 +69,9 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         $courseshortname = format_string($course->shortname, true,
             array('context' => context_course::instance($course->id)));
 
-        $table = new capquizreport_attempts_table($capquiz, $this->context,
+        $table = new capquizreport_questions_table($capquiz, $this->context,
             $this->options, $studentsjoins, $questions, $this->options->get_url());
-        $filename = capquiz_report_download_filename(get_string('attemptsfilename', 'capquizreport_attempts'),
+        $filename = capquiz_report_download_filename(get_string('questionsfilename', 'capquizreport_questions'),
             $courseshortname, $capquiz->name());
         $table->is_downloading($this->options->download, $filename,
             $courseshortname . ' ' . format_string($capquiz->name(), true));
@@ -87,9 +87,6 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
                     WHERE $studentsjoins->wheres";
             $hasstudents = $DB->record_exists_sql($sql, $studentsjoins->params);
         }
-
-        // TODO enable when support for attempt deletion is implemented {@link delete_selected_attempts}.
-        // $this->process_actions($capquiz, $cm, $studentsjoins, $this->options->get_url());
 
         $hasquestions = capquiz_has_questions($capquiz->id());
         // Start output.
@@ -110,50 +107,32 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $columns = array();
             $headers = array();
 
-            if (!$table->is_downloading() && $this->options->checkboxcolumn) {
-                $columns[] = 'checkbox';
-                $headers[] = null;
-            }
-
-            $this->add_user_columns($table, $columns, $headers);
-
             if ($table->is_downloading()) {
-                $this->add_uesrid_column($columns, $headers);
-                $this->add_moodlequestionid_column($columns, $headers);
+                $columns[] = 'attemptid';
+                $headers[] = get_string('attemptid', 'capquizreport_questions');
             }
 
-            if ($this->options->showansstate) {
-                $columns[] = 'answerstate';
-                $headers[] = get_string('answerstate', 'capquizreport_attempts');
-            }
-
-            $this->add_rating_columns($columns, $headers);
+            $this->add_questionid_column($columns, $headers);
+            $this->add_question_rating_columns($columns, $headers);
 
             if ($table->is_downloading()) {
                 $columns[] = 'questionprevratingmanual';
-                $headers[] = get_string('questionprevratingmanual', 'capquizreport_attempts');
+                $headers[] = get_string('questionprevratingmanual', 'capquizreport_questions');
             }
 
-            if ($table->is_downloading()) {
-                $this->add_time_columns($columns, $headers);
-            }
+            $this->add_moodlequestionid_column($columns, $headers);
 
             if ($this->options->showqtext) {
                 $columns[] = 'question';
-                $headers[] = get_string('question', 'capquizreport_attempts');
+                $headers[] = get_string('question', 'capquizreport_questions');
             }
-            if ($this->options->showresponses) {
-                $columns[] = 'response';
-                $headers[] = get_string('response', 'capquizreport_attempts');
-            }
-            if ($this->options->showright) {
-                $columns[] = 'right';
-                $headers[] = get_string('rightanswer', 'capquizreport_attempts');
-            }
+
+            $columns[] = 'timecreated';
+            $headers[] = get_string('timecreated', 'capquizreport_questions');
 
             $table->define_columns($columns);
             $table->define_headers($headers);
-            $table->sortable(true, 'uniqueid');
+            $table->sortable(true, 'uniqueidquestion');
 
             // Set up the table.
             $table->define_baseurl($this->options->get_url());
@@ -162,8 +141,6 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
 
             $table->no_sorting('answerstate');
             $table->no_sorting('question');
-            $table->no_sorting('response');
-            $table->no_sorting('right');
 
             $table->set_attribute('id', 'responses');
 
@@ -174,27 +151,25 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         return true;
     }
 
-    protected function add_rating_columns(array &$columns, array &$headers) {
-        if ($this->options->showurating) {
-            $this->add_user_rating_column($columns, $headers);
-        }
-        if ($this->options->showuprevrating) {
-            $this->add_user_previous_rating_column($columns, $headers);
+    protected function print_standard_header_and_messages($cm, $course, $capquiz,
+                                                          $options, $hasquestions, $hasstudents) {
+        global $OUTPUT;
+
+        echo $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);
+
+        if (!$hasquestions) {
+            echo capquiz_no_questions_message($capquiz, $cm, $this->context);
+        } else if (!$capquiz->is_published()) {
+            echo capquiz_not_published_message($capquiz, $cm, $this->context);
+        } else if (!$hasstudents) {
+            echo $OUTPUT->notification(get_string('nostudentsyet'));
         }
 
-        if ($this->options->showqprevrating) {
-            $this->add_question_previous_rating_column($columns, $headers);
-        }
     }
 
-    protected function add_user_rating_column(array &$columns, array &$headers) {
-        $columns[] = 'userrating';
-        $headers[] = get_string('userrating', 'capquiz');
-    }
-
-    protected function add_user_previous_rating_column(array &$columns, array &$headers) {
-        $columns[] = 'userprevrating';
-        $headers[] = get_string('userprevrating', 'capquizreport_attempts');
+    protected function add_question_rating_columns(array &$columns, array &$headers) {
+        $this->add_question_rating_column($columns, $headers);
+        $this->add_question_previous_rating_column($columns, $headers);
     }
 
     protected function add_question_rating_column(array &$columns, array &$headers) {
@@ -203,7 +178,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
     }
 
     protected function add_question_previous_rating_column(array &$columns, array &$headers) {
-            $columns[] = 'questionprevrating';
-            $headers[] = get_string('questionprevrating', 'capquizreport_attempts');
+        $columns[] = 'questionprevrating';
+        $headers[] = get_string('questionprevrating', 'capquizreport_questions');
     }
 }

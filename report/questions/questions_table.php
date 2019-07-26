@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines the capquiz attempts table for showing question attempts.
+ * This file defines the capquiz questions table for showing question data.
  *
- * @package     capquizreport_attempts
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace capquizreport_attempts;
+namespace capquizreport_questions;
 
 use core\dml\sql_join;
 use mod_capquiz\report\capquiz_attempts_report_options;
@@ -38,13 +38,13 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 
 /**
- * This is a table subclass for displaying the capquiz attempts report.
+ * This is a table subclass for displaying the capquiz question report.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquizreport_attempts_table extends capquiz_attempts_report_table {
+class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
      * Constructor
@@ -58,7 +58,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
      */
     public function __construct($capquiz, $context, capquiz_attempts_report_options $options,
                                 sql_join $studentsjoins, $questions, $reporturl) {
-        parent::__construct('mod-capquiz-report-attempts-report', $capquiz, $context,
+        parent::__construct('mod-capquiz-report-questions-report', $capquiz, $context,
             $options, $studentsjoins, $questions, $reporturl);
     }
 
@@ -75,10 +75,6 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         switch ($colname) {
             case 'question':
                 return $this->data_col($attempt->slot, 'questionsummary', $attempt);
-            case 'response':
-                return $this->data_col($attempt->slot, 'responsesummary', $attempt);
-            case 'right':
-                return $this->data_col($attempt->slot, 'rightanswer', $attempt);
             default:
                 return null;
         }
@@ -105,10 +101,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
             return $summary;
         }
 
-        if ($field === 'responsesummary') {
-            return $this->make_review_link($summary, $attempt, $slot);
-
-        } else if ($field === 'questionsummary') {
+        if ($field === 'questionsummary') {
             return $this->make_preview_link($summary, $attempt, $slot);
 
         } else {
@@ -159,18 +152,6 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         }
     }
 
-    /**
-     * Generate the display of the user rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_userrating($attempt) {
-        if ($attempt->userrating) {
-            return $attempt->userrating;
-        } else {
-            return '-';
-        }
-    }
 
     /**
      * Generate the display of the question rating column.
@@ -186,33 +167,46 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Generate the display of the users's previous rating column.
+     * Generate the display of the time created (actually time answered) rating column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_userprevrating($attempt) {
-        if ($attempt->userrating) {
-            return $attempt->prevuserrating;
+    public function col_timecreated($attempt) {
+        if ($attempt->attempt) {
+            return userdate($attempt->timeanswered, $this->strtimeformat);
         } else {
             return '-';
         }
     }
 
     /**
-     * Generate the display of the question's previous rating column.
+     * Generate the display of the time created (actually time answered) rating column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_attemptid($attempt) {
+        if ($attempt->attempt) {
+            return $attempt->attempt;
+        } else {
+            return '-';
+        }
+    }
+
+    /**
+     * Generate the display of the previous question rating column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
     public function col_questionprevrating($attempt) {
         global $OUTPUT;
-        if ($attempt->prevquestionrating) {
-            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_attempts'),
+        if ($attempt->questionprevrating) {
+            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
                 'moodle', array('class' => 'icon'));
 
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
-                return $warningicon . $attempt->prevquestionrating;
+                return $warningicon . $attempt->questionprevrating;
             } else {
-                return $attempt->prevquestionrating;
+                return $attempt->questionprevrating;
             }
         } else {
             return '-';
@@ -220,7 +214,49 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Generate the display of the question's previous rating manual column.
+     * Generate the display of the previous question rating column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_prevquestionrating($attempt) {
+        global $OUTPUT;
+        if ($attempt->questionprevrating) {
+            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
+                'moodle', array('class' => 'icon'));
+
+            if (!$this->is_downloading() && $attempt->manualprevqrating) {
+                return $warningicon . $attempt->questionprevrating;
+            } else {
+                return $attempt->questionprevrating;
+            }
+        } else {
+            return '-';
+        }
+    }
+
+    /**
+     * Generate the display of the previous question rating column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_prevquestionprevrating($attempt) {
+        global $OUTPUT;
+        if ($attempt->questionprevrating) {
+            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
+                'moodle', array('class' => 'icon'));
+
+            if (!$this->is_downloading() && $attempt->manualprevqrating) {
+                return $warningicon . $attempt->questionprevrating;
+            } else {
+                return $attempt->questionprevrating;
+            }
+        } else {
+            return '-';
+        }
+    }
+
+    /**
+     * Generate the display of the previous question manual rating column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
@@ -233,38 +269,56 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         return $manualprevqrating;
     }
 
+    public function base_sql(sql_join $allowedstudentsjoins) {
+        global $DB;
+        list($fields, $from, $where, $params) = parent::base_sql($allowedstudentsjoins);
+        $fields1 = ',
+                    1 AS identifier,
+                    ca.time_answered AS timecreated,
+                    cqr.rating AS questionrating,
+                    pcqr.rating AS questionprevrating,
+                    pcqr.manual AS manualprevqrating,
+                    cqr2.id AS questionid,
+                    cqr2.question_id AS moodlequestionid';
+
+        $from1 = "\nJOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
+        $from1 .= "\nJOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.question_prev_rating_id";
+        $from1 .= "\nJOIN {capquiz_question} cqr2 ON cqr2.id = cqr.capquiz_question_id";
+
+        $sql1 = "SELECT {$fields}{$fields1}
+                 \nFROM ({$from}{$from1})
+                 \nWHERE {$where}";
+
+        $fields2 = ',
+                    2 AS identifier,
+                    ca.time_answered AS timecreated,
+                    cqr.rating AS questionrating,
+                    pcqr.rating AS questionprevrating,
+                    pcqr.manual AS manualprevqrating,
+                    cq2.id AS questionid,
+                    cq2.question_id AS moodlequestionid';
+
+        $from2 = "\nJOIN {capquiz_question_rating} cqr ON cqr.id = ca.prev_question_rating_id";
+        $from2 .= "\nJOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.prev_question_prev_rating_id";
+        $from2 .= "\nJOIN {capquiz_question} cq2 ON cq2.id = cqr.capquiz_question_id";
+
+        $sql2 = "SELECT {$fields}{$fields2}
+                 \nFROM {$from}{$from2}
+                 \nWHERE {$where}";
+
+        $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier') . ' AS uniqueidquestion,';
+        $fields .= "*";
+        $from = "(\n{$sql1}\nUNION\n{$sql2} ) AS test";
+
+        list($from, $params) = uniquify_sql_params($from, $params);
+        return [$fields, $from, '1=1', $params];
+    }
+
     protected function requires_latest_steps_loaded() {
-        if ($this->options->showansstate
-            || $this->options->showqtext
-            || $this->options->showresponses
-            || $this->options->showright) {
+        if ($this->options->showqtext) {
             return true;
         } else {
             return false;
         }
-    }
-
-    protected function is_latest_step_column($column) {
-        if (preg_match('/^(?:question|response|right)/', $column, $matches)) {
-            return $matches[1];
-        }
-        return false;
-    }
-
-    protected function update_sql_after_count($fields, $from, $where, $params) {
-        $fields .= ',
-                    cqr.rating AS questionrating,
-                    pcqr.rating AS prevquestionrating,
-                    pcqr.manual AS manualprevqrating,
-                    cur.rating AS userrating,
-                    pcur.rating AS prevuserrating,
-                    pcur.rating AS manualprevurating';
-
-        $from .= "\nLEFT JOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
-        $from .= "\nLEFT JOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.question_prev_rating_id";
-        $from .= "\nLEFT JOIN {capquiz_user_rating} cur ON cur.id = ca.user_rating_id";
-        $from .= "\nLEFT JOIN {capquiz_user_rating} pcur ON pcur.id = ca.user_prev_rating_id";
-
-        return [$fields, $from, $where, $params];
     }
 }

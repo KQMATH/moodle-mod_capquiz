@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'capquizreport_attempts', language 'en'
+ * Strings for component 'capquizreport_questions', language 'en'
  *
- * @package     capquizreport_attempts
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Attempts';
-$string['privacy:metadata'] = 'The capquizreport attempts plugin does not store any personal data.';
-$string['attemptsfilename'] = 'attempts';
+$string['pluginname'] = 'Questions';
+$string['privacy:metadata'] = 'The capquizreport questions plugin does not store any personal data.';
+$string['questionsfilename'] = 'questions';
 
 $string['userprevrating'] = 'User\'s previous rating';
 $string['questionprevrating'] = 'Question\'s previous rating';
@@ -44,3 +44,5 @@ $string['correct'] = 'Correct';
 $string['wrong'] = 'Wrong';
 $string['questionprevratingmanual'] = 'Previous rating manually updated';
 $string['rating_manually_updated'] = 'Previous rating was manually updated';
+$string['timecreated'] = 'Time created';
+$string['attemptid'] = 'Attempt id';

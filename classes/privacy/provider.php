@@ -78,6 +78,9 @@ class provider implements
         // The 'capquiz_question' table is used to map the usage of a question used in a CAPQuiz activity.
         // It does not contain user data.
 
+        // The 'capquiz_question_rating' contains each change of rating for a question.
+        // It does not contain user data.
+
         // The 'capquiz_question_list' table is used to store the set of question lists used by a CapQuiz activity.
         // It does not contain user data.
 

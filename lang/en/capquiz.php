@@ -221,3 +221,11 @@ $string['erroraccessingreport'] = 'You cannot access this report';
 
 $string['true'] = 'True';
 $string['false'] = 'False';
+$string['questionid'] = 'Question id';
+$string['moodlequestionid'] = 'Moodle question id';
+$string['capquizquestionid'] = 'CAPQuiz question id';
+$string['userid'] = 'User id';
+$string['timeanswered'] = 'Time answered';
+$string['timereviewed'] = 'Time reviewed';
+$string['strftimedatetimeseconds'] = '%d %B %Y, %I:%M:%S %p';
+$string['reportshowonlyanswered'] = 'Show only answered attempts';

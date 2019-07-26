@@ -15,43 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * CAPQuiz questions settings form definition.
  *
- * @package     mod_capquiz
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz\report;
+namespace capquizreport_questions;
 
-use moodleform;
+use mod_capquiz\report\capquiz_attempts_report;
+use mod_capquiz\report\capquiz_attempts_report_form;
 use MoodleQuickForm;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/formslib.php');
-
+require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_form.php');
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * This is the settings form for the capquiz questions report.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class capquiz_attempts_report_form extends moodleform {
-
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        return $errors;
-    }
+class capquizreport_questions_settings_form extends capquiz_attempts_report_form {
 
     protected function definition() {
         $mform = $this->_form;
-
-        $mform->addElement('header', 'preferencespage',
-            get_string('reportwhattoinclude', 'quiz'));
 
         $this->standard_attempt_fields($mform);
         $this->other_attempt_fields($mform);
@@ -67,26 +59,17 @@ abstract class capquiz_attempts_report_form extends moodleform {
     }
 
     protected function standard_attempt_fields(MoodleQuickForm $mform) {
+        $mform->addElement('hidden', 'attempts', capquiz_attempts_report::ALL_WITH);
+        $mform->setType('attempts', PARAM_ALPHAEXT);
 
-        $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
-            capquiz_attempts_report::ENROLLED_WITH => get_string('reportuserswith', 'quiz'),
-            // capquiz_attempts_report::ENROLLED_WITHOUT => get_string('reportuserswithout', 'quiz'),
-            // capquiz_attempts_report::ENROLLED_ALL     => get_string('reportuserswithorwithout', 'quiz'),
-            capquiz_attempts_report::ALL_WITH => get_string('reportusersall', 'quiz'),
-        ));
-
-        $mform->addElement('advcheckbox', 'onlyanswered', '',
-            get_string('reportshowonlyanswered', 'capquiz'));
-    }
-
-    protected function other_attempt_fields(MoodleQuickForm $mform) {
-    }
-
-    protected function standard_preference_fields(MoodleQuickForm $mform) {
-        $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz'));
-        $mform->setType('pagesize', PARAM_INT);
+        $mform->addElement('hidden', 'onlyanswered', 1);
+        $mform->setType('onlyanswered', PARAM_INT);
     }
 
     protected function other_preference_fields(MoodleQuickForm $mform) {
+        $mform->addGroup(array(
+            $mform->createElement('advcheckbox', 'qtext', '',
+                get_string('questiontext', 'quiz_responses')),
+        ), 'coloptions', get_string('showthe', 'quiz_responses'), array(' '), false);
     }
 }

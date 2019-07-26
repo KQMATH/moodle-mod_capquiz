@@ -46,9 +46,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
     /** @var bool whether to show the question answer state (correct or wrong) columns. */
     public $showansstate = true;
 
-    /** @var bool whether to show the question rating columns. */
-    public $showqrating = true;
-
     /** @var bool whether to show the previous question rating columns. */
     public $showqprevrating = true;
 
@@ -72,7 +69,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         $toform->ansstate = $this->showansstate;
         $toform->urating = $this->showurating;
         $toform->uprevrating = $this->showuprevrating;
-        $toform->qrating = $this->showqrating;
         $toform->qprevrating = $this->showqprevrating;
         $toform->qtext = $this->showqtext;
         $toform->resp = $this->showresponses;
@@ -87,7 +83,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         $this->showansstate = $fromform->ansstate;
         $this->showurating = $fromform->urating;
         $this->showuprevrating = $fromform->uprevrating;
-        $this->showqrating = $fromform->qrating;
         $this->showqprevrating = $fromform->qprevrating;
         $this->showqtext = $fromform->qtext;
         $this->showresponses = $fromform->resp;
@@ -100,7 +95,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         $this->showansstate = optional_param('ansstate', $this->showansstate, PARAM_BOOL);
         $this->showurating = optional_param('urating', $this->showurating, PARAM_BOOL);
         $this->showuprevrating = optional_param('uprevrating', $this->showuprevrating, PARAM_BOOL);
-        $this->showqrating = optional_param('qrating', $this->showqrating, PARAM_BOOL);
         $this->showqprevrating = optional_param('qprevrating', $this->showqprevrating, PARAM_BOOL);
         $this->showqtext = optional_param('qtext', $this->showqtext, PARAM_BOOL);
         $this->showresponses = optional_param('resp', $this->showresponses, PARAM_BOOL);
@@ -113,7 +107,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         $this->showansstate = get_user_preferences('capquizreport_attempts_ansstate', $this->showansstate);
         $this->showurating = get_user_preferences('capquizreport_attempts_urating', $this->showurating);
         $this->showuprevrating = get_user_preferences('capquizreport_attempts_uprevrating', $this->showuprevrating);
-        $this->showqrating = get_user_preferences('capquizreport_attempts_qrating', $this->showqrating);
         $this->showqprevrating = get_user_preferences('capquizreport_attempts_qprevrating', $this->showqprevrating);
         $this->showqtext = get_user_preferences('capquizreport_attempts_qtext', $this->showqtext);
         $this->showresponses = get_user_preferences('capquizreport_attempts_resp', $this->showresponses);
@@ -126,7 +119,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         set_user_preference('capquizreport_attempts_ansstate', $this->showansstate);
         set_user_preference('capquizreport_attempts_urating', $this->showurating);
         set_user_preference('capquizreport_attempts_uprevrating', $this->showuprevrating);
-        set_user_preference('capquizreport_attempts_qrating', $this->showqrating);
         set_user_preference('capquizreport_attempts_qprevrating', $this->showqprevrating);
         set_user_preference('capquizreport_attempts_qtext', $this->showqtext);
         set_user_preference('capquizreport_attempts_resp', $this->showresponses);
@@ -139,7 +131,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         if (!$this->showansstate
             && !$this->showurating
             && !$this->showuprevrating
-            && !$this->showqrating
             && !$this->showqprevrating
             && !$this->showqtext
             && !$this->showresponses
@@ -147,7 +138,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
             // We have to show at least something.
             $this->showansstate = true;
             $this->showurating = true;
-            $this->showqrating = true;
+            $this->showqprevrating = true;
         }
 
         // We only want to show the checkbox to delete attempts
@@ -161,7 +152,6 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
         $params['ansstate'] = $this->showansstate;
         $params['urating'] = $this->showurating;
         $params['uprevrating'] = $this->showuprevrating;
-        $params['qrating'] = $this->showqrating;
         $params['qprevrating'] = $this->showqprevrating;
         $params['qtext'] = $this->showqtext;
         $params['resp'] = $this->showresponses;

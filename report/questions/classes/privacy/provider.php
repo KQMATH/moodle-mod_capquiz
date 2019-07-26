@@ -15,21 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CAPQuiz attempts report version information.
+ * Privacy Subsystem implementation for capquizreport_questions.
  *
- * @package     capquizreport_attempts
+ * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace capquizreport_questions\privacy;
+
+use core_privacy\local\metadata\null_provider;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019072500;
-$plugin->requires  = 2016120500;
-$plugin->component = 'capquizreport_attempts';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v0.1.0';
-$plugin->dependencies = array(
-    'mod_capquiz' => 2019072500,   // The CAPQuiz plugin version 2019071800 or higher must be present.
-);
+/**
+ * Privacy Subsystem for capquizreport_questions implementing null_provider.
+ *
+ * @package     capquizreport_questions
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

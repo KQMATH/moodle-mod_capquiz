@@ -57,7 +57,8 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $attempts = new backup_nested_element('attempts');
         $attempt = new backup_nested_element('attempt', ['id'], [
             'slot', 'user_id', 'question_id', 'reviewed', 'answered', 'time_answered', 'time_reviewed',
-            'question_rating_id', 'previous_question_rating_id', 'user_rating_id', 'previous_user_rating_id', 'feedback'
+            'question_rating_id', 'question_prev_rating_id', 'prev_question_rating_id',
+            'prev_question_prev_rating_id', 'user_rating_id', 'user_prev_rating_id', 'feedback'
         ]);
 
         // Build the tree.

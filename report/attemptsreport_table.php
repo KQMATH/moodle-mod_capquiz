@@ -28,12 +28,14 @@ namespace mod_capquiz\report;
 use coding_exception;
 use core\dml\sql_join;
 use html_writer;
+use mod_capquiz\capquiz_question_attempt;
 use mod_quiz_attempts_report_options;
 use moodle_url;
 use qubaid_condition;
 use qubaid_list;
 use question_engine_data_mapper;
 use question_state;
+use quiz_attempt;
 use stdClass;
 use table_sql;
 use user_picture;
@@ -191,6 +193,19 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Generate the display of the moodle question rating column.
+     * @param object $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_moodlequestionid($attempt) {
+        if ($attempt->moodlequestionid) {
+            return $attempt->moodlequestionid;
+        } else {
+            return '-';
+        }
+    }
+
+    /**
      * Generate the display of the user id column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
@@ -238,6 +253,31 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Make a link to review an individual question in a popup window.
+     *
+     * @param string $data HTML fragment. The text to make into the link.
+     * @param object $attempt data for the row of the table being output.
+     * @param int $slot the number used to identify this question within this usage.
+     */
+    public function make_preview_link($data, $attempt, $slot) {
+        global $OUTPUT;
+
+        $questionid = $this->slot_questionid($attempt, $slot);
+
+        $output = html_writer::tag('span', html_writer::tag('span', $data),
+            array('class' => 'que'));
+
+        $url = question_preview_url($questionid)->out(false);
+
+        $output = $OUTPUT->action_link($url, $output,
+            new \popup_action('click', $url, 'previewquestion',
+                array('height' => 450, 'width' => 650)),
+            array('title' => get_string('previewquestion', 'quiz')));
+
+        return $output;
+    }
+
+    /**
      * @param object $attempt the row data
      * @param int $slot
      * @return question_state
@@ -245,6 +285,16 @@ abstract class capquiz_attempts_report_table extends table_sql {
     protected function slot_state($attempt, $slot) {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
         return question_state::get($stepdata->state);
+    }
+
+    /**
+     * @param object $attempt the row data
+     * @param int $slot
+     * @return question_id
+     */
+    protected function slot_questionid($attempt, $slot) {
+        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
+        return $stepdata->questionid;
     }
 
     /**
@@ -314,7 +364,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 ca.slot,
                 ca.time_answered AS timeanswered,
                 ca.time_reviewed AS timereviewed,
-                cq.question_id AS questionid';
+                cq.question_id AS moodlequestionid';
 
         // This part is the same for all cases. Join the users and capquiz_attempts tables.
         $from = " {user} u";
@@ -356,6 +406,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             */
+        }
+
+        if ($this->options->onlyanswered) {
+            $where .= " AND ca.answered = 1";
         }
 
         return array($fields, $from, $where, $params);
@@ -460,7 +514,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         // Add attemptid as a final tie-break to the sort. This ensures that
         // Attempts by the same student appear in order when just sorting by name.
         $sortcolumns = parent::get_sort_columns();
-        $sortcolumns['ca.id'] = SORT_ASC;
+        $sortcolumns['attempt'] = SORT_ASC;
         return $sortcolumns;
     }
 

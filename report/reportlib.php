@@ -194,3 +194,44 @@ function capquiz_not_published_message($quiz, $cm, $context) {
 
     return $output;
 }
+
+/**
+ * Make all named SQL parameters unique and
+ * generate a new parameter array with the unique parameters.
+ * @param string $sql The SQL with patameters to uniquify
+ * @param array $params The patameters to uniquify
+ * @return array
+ */
+function uniquify_sql_params($sql, $params): array {
+    $pattern = "/:([a-zA-Z0-9_]+)/";
+    $paramsres = [];
+    $processed = [];
+    $sqlres = preg_replace_callback($pattern,
+        function ($matches) use (&$params, &$paramsres, &$processed) {
+            $index = 1;
+            $key = substr($matches[0], 1);
+            if (!array_key_exists($key, $params)) {
+                return $matches[0];
+            }
+
+            if (array_key_exists($key, $processed)) {
+                $processed[$key] += 1;
+                $index = $processed[$key];
+            } else {
+                $processed[$key] = 1;
+            }
+
+            $newkey = $key . $index;
+            $paramsres[$newkey] = $params[$key];
+
+            return $matches[0] . $index;
+        }, $sql);
+
+    foreach ($params as $param => $value) {
+        if (!array_key_exists($param, $paramsres) && !array_key_exists($param, $processed)) {
+            $paramsres[$param] = $value;
+        }
+    }
+
+    return [$sqlres, $paramsres];
+}

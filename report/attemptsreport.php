@@ -196,7 +196,17 @@ abstract class capquiz_attempts_report extends report {
      */
     protected function add_questionid_column(&$columns, &$headers) {
         $columns[] = 'questionid';
-        $headers[] = get_string('questionid', 'capquizreport_attempts');
+        $headers[] = get_string('questionid', 'capquiz');
+    }
+
+    /**
+     * Add the state column to the $columns and $headers arrays.
+     * @param array $columns the list of columns. Added to.
+     * @param array $headers the columns headings. Added to.
+     */
+    protected function add_moodlequestionid_column(&$columns, &$headers) {
+        $columns[] = 'moodlequestionid';
+        $headers[] = get_string('moodlequestionid', 'capquiz');
     }
 
     /**
@@ -206,7 +216,7 @@ abstract class capquiz_attempts_report extends report {
      */
     protected function add_uesrid_column(&$columns, &$headers) {
         $columns[] = 'userid';
-        $headers[] = get_string('userid', 'capquizreport_attempts');
+        $headers[] = get_string('userid', 'capquiz');
     }
 
     /**
@@ -216,10 +226,10 @@ abstract class capquiz_attempts_report extends report {
      */
     protected function add_time_columns(&$columns, &$headers) {
         $columns[] = 'timeanswered';
-        $headers[] = get_string('timeanswered', 'capquizreport_attempts');
+        $headers[] = get_string('timeanswered', 'capquiz');
 
         $columns[] = 'timereviewed';
-        $headers[] = get_string('timereviewed', 'capquizreport_attempts');
+        $headers[] = get_string('timereviewed', 'capquiz');
 
     }
 

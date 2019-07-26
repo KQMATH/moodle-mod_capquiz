@@ -61,6 +61,11 @@ class capquiz_attempts_report_options {
      */
     public $attempts = capquiz_attempts_report::ENROLLED_WITH;
 
+    /**
+     * @var bool whether to show all attempts, or just the ones that are answered.
+     */
+    public $onlyanswered = true;
+
     /** @var int Number of attempts to show per page. */
     public $pagesize = capquiz_attempts_report::DEFAULT_PAGE_SIZE;
 
@@ -93,6 +98,7 @@ class capquiz_attempts_report_options {
             'id'         => $this->cm->id,
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
+            'onlyanswered' => $this->onlyanswered,
         );
 
         return $params;
@@ -134,6 +140,7 @@ class capquiz_attempts_report_options {
     public function get_initial_form_data() {
         $toform = new stdClass();
         $toform->attempts   = $this->attempts;
+        $toform->onlyanswered = $this->onlyanswered;
         $toform->pagesize   = $this->pagesize;
 
         return $toform;
@@ -145,6 +152,7 @@ class capquiz_attempts_report_options {
      */
     public function setup_from_form_data($fromform) {
         $this->attempts   = $fromform->attempts;
+        $this->onlyanswered = !empty($fromform->onlyanswered);
         $this->pagesize   = $fromform->pagesize;
     }
 
@@ -153,6 +161,7 @@ class capquiz_attempts_report_options {
      */
     public function setup_from_params() {
         $this->attempts   = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
+        $this->onlyanswered = optional_param('onlyanswered', $this->onlyanswered, PARAM_BOOL);
         $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
         $this->download   = optional_param('download', $this->download, PARAM_ALPHA);
     }
