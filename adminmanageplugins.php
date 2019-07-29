@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CAPQuiz attempts report version information.
+ * Allows the admin to manage capquiz plugins
  *
- * @package     capquizreport_attempts
+ * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,8 +25,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019072900;
-$plugin->requires  = 2016120500;
-$plugin->component = 'capquizreport_attempts';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.0.0';
+require_once("../../config.php");
+require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
+
+$subtype = required_param('subtype', PARAM_PLUGIN);
+$action = optional_param('action', null, PARAM_PLUGIN);
+$plugin = optional_param('plugin', null, PARAM_PLUGIN);
+
+if (!empty($plugin)) {
+    require_sesskey();
+}
+
+// Create the class for this controller.
+$pluginmanager = new capquiz_plugin_manager($subtype);
+
+$PAGE->set_context(context_system::instance());
+
+// Execute the controller.
+$pluginmanager->execute($action, $plugin);

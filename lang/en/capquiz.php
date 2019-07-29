@@ -215,8 +215,15 @@ $string['userrating'] = 'User rating';
 $string['questionrating'] = 'Question rating';
 $string['report'] = 'report';
 
+$string['settings'] = 'CAPQuiz settings';
+$string['hideshow'] = 'Hide/Show';
+$string['noreports'] = 'No reports accessible';
+
 $string['subplugintype_capquizreport'] = 'Report';
 $string['subplugintype_capquizreport_plural'] = 'Reports';
+$string['reportplugin'] = 'Report plugins';
+$string['managecapquizreportplugins'] = 'Manage report plugins';
+$string['capquizreporttype'] = 'Report type';
 $string['erroraccessingreport'] = 'You cannot access this report';
 
 $string['true'] = 'True';

@@ -25,11 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019072500;
+$plugin->version   = 2019072900;
 $plugin->requires  = 2016120500;
 $plugin->component = 'capquizreport_questions';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v0.1.0';
-$plugin->dependencies = array(
-    'mod_capquiz' => 2019072500,   // The CAPQuiz plugin version 2019071800 or higher must be present.
-);
+$plugin->release   = 'v1.0.0';

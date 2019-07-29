@@ -46,21 +46,21 @@ class report_renderer {
     }
 
     public function render() {
-        global $OUTPUT;
+        global $CFG;
         $html = '';
         $download = optional_param('download', '', PARAM_RAW);
         $mode = optional_param('mode', '', PARAM_ALPHA);
 
         $reportlist = capquiz_report_list($this->capquiz->context());
         if (empty($reportlist)) {
-            throw new capquiz_exception('erroraccessingreport');
+            return get_string('noreports', 'capquiz');
         }
         if ($mode == '') {
             // Default to first accessible report and redirect.
             capquiz_urls::redirect_to_url(capquiz_urls::view_report_url(reset($reportlist)));
         }
         if (!in_array($mode, $reportlist)) {
-            throw new capquiz_exception('erroraccessingreport');
+            throw new capquiz_exception('erroraccessingreport', 'capquiz', $CFG->wwwroot.'/mod/capquiz/view.php?id=' . $this->capquiz->course()->id);
         }
         $report = capquiz_report_factory::make($mode);
         $this->setup_report();
