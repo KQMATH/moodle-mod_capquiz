@@ -147,7 +147,7 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
 
         $state = $this->slot_state($attempt, $attempt->slot);
         if ($this->is_downloading()) {
-            return $state;
+            return $state->__toString();
         } else {
             return $this->make_review_link($state, $attempt, $attempt->slot);
         }

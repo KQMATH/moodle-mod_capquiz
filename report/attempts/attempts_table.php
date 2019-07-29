@@ -150,10 +150,9 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         if ($attempt->usageid == 0) {
             return '-';
         }
-
         $state = $this->slot_state($attempt, $attempt->slot);
         if ($this->is_downloading()) {
-            return $state;
+            return $state->__toString();
         } else {
             return $this->make_review_link($state, $attempt, $attempt->slot);
         }
