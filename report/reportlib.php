@@ -23,13 +23,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\report\capquiz_report_factory;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
@@ -43,17 +43,21 @@ function capquiz_report_list($context) {
     if (!empty($reportlist)) {
         return $reportlist;
     }
-    $installed = core_component::get_plugin_list('capquizreport');
-    foreach ($installed as $reportname => $notused) {
+    $pluginmanager = new capquiz_plugin_manager('capquizreport');
+    $installedplugins = $pluginmanager->get_sorted_plugins_list();
+    $enabledplugins = core_plugin_manager::instance()->get_enabled_plugins('capquizreport');
+    foreach ($installedplugins as $idx => $reportname) {
         $report = capquiz_report_factory::make($reportname);
 
-        if ($report->canview($context)) {
+        if (isset($enabledplugins[$reportname]) && $report->canview($context)) {
             $reportlist[] = $reportname;
         }
         continue;
     }
     return $reportlist;
 }
+
+
 
 /**
  * Create a filename for use when downloading data from a capquiz report. It is
