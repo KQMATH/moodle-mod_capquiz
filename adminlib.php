@@ -47,7 +47,7 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
      */
     public function __construct($subtype) {
         $this->subtype = $subtype;
-        $url = new moodle_url('/mod/capquiz/adminmanageplugins.php', array('subtype'=>$subtype));
+        $url = new moodle_url('/mod/capquiz/adminmanageplugins.php', array('subtype' => $subtype));
         parent::__construct('manage' . $subtype . 'plugins',
             get_string('manage' . $subtype . 'plugins', 'capquiz'),
             $url);
@@ -75,7 +75,7 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
         }
         if ($found) {
             $result = new stdClass();
-            $result->page     = $this;
+            $result->page = $this;
             $result->settings = array();
             return array($this->name => $result);
         } else {
@@ -325,9 +325,6 @@ class capquiz_plugin_manager {
      */
     private function view_header() {
         global $OUTPUT;
-
-
-//        admin_externalpage_setup('managereports');
         admin_externalpage_setup('manage' . $this->subtype . 'plugins');
         // Print the page heading.
         echo $OUTPUT->header();

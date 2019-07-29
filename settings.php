@@ -28,11 +28,6 @@ $modcapquizfolder = new admin_category('modcapquizfolder', new lang_string('plug
 $ADMIN->add('modsettings', $modcapquizfolder);
 
 $settings = new admin_settingpage($section, get_string('settings', 'capquiz'), 'moodle/site:config', !$module->is_enabled());
-
-if ($ADMIN->fulltree) {
-    // CAPQuiz settings goes here
-}
-
 $ADMIN->add('modcapquizfolder', $settings);
 // Tell core we already added the settings structure.
 $settings = null;
