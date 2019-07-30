@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
-### Added
 
 ## [0.4.0] - 2019-07-30
 ### Added
@@ -21,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 - Add some missing language strings
 - Wrong contexts were exported when exporting user data through the Privacy API (GDPR)
-
 
 ## [0.3.2] - 2019-07-01
 
