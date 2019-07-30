@@ -34,6 +34,10 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $question = new backup_nested_element('question', ['id'], [
             'question_id', 'question_list_id', 'rating'
         ]);
+        $questionratings = new backup_nested_element('questionratings');
+        $questionrating = new backup_nested_element('question_rating', ['id'], [
+            'capquiz_question_id', 'rating', 'manual', 'timecreated'
+        ]);
         $questionselections = new backup_nested_element('questionselections');
         $questionselection = new backup_nested_element('questionselection', ['id'], [
             'capquiz_id', 'strategy', 'configuration'
@@ -46,32 +50,47 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $user = new backup_nested_element('user', ['id'], [
             'user_id', 'capquiz_id', 'rating', 'highest_level'
         ]);
+        $userratings = new backup_nested_element('userratings');
+        $userrating = new backup_nested_element('user_rating', ['id'], [
+            'capquiz_user_id', 'rating', 'manual', 'timecreated'
+        ]);
         $attempts = new backup_nested_element('attempts');
         $attempt = new backup_nested_element('attempt', ['id'], [
-            'slot', 'user_id', 'question_id', 'reviewed', 'answered', 'time_answered', 'time_reviewed', 'feedback'
+            'slot', 'user_id', 'question_id', 'reviewed', 'answered', 'time_answered', 'time_reviewed',
+            'question_rating_id', 'question_prev_rating_id', 'prev_question_rating_id',
+            'prev_question_prev_rating_id', 'user_rating_id', 'user_prev_rating_id', 'feedback'
         ]);
 
         // Build the tree.
-        $capquiz->add_child($users);
-        $users->add_child($user);
-        $user->add_child($attempts);
-        $attempts->add_child($attempt);
-        $capquiz->add_child($questionselections);
-        $questionselections->add_child($questionselection);
-        $capquiz->add_child($ratingsystems);
-        $ratingsystems->add_child($ratingsystem);
         $capquiz->add_child($questionlist);
         $questionlist->add_child($questions);
         $questions->add_child($question);
+        $question->add_child($questionratings);
+        $questionratings->add_child($questionrating);
+
+        $capquiz->add_child($questionselections);
+        $questionselections->add_child($questionselection);
+
+        $capquiz->add_child($ratingsystems);
+        $ratingsystems->add_child($ratingsystem);
+
+        $capquiz->add_child($users);
+        $users->add_child($user);
+        $user->add_child($userratings);
+        $userratings->add_child($userrating);
+        $user->add_child($attempts);
+        $attempts->add_child($attempt);
 
         // Define sources.
         $capquiz->set_source_table('capquiz', ['id' => backup::VAR_ACTIVITYID]);
         $questionlist->set_source_table('capquiz_question_list', ['capquiz_id' => backup::VAR_PARENTID]);
         $question->set_source_table('capquiz_question', ['question_list_id' => backup::VAR_PARENTID]);
+        $questionrating->set_source_table('capquiz_question_rating', ['capquiz_question_id' => backup::VAR_PARENTID]);
         $questionselection->set_source_table('capquiz_question_selection', ['capquiz_id' => backup::VAR_PARENTID]);
         $ratingsystem->set_source_table('capquiz_rating_system', ['capquiz_id' => backup::VAR_PARENTID]);
         if ($this->get_setting_value('userinfo')) {
             $user->set_source_table('capquiz_user', ['capquiz_id' => backup::VAR_PARENTID]);
+            $userrating->set_source_table('capquiz_user_rating', ['capquiz_user_id' => backup::VAR_PARENTID]);
             $attempt->set_source_table('capquiz_attempt', ['user_id' => backup::VAR_PARENTID]);
         }
 

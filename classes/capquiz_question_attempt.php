@@ -163,6 +163,11 @@ class capquiz_question_attempt {
         return $moodleattempt->get_state()->is_correct();
     }
 
+    public function get_state() : bool {
+        $moodleattempt = $this->quba->get_question_attempt($this->question_slot());
+        return $moodleattempt->get_state();
+    }
+
     public function is_reviewed() : bool {
         return $this->record->reviewed;
     }
@@ -212,6 +217,36 @@ class capquiz_question_attempt {
     public function update_student_comment(string $feedback) {
         global $DB;
         $this->record->feedback = ($feedback !== '' ? $feedback : null);
+        $DB->update_record('capquiz_attempt', $this->record);
+    }
+
+    public function set_question_rating(capquiz_question_rating $rating, $previous = false) {
+        global $DB;
+        if (!$previous) {
+            $this->record->question_rating_id = $rating->id();
+        } else {
+            $this->record->question_prev_rating_id = $rating->id();
+        }
+        $DB->update_record('capquiz_attempt', $this->record);
+    }
+
+    public function set_previous_question_rating(capquiz_question_rating $rating, $previous = false) {
+        global $DB;
+        if (!$previous) {
+            $this->record->prev_question_rating_id = $rating->id();
+        } else {
+            $this->record->prev_question_prev_rating_id = $rating->id();
+        }
+        $DB->update_record('capquiz_attempt', $this->record);
+    }
+
+    public function set_user_rating(capquiz_user_rating $rating, $previous = false) {
+        global $DB;
+        if (!$previous) {
+            $this->record->user_rating_id = $rating->id();
+        } else {
+            $this->record->user_prev_rating_id = $rating->id();
+        }
         $DB->update_record('capquiz_attempt', $this->record);
     }
 

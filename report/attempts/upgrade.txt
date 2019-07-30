@@ -1,0 +1,2 @@
+This files describes API changes in /mod/capquiz/report/attempts/*,
+information provided here is intended especially for developers.

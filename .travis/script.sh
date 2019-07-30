@@ -10,6 +10,7 @@ moodle-plugin-ci validate || EXIT=$?
 moodle-plugin-ci savepoints || EXIT=$?
 moodle-plugin-ci mustache || EXIT=$?
 moodle-plugin-ci grunt -t eslint:amd -t stylelint:css || EXIT=$?
+#moodle-plugin-ci phpdoc || EXIT=$?
 moodle-plugin-ci phpunit --coverage-clover || EXIT=$?
 moodle-plugin-ci behat || EXIT=$?
 
