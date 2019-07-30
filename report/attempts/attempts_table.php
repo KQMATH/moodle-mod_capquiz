@@ -260,7 +260,6 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
                     pcur.rating AS prevuserrating,
                     pcur.rating AS manualprevurating';
 
-        $from .= "\nJOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id";
         $from .= "\nLEFT JOIN {capquiz_question_rating} cqr ON cqr.id = ca.question_rating_id";
         $from .= "\nLEFT JOIN {capquiz_question_rating} pcqr ON pcqr.id = ca.question_prev_rating_id";
         $from .= "\nLEFT JOIN {capquiz_user_rating} cur ON cur.id = ca.user_rating_id";
