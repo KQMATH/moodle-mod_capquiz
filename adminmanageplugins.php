@@ -24,6 +24,9 @@
  */
 
 require_once("../../config.php");
+
+require_login();
+
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 
 $subtype = required_param('subtype', PARAM_PLUGIN);
