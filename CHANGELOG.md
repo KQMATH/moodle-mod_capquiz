@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 ### Added
+
+## [0.4.0] - 2019-07-30
+### Added
 - Framework for CAPQuiz **report** sub-plugins
 - New **Attempts** report sub-plugin where one can view/generate reports on CAPQuiz attempts made within the activity.
 - New **Questions** report sub-plugin where one can view/generate reports on the development of CAPQuiz question ratings over time.
@@ -77,8 +80,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## 0.1.0 - 2018-09-28
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.0...HEAD
 
+[0.4.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.2.0...v0.3.0
