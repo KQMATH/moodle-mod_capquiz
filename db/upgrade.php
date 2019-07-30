@@ -84,7 +84,7 @@ function xmldb_capquiz_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2019062553, 'capquiz');
     }
-    if ($oldversion < 2019072500) {
+    if ($oldversion < 2019073000) {
         // Define table capquiz_user_rating to be created.
         $utable = new xmldb_table('capquiz_user_rating');
 
@@ -193,7 +193,7 @@ function xmldb_capquiz_upgrade($oldversion) {
             $dbman->add_key($atable, $aprevurkey);
         }
 
-        upgrade_mod_savepoint(true, 2019072500, 'capquiz');
+        upgrade_mod_savepoint(true, 2019073000, 'capquiz');
     }
     return true;
 }
