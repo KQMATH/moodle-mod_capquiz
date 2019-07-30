@@ -29,4 +29,4 @@ $plugin->version   = 2019073000;
 $plugin->requires  = 2016120500;
 $plugin->component = 'capquizreport_questions';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.0.0';
+$plugin->release   = '1.0.0';
