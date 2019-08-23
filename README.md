@@ -25,7 +25,7 @@ CAPQuiz includes the work of many [contributors](https://github.com/KQMATH/moodl
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
 **Developers:**
-* Aleksander Skrede <aleksander.skrede@gmail.com>
+* Aleksander Skrede <aleksander.l.skrede@ntnu.no>
 * Sebastian S. Gundersen <sebastian@sgundersen.com>
 * [André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
 
