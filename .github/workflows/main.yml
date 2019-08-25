@@ -1,0 +1,21 @@
+name: Wiki sync
+
+on: [gollum]
+
+jobs:
+  copycat:
+    name: Copycat
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Copycat CAPQuiz
+      uses: andstor/copycat-action@v1.0.1
+      env:
+        DST_BRANCH: master
+        DST_OWNER: KQMATH
+        DST_REPO_NAME: kqmath.github.io
+        DST_PATH: /docs/capquiz/
+        GH_PAT: ${{ secrets.GH_PAT }}
+        SRC_BRANCH: master
+        SRC_PATH: /.
+        SRC_WIKI: "true"
