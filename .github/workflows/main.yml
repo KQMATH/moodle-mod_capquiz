@@ -19,3 +19,5 @@ jobs:
         SRC_BRANCH: master
         SRC_PATH: /.
         SRC_WIKI: "true"
+        USERNAME: nutsbot
+        EMAIL: andr3.storhaug+bot@gmail.com
