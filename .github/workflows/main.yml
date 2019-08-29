@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Copycat CAPQuiz
-      uses: andstor/copycat-action@v1.0.1
+      uses: andstor/copycat-action@v1.1.0
       env:
         DST_BRANCH: master
         DST_OWNER: KQMATH
