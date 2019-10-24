@@ -66,12 +66,14 @@ class elo_rating_system extends capquiz_rating_system {
         $loserating = $loser->rating();
         $winrating = $winner->rating();
         $factor = $this->questionkfactor;
-        $newloserating = $loserating + $factor * (0 - $this->expected_result($winrating, $loserating));
-        $newwinrating = $winrating + $factor * (1 - $this->expected_result($loserating, $winrating));
+        $newloserating = $loserating + $factor * (0 - $this->expected_result($loserating, $winrating));
+        $newwinrating = $winrating + $factor * (1 - $this->expected_result($winrating, $loserating));
         $loser->set_rating($newloserating);
         $winner->set_rating($newwinrating);
     }
 
+    /* Calculates the expected score in favour of the player with rating $a,
+     * against a player with rating $b */
     private function expected_result(float $a, float $b) : float {
         $exponent = ($b - $a) / 400.0;
         return 1.0 / (1.0 + pow(10.0, $exponent));
