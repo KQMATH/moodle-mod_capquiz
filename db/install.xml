@@ -103,6 +103,9 @@
         <KEY NAME="user_rating_id" TYPE="foreign" FIELDS="user_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
         <KEY NAME="user_previous_rating_id" TYPE="foreign" FIELDS="prev_question_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="timereviewed" UNIQUE="false" FIELDS="time_reviewed"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="capquiz_question_rating" COMMENT="Stores a rating for a CAPQuiz question.">
       <FIELDS>
