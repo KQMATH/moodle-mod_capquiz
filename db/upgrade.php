@@ -195,5 +195,19 @@ function xmldb_capquiz_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2019073000, 'capquiz');
     }
+    if ($oldversion < 2019103100 ) {
+
+        // Define index timereviewed (not unique) to be added to capquiz_attempt.
+        $table = new xmldb_table('capquiz_attempt');
+        $index = new xmldb_index('timereviewed', XMLDB_INDEX_NOTUNIQUE, ['user_id', 'time_reviewed']);
+
+        // Conditionally launch add index timereviewed.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2019103100, 'capquiz');
+    }
     return true;
 }
