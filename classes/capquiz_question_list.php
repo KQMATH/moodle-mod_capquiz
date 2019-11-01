@@ -39,9 +39,7 @@ class capquiz_question_list {
     public function __construct(\stdClass $record, $context) {
         global $DB;
         $this->record = $record;
-
-        $this->load_questions() ;
-
+        // $this->load_questions() ;
         $this->create_question_usage($context);
         $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
     }
