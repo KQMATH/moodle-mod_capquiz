@@ -83,7 +83,7 @@ class capquiz_question_engine {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $attempt->mark_as_answered();
         $attempt->set_user_rating($user->get_capquiz_user_rating(), true);
-        $qrating = $this->capquiz->question_list()->question($attempt->question_id()->rating);
+        $qrating = $this->capquiz->question_list()->get_capquiz_question_rating($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $ratingsystem->update_user_rating($user, $qrating, 1);
             $this->set_new_highest_star_if_attained($user);

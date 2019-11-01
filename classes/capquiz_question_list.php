@@ -176,6 +176,14 @@ class capquiz_question_list {
         return null;
     }
 
+    /**
+     * @param int $questionid
+     * @return float
+     */
+    public function get_capquiz_question_rating(int $questionid) : float {
+        return $this->question($questionid)->rating;
+    }
+
     public function has_question(int $questionid) {
         $this->load_questions() ;
         // TODO: This is unnecessarily slow for large question lists
@@ -333,5 +341,6 @@ class capquiz_question_list {
         }
         return $qlists;
     }
+
 
 }
