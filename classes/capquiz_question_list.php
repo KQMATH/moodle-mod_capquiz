@@ -31,7 +31,7 @@ class capquiz_question_list {
     private $record;
 
     /** @var capquiz_question[] $questions */
-    private $questions;
+    private $questions = null;
 
     /** @var \question_usage_by_activity $quba */
     private $quba;
@@ -39,13 +39,22 @@ class capquiz_question_list {
     public function __construct(\stdClass $record, $context) {
         global $DB;
         $this->record = $record;
-        $entries = $DB->get_records('capquiz_question', ['question_list_id' => $this->record->id]);
-        $this->questions = [];
-        foreach ($entries as $entry) {
-            $this->questions[] = new capquiz_question($entry);
-        }
+
+        $this->load_questions() ;
+
         $this->create_question_usage($context);
         $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+    }
+
+    private function load_questions() {
+        global $DB;
+        if ( is_null( $this->questions ) ) {
+           $entries = $DB->get_records('capquiz_question', ['question_list_id' => $this->record->id]);
+           $this->questions = [];
+           foreach ($entries as $entry) {
+               $this->questions[] = new capquiz_question($entry);
+           }
+        }
     }
 
     public function star_ratings_array() {
@@ -107,7 +116,7 @@ class capquiz_question_list {
     }
 
     public function has_questions() : bool {
-        return count($this->questions) > 0;
+        return count($this->questions()) > 0;
     }
 
     public function is_template() : bool {
@@ -141,17 +150,19 @@ class capquiz_question_list {
     }
 
     public function question_count() : int {
-        return count($this->questions);
+        return count($this->questions());
     }
 
     /**
      * @return capquiz_question[]
      */
     public function questions() : array {
+        $this->load_questions() ;
         return $this->questions;
     }
 
     public function question(int $questionid) {
+        $this->load_questions() ;
         foreach ($this->questions as $question) {
             if ($question->id() === $questionid) {
                 return $question;
@@ -161,6 +172,8 @@ class capquiz_question_list {
     }
 
     public function has_question(int $questionid) {
+        $this->load_questions() ;
+        // TODO: This is unnecessarily slow for large question lists
         foreach ($this->questions as $question) {
             if ($question->question_id() === $questionid) {
                 return $question;
@@ -177,7 +190,8 @@ class capquiz_question_list {
      */
     public function merge(capquiz_question_list $that) {
         global $DB;
-        foreach ($that->questions as $question) {
+        $thatqs = $that->questions() ;
+        foreach ( $thatqs as $question) {
             if ($this->has_question($question->question_id()) === null) {
                 $newquestion = new \stdClass();
                 $newquestion->question_list_id = $this->id();
@@ -227,6 +241,7 @@ class capquiz_question_list {
 
     private function copy_questions_to_list(int $qlistid) {
         global $DB;
+        $this->load_questions() ;
         foreach ($this->questions() as $question) {
             $record = $question->entry();
             $record->id = null;
