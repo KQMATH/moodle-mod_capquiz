@@ -30,6 +30,10 @@ class capquiz_question_list {
     /** @var \stdClass $record */
     private $record;
 
+
+    // TODO: Document this with data type
+    private $context;
+
     /** @var capquiz_question[] $questions */
     private $questions = null;
 
@@ -38,6 +42,7 @@ class capquiz_question_list {
 
     public function __construct(\stdClass $record, $context) {
         global $DB;
+        $this->context = $context;
         $this->record = $record;
         // $this->load_questions() ;
     }
@@ -99,7 +104,7 @@ class capquiz_question_list {
 
     public function question_usage() {
         if ( is_null( $this->quba ) ) {
-           $this->create_question_usage($context);
+           $this->create_question_usage($this->context);
            $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
         }
         return $this->quba;
