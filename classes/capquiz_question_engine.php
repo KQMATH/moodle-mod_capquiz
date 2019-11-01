@@ -128,6 +128,8 @@ class capquiz_question_engine {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $currentcorrect = $current->is_correctly_answered();
         $previouscorrect = $previous->is_correctly_answered();
+        // TODO:  Looking up the question in the question list loads all questions.
+        // It should be possible to look up only the two questions needed
         $currentquestion = $this->capquiz->question_list()->question($current->question_id());
         $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
 
