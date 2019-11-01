@@ -41,8 +41,8 @@ class capquiz_question {
         $qname = $DB->get_record_sql($sql, array($record->question_id));
         // $question = $DB->get_record('question', ['id' => $record->question_id]);
         if ($question !== false) {
-            $this->record->name = $question->name;
-            $this->record->text = $question->questiontext;
+            $this->record->name = $qname->name;
+            $this->record->text = $qname->questiontext;
         } else {
             $this->record->name = get_string('missing_question', 'capquiz');
             $this->record->text = $this->record->name;
