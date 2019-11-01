@@ -83,12 +83,12 @@ class capquiz_question_engine {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $attempt->mark_as_answered();
         $attempt->set_user_rating($user->get_capquiz_user_rating(), true);
-        $qrating = $this->capquiz->question_list()->get_capquiz_question_rating($attempt->question_id());
+        $question = capquiz_question::load($attempt->question_rating_id());
         if ($attempt->is_correctly_answered()) {
-            $ratingsystem->update_user_rating($user, $qrating, 1);
+            $ratingsystem->update_user_rating($user, $question->rating(), 1);
             $this->set_new_highest_star_if_attained($user);
         } else {
-            $ratingsystem->update_user_rating($user, $qrating, 0);
+            $ratingsystem->update_user_rating($user, $question->rating(), 0);
         }
         $attempt->set_user_rating($user->get_capquiz_user_rating());
         $previousattempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user);
@@ -128,10 +128,9 @@ class capquiz_question_engine {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $currentcorrect = $current->is_correctly_answered();
         $previouscorrect = $previous->is_correctly_answered();
-        // TODO:  Looking up the question in the question list loads all questions.
-        // It should be possible to look up only the two questions needed
-        $currentquestion = $this->capquiz->question_list()->question($current->question_id());
-        $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
+        // TODO:  The current question is looked up twice, once here and once to update the user rating.
+        $currentquestion = capquiz_question::load($current->question_rating_id());
+        $previousquestion = capquiz_question::load($previous->question_rating_id());
 
         $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating(), true);
         $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);

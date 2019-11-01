@@ -179,6 +179,9 @@ class capquiz_question_list {
     /**
      * @param int $questionid
      * @return float
+     *
+     * This function is a convenience function created as an intermediate step towards
+     * looking up rating without loading all questions.  It is probably superfluous. 
      */
     public function get_capquiz_question_rating(int $questionid) : float {
         return $this->question($questionid)->rating;
