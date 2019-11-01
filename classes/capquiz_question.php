@@ -40,7 +40,7 @@ class capquiz_question {
         $sql = 'SELECT name,questiontext FROM {question} WHERE id = ?';
         $qname = $DB->get_record_sql($sql, array($record->question_id));
         // $question = $DB->get_record('question', ['id' => $record->question_id]);
-        if ($question !== false) {
+        if ($qname !== false) {
             $this->record->name = $qname->name;
             $this->record->text = $qname->questiontext;
         } else {
