@@ -37,7 +37,9 @@ class capquiz_question {
         global $DB;
         $this->record = $record;
         // TODO: This query should probably be done in question list.
-        $question = $DB->get_record('question', ['id' => $record->question_id]);
+        $sql = 'SELECT {name,question_text} FROM {question} WHERE id = ?';
+        $qname = $DB->get_record_sql($sql, array($record->question_id));
+        // $question = $DB->get_record('question', ['id' => $record->question_id]);
         if ($question !== false) {
             $this->record->name = $question->name;
             $this->record->text = $question->questiontext;
