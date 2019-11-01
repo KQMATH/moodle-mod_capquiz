@@ -34,14 +34,12 @@ class capquiz_question_list {
     private $questions = null;
 
     /** @var \question_usage_by_activity $quba */
-    private $quba;
+    private $quba = null;
 
     public function __construct(\stdClass $record, $context) {
         global $DB;
         $this->record = $record;
         // $this->load_questions() ;
-        $this->create_question_usage($context);
-        $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
     }
 
     private function load_questions() {
@@ -100,6 +98,10 @@ class capquiz_question_list {
     }
 
     public function question_usage() {
+        if ( is_null( $this->quba ) ) {
+           $this->create_question_usage($context);
+           $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+        }
         return $this->quba;
     }
 
