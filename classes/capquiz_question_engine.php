@@ -83,7 +83,7 @@ class capquiz_question_engine {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $attempt->mark_as_answered();
         $attempt->set_user_rating($user->get_capquiz_user_rating(), true);
-        $question = capquiz_question::load($attempt->question_rating_id());
+        $question = capquiz_question::load($attempt->question_id());
         if ($attempt->is_correctly_answered()) {
             $ratingsystem->update_user_rating($user, $question->rating(), 1);
             $this->set_new_highest_star_if_attained($user);
@@ -129,8 +129,8 @@ class capquiz_question_engine {
         $currentcorrect = $current->is_correctly_answered();
         $previouscorrect = $previous->is_correctly_answered();
         // TODO:  The current question is looked up twice, once here and once to update the user rating.
-        $currentquestion = capquiz_question::load($current->question_rating_id());
-        $previousquestion = capquiz_question::load($previous->question_rating_id());
+        $currentquestion = capquiz_question::load($current->question_id());
+        $previousquestion = capquiz_question::load($previous->question_id());
 
         $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating(), true);
         $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);
