@@ -127,7 +127,8 @@ class question_attempt_renderer {
             ],
             'gradingdone' => $this->capquiz->is_grading_completed(),
             'finalgrade' => $this->capquiz->user()->highest_stars_graded(),
-            'gradingpass' => $this->capquiz->user()->highest_stars_graded() >= $this->capquiz->stars_to_pass()
+            'gradingpass' => $this->capquiz->user()->highest_stars_graded() >= $this->capquiz->stars_to_pass(),
+            'duedate' => $this->capquiz->duedate()
         ]);
     }
 
