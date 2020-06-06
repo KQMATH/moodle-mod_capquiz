@@ -83,7 +83,7 @@ class capquiz {
     }
 
     public function duedate() : string {
-        return date('d-m-Y', $this->record->timedue);
+        return userdate($this->record->timedue, get_string('strftimedatetime', 'langconfig'));
     }
 
     public function stars_to_pass() : int {
