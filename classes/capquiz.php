@@ -82,10 +82,6 @@ class capquiz {
         return $this->record->timedue < time() && $this->record->timedue > 0;
     }
 
-    public function duedate() : string {
-        return userdate($this->record->timedue, get_string('strftimedatetime', 'langconfig'));
-    }
-
     public function stars_to_pass() : int {
         return $this->record->stars_to_pass;
     }
