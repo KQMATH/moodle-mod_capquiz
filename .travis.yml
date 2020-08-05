@@ -1,18 +1,12 @@
 language: php
 
-sudo: true
-
-dist: trusty
+addons:
+  postgresql: "9.5"
 
 services:
   - mysql
-
-addons:
-  firefox: "47.0.1"
-  postgresql: "9.4"
-  apt:
-    packages:
-      - openjdk-8-jre-headless
+  - postgresql
+  - docker
 
 cache:
   directories:
@@ -20,101 +14,35 @@ cache:
     - $HOME/.npm
 
 php:
-  - 7.0
-  - 7.1
-  - 7.2
+ - 7.2
+ - 7.3
+ - 7.4
 
 env:
-  fast_finish: true
-  matrix:
-    - DB=pgsql    MOODLE_BRANCH=MOODLE_35_STABLE
-    - DB=mysqli   MOODLE_BRANCH=MOODLE_35_STABLE
-
-    - DB=pgsql    MOODLE_BRANCH=MOODLE_36_STABLE
-    - DB=mysqli   MOODLE_BRANCH=MOODLE_36_STABLE
-
-    - DB=pgsql    MOODLE_BRANCH=MOODLE_37_STABLE
-    - DB=mysqli   MOODLE_BRANCH=MOODLE_37_STABLE
-
-    - DB=pgsql    MOODLE_BRANCH=master
-    - DB=mysqli   MOODLE_BRANCH=master
-
-  allow_failures:
-    - DB=pgsql    MOODLE_BRANCH=master
-    - DB=mysqli   MOODLE_BRANCH=master
+ global:
+  - MOODLE_BRANCH=MOODLE_39_STABLE
+ matrix:
+  - DB=pgsql
+  - DB=mysqli
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 8.9
-  - nvm use 8.9
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
-jobs:
-  include:
-    # Prechecks against latest Moodle stable only. Testing against PHP 7.0, 7.1 and 7.2.
-    # pgsql
-    - stage: develop
-      php: 7.0
-      env: DB=pgsql    MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-    - stage: develop
-      php: 7.1
-      env: DB=pgsql    MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-    - stage: develop
-      php: 7.2
-      env: DB=pgsql    MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-    # mysql
-    - stage: develop
-      php: 7.0
-      env: DB=mysqli   MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-    - stage: develop
-      php: 7.1
-      env: DB=mysqli   MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-    - stage: develop
-      php: 7.2
-      env: DB=mysqli   MOODLE_BRANCH=MOODLE_37_STABLE
-      install:
-        - moodle-plugin-ci install
-      script:
-        - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-# Default 'test' stage: All tests against full matrix.
 install:
   - moodle-plugin-ci install
+
 script:
-  - bash $TRAVIS_BUILD_DIR/.travis/script.sh
-
-after_success:
-  - moodle-plugin-ci coveralls-upload
-
-stages:
-  - name: develop
-    if: branch != master
-  - name: test
-    if: branch = master
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt
+  - moodle-plugin-ci phpdoc
+  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci behat
