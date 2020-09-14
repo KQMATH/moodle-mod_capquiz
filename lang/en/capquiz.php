@@ -237,3 +237,4 @@ $string['timeanswered'] = 'Time answered';
 $string['timereviewed'] = 'Time reviewed';
 $string['strftimedatetimeseconds'] = '%d %B %Y, %I:%M:%S %p';
 $string['reportshowonlyanswered'] = 'Show only answered attempts';
+$string['reportshowonlyanswered_help'] = 'Show only attempts by students that have been answered and submitted.';
