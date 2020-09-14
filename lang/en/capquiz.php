@@ -50,6 +50,7 @@ $string['delete_star'] = 'Delete star';
 $string['stars_to_pass'] = 'Number of stars required for passing grade';
 $string['stars_to_pass_required'] = 'Stars for passing grade is required (0-5)';
 $string['due_time_grading'] = 'Time for final grading';
+$string['due_date_grading'] = 'Due date for final grading was {$a}.';
 $string['grading_is_completed'] = 'Grading is completed.';
 $string['grade_has_been_set_pass'] = 'You achieved {$a} stars, which is a <b>passing</b> grade.';
 $string['grade_has_been_set_fail'] = 'You achieved {$a} stars, which is a <b>failing</b> grade.';
