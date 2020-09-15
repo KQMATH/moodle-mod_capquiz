@@ -42,7 +42,7 @@ function capquiz_update_instance(stdClass $capquiz) {
     global $DB;
     $capquiz->id = $capquiz->instance;
     $DB->update_record('capquiz', $capquiz);
-    capquiz_update_grades($capquiz);
+    $capquiz->cmidnumber = get_coursemodule_from_instance('capquiz', $capquiz->id)->id;
     return true;
 }
 
