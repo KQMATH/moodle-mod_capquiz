@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.5.0] - 2020-09-16
+### Removed
+- Commenting system for student feedback is removed in favour of the [QTracker plugin](https://github.com/KQMATH/moodle-local_qtracker).
+
 ## [0.4.2] - 2020-09-15
 
 ## [0.4.1] - 2019-10-24
@@ -84,8 +88,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## 0.1.0 - 2018-09-28
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.5.0...HEAD
 
+[0.5.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.2...v0.5.0
 [0.4.2]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.3.2...v0.4.0
