@@ -23,17 +23,6 @@
 define(['jquery', 'core/str'], function($, mString) {
 
     /**
-     * @param $form
-     */
-    function moveCommentFieldToForm($form) {
-        var $comment = $('.capquiz-student-comment');
-        if ($comment.find('textarea').val().length) {
-            $comment.prop('open', true);
-        }
-        $form.prepend($comment);
-    }
-
-    /**
      * Show star tooltip.
      * @param $element
      * @param text
@@ -86,10 +75,6 @@ define(['jquery', 'core/str'], function($, mString) {
 
     return {
         initialize: function() {
-            var $nextButton = $('#capquiz_review_next');
-            if ($nextButton.length) {
-                moveCommentFieldToForm($nextButton.parent());
-            }
             enableTooltips();
         }
     };

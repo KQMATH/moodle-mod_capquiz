@@ -192,10 +192,6 @@ class capquiz_question_attempt {
         $DB->execute('DELETE FROM {capquiz_attempt} WHERE id = :id', ['id' => $this->id()]);
     }
 
-    public function student_comment() : string {
-        return isset($this->record->feedback) ? $this->record->feedback : '';
-    }
-
     public function mark_as_answered() {
         global $DB;
         $submitteddata = $this->quba->extract_responses($this->question_slot());
@@ -211,12 +207,6 @@ class capquiz_question_attempt {
         global $DB;
         $this->record->reviewed = true;
         $this->record->time_reviewed = time();
-        $DB->update_record('capquiz_attempt', $this->record);
-    }
-
-    public function update_student_comment(string $feedback) {
-        global $DB;
-        $this->record->feedback = ($feedback !== '' ? $feedback : null);
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
@@ -248,37 +238,6 @@ class capquiz_question_attempt {
             $this->record->user_prev_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
-    }
-
-    /**
-     * @param int $questionid
-     * @return array
-     * @throws \dml_exception
-     */
-    public static function all_comments_for_question(int $questionid) {
-        global $DB;
-        $sql = "SELECT ca.feedback                          AS comment,
-                       ca.time_answered                     AS time_submitted,
-                       CONCAT(u.firstname, ' ', u.lastname) AS student
-                  FROM {question} q
-                  JOIN {capquiz_question} cq
-                    ON cq.question_id = q.id
-                  JOIN {capquiz_attempt} ca
-                    ON ca.question_id = cq.id
-                   AND ca.feedback IS NOT NULL
-                   AND ca.feedback <> ''
-                  JOIN {capquiz_user} cu
-                    ON cu.id = ca.user_id
-                  JOIN {user} u
-                    ON u.id = cu.user_id
-                 WHERE q.id = :qid";
-        $result = $DB->get_recordset_sql($sql, ['qid' => $questionid]);
-        $comments = [];
-        foreach ($result as $row) {
-            $comments[] = $row;
-        }
-        $result->close();
-        return $comments;
     }
 
     /**

@@ -209,5 +209,16 @@ function xmldb_capquiz_upgrade($oldversion) {
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2019103100, 'capquiz');
     }
+    if ($oldversion < 2020091600 ) {
+        $table = new xmldb_table('capquiz_attempt');
+        $field = new xmldb_field("feedback");
+
+        // Conditionally launch delete feedback.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2020091600, 'capquiz');
+    }
     return true;
 }

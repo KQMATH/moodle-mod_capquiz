@@ -60,7 +60,6 @@ $string['grade_pass'] = 'Passed';
 $string['grade_fail'] = 'Failed';
 $string['regrade_all'] = 'Regrade all';
 
-$string['comments'] = 'Comments';
 $string['import'] = 'Import';
 $string['home'] = 'Home';
 $string['name'] = 'Name';
@@ -185,12 +184,6 @@ $string['question_list_not_published'] = 'The question list is not yet published
 $string['question_list_settings'] = 'Question list settings';
 $string['you_finished_capquiz'] = 'You have finished this capquiz!';
 
-$string['problem_with_question_header'] = 'Is there a problem with this question? Send feedback to your instructor here.';
-$string['problem_with_question_details'] = 'If you have feedback for this question, please type it below. The text will be sent to your instructor. You will be able to continue editing this when you have submitted your answer.';
-$string['enter_comment_here'] = 'Enter your comment here...';
-$string['feedback_from_students'] = 'Feedback from students';
-$string['posted_by_student'] = 'Posted by {$a}';
-
 $string['deleted_grades'] = 'Deleted grades';
 $string['deleted_attempts'] = 'Deleted attempts';
 
@@ -199,7 +192,6 @@ $string['privacy:metadata:capquiz_attempt'] = 'Details about each attempt on a C
 $string['privacy:metadata:capquiz_attempt:userid'] = 'The user who made the attempt.';
 $string['privacy:metadata:capquiz_attempt:time_answered'] = 'The time that the attempt was answered.';
 $string['privacy:metadata:capquiz_attempt:time_reviewed'] = 'The time that the attempt was reviewed.';
-$string['privacy:metadata:capquiz_attempt:feedback'] = 'The feedback comment provided by the student to the instructor.';
 $string['privacy:metadata:capquiz_user'] = 'Additional details stored about the user';
 $string['privacy:metadata:capquiz_user:userid'] = 'The CAPQuiz user.';
 $string['privacy:metadata:capquiz_user:rating'] = 'The rating of the user.';
