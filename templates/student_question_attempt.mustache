@@ -36,6 +36,7 @@
         <p>{{#str}} grade_has_been_set_pass, capquiz, {{finalgrade}} {{/str}}</p>
     {{/gradingpass}}
     {{^gradingpass}}
+        <p>{{#str}} due_date_grading, capquiz, {{duedate}} {{/str}}</p>
         <p>{{#str}} grade_has_been_set_fail, capquiz, {{finalgrade}} {{/str}}</p>
     {{/gradingpass}}
 {{/gradingdone}}

@@ -1,0 +1,26 @@
+
+These notes concern Bug #167.
+The file should be removed before merging into master.
+
+I.  Slow grading.
+
+Hopefully this is improved by the new index timereviewed
+
+II.  Slow matchmaking
+
+Dubious code.
+A.  file classes/matchmaking/n_closest/n_closest_selector.php, line 88-90.
+The SQL query orders by the absolute value of a difference comparing the rating with a certain target value. A suitable index may or may not help here.
+Three columns are involved, and you probably want to order before the the inequality constraints. I am not sure if postgres would do that efficiently. Two possible alternatives
+1 remove the blacklisted question at the client.
+2 create new tables where the blacklist can be filtered out in one constraint. This may or may not be feasible.
+
+B. inactive_attempts() in classes/capquiz_question_attempt.php
+This is the function to make the blacklist, to avoid frequent repeat questions.
+This appears to retrieve every attempt from the DB, with no obvious reason. The SQL query should be critically reviewed.
+
+The blacklist handling should probably be simplified, one way or another.  Suggestions:
+a. It may be better to store the blacklist in a field for each capquiz user, rather than recreating it from the attempts.
+b. It may be better to filter out the forbidden questions in the client, rather than having a long list of inequality constraints in an SQL call.
+
+

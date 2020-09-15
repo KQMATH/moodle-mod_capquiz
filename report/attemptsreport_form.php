@@ -77,6 +77,7 @@ abstract class capquiz_attempts_report_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'onlyanswered', '',
             get_string('reportshowonlyanswered', 'capquiz'));
+        $mform->addHelpButton('onlyanswered', 'reportshowonlyanswered', 'capquiz');
     }
 
     protected function other_attempt_fields(MoodleQuickForm $mform) {
