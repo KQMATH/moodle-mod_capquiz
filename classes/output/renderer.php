@@ -57,7 +57,6 @@ class renderer extends \plugin_renderer_base {
             $this->tab('view_questions', 'questions', capquiz_urls::view_question_list_url()),
             $this->tab('view_grading', 'grading', capquiz_urls::view_grading_url()),
             $this->tab('view_classlist', 'classlist', capquiz_urls::view_classlist_url()),
-            $this->tab('view_comments', 'comments', capquiz_urls::view_comments_url()),
             $this->tab('view_import', 'other_question_lists', capquiz_urls::view_import_url()),
             $this->tab('view_report', 'reports', capquiz_urls::view_report_url()),
         ];
@@ -151,10 +150,6 @@ class renderer extends \plugin_renderer_base {
 
     public function display_leaderboard(capquiz $capquiz) {
         $this->display_tabbed_view(new classlist_renderer($capquiz, $this), 'view_classlist');
-    }
-
-    public function display_comments(capquiz $capquiz) {
-        $this->display_tabbed_view(new comments_renderer($capquiz, $this), 'view_comments');
     }
 
     public function display_import(capquiz $capquiz) {

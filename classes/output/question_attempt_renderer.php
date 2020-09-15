@@ -122,8 +122,7 @@ class question_attempt_renderer {
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),
                 'body' => $quba->render_question($attempt->question_slot(), $options, $attempt->question_id()),
-                'slots' => '',
-                'comment' => $attempt->student_comment()
+                'slots' => ''
             ],
             'gradingdone' => $this->capquiz->is_grading_completed(),
             'finalgrade' => $this->capquiz->user()->highest_stars_graded(),

@@ -71,8 +71,7 @@ class provider implements
         $items->add_database_table('capquiz_attempt', [
             'userid' => 'privacy:metadata:capquiz_attempt:userid',
             'time_answered' => 'privacy:metadata:capquiz_attempt:time_answered',
-            'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed',
-            'feedback' => 'privacy:metadata:capquiz_attempt:feedback'
+            'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed'
         ], 'privacy:metadata:capquiz_attempt');
 
         // The 'capquiz_question' table is used to map the usage of a question used in a CAPQuiz activity.
@@ -166,7 +165,6 @@ class provider implements
                        ca.answered           AS answered,
                        ca.time_reviewed      AS timereviewed,
                        ca.time_answered      AS timeanswered,
-                       ca.feedback           AS feedback,
                        cu.id                 AS capuserid,
                        cql.question_usage_id AS qubaid
                   FROM {context} cx
@@ -207,7 +205,6 @@ class provider implements
             $data = new stdClass();
             $data->timereviewed = transform::datetime($attempt->timereviewed);
             $data->timeanswered = transform::datetime($attempt->timeanswered);
-            $data->feedback = $attempt->feedback;
 
             // The capquiz attempt data is organised in: {Course name}/{CAPQuiz activity name}/{Attempts}/{_X}/data.json
             // where X is the attempt number.
