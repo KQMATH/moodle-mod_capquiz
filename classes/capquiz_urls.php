@@ -39,7 +39,6 @@ class capquiz_urls {
     public static $urlaction = '/mod/capquiz/action.php';
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
     public static $urlviewgrading = '/mod/capquiz/view_grading.php';
-    public static $urlviewcomments = '/mod/capquiz/view_comments.php';
     public static $urlviewimport = '/mod/capquiz/view_import.php';
     public static $urlviewreport = '/mod/capquiz/view_report.php';
     public static $urledit = '/mod/capquiz/edit.php';
@@ -122,10 +121,6 @@ class capquiz_urls {
 
     public static function view_create_question_list_url(): moodle_url {
         return self::create_view_url(self::$urlviewcreateqlist);
-    }
-
-    public static function view_comments_url(): moodle_url {
-        return self::create_view_url(self::$urlviewcomments);
     }
 
     public static function view_import_url(): moodle_url {
