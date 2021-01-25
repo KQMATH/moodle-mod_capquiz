@@ -16,6 +16,8 @@ Documentation is available [here](https://github.com/KQMATH/moodle-mod_capquiz/w
 
 See the [migration guide](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Migration) for details on how to update to a newer version of CAPQuiz.
 
++ [CAPQuiz](https://moodle.org/plugins/pluginversions.php?plugin=mod_capquiz) in the Moodle Plugin Repository
+
 ## History
 The idea of an adaptive learning system at NTNU in Ålesund (then Ålesund University College) was first conceived by Siebe van Albada.  His efforts led to a prototype, known as [MathGen](https://github.com/MathGen/oppgavegenerator), written as a standalone server in python.
 
