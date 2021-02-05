@@ -48,7 +48,7 @@ class classlist_renderer {
         global $PAGE;
         $cmid = $this->capquiz->course_module()->id;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
-        $users = capquiz_user::list_users($this->capquiz->id());
+        $users = capquiz_user::list_users($this->capquiz->id(), $this->capquiz->context());
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {
             $user = $users[$i];

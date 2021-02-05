@@ -36,12 +36,15 @@ class capquiz_user {
     /** @var capquiz_user_rating $rating */
     private $rating;
 
+    /** @var \question_usage_by_activity $quba */
+    private $quba;
+
     /**
      * capquiz_user constructor.
      * @param \stdClass $record
      * @throws \dml_exception
      */
-    public function __construct(\stdClass $record) {
+    public function __construct(\stdClass $record, \context_module $context) {
         global $DB;
         $this->record = $record;
         $this->user = $DB->get_record('user', ['id' => $this->record->user_id]);
@@ -52,6 +55,39 @@ class capquiz_user {
         } else {
             $this->rating = $rating;
         }
+        $this->create_question_usage($context);
+        $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+    }
+
+    private function has_question_usage() : bool {
+        return $this->record->question_usage_id !== null;
+    }
+
+    public function create_question_usage($context) {
+        global $DB;
+        if ($this->has_question_usage()) {
+            return;
+        }
+        $quba = \question_engine::make_questions_usage_by_activity('mod_capquiz', $context);
+        $quba->set_preferred_behaviour('immediatefeedback');
+        // TODO: Don't suppress the error if it becomes possible to save QUBAs without slots.
+        @\question_engine::save_questions_usage_by_activity($quba);
+        $this->record->question_usage_id = $quba->get_id();
+        $DB->update_record('capquiz_user', $this->record);
+    }
+
+    public function question_usage() {
+        return $this->quba;
+    }
+
+    public function question_engine() {
+        $quba = $this->question_usage();
+        if (!$quba) {
+            return null;
+        }
+        $ratingsystemloader = new capquiz_rating_system_loader($this);
+        $strategyloader = new capquiz_matchmaking_strategy_loader($this);
+        return new capquiz_question_engine($this, $quba, $strategyloader, $ratingsystemloader);
     }
 
     /**
@@ -60,9 +96,9 @@ class capquiz_user {
      * @return capquiz_user|null
      * @throws \Exception
      */
-    public static function load_user(capquiz $capquiz, int $moodleuserid) {
+    public static function load_user(capquiz $capquiz, int $moodleuserid, \context_module $context) {
         global $DB;
-        if ($user = self::load_db_entry($capquiz, $moodleuserid)) {
+        if ($user = self::load_db_entry($capquiz, $moodleuserid, $context)) {
             return $user;
         }
         $record = new \stdClass();
@@ -71,7 +107,7 @@ class capquiz_user {
         $record->rating = $capquiz->default_user_rating();
         $capquizuserid = $DB->insert_record('capquiz_user', $record, true);
         capquiz_user_rating::insert_user_rating_entry($capquizuserid, $record->rating);
-        return self::load_db_entry($capquiz, $moodleuserid);
+        return self::load_db_entry($capquiz, $moodleuserid, $context);
     }
 
     public static function user_count(int $capquizid) : int {
@@ -84,11 +120,11 @@ class capquiz_user {
      * @return capquiz_user[]
      * @throws \dml_exception
      */
-    public static function list_users(int $capquizid) : array {
+    public static function list_users(int $capquizid, \context_module $context) : array {
         global $DB;
         $users = [];
         foreach ($DB->get_records('capquiz_user', ['capquiz_id' => $capquizid]) as $user) {
-            $users[] = new capquiz_user($user);
+            $users[] = new capquiz_user($user, $context);
         }
         return $users;
     }
@@ -146,13 +182,13 @@ class capquiz_user {
      * @return capquiz_user|null
      * @throws \dml_exception
      */
-    private static function load_db_entry(capquiz $capquiz, int $moodleuserid) {
+    private static function load_db_entry(capquiz $capquiz, int $moodleuserid, \context_module $context) {
         global $DB;
         $entry = $entry = $DB->get_record('capquiz_user', [
             'user_id' => $moodleuserid,
             'capquiz_id' => $capquiz->id()
         ]);
-        return $entry ? new capquiz_user($entry) : null;
+        return $entry ? new capquiz_user($entry, $context) : null;
     }
 
 

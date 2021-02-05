@@ -113,7 +113,6 @@ class capquiz {
         if (!$this->can_publish()) {
             return false;
         }
-        $this->question_list()->create_question_usage($this->context());
         $this->record->published = true;
         $DB->update_record('capquiz', $this->record);
         return $this->is_published();
@@ -126,8 +125,8 @@ class capquiz {
         return $this->question_list()->has_questions();
     }
 
-    public function question_engine() {
-        $quba = $this->question_usage();
+    public function question_engine(capquiz_user $user) {
+        $quba = $user->question_usage();
         if (!$quba) {
             return null;
         }
@@ -136,16 +135,9 @@ class capquiz {
         return new capquiz_question_engine($this, $quba, $strategyloader, $ratingsystemloader);
     }
 
-    public function question_usage() {
-        if ($this->has_question_list() && $this->is_published()) {
-            return $this->question_list()->question_usage();
-        }
-        return null;
-    }
-
     public function user() : capquiz_user {
         global $USER;
-        return capquiz_user::load_user($this, $USER->id);
+        return capquiz_user::load_user($this, $USER->id, $this->context());
     }
 
     public function default_user_rating() : float {

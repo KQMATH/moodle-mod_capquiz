@@ -48,7 +48,7 @@ class capquiz_question_engine {
     }
 
     public function user_is_completed(capquiz_user $user) : bool {
-        if (capquiz_question_attempt::active_attempt($this->capquiz, $user)) {
+        if (capquiz_question_attempt::active_attempt($user)) {
             return false;
         }
         if ($this->find_question_for_user($user)) {
@@ -58,7 +58,7 @@ class capquiz_question_engine {
     }
 
     public function attempt_for_user(capquiz_user $user) {
-        if ($attempt = capquiz_question_attempt::active_attempt($this->capquiz, $user)) {
+        if ($attempt = capquiz_question_attempt::active_attempt($user)) {
             return $attempt;
         }
         return $this->new_attempt_for_user($user);
@@ -91,7 +91,7 @@ class capquiz_question_engine {
             $ratingsystem->update_user_rating($user, $question, 0);
         }
         $attempt->set_user_rating($user->get_capquiz_user_rating());
-        $previousattempt = capquiz_question_attempt::previous_attempt($this->capquiz, $user);
+        $previousattempt = capquiz_question_attempt::previous_attempt($user);
         if ($previousattempt) {
             $this->update_question_rating($previousattempt, $attempt);
         }
@@ -114,13 +114,13 @@ class capquiz_question_engine {
 
     private function new_attempt_for_user(capquiz_user $user) {
         $question = $this->find_question_for_user($user);
-        return $question ? capquiz_question_attempt::create_attempt($this->capquiz, $user, $question) : null;
+        return $question ? capquiz_question_attempt::create_attempt($user, $question) : null;
     }
 
     private function find_question_for_user(capquiz_user $user) {
         $selector = $this->matchmakingloader->selector();
         $questionlist = $this->capquiz->question_list();
-        $inactiveattempts = capquiz_question_attempt::inactive_attempts($this->capquiz, $user);
+        $inactiveattempts = capquiz_question_attempt::inactive_attempts($user);
         return $selector->next_question_for_user($user, $questionlist, $inactiveattempts);
     }
 
