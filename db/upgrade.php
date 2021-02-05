@@ -220,5 +220,42 @@ function xmldb_capquiz_upgrade($oldversion) {
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2020091600, 'capquiz');
     }
+	if ($oldversion < 2021020600) {
+
+        // Define key question_usage_id (foreign-unique) to be dropped from capquiz_question_list.
+        $table = new xmldb_table('capquiz_question_list');
+        $key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
+
+        // Launch drop key question_usage_id.
+        $dbman->drop_key($table, $key);
+
+        // Define field question_usage_id to be dropped from capquiz_question_list.
+        $table = new xmldb_table('capquiz_question_list');
+        $field = new xmldb_field('question_usage_id');
+
+        // Conditionally launch drop field question_usage_id.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+		// Define field id to be added to capquiz_user.
+		$table = new xmldb_table('capquiz_user');
+		$field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+		
+		// Conditionally launch add field id.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Define key question_usage_id (foreign-unique) to be added to capquiz_user.
+		$table = new xmldb_table('capquiz_user');
+		$key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
+		
+		// Launch add key question_usage_id.
+		$dbman->add_key($table, $key);
+
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021020600, 'capquiz');
+    }
     return true;
 }
