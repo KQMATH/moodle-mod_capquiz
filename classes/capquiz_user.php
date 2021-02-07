@@ -80,16 +80,6 @@ class capquiz_user {
         return $this->quba;
     }
 
-    public function question_engine() {
-        $quba = $this->question_usage();
-        if (!$quba) {
-            return null;
-        }
-        $ratingsystemloader = new capquiz_rating_system_loader($this);
-        $strategyloader = new capquiz_matchmaking_strategy_loader($this);
-        return new capquiz_question_engine($this, $quba, $strategyloader, $ratingsystemloader);
-    }
-
     /**
      * @param capquiz $capquiz
      * @param int $moodleuserid

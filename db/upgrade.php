@@ -221,6 +221,53 @@ function xmldb_capquiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020091600, 'capquiz');
     }
 	if ($oldversion < 2021020600) {
+		
+		// Define field id to be added to capquiz_user.
+		$table = new xmldb_table('capquiz_user');
+		$field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+		
+		// Conditionally launch add field id.
+		if (!$dbman->field_exists($table, $field)) {
+			$dbman->add_field($table, $field);
+		}
+
+		// Define key question_usage_id (foreign-unique) to be added to capquiz_user.
+		$table = new xmldb_table('capquiz_user');
+		$key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
+		
+		// Launch add key question_usage_id.
+		$dbman->add_key($table, $key);
+
+		// Split question usages.
+		$qlists = $DB->get_records('capquiz_question_list');
+		foreach ($qlists as &$qlist) {
+			$oldqubaid = $qlist->question_usage_id;
+			if (!$oldqubaid) {
+				continue;
+			}
+			$oldquba = $DB->get_record('question_usage', ['id' => $oldqubaid]);
+			$users = $DB->get_records('capquiz_user', ['question_usage_id' => $oldqubaid]);
+			foreach ($users as &$user) {
+				// Create new question usage for user.
+				$newquba = new stdClass();
+				$newquba->contextid = $oldquba->contextid;
+				$newquba->component = $oldquba->component;
+				$newquba->preferredbehaviour = $oldquba->preferredbehaviour;
+				$newqubaid = $DB->insert_record('question_usages', $newquba);
+
+				// Update question usage for user and their attempts.
+				$user->question_usage_id = $newqubaid;
+				$DB->update_record('capquiz_user', $user);
+				$attempts = $DB->get_records('question_attempts', ['questionusageid' => $oldqubaid]);
+				foreach ($attempts as &$attempt) {
+					$attempt->questionusageid = $user->question_usage_id;
+					$DB->update_record('question_attempts', $attempt);
+				}
+			}
+
+			// Delete original question usage.
+			$DB->delete_records('question_usages', ['id' => $oldqubaid]);
+		}
 
         // Define key question_usage_id (foreign-unique) to be dropped from capquiz_question_list.
         $table = new xmldb_table('capquiz_question_list');
@@ -237,22 +284,6 @@ function xmldb_capquiz_upgrade($oldversion) {
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
-
-		// Define field id to be added to capquiz_user.
-		$table = new xmldb_table('capquiz_user');
-		$field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-		
-		// Conditionally launch add field id.
-		if (!$dbman->field_exists($table, $field)) {
-			$dbman->add_field($table, $field);
-		}
-
-		// Define key question_usage_id (foreign-unique) to be added to capquiz_user.
-		$table = new xmldb_table('capquiz_user');
-		$key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
-		
-		// Launch add key question_usage_id.
-		$dbman->add_key($table, $key);
 
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2021020600, 'capquiz');
