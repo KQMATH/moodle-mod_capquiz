@@ -26,10 +26,9 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
             'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'published', 'default_user_rating'
         ]);
         $questionlist = new backup_nested_element('questionlist', null, [
-            'id', 'capquiz_id', 'question_usage_id', 'title', 'author', 'description',
+            'id', 'capquiz_id', 'title', 'author', 'description',
             'star_ratings', 'is_template', 'time_created', 'time_modified', 'default_question_rating'
         ]);
-        $this->add_question_usages($questionlist, 'question_usage_id');
         $questions = new backup_nested_element('questions');
         $question = new backup_nested_element('question', ['id'], [
             'question_id', 'question_list_id', 'rating'
@@ -48,8 +47,10 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         ]);
         $users = new backup_nested_element('users');
         $user = new backup_nested_element('user', ['id'], [
-            'user_id', 'capquiz_id', 'rating', 'highest_level'
+            'user_id', 'capquiz_id', 'question_usage_id', 'rating', 'highest_level'
         ]);
+        $this->add_question_usages($user, 'question_usage_id');
+
         $userratings = new backup_nested_element('userratings');
         $userrating = new backup_nested_element('user_rating', ['id'], [
             'capquiz_user_id', 'rating', 'manual', 'timecreated'
