@@ -224,7 +224,7 @@ function xmldb_capquiz_upgrade($oldversion) {
 		
 		// Define field id to be added to capquiz_user.
 		$table = new xmldb_table('capquiz_user');
-		$field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, null, XMLDB_SEQUENCE, null, null);
+		$field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null);
 		
 		// Conditionally launch add field id.
 		if (!$dbman->field_exists($table, $field)) {
@@ -246,7 +246,7 @@ function xmldb_capquiz_upgrade($oldversion) {
 				continue;
 			}
 			$oldquba = $DB->get_record('question_usages', ['id' => $oldqubaid]);
-			$users = $DB->get_records('capquiz_user', ['question_usage_id' => $oldqubaid]);
+			$users = $DB->get_records('capquiz_user', ['capquiz_id' => $qlist->capquiz_id]);
 			foreach ($users as &$user) {
 				// Create new question usage for user.
 				$newquba = new stdClass();
