@@ -260,8 +260,14 @@ function xmldb_capquiz_upgrade($oldversion) {
 				$DB->update_record('capquiz_user', $user);
 				$attempts = $DB->get_records('question_attempts', ['questionusageid' => $oldqubaid]);
 				foreach ($attempts as &$attempt) {
-					$attempt->questionusageid = $user->question_usage_id;
-					$DB->update_record('question_attempts', $attempt);
+					$steps = $DB->get_records('question_attempt_steps', [
+						'questionattemptid' => $attempt->id,
+						'userid' => $user->user_id
+					]);
+					if (count($steps) > 0) {
+						$attempt->questionusageid = $newqubaid;
+						$DB->update_record('question_attempts', $attempt);
+					}
 				}
 			}
 
