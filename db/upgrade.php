@@ -258,15 +258,30 @@ function xmldb_capquiz_upgrade($oldversion) {
 				// Update question usage for user and their attempts.
 				$user->question_usage_id = $newqubaid;
 				$DB->update_record('capquiz_user', $user);
-				$attempts = $DB->get_records('question_attempts', ['questionusageid' => $oldqubaid]);
+				$attempts = $DB->get_records('question_attempts', ['questionusageid' => $oldqubaid], 'slot');
+				$slot = 1;
 				foreach ($attempts as &$attempt) {
+					// Go through steps to check for user.
 					$steps = $DB->get_records('question_attempt_steps', [
 						'questionattemptid' => $attempt->id,
 						'userid' => $user->user_id
 					]);
 					if (count($steps) > 0) {
+						// Update user's CAPQuiz question attempt.
+						$capquizattempt = $DB->get_record('capquiz_attempt', [
+							'user_id' => $user->id,
+							'slot' => $attempt->slot
+						]);
+						if ($capquizattempt) {
+							$capquizattempt->slot = $slot;
+							$DB->update_record('capquiz_attempt', $capquizattempt);
+						}
+
+						// Update user's question attempt.
+						$attempt->slot = $slot;
 						$attempt->questionusageid = $newqubaid;
 						$DB->update_record('question_attempts', $attempt);
+						$slot++;
 					}
 				}
 			}
