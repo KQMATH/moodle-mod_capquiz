@@ -166,7 +166,7 @@ class provider implements
                        ca.time_reviewed      AS timereviewed,
                        ca.time_answered      AS timeanswered,
                        cu.id                 AS capuserid,
-                       cql.question_usage_id AS qubaid
+                       cu.question_usage_id  AS qubaid
                   FROM {context} cx
                   JOIN {course_modules} cm
                     ON cm.id = cx.instanceid
