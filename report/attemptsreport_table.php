@@ -352,7 +352,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 'imagealt', 'institution', 'department', 'email'));
         $allnames = get_all_user_name_fields(true, 'u');
         $fields .= '
-                cql.question_usage_id AS usageid,
+                cu.question_usage_id AS usageid,
                 ca.id AS attempt,
                 u.id AS userid,
                 u.idnumber, ' . $allnames . ',
@@ -372,7 +372,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                         ON cql.capquiz_id = :capquizid
                         AND cql.is_template = 0";
 
-        $from .= "\nJOIN {question_usages} qu ON qu.id = cql.question_usage_id";
+        $from .= "\nJOIN {question_usages} qu ON qu.id = cu.question_usage_id";
         $from .= "\nJOIN {question_attempts} qa ON qa.questionusageid = qu.id";
 
         $from .= "\nJOIN {capquiz_attempt} ca ON ca.user_id = cu.id AND ca.slot = qa.slot";
