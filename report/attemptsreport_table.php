@@ -80,7 +80,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
     /** @var sql_join Contains joins, wheres, params to find the students in the course. */
     protected $studentsjoins;
 
-    /** @var object the questions that comprise this capquiz.. */
+    /** @var array the questions that comprise this capquiz.. */
     protected $questions;
 
     /** @var bool whether to include the column with checkboxes to select each attempt. */
@@ -479,7 +479,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
         $dm = new question_engine_data_mapper();
         $latesstepdata = $dm->load_questions_usages_latest_steps(
-            $qubaids, array_keys($this->questions));
+            $qubaids, array_map(function($o) { return $o->slot; }, $this->questions));
 
         $lateststeps = array();
         foreach ($latesstepdata as $step) {
@@ -505,7 +505,6 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 $qubaids[] = $attempt->usageid;
             }
         }
-
         return new qubaid_list($qubaids);
     }
 
