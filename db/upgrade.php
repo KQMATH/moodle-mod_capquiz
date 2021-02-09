@@ -221,6 +221,9 @@ function xmldb_capquiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2020091600, 'capquiz');
     }
 	if ($oldversion < 2021020600) {
+
+		// This might take a while on large databases.
+		\core_php_time_limit::raise();
 		
 		// Define field id to be added to capquiz_user.
 		$table = new xmldb_table('capquiz_user');
@@ -240,17 +243,21 @@ function xmldb_capquiz_upgrade($oldversion) {
 
 		// Split question usages.
 		$qlists = $DB->get_records('capquiz_question_list');
+		$totalqlists = count($qlists);
+		$qlistindex = 0;
 		foreach ($qlists as &$qlist) {
+			$qlistindex++;
 			$oldqubaid = $qlist->question_usage_id;
 			if (!$oldqubaid) {
 				continue;
 			}
 			$oldquba = $DB->get_record('question_usages', ['id' => $oldqubaid]);
 			if (!$oldquba) {
-				echo $OUTPUT->notification("Did not find question usage with id $oldqubaid for question list {$qlist->title} ({$qlist->id})");
+				echo $OUTPUT->notification("[$qlistindex/$totalqlists] Did not find question usage with id $oldqubaid for question list {$qlist->title} ({$qlist->id})");
 				continue;
 			}
 			$users = $DB->get_records('capquiz_user', ['capquiz_id' => $qlist->capquiz_id]);
+			echo $OUTPUT->notification("[$qlistindex/$totalqlists] Migrating question list {$qlist->title} with " . count($users) . ' users', 'notifysuccess');
 			foreach ($users as &$user) {
 				// Create new question usage for user.
 				$newquba = new stdClass();
