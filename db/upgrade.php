@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 function xmldb_capquiz_upgrade($oldversion) {
-    global $DB;
+    global $DB, $OUTPUT;
     $dbman = $DB->get_manager();
     if ($oldversion < 2019060705) {
         $table = new xmldb_table('capquiz_attempt');
@@ -246,6 +246,10 @@ function xmldb_capquiz_upgrade($oldversion) {
 				continue;
 			}
 			$oldquba = $DB->get_record('question_usages', ['id' => $oldqubaid]);
+			if (!$oldquba) {
+				echo $OUTPUT->notification("Did not find question usage with id $oldqubaid for question list {$qlist->title} ({$qlist->id})");
+				continue;
+			}
 			$users = $DB->get_records('capquiz_user', ['capquiz_id' => $qlist->capquiz_id]);
 			foreach ($users as &$user) {
 				// Create new question usage for user.
