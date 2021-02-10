@@ -274,33 +274,34 @@ function xmldb_capquiz_upgrade($oldversion) {
                 // Update question usage for user and their attempts.
                 $user->question_usage_id = $newqubaid;
                 $DB->update_record('capquiz_user', $user);
-                $attempts = $DB->get_records('question_attempts', ['questionusageid' => $oldqubaid], 'slot');
+
+                // Update user's question attempts.
+                $attempts = $DB->get_records_sql(
+                    ' SELECT DISTINCT qa.id, qa.slot, qa.questionusageid ' .
+                    '   FROM {question_attempts}      AS qa ' .
+                    '   JOIN {question_attempt_steps} AS qas' .
+                    '     ON qas.questionattemptid = qa.id '  .
+                    '    AND qas.userid = ? ' .
+                    '  WHERE qa.questionusageid = ?'
+                , [$user->user_id, $oldqubaid]);
+                
                 $slot = 1;
                 foreach ($attempts as &$attempt) {
-                    // Go through steps to check for user.
-                    $steps = $DB->get_records('question_attempt_steps', [
-                        'questionattemptid' => $attempt->id,
-                        'userid' => $user->user_id
-                    ]);
-                    if (count($steps) > 0) {
-                        // Update user's CAPQuiz question attempt.
-                        $capquizattempt = $DB->get_record('capquiz_attempt', [
-                            'user_id' => $user->id,
-                            'slot' => $attempt->slot
-                        ]);
-                        if ($capquizattempt) {
-                            $capquizattempt->slot = $slot;
-                            $DB->update_record('capquiz_attempt', $capquizattempt);
-                        }
-            
-                        // Update user's question attempt.
-                        $attempt->slot = $slot;
-                        $attempt->questionusageid = $newqubaid;
-                        $DB->update_record('question_attempts', $attempt);
-                        $slot++;
-                    }
+                    $attempt->slot = $slot;
+                    $attempt->questionusageid = $newqubaid;
+                    $DB->update_record_raw('question_attempts', $attempt, true);
+                    $slot++;
                 }
-            
+                
+                // Update user's CAPQuiz question attempts.
+                $capquizattempts = $DB->get_records('capquiz_attempt', ['user_id' => $user->id], 'slot', 'id, slot');
+                $slot = 1;
+                foreach ($capquizattempts as &$capquizattempt) {
+                    $capquizattempt->slot = $slot;
+                    $DB->update_record_raw('capquiz_attempt', $capquizattempt, true);
+                    $slot++;
+                }
+                
                 // Feedback.
                 $userindex++;
                 echo '<script> document.getElementById("capquiz_progress_2021020600_' . $qlistindex . '").value = ' . $userindex . '; </script>';
