@@ -56,7 +56,11 @@ class capquiz_user {
             $this->rating = $rating;
         }
         $this->create_question_usage($context);
-        $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+        try {
+            $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
+        } catch (\coding_exception $e) {
+            $this->quba = null;
+        }
     }
 
     private function has_question_usage() : bool {
@@ -76,7 +80,7 @@ class capquiz_user {
         $DB->update_record('capquiz_user', $this->record);
     }
 
-    public function question_usage() {
+    public function question_usage() : ?\question_usage_by_activity {
         return $this->quba;
     }
 
