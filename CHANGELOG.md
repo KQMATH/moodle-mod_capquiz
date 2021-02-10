@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+**Warning**  Upgrade from previous version can be exceptionally slow
+if there are activities with a large number of attempts.
+
+### Fixed
+
+- Performance improvements.  Fixes #167
+
 ## [0.5.0] - 2020-09-16
 ### Removed
 - Commenting system for student feedback is removed in favour of the [QTracker plugin](https://github.com/KQMATH/moodle-local_qtracker).
