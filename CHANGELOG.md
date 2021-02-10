@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 **Warning**  Upgrade from previous version can be exceptionally slow
-if there are activities with a large number of attempts.
+if there are activities with a large number of attempts.  The timeout
+limits are reached in PHP, data may be lost.
 
 ### Fixed
 
