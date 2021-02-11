@@ -27,7 +27,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $paths = [];
         $paths[] = new restore_path_element('capquiz', '/activity/capquiz');
         $questionlist = new restore_path_element('capquiz_question_list', '/activity/capquiz/questionlist');
-        $this->add_question_usages($questionlist, $paths);
         $paths[] = $questionlist;
         $paths[] = new restore_path_element('capquiz_question', '/activity/capquiz/questionlist/questions/question');
         $paths[] = new restore_path_element(
@@ -35,7 +34,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $paths[] = new restore_path_element('capquiz_question_selection', '/activity/capquiz/questionselections/questionselection');
         $paths[] = new restore_path_element('capquiz_rating_system', '/activity/capquiz/ratingsystems/ratingsystem');
         if ($this->get_setting_value('userinfo')) {
-            $paths[] = new restore_path_element('capquiz_user', '/activity/capquiz/users/user');
+            $capuser = new restore_path_element('capquiz_user', '/activity/capquiz/users/user');
+            $this->add_question_usages($capuser, $paths);
+            $paths[] = $capuser;
             $paths[] = new restore_path_element('capquiz_user_rating', '/activity/capquiz/users/user/userratings/user_rating');
             $paths[] = new restore_path_element('capquiz_attempt', '/activity/capquiz/users/user/attempts/attempt');
         }
@@ -55,10 +56,15 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     protected function process_capquiz_question_list($data) {
+        global $DB;
         $data = (object)$data;
+        $oldid = $data->id;
+        $data->capquiz_id = $this->get_new_parentid('capquiz');
         $data->time_created = $this->apply_date_offset($data->time_created);
         $data->time_modified = $this->apply_date_offset($data->time_modified);
-        $this->currentquestionlist = clone($data);
+        $data->context_id = \context_course::instance($this->get_courseid())->id;
+        $newitemid = $DB->insert_record('capquiz_question_list', $data);
+        $this->set_mapping('capquiz_question_list', $oldid, $newitemid);
     }
 
     protected function process_capquiz_question($data) {
@@ -102,14 +108,10 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     protected function process_capquiz_user($data) {
-        global $DB;
         $data = (object)$data;
-        $oldid = $data->id;
         $data->user_id = $this->get_mappingid('user', $data->user_id);
         $data->capquiz_id = $this->get_new_parentid('capquiz');
-        $newitemid = $DB->insert_record('capquiz_user', $data);
-        $this->set_mapping('capquiz_user', $oldid, $newitemid);
-
+        $this->currentcapuser = clone($data);
     }
 
     protected function process_capquiz_user_rating($data) {
@@ -139,13 +141,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
 
     protected function inform_new_usage_id($newusageid) {
         global $DB;
-        $data = $this->currentquestionlist;
+        $data = $this->currentcapuser;
         $oldid = $data->id;
         $data->question_usage_id = $newusageid;
-        $data->context_id = \context_course::instance($this->get_courseid())->id;
-        $data->capquiz_id = $this->get_new_parentid('capquiz');
-        $newitemid = $DB->insert_record('capquiz_question_list', $data);
-        $this->set_mapping('capquiz_question_list', $oldid, $newitemid);
+        $newitemid = $DB->insert_record('capquiz_user', $data);
+        $this->set_mapping('capquiz_user', $oldid, $newitemid);
     }
 
     protected function after_execute() {

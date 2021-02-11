@@ -48,7 +48,7 @@ if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
 } else {
     require_capability('mod/capquiz:student', $capquiz->context());
     // Question engine is null if the quiz is not published.
-    $qengine = $capquiz->question_engine();
+    $qengine = $capquiz->question_engine($capquiz->user());
     if ($qengine) {
         $qengine->delete_invalid_attempt($capquiz->user());
     }

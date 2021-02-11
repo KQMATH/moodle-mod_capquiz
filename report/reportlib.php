@@ -93,25 +93,24 @@ function capquiz_has_questions($capquizid) {
  */
 function capquiz_report_get_questions(capquiz $capquiz) {
     global $DB;
-    $qsbyslot = $DB->get_records_sql("
-            SELECT DISTINCT
-                   ca.slot,
-                   q.id,
-                   q.qtype,
-                   q.length
+    $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id',"'#'",'cu.id', 'ca.slot') . ' AS uniqueid,
+                ca.slot,
+                q.id,
+                q.qtype,
+                q.length
+            FROM {question} q
+            JOIN {capquiz_question} cq ON cq.question_id = q.id
+            JOIN {capquiz_question_list} cql ON cql.id = cq.question_list_id AND cql.is_template = 0
+            JOIN {capquiz_user} cu ON cu.capquiz_id = cql.capquiz_id
+            JOIN {question_usages} qu ON qu.id = cu.question_usage_id
+            JOIN {question_attempts} qa ON qa.questionusageid = qu.id
+            JOIN {capquiz_attempt} ca ON ca.question_id = cq.id AND ca.slot = qa.slot AND ca.user_id = cu.id
 
-              FROM {question} q
-              JOIN {capquiz_question} cq ON cq.question_id = q.id
-              JOIN {capquiz_question_list} cql ON cql.id = cq.question_list_id AND cql.is_template = 0
-              JOIN {question_usages} qu ON qu.id = cql.question_usage_id
-              JOIN {question_attempts} qa ON qa.questionusageid = qu.id
-              JOIN {capquiz_attempt} ca ON ca.question_id = cq.id AND ca.slot = qa.slot
+            WHERE cu.capquiz_id = ?
+            AND q.length > 0
 
-             WHERE cql.capquiz_id = ?
-               AND q.length > 0
-
-          ORDER BY ca.slot", array($capquiz->id()));
-
+            ORDER BY ca.slot';
+    $qsbyslot = $DB->get_records_sql($sql, array($capquiz->id()));
     $number = 1;
     foreach ($qsbyslot as $question) {
         $question->number = $number;
@@ -148,12 +147,12 @@ function capquiz_num_attempt_summary(capquiz $capquiz, $returnzero = false) {
  */
 function capquiz_report_num_attempt(capquiz $capquiz): int {
     global $DB;
-    $sql = 'SELECT COUNT(ca.id)
+    $sql = 'SELECT  COUNT( ca.id)
               FROM {capquiz_attempt} ca
-              JOIN {capquiz_question_list} cql ON cql.capquiz_id = :capquizid AND cql.is_template = 0
-              JOIN {question_usages} qu ON qu.id = cql.question_usage_id
+              JOIN {capquiz_user} cu ON cu.capquiz_id = :capquizid AND cu.id = ca.user_id
+              JOIN {question_usages} qu ON qu.id = cu.question_usage_id
               JOIN {question_attempts} qa ON qa.questionusageid = qu.id AND qa.slot = ca.slot
-              JOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id';
+              JOIN {capquiz_question} cq ON cq.id = ca.question_id';
     $attempts = $DB->count_records_sql($sql, ['capquizid' => $capquiz->id()]);
     return $attempts;
 }

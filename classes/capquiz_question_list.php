@@ -33,10 +33,7 @@ class capquiz_question_list {
     /** @var capquiz_question[] $questions */
     private $questions;
 
-    /** @var \question_usage_by_activity $quba */
-    private $quba;
-
-    public function __construct(\stdClass $record, $context) {
+    public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
         $entries = $DB->get_records('capquiz_question', ['question_list_id' => $this->record->id]);
@@ -44,8 +41,6 @@ class capquiz_question_list {
         foreach ($entries as $entry) {
             $this->questions[] = new capquiz_question($entry);
         }
-        $this->create_question_usage($context);
-        $this->quba = \question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
     }
 
     public function star_ratings_array() {
@@ -90,10 +85,6 @@ class capquiz_question_list {
             }
         }
         return $goal >= 1 ? (int)($rating / $goal * 100) : 0;
-    }
-
-    public function question_usage() {
-        return $this->quba;
     }
 
     public function id() : int {
@@ -208,23 +199,6 @@ class capquiz_question_list {
         return $this->create_copy($capquiz, true);
     }
 
-    public function create_question_usage($context) {
-        global $DB;
-        if ($this->has_question_usage()) {
-            return;
-        }
-        $quba = \question_engine::make_questions_usage_by_activity('mod_capquiz', $context);
-        $quba->set_preferred_behaviour('immediatefeedback');
-        // TODO: Don't suppress the error if it becomes possible to save QUBAs without slots.
-        @\question_engine::save_questions_usage_by_activity($quba);
-        $this->record->question_usage_id = $quba->get_id();
-        $DB->update_record('capquiz_question_list', $this->record);
-    }
-
-    private function has_question_usage() : bool {
-        return $this->record->question_usage_id !== null;
-    }
-
     private function copy_questions_to_list(int $qlistid) {
         global $DB;
         foreach ($this->questions() as $question) {
@@ -242,7 +216,6 @@ class capquiz_question_list {
         $record->id = null;
         $record->capquiz_id = $template ? null : $capquiz->id();
         $record->context_id = \context_course::instance($capquiz->course()->id)->id;
-        $record->question_usage_id = null;
         $record->is_template = $template;
         $record->time_created = time();
         $record->time_modified = time();
