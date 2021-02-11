@@ -117,9 +117,10 @@ class question_attempt_renderer {
     }
 
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
+        global $PAGE ;
         $user = $this->capquiz->user();
         $quba = $user->question_usage();
-        $this->page->requires->js_module('core_question_engine');
+        $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),
