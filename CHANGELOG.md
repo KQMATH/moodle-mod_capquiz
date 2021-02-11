@@ -6,13 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
-**Warning**  Upgrade from previous version can be exceptionally slow
-if there are activities with a large number of attempts.  The timeout
-limits are reached in PHP, data may be lost.
+Tested for Moodle 3.10 and 3.9.
 
 ### Fixed
 
 - Performance improvements.  Fixes #167
+- #193 fix foreign key user id for capquiz attempt
 
 ## [0.5.0] - 2020-09-16
 ### Removed
