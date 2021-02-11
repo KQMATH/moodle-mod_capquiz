@@ -332,5 +332,17 @@ function xmldb_capquiz_upgrade($oldversion) {
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2021020600, 'capquiz');
     }
+    if ($oldversion < 2021021100) {
+
+        $table = new xmldb_table('capquiz_attempt');
+
+        $key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, ['user_id'], 'users', ['id']);
+        $dbman->drop_key($table, $key);
+        $key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, ['user_id'], 'capquiz_user', ['id']);
+        $dbman->add_key($table, $key);
+
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021021100, 'capquiz');
+	}
     return true;
 }
