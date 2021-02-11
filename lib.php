@@ -33,8 +33,6 @@ function capquiz_add_instance(stdClass $modformdata) {
     $modformdata->time_modified = time();
     $modformdata->time_created = time();
     $modformdata->published = false;
-    $modformdata->question_list_id = null;
-    $modformdata->question_usage_id = null;
     return $DB->insert_record('capquiz', $modformdata);
 }
 
@@ -49,8 +47,11 @@ function capquiz_update_instance(stdClass $capquiz) {
 function capquiz_delete_instance(int $cmid) {
     $capquiz = new capquiz($cmid);
     if ($capquiz) {
-        $quba = $capquiz->question_usage();
-        \question_engine::delete_questions_usage_by_activity($quba->get_id());
+        $user = $capquiz->user();
+        if ($user) {
+            $quba = $user->question_usage();
+            \question_engine::delete_questions_usage_by_activity($quba->get_id());
+        }
     }
 }
 
@@ -66,18 +67,15 @@ function capquiz_reset_userdata($data) {
 
     $instances = $DB->get_records('capquiz', ['course' => $data->courseid]);
     foreach ($instances as $instance) {
-        $qlist = $DB->get_record('capquiz_question_list', ['capquiz_id' => $instance->id]);
-        if (!$qlist) {
+        $users = $DB->get_records('capquiz_user', ['capquiz_id' => $instance->id]);
+        if (!$users) {
             continue;
         }
-        \question_engine::delete_questions_usage_by_activity($qlist->question_usage_id);
-        $users = $DB->get_records('capquiz_user', ['capquiz_id' => $instance->id]);
         foreach ($users as $user) {
+            \question_engine::delete_questions_usage_by_activity($user->question_usage_id);
             $DB->delete_records('capquiz_attempt', ['user_id' => $user->id]);
         }
         $DB->delete_records('capquiz_user', ['capquiz_id' => $instance->id]);
-        $qlist->question_usage_id = null;
-        $DB->update_record('capquiz_question_list', $qlist);
     }
     $status[] = ['component' => $strmodname, 'item' => $strdeleteattempts, 'error' => false];
     return $status;

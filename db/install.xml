@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/capquiz/db" VERSION="20190116" COMMENT="XMLDB file for Moodle module mod/capquiz"
+<XMLDB PATH="mod/capquiz/db" VERSION="20210205" COMMENT="XMLDB file for Moodle module mod/capquiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -23,11 +23,10 @@
         <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="capquiz_question_list" COMMENT="An ordered list of questions used by a CapQuiz assignment.">
+    <TABLE NAME="capquiz_question_list" COMMENT="An ordered list of questions used by a CAPQuiz assignment.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="question_usage_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this question list"/>
         <FIELD NAME="author" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
@@ -41,7 +40,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="capquiz_id" TYPE="foreign-unique" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
-        <KEY NAME="question_usage_id" TYPE="foreign-unique" FIELDS="question_usage_id" REFTABLE="question_usages" REFFIELDS="id"/>
         <KEY NAME="author" TYPE="foreign" FIELDS="author" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="context_id" TYPE="foreign" FIELDS="context_id" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
@@ -64,6 +62,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="question_usage_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
         <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest number of stars attained by this user"/>
         <FIELD NAME="stars_graded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of stars for the final grade"/>
@@ -72,6 +71,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="capquiz_id" TYPE="foreign" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
+        <KEY NAME="question_usage_id" TYPE="foreign-unique" FIELDS="question_usage_id" REFTABLE="question_usages" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="capquiz_attempt" COMMENT="Attempt table">
@@ -93,7 +93,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="capquiz_user" REFFIELDS="id"/>
         <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
         <KEY NAME="question_rating_id" TYPE="foreign" FIELDS="question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
         <KEY NAME="question_prev_rating_id" TYPE="foreign" FIELDS="question_prev_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>

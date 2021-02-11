@@ -24,7 +24,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 
-$modcapquizfolder = new admin_category('modcapquizfolder', new lang_string('pluginname', 'capquiz'), $module->is_enabled() === false);
+$modcapquizfolder = new admin_category('modcapquizfolder',
+                           new lang_string('pluginname', 'capquiz'),
+                           $module->is_enabled() === false);
 $ADMIN->add('modsettings', $modcapquizfolder);
 
 $settings = new admin_settingpage($section, get_string('settings', 'capquiz'), 'moodle/site:config', !$module->is_enabled());

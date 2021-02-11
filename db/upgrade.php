@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 function xmldb_capquiz_upgrade($oldversion) {
-    global $DB;
+    global $DB, $OUTPUT;
     $dbman = $DB->get_manager();
     if ($oldversion < 2019060705) {
         $table = new xmldb_table('capquiz_attempt');
@@ -220,5 +220,129 @@ function xmldb_capquiz_upgrade($oldversion) {
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2020091600, 'capquiz');
     }
+    if ($oldversion < 2021020600) {
+
+        // This might take a while on large databases.
+        set_time_limit(0);
+        
+        // Define field id to be added to capquiz_user.
+        $table = new xmldb_table('capquiz_user');
+        $field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null);
+        
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Define key question_usage_id (foreign-unique) to be added to capquiz_user.
+        $table = new xmldb_table('capquiz_user');
+        $key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
+        
+        // Launch add key question_usage_id.
+        $dbman->add_key($table, $key);
+        
+        // Split question usages.
+        $qlists = $DB->get_records('capquiz_question_list');
+        $totalqlists = count($qlists);
+        $qlistindex = 0;
+        foreach ($qlists as &$qlist) {
+            $qlistindex++;
+            $oldqubaid = $qlist->question_usage_id;
+            if (!$oldqubaid) {
+                continue;
+            }
+            $oldquba = $DB->get_record('question_usages', ['id' => $oldqubaid]);
+            if (!$oldquba) {
+                echo $OUTPUT->notification("[$qlistindex/$totalqlists] Did not find question usage with id $oldqubaid for question list {$qlist->title} ({$qlist->id})");
+                continue;
+            }
+            $users = $DB->get_records('capquiz_user', ['capquiz_id' => $qlist->capquiz_id]);
+            $totalusers = count($users);
+            echo $OUTPUT->notification("[$qlistindex/$totalqlists] Migrating question list {$qlist->title} with " . $totalusers . ' users', 'notifysuccess');
+            echo '<progress id="capquiz_progress_2021020600_' . $qlistindex . '" value="0" max="' . $totalusers . '"></progress>';
+            echo '<label id="capquiz_progress_2021020600_' . $qlistindex . '_label">0%</label>';
+            $userindex = 0;
+            foreach ($users as &$user) {
+            
+                // Create new question usage for user.
+                $newquba = new stdClass();
+                $newquba->contextid = $oldquba->contextid;
+                $newquba->component = $oldquba->component;
+                $newquba->preferredbehaviour = $oldquba->preferredbehaviour;
+                $newqubaid = $DB->insert_record('question_usages', $newquba);
+            
+                // Update question usage for user and their attempts.
+                $user->question_usage_id = $newqubaid;
+                $DB->update_record('capquiz_user', $user);
+
+                // Update user's question attempts.
+                $attempts = $DB->get_records_sql(
+                    ' SELECT DISTINCT qa.id, qa.slot, qa.questionusageid ' .
+                    '   FROM {question_attempts}      AS qa ' .
+                    '   JOIN {question_attempt_steps} AS qas' .
+                    '     ON qas.questionattemptid = qa.id '  .
+                    '    AND qas.userid = ? ' .
+                    '  WHERE qa.questionusageid = ?'
+                , [$user->user_id, $oldqubaid]);
+                
+                $slot = 1;
+                foreach ($attempts as &$attempt) {
+                    $attempt->slot = $slot;
+                    $attempt->questionusageid = $newqubaid;
+                    $DB->update_record_raw('question_attempts', $attempt, true);
+                    $slot++;
+                }
+                
+                // Update user's CAPQuiz question attempts.
+                $capquizattempts = $DB->get_records('capquiz_attempt', ['user_id' => $user->id], 'slot', 'id, slot');
+                $slot = 1;
+                foreach ($capquizattempts as &$capquizattempt) {
+                    $capquizattempt->slot = $slot;
+                    $DB->update_record_raw('capquiz_attempt', $capquizattempt, true);
+                    $slot++;
+                }
+                
+                // Feedback.
+                $userindex++;
+                echo '<script> document.getElementById("capquiz_progress_2021020600_' . $qlistindex . '").value = ' . $userindex . '; </script>';
+                echo '<script> document.getElementById("capquiz_progress_2021020600_' . $qlistindex . '_label").innerHTML = "' 
+                . $userindex . '/' . $totalusers . ' users processed"; </script>';
+            }
+            
+            // Delete original question usage.
+            $DB->delete_records('question_usages', ['id' => $oldqubaid]);
+        }
+
+        // Define key question_usage_id (foreign-unique) to be dropped from capquiz_question_list.
+        $table = new xmldb_table('capquiz_question_list');
+        $key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
+
+        // Launch drop key question_usage_id.
+        $dbman->drop_key($table, $key);
+
+        // Define field question_usage_id to be dropped from capquiz_question_list.
+        $table = new xmldb_table('capquiz_question_list');
+        $field = new xmldb_field('question_usage_id');
+
+        // Conditionally launch drop field question_usage_id.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021020600, 'capquiz');
+    }
+    if ($oldversion < 2021021100) {
+
+        $table = new xmldb_table('capquiz_attempt');
+
+        $key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, ['user_id'], 'users', ['id']);
+        $dbman->drop_key($table, $key);
+        $key = new xmldb_key('user_id', XMLDB_KEY_FOREIGN, ['user_id'], 'capquiz_user', ['id']);
+        $dbman->add_key($table, $key);
+
+        // Capquiz savepoint reached.
+        upgrade_mod_savepoint(true, 2021021100, 'capquiz');
+	}
     return true;
 }

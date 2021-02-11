@@ -40,11 +40,11 @@ capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
 
 if ($attemptid !== null) {
     $user = $capquiz->user();
-    $attempt = capquiz_question_attempt::load_attempt($capquiz, $user, $attemptid);
+    $attempt = capquiz_question_attempt::load_attempt($user, $attemptid);
     if ($action === 'answered') {
-        $capquiz->question_engine()->attempt_answered($user, $attempt);
+        $capquiz->question_engine($user)->attempt_answered($user, $attempt);
     } else if ($action === 'reviewed') {
-        $capquiz->question_engine()->attempt_reviewed($attempt);
+        $capquiz->question_engine($user)->attempt_reviewed($attempt);
     }
     capquiz_urls::redirect_to_dashboard();
 }

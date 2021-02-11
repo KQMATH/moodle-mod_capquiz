@@ -80,7 +80,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
     /** @var sql_join Contains joins, wheres, params to find the students in the course. */
     protected $studentsjoins;
 
-    /** @var object the questions that comprise this capquiz.. */
+    /** @var array the questions that comprise this capquiz.. */
     protected $questions;
 
     /** @var bool whether to include the column with checkboxes to select each attempt. */
@@ -352,7 +352,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 'imagealt', 'institution', 'department', 'email'));
         $allnames = get_all_user_name_fields(true, 'u');
         $fields .= '
-                cql.question_usage_id AS usageid,
+                cu.question_usage_id AS usageid,
                 ca.id AS attempt,
                 u.id AS userid,
                 u.idnumber, ' . $allnames . ',
@@ -372,7 +372,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                         ON cql.capquiz_id = :capquizid
                         AND cql.is_template = 0";
 
-        $from .= "\nJOIN {question_usages} qu ON qu.id = cql.question_usage_id";
+        $from .= "\nJOIN {question_usages} qu ON qu.id = cu.question_usage_id";
         $from .= "\nJOIN {question_attempts} qa ON qa.questionusageid = qu.id";
 
         $from .= "\nJOIN {capquiz_attempt} ca ON ca.user_id = cu.id AND ca.slot = qa.slot";
@@ -479,7 +479,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
         $dm = new question_engine_data_mapper();
         $latesstepdata = $dm->load_questions_usages_latest_steps(
-            $qubaids, array_keys($this->questions));
+            $qubaids, array_map(function($o) { return $o->slot; }, $this->questions));
 
         $lateststeps = array();
         foreach ($latesstepdata as $step) {
@@ -505,7 +505,6 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 $qubaids[] = $attempt->usageid;
             }
         }
-
         return new qubaid_list($qubaids);
     }
 

@@ -46,13 +46,14 @@ class question_attempt_renderer {
     }
 
     private function render_question_head_html() {
-        $qengine = $this->capquiz->question_engine();
+        $user = $this->capquiz->user();
+        $qengine = $this->capquiz->question_engine($user);
         if ($qengine === null) {
             return;
         }
-        $attempt = $qengine->attempt_for_user($this->capquiz->user());
+        $attempt = $qengine->attempt_for_user($user);
         if ($attempt !== null) {
-            $this->capquiz->question_usage()->render_question_head_html($attempt->question_slot());
+            $user->question_usage()->render_question_head_html($attempt->question_slot());
         }
     }
 
@@ -62,8 +63,9 @@ class question_attempt_renderer {
             return get_string('nothing_here_yet', 'capquiz');
         }
         $PAGE->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
-        $qengine = $this->capquiz->question_engine();
-        $attempt = $qengine->attempt_for_user($this->capquiz->user());
+        $user = $this->capquiz->user();
+        $qengine = $this->capquiz->question_engine($user);
+        $attempt = $qengine->attempt_for_user($user);
         if ($attempt) {
             if ($attempt->is_answered()) {
                 return $this->render_review($attempt);
@@ -115,8 +117,9 @@ class question_attempt_renderer {
     }
 
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
-        global $PAGE;
-        $quba = $this->capquiz->question_usage();
+        global $PAGE ;
+        $user = $this->capquiz->user();
+        $quba = $user->question_usage();
         $PAGE->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
@@ -125,8 +128,8 @@ class question_attempt_renderer {
                 'slots' => ''
             ],
             'gradingdone' => $this->capquiz->is_grading_completed(),
-            'finalgrade' => $this->capquiz->user()->highest_stars_graded(),
-            'gradingpass' => $this->capquiz->user()->highest_stars_graded() >= $this->capquiz->stars_to_pass(),
+            'finalgrade' => $user->highest_stars_graded(),
+            'gradingpass' => $user->highest_stars_graded() >= $this->capquiz->stars_to_pass(),
             'duedate' => userdate($this->capquiz->time_due(), get_string('strftimedatetime', 'langconfig'))
         ]);
     }
