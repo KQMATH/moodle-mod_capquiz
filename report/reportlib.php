@@ -93,7 +93,7 @@ function capquiz_has_questions($capquizid) {
  */
 function capquiz_report_get_questions(capquiz $capquiz) {
     global $DB;
-    $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id',"'#'",'cu.id', 'ca.slot') . ' AS uniqueid,
+    $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id', "'#'", 'cu.id', 'ca.slot') . ' AS uniqueid,
                 ca.slot,
                 q.id,
                 q.qtype,

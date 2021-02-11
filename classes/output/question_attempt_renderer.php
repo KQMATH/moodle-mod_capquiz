@@ -46,7 +46,7 @@ class question_attempt_renderer {
     }
 
     private function render_question_head_html() {
-		$user = $this->capquiz->user();
+        $user = $this->capquiz->user();
         $qengine = $this->capquiz->question_engine($user);
         if ($qengine === null) {
             return;
@@ -63,7 +63,7 @@ class question_attempt_renderer {
             return get_string('nothing_here_yet', 'capquiz');
         }
         $PAGE->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
-		$user = $this->capquiz->user();
+        $user = $this->capquiz->user();
         $qengine = $this->capquiz->question_engine($user);
         $attempt = $qengine->attempt_for_user($user);
         if ($attempt) {
@@ -117,10 +117,9 @@ class question_attempt_renderer {
     }
 
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
-        global $PAGE;
-		$user = $this->capquiz->user();
+        $user = $this->capquiz->user();
         $quba = $user->question_usage();
-        $PAGE->requires->js_module('core_question_engine');
+        $this->page->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),
