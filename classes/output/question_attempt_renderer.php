@@ -117,7 +117,7 @@ class question_attempt_renderer {
     }
 
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
-        global $PAGE ;
+        global $PAGE;
         $user = $this->capquiz->user();
         $quba = $user->question_usage();
         $PAGE->requires->js_module('core_question_engine');

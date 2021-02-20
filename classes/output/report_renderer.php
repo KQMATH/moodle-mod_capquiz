@@ -60,7 +60,8 @@ class report_renderer {
             capquiz_urls::redirect_to_url(capquiz_urls::view_report_url(reset($reportlist)));
         }
         if (!in_array($mode, $reportlist)) {
-            throw new capquiz_exception('erroraccessingreport', 'capquiz', $CFG->wwwroot.'/mod/capquiz/view.php?id=' . $this->capquiz->course()->id);
+            throw new capquiz_exception('erroraccessingreport', 'capquiz',
+                $CFG->wwwroot.'/mod/capquiz/view.php?id=' . $this->capquiz->course()->id);
         }
         $report = capquiz_report_factory::make($mode);
         $this->setup_report();

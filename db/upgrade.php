@@ -224,23 +224,23 @@ function xmldb_capquiz_upgrade($oldversion) {
 
         // This might take a while on large databases.
         set_time_limit(0);
-        
+
         // Define field id to be added to capquiz_user.
         $table = new xmldb_table('capquiz_user');
         $field = new xmldb_field('question_usage_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null, null);
-        
+
         // Conditionally launch add field id.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         // Define key question_usage_id (foreign-unique) to be added to capquiz_user.
         $table = new xmldb_table('capquiz_user');
         $key = new xmldb_key('question_usage_id', XMLDB_KEY_FOREIGN_UNIQUE, ['question_usage_id'], 'question_usages', ['id']);
-        
+
         // Launch add key question_usage_id.
         $dbman->add_key($table, $key);
-        
+
         // Split question usages.
         $qlists = $DB->get_records('capquiz_question_list');
         $totalqlists = count($qlists);
@@ -253,24 +253,26 @@ function xmldb_capquiz_upgrade($oldversion) {
             }
             $oldquba = $DB->get_record('question_usages', ['id' => $oldqubaid]);
             if (!$oldquba) {
-                echo $OUTPUT->notification("[$qlistindex/$totalqlists] Did not find question usage with id $oldqubaid for question list {$qlist->title} ({$qlist->id})");
+                echo $OUTPUT->notification("[$qlistindex/$totalqlists] Did not find question usage with id $oldqubaid
+                 for question list {$qlist->title} ({$qlist->id})");
                 continue;
             }
             $users = $DB->get_records('capquiz_user', ['capquiz_id' => $qlist->capquiz_id]);
             $totalusers = count($users);
-            echo $OUTPUT->notification("[$qlistindex/$totalqlists] Migrating question list {$qlist->title} with " . $totalusers . ' users', 'notifysuccess');
+            echo $OUTPUT->notification("[$qlistindex/$totalqlists] Migrating question list {$qlist->title} with "
+                . $totalusers . ' users', 'notifysuccess');
             echo '<progress id="capquiz_progress_2021020600_' . $qlistindex . '" value="0" max="' . $totalusers . '"></progress>';
             echo '<label id="capquiz_progress_2021020600_' . $qlistindex . '_label">0%</label>';
             $userindex = 0;
             foreach ($users as &$user) {
-            
+
                 // Create new question usage for user.
                 $newquba = new stdClass();
                 $newquba->contextid = $oldquba->contextid;
                 $newquba->component = $oldquba->component;
                 $newquba->preferredbehaviour = $oldquba->preferredbehaviour;
                 $newqubaid = $DB->insert_record('question_usages', $newquba);
-            
+
                 // Update question usage for user and their attempts.
                 $user->question_usage_id = $newqubaid;
                 $DB->update_record('capquiz_user', $user);
@@ -284,7 +286,7 @@ function xmldb_capquiz_upgrade($oldversion) {
                     '    AND qas.userid = ? ' .
                     '  WHERE qa.questionusageid = ?'
                 , [$user->user_id, $oldqubaid]);
-                
+
                 $slot = 1;
                 foreach ($attempts as &$attempt) {
                     $attempt->slot = $slot;
@@ -292,7 +294,7 @@ function xmldb_capquiz_upgrade($oldversion) {
                     $DB->update_record_raw('question_attempts', $attempt, true);
                     $slot++;
                 }
-                
+
                 // Update user's CAPQuiz question attempts.
                 $capquizattempts = $DB->get_records('capquiz_attempt', ['user_id' => $user->id], 'slot', 'id, slot');
                 $slot = 1;
@@ -301,14 +303,16 @@ function xmldb_capquiz_upgrade($oldversion) {
                     $DB->update_record_raw('capquiz_attempt', $capquizattempt, true);
                     $slot++;
                 }
-                
+
                 // Feedback.
                 $userindex++;
-                echo '<script> document.getElementById("capquiz_progress_2021020600_' . $qlistindex . '").value = ' . $userindex . '; </script>';
-                echo '<script> document.getElementById("capquiz_progress_2021020600_' . $qlistindex . '_label").innerHTML = "' 
+                echo '<script> document.getElementById("capquiz_progress_2021020600_'
+                    . $qlistindex . '").value = ' . $userindex . '; </script>';
+                echo '<script> document.getElementById("capquiz_progress_2021020600_'
+                    . $qlistindex . '_label").innerHTML = "'
                 . $userindex . '/' . $totalusers . ' users processed"; </script>';
             }
-            
+
             // Delete original question usage.
             $DB->delete_records('question_usages', ['id' => $oldqubaid]);
         }
@@ -343,6 +347,6 @@ function xmldb_capquiz_upgrade($oldversion) {
 
         // Capquiz savepoint reached.
         upgrade_mod_savepoint(true, 2021021100, 'capquiz');
-	}
+    }
     return true;
 }

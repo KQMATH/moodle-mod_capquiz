@@ -307,7 +307,8 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
                  \nFROM {$from}{$from2}
                  \nWHERE {$where}";
 
-        $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier') . ' AS uniqueidquestion,';
+        $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier')
+            . ' AS uniqueidquestion,';
         $fields .= "ratings.*";
         $from = "(\n{$sql1} \nUNION ALL\n {$sql2}) AS ratings";
 

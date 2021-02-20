@@ -14,8 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Define all the restore steps that will be used by the restore_capquiz_activity_task
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Structure step to restore one assignment activity
+ *
+ * @package mod_capquiz
+ */
 class restore_capquiz_activity_structure_step extends restore_questions_activity_structure_step {
 
     /**
@@ -23,6 +37,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      */
     private $currentquestionlist;
 
+    /**
+     * Define the structure to be processed by this backup step.
+     */
     protected function define_structure() {
         $paths = [];
         $paths[] = new restore_path_element('capquiz', '/activity/capquiz');

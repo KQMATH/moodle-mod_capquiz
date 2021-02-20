@@ -14,13 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines backup_capquiz_acivity_structure_step class
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Define the complete choice structure for backup, with file and id annotations.
+ *
+ * @package mod_capquiz
  */
 class backup_capquiz_activity_structure_step extends backup_questions_activity_structure_step {
 
+    /**
+     * Define the structure to be processed by this backup step.
+     */
     protected function define_structure() {
         $capquiz = new backup_nested_element('capquiz', ['id'], [
             'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'published', 'default_user_rating'
