@@ -54,6 +54,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class capquiz_attempts_report_table extends table_sql {
+
+    /** @var string the name of the userid field  */
     public $useridfield = 'userid';
 
     /** @var moodle_url the URL of this report. */
@@ -91,8 +93,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * @param string $uniqueid
      * @param object $quiz
      * @param context $context
-     * @param mod_quiz_attempts_report_options $options
-     * @param sql_join $groupstudentsjoins Contains joins, wheres, params
+     * @param capquiz_attempts_report_options $options
      * @param sql_join $studentsjoins Contains joins, wheres, params
      * @param array $questions
      * @param moodle_url $reporturl
@@ -278,6 +279,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Find the state for $slot given after this try.
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return question_state
@@ -288,6 +291,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Returns the id of the question
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return question_id
@@ -311,6 +316,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * The grade for this slot after this try.
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return float
@@ -427,6 +434,13 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return [$fields, $from, $where, $params];
     }
 
+    /**
+     * Query the db. Store results in the table object for use by build_table.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar. Bar
+     * will only be used if there is a fullname column defined for the table.
+     */
     public function query_db($pagesize, $useinitialsbar = true) {
         parent::query_db($pagesize, $useinitialsbar);
 
@@ -510,6 +524,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return new qubaid_list($qubaids);
     }
 
+    /**
+     * Get the columns to sort by, in the form required by {@link construct_order_by()}.
+     * @return array column name => SORT_... constant.
+     */
     public function get_sort_columns() {
         // Add attemptid as a final tie-break to the sort. This ensures that
         // Attempts by the same student appear in order when just sorting by name.
@@ -518,6 +536,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return $sortcolumns;
     }
 
+    /**
+     * Wrap start of table
+     */
     public function wrap_html_start() {
         if ($this->is_downloading() || !$this->includecheckboxes) {
             return;
@@ -533,6 +554,11 @@ abstract class capquiz_attempts_report_table extends table_sql {
         echo '<div>';
     }
 
+    /**
+     * End of table wrap
+     *
+     * @throws coding_exception
+     */
     public function wrap_html_finish() {
         global $PAGE;
         if ($this->is_downloading() || !$this->includecheckboxes) {

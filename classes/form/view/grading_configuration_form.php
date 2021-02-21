@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * CAPQuiz grading configuration form definition.
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
@@ -24,6 +33,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
+ * grading_configuration_form class
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -34,11 +45,19 @@ class grading_configuration_form extends \moodleform {
     /** @var capquiz $capquiz */
     private $capquiz;
 
+    /**
+     * grading_configuration_form constructor.
+     * @param capquiz $capquiz
+     * @param \moodle_url $url
+     */
     public function __construct(capquiz $capquiz, \moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
     }
 
+    /**
+     * Defines form
+     */
     public function definition() {
         $qlist = $this->capquiz->question_list();
         $form = $this->_form;
@@ -79,6 +98,14 @@ class grading_configuration_form extends \moodleform {
         $form->addElement('submit', 'submitbutton', get_string('savechanges'));
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validations($data, $files) {
         $errors = [];
         if (empty($data['default_user_rating'])) {

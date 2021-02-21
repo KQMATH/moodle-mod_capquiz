@@ -44,9 +44,10 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
     /**
      * Validate the data from the form.
      *
-     * @param  array $data form data
-     * @param  array $files form files
-     * @return array An array of error messages.
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);

@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The file defines a base class that can be used to build a report like the
- * overview or responses report, that has one row per attempt.
+ * The file defines a base class to be used to build a report like the overview or responses report, with one row per attempt.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -121,7 +120,6 @@ abstract class capquiz_attempts_report extends report {
      * @param stdClass $course the course settings.
      * @param stdClass $capquiz the capquiz settings.
      * @param mod_quiz_attempts_report_options $options the current report settings.
-     * @param int $currentgroup the current group.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */
@@ -255,8 +253,6 @@ abstract class capquiz_attempts_report extends report {
      * Process any submitted actions.
      * @param object $quiz the capquiz settings.
      * @param object $cm the cm object for the capquiz.
-     * @param int $currentgroup the currently selected group.
-     * @param sql_join $groupstudentsjoins (joins, wheres, params) the students in the current group.
      * @param sql_join $allowedjoins (joins, wheres, params) the users whose attempt this user is allowed to modify.
      * @param moodle_url $redirecturl where to redircet to after a successful action.
      */
