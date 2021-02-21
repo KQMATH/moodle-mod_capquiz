@@ -60,6 +60,12 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * @param $data
+     * @throws base_step_exception
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz($data) {
         global $DB;
         $data = (object)$data;
@@ -72,6 +78,12 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws base_step_exception
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_list($data) {
         global $DB;
         $data = (object)$data;
@@ -84,6 +96,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_list', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question($data) {
         global $DB;
         $data = (object)$data;
@@ -97,6 +114,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_rating($data) {
         global $DB;
         $data = (object)$data;
@@ -106,6 +128,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_rating', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_selection($data) {
         global $DB;
         $data = (object)$data;
@@ -115,6 +142,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_selection', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_rating_system($data) {
         global $DB;
         $data = (object)$data;
@@ -124,6 +156,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_rating_system', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     */
     protected function process_capquiz_user($data) {
         $data = (object)$data;
         $data->user_id = $this->get_mappingid('user', $data->user_id);
@@ -131,6 +166,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->currentcapuser = clone($data);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_user_rating($data) {
         global $DB;
         $data = (object)$data;
@@ -140,6 +180,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_user_rating', $oldid, $newitemid);
     }
 
+    /**
+     * @param $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_attempt($data) {
         global $DB;
         $data = (object)$data;
@@ -156,6 +201,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_attempt', $oldid, $newitemid);
     }
 
+    /**
+     * @param int $newusageid
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function inform_new_usage_id($newusageid) {
         global $DB;
         $data = $this->currentcapuser;
@@ -165,6 +215,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_user', $oldid, $newitemid);
     }
 
+    /**
+     *
+     */
     protected function after_execute() {
         $this->add_related_files('mod_capquiz', 'intro', null);
     }

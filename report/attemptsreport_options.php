@@ -80,7 +80,7 @@ class capquiz_attempts_report_options {
      * @param string $mode which report these options are for.
      * @param object $capquiz the settings for the capquiz being reported on.
      * @param object $cm the course module objects for the capquiz being reported on.
-     * @param object $coures the course settings for the coures this capquiz is in.
+     * @param object $course the course settings for the coures this capquiz is in.
      */
     public function __construct($mode, capquiz $capquiz, $cm, $course) {
         $this->mode     = $mode;

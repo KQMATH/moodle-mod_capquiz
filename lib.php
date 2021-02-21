@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/gradelib.php');
 
+/**
+ * Add this capquiz instance to the database
+ *
+ * @param stdClass $modformdata The data submitted from the form
+ * @return bool|int
+ */
 function capquiz_add_instance(stdClass $modformdata) {
     global $DB;
     $modformdata->time_modified = time();
@@ -36,6 +42,12 @@ function capquiz_add_instance(stdClass $modformdata) {
     return $DB->insert_record('capquiz', $modformdata);
 }
 
+/**
+ * Update this instance in the database
+ *
+ * @param stdClass $capquiz database record
+ * @return bool
+ */
 function capquiz_update_instance(stdClass $capquiz) {
     global $DB;
     $capquiz->id = $capquiz->instance;
@@ -44,6 +56,11 @@ function capquiz_update_instance(stdClass $capquiz) {
     return true;
 }
 
+/**
+ * Delete this instance from the database
+ *
+ * @param int $cmid Course module id for the instance to be deleted
+ */
 function capquiz_delete_instance(int $cmid) {
     $capquiz = new capquiz($cmid);
     if ($capquiz) {
@@ -55,6 +72,15 @@ function capquiz_delete_instance(int $cmid) {
     }
 }
 
+/**
+ * Implementation of the reset course functionality, delete all the
+ * assignment submissions for course $data->courseid.
+ *
+ * @param $data
+ * @return array
+ * @throws coding_exception
+ * @throws dml_exception
+ */
 function capquiz_reset_userdata($data) {
     global $DB;
     $status = [];
@@ -81,6 +107,12 @@ function capquiz_reset_userdata($data) {
     return $status;
 }
 
+/**
+ * Finds all assignment notifications that have yet to be mailed out, and mails them.
+ *
+ * Cron function to be run periodically according to the moodle cron.
+ * @return bool
+ */
 function capquiz_cron() {
     return true;
 }
@@ -102,6 +134,13 @@ function capquiz_extend_settings_navigation($settings, $capquiznode) {
     question_extend_settings_navigation($capquiznode, $PAGE->cm->context)->trim_if_empty();
 }
 
+/**
+ * Get an upto date list of user grades and feedback for the gradebook.
+ *
+ * @param stdClass $capquiz database record
+ * @param int $userid int or 0 for all users
+ * @return array
+ */
 function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
     global $DB;
     $params = ['capquiz_id' => $capquiz->id];
@@ -124,6 +163,13 @@ function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
     return $grades;
 }
 
+/**
+ * Create grade item for given assignment.
+ *
+ * @param stdClass $capquiz record with extra cmidnumber
+ * @param array $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
+ */
 function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
     global $DB;
     $capquiz->cmidnumber = get_coursemodule_from_instance('capquiz', $capquiz->id)->id;
@@ -156,6 +202,13 @@ function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
     return $status;
 }
 
+/**
+ * Update activity grades
+ *
+ * @param stdClass $capquiz database record
+ * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone
+ */
 function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone = true) {
     $grades = capquiz_get_user_grades($capquiz, $userid);
     if ($grades) {
@@ -170,6 +223,12 @@ function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone =
     }
 }
 
+/**
+ * Reset activity gradebook
+ *
+ * @param int $courseid  id of the course to be reset
+ * @param string $type Optional type of assignment to limit the reset to a particular assignment type
+ */
 function capquiz_reset_gradebook($courseid, $type = '') {
     global $DB;
     $instances = $DB->get_records('capquiz', ['course' => $courseid]);
@@ -178,6 +237,12 @@ function capquiz_reset_gradebook($courseid, $type = '') {
     }
 }
 
+/**
+ * Checks if $feature is supported
+ *
+ * @param $feature
+ * @return bool
+ */
 function capquiz_supports($feature) {
     switch ($feature) {
         case FEATURE_MOD_INTRO:

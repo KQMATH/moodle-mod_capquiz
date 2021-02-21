@@ -41,6 +41,13 @@ require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_form.php');
  */
 class capquizreport_attempts_settings_form extends capquiz_attempts_report_form {
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param  array $data form data
+     * @param  array $files form files
+     * @return array An array of error messages.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -57,6 +64,11 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
         return $errors;
     }
 
+    /**
+     * Adds any additional preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function other_preference_fields(MoodleQuickForm $mform) {
         $mform->addGroup(array(
             $mform->createElement('advcheckbox', 'ansstate', '',

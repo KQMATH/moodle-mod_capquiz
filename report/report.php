@@ -58,7 +58,9 @@ class report {
     }
 
     /**
-     * allows the plugin to control who can see this plugin.
+     * Allows the plugin to control who can see this plugin.
+     *
+     * @param context_module $contextmodule Course mocule context class
      * @return boolean
      */
     public function canview($contextmodule) {
@@ -69,7 +71,7 @@ class report {
      * Initialise some parts of $PAGE and start output.
      *
      * @param object $cm the course_module information.
-     * @param object $coures the course settings.
+     * @param object $course the course settings.
      * @param object $capquiz the capquiz settings.
      * @param string $reportmode the report name.
      */

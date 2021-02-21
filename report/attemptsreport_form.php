@@ -42,11 +42,21 @@ require_once($CFG->libdir . '/formslib.php');
  */
 abstract class capquiz_attempts_report_form extends moodleform {
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param  array $data form data
+     * @param  array $files form files
+     * @return array An array of error messages.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         return $errors;
     }
 
+    /**
+     * Defines teh form
+     */
     protected function definition() {
         $mform = $this->_form;
 
@@ -66,6 +76,11 @@ abstract class capquiz_attempts_report_form extends moodleform {
             get_string('showreport', 'quiz'));
     }
 
+    /**
+     * Adds the standard attempt fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add attempt fields to
+     */
     protected function standard_attempt_fields(MoodleQuickForm $mform) {
 
         $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
@@ -80,14 +95,29 @@ abstract class capquiz_attempts_report_form extends moodleform {
         $mform->addHelpButton('onlyanswered', 'reportshowonlyanswered', 'capquiz');
     }
 
+    /**
+     * Adds any additional attempt fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add attempt fields to
+     */
     protected function other_attempt_fields(MoodleQuickForm $mform) {
     }
 
+    /**
+     * Adds the standard preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function standard_preference_fields(MoodleQuickForm $mform) {
         $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz'));
         $mform->setType('pagesize', PARAM_INT);
     }
 
+    /**
+     * Adds any additional preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function other_preference_fields(MoodleQuickForm $mform) {
     }
 }
