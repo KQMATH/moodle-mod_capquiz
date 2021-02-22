@@ -35,11 +35,23 @@ class import_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /**
+     * import_renderer constructor.
+     * @param capquiz $capquiz The current capquiz
+     * @param renderer $renderer The renderer to be used by this instance
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
+    /**
+     * Fetches questions in the list from the database
+     *
+     * @param int $qlistid the id of the list with the question
+     * @return array Array of all questions in list $qlistid
+     * @throws \dml_exception
+     */
     private function get_questions_in_list(int $qlistid) : array {
         global $DB;
         $sql = 'SELECT cq.id     AS id,
@@ -53,6 +65,12 @@ class import_renderer {
         return $DB->get_records_sql($sql, ['qlistid' => $qlistid]);
     }
 
+    /**
+     * Get list of all questions
+     *
+     * @return array
+     * @throws \dml_exception
+     */
     private function get_question_lists() : array {
         global $DB;
         $path = \context_course::instance($this->capquiz->course()->id)->path;
@@ -66,6 +84,14 @@ class import_renderer {
         return $DB->get_records_sql($sql, ['pathpart' => $path . '%']);
     }
 
+    /**
+     * Render
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     public function render() {
         $srcqlists = $this->get_question_lists();
         $qlists = [];

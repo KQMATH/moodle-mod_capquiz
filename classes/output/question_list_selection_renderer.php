@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render a capquiz' question list selection
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz_question_list;
@@ -22,6 +31,8 @@ use mod_capquiz\capquiz_urls;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_list_selection_renderer
+ *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
@@ -35,11 +46,22 @@ class question_list_selection_renderer {
     /** @var $context */
     private $context;
 
+    /**
+     * question_list_selection_renderer constructor.
+     * @param capquiz $capquiz The capquiz whose question list selection should be rendered
+     * @param renderer $renderer The renderer used to render the question list selection
+     */
     public function __construct(renderer $renderer, $context) {
         $this->renderer = $renderer;
         $this->context = $context;
     }
 
+    /**
+     * Renders the question list selection
+     *
+     * @return bool|string
+     * @throws \moodle_exception
+     */
     public function render() {
         $templates = capquiz_question_list::load_question_list_templates($this->context);
         $lists = [];

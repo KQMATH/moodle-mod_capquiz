@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render a capquiz' question list creator
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -26,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
+ * Class question_list_creator_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -39,11 +49,22 @@ class question_list_creator_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /**
+     * question_list_creator_renderer constructor.
+     * @param capquiz $capquiz The capquiz whose question list creator should be rendered
+     * @param renderer $renderer The renderer used to render the question list creator
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
+    /**
+     * Renders the question list creator
+     *
+     * @return bool|string
+     * @throws \moodle_exception
+     */
     public function render() {
         global $PAGE;
         $url = $PAGE->url;
