@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class representing a capquiz user
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * capquiz_user class
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
@@ -41,6 +53,7 @@ class capquiz_user {
 
     /**
      * capquiz_user constructor.
+     *
      * @param \stdClass $record
      * @throws \dml_exception
      */
@@ -63,10 +76,22 @@ class capquiz_user {
         }
     }
 
+    /**
+     * Verify if user has permission to use question
+     *
+     * @return bool
+     */
     private function has_question_usage() : bool {
         return $this->record->question_usage_id !== null;
     }
 
+
+    /**
+     * Create question usage
+     *
+     * @param  \context_module $context
+     * @throws \dml_exception
+     */
     public function create_question_usage($context) {
         global $DB;
         if ($this->has_question_usage()) {
@@ -80,13 +105,22 @@ class capquiz_user {
         $DB->update_record('capquiz_user', $this->record);
     }
 
+
+    /**
+     * Return this users quba
+     *
+     * @return \question_usage_by_activity|null
+     */
     public function question_usage() : ?\question_usage_by_activity {
         return $this->quba;
     }
 
     /**
+     * Loads capquiz user
+     *
      * @param capquiz $capquiz
      * @param int $moodleuserid
+     * @param \context_module $context
      * @return capquiz_user|null
      * @throws \Exception
      */
@@ -104,13 +138,23 @@ class capquiz_user {
         return self::load_db_entry($capquiz, $moodleuserid, $context);
     }
 
+    /**
+     * Returns count of users in this capquiz
+     *
+     * @param int $capquizid
+     * @return int count of users in this capquiz
+     * @throws \dml_exception
+     */
     public static function user_count(int $capquizid) : int {
         global $DB;
         return $DB->count_records('capquiz_user', ['capquiz_id' => $capquizid]);
     }
 
     /**
+     * Returns list of all users in this capquiz
+     *
      * @param int $capquizid
+     * @param \context_module $context
      * @return capquiz_user[]
      * @throws \dml_exception
      */
@@ -123,44 +167,97 @@ class capquiz_user {
         return $users;
     }
 
+    /**
+     * Return this users id
+     *
+     * @return int users id
+     */
     public function id() : int {
         return $this->record->id;
     }
 
+    /**
+     * Returns this users username
+     *
+     * @return string username
+     */
     public function username() : string {
         return $this->user->username;
     }
 
+    /**
+     * Returns this users first name
+     *
+     * @return string first name
+     */
     public function first_name() : string {
         return $this->user->firstname;
     }
 
+    /**
+     * Returns this users last name
+     *
+     * @return string last name
+     */
     public function last_name() : string {
         return $this->user->lastname;
     }
 
+    /**
+     * Return users rating
+     *
+     * @return float
+     */
     public function rating() : float {
         return $this->record->rating;
     }
 
+    /**
+     * Get this users capquiz rating
+     *
+     * @return capquiz_user_rating
+     */
     public function get_capquiz_user_rating() : capquiz_user_rating {
         return $this->rating;
     }
 
+    /**
+     * Return the highest star rating this user has achieved
+     *
+     * @return int highest star rating
+     */
     public function highest_stars_achieved() : int {
         return $this->record->highest_level;
     }
 
+    /**
+     * Return the highest star grade
+     *
+     * @return int highest star grade
+     */
     public function highest_stars_graded() : int {
         return $this->record->stars_graded;
     }
 
+    /**
+     * Set this users highest star rating
+     *
+     * @param int $higheststar
+     * @throws \dml_exception
+     */
     public function set_highest_star(int $higheststar) {
         global $DB;
         $this->record->highest_level = $higheststar;
         $DB->update_record('capquiz_user', $this->record);
     }
 
+    /**
+     * Set this users rating
+     *
+     * @param $rating
+     * @param bool $manual
+     * @throws \dml_exception
+     */
     public function set_rating($rating, bool $manual = false) {
         global $DB;
         $this->record->rating = $rating;
@@ -171,6 +268,8 @@ class capquiz_user {
     }
 
     /**
+     * Load user entry from database
+     *
      * @param capquiz $capquiz
      * @param int $moodleuserid
      * @return capquiz_user|null

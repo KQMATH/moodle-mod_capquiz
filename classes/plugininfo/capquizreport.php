@@ -33,7 +33,15 @@ use part_of_admin_tree;
 
 defined('MOODLE_INTERNAL') || die();
 
-
+/**
+ * Class capquizreport
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+ */
 class capquizreport extends base {
     /**
      * Return URL used for management of plugins of this type.
@@ -78,6 +86,11 @@ class capquizreport extends base {
         return $enabled;
     }
 
+    /**
+     * Is it possible to uninstall this plugin?
+     *
+     * @return bool
+     */
     public function is_uninstall_allowed() {
         return true;
     }
@@ -115,6 +128,11 @@ class capquizreport extends base {
         }
     }
 
+    /**
+     * Returns the node name used in admin settings menu for this plugin settings (if applicable)
+     *
+     * @return string
+     */
     public function get_settings_section_name() {
         return $this->type . '_' . $this->name;
     }

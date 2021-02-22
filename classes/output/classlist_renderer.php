@@ -39,11 +39,21 @@ class classlist_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /**
+     * classlist_renderer constructor.
+     * @param capquiz $capquiz The capquiz whose classlist should be rendered
+     * @param renderer $renderer The renderer used to render the classlist
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
+    /**
+     * Renders the entire classlist of the $capquiz in the constructor
+     *
+     * @return bool|string
+     */
     public function render() {
         global $PAGE;
         $cmid = $this->capquiz->course_module()->id;
