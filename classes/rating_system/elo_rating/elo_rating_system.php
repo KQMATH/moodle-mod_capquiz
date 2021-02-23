@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used as a registry for the rating system
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,6 +41,9 @@ class elo_rating_system extends capquiz_rating_system {
     /** @var float $questionkfactor */
     private $questionkfactor;
 
+    /**
+     * @param \stdClass $configuration
+     */
     public function configure(\stdClass $configuration) {
         if ($configuration->student_k_factor) {
             $this->studentkfactor = $configuration->student_k_factor;
