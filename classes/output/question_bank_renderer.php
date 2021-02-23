@@ -13,6 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * This file defines a class used to render a question bank
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace mod_capquiz\output;
 
@@ -23,6 +31,8 @@ use mod_capquiz\bank\question_bank_view;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_bank_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -39,17 +49,33 @@ class question_bank_renderer {
     /** @var array $pagevars */
     private $pagevars;
 
+    /**
+     * question_bank_renderer constructor.
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
+    /**
+     * Creates question bank view
+     *
+     * @return question_bank_view
+     */
     public function create_view() {
         list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = $this->setup_question_edit();
         $this->pagevars = $pagevars;
         return new question_bank_view($contexts, $url, $this->capquiz->course(), $this->capquiz->course_module());
     }
 
+    /**
+     * Renders question bank
+     *
+     * @return string
+     * @throws \coding_exception
+     */
     public function render() {
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);

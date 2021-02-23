@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render the question list imports
+ *
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -22,6 +31,8 @@ use mod_capquiz\capquiz_urls;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class import_renderer
+ *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2019 NTNU

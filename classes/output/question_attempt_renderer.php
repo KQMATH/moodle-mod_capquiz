@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render a question attempt
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -26,6 +35,8 @@ use mod_capquiz\capquiz_question_attempt;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_attempt_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -39,12 +50,20 @@ class question_attempt_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /**
+     * question_attempt_renderer constructor.
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->render_question_head_html();
     }
 
+    /**
+     * Renders the question head
+     */
     private function render_question_head_html() {
         $user = $this->capquiz->user();
         $qengine = $this->capquiz->question_engine($user);
@@ -57,6 +76,12 @@ class question_attempt_renderer {
         }
     }
 
+    /**
+     * Renders the question attempt view
+     *
+     * @return string
+     * @throws \coding_exception
+     */
     public function render() : string {
         global $PAGE;
         if (!$this->capquiz->is_published()) {
@@ -76,6 +101,13 @@ class question_attempt_renderer {
         return get_string('you_finished_capquiz', 'capquiz');
     }
 
+    /**
+     * Render the attempt
+     *
+     * @param capquiz_question_attempt $attempt
+     * @param \question_display_options $options
+     * @return string
+     */
     private function render_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
         $user = $this->capquiz->user();
         $html = $this->render_progress($user);
@@ -83,12 +115,26 @@ class question_attempt_renderer {
         return $html;
     }
 
+    /**
+     * Render the attempt review
+     *
+     * @param capquiz_question_attempt $attempt
+     * @return string
+     */
     private function render_review(capquiz_question_attempt $attempt) : string {
         $html = $this->render_attempt($attempt, $this->review_display_options());
         $html .= $this->render_review_next_button($attempt);
         return $html;
     }
 
+    /**
+     * Render the review next button
+     *
+     * @param capquiz_question_attempt $attempt
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function render_review_next_button(capquiz_question_attempt $attempt) : string {
         return basic_renderer::render_action_button(
             $this->renderer,
@@ -100,6 +146,13 @@ class question_attempt_renderer {
         );
     }
 
+    /**
+     * Render a users progress
+     *
+     * @param capquiz_user $user
+     * @return string
+     * @throws \moodle_exception
+     */
     private function render_progress(capquiz_user $user) : string {
         $qlist = $this->capquiz->question_list();
         $percent = $qlist->next_level_percent($this->capquiz, $user->rating());
@@ -116,6 +169,15 @@ class question_attempt_renderer {
         ]);
     }
 
+    /**
+     * Render the question attempt
+     *
+     * @param capquiz_question_attempt $attempt
+     * @param \question_display_options $options
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
         global $PAGE;
         $user = $this->capquiz->user();
@@ -134,6 +196,14 @@ class question_attempt_renderer {
         ]);
     }
 
+    /**
+     * Render question attempts metainfo
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question_attempt $attempt
+     * @return string
+     * @throws \moodle_exception
+     */
     public function render_metainfo(capquiz_user $user, capquiz_question_attempt $attempt) : string {
         $question = capquiz_question::load($attempt->question_id());
         if ($question == null) {
@@ -153,6 +223,13 @@ class question_attempt_renderer {
         ]);
     }
 
+    /**
+     * Checks a users star progress
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question_list $qlist
+     * @return array[]
+     */
     private function user_star_progress(capquiz_user $user, capquiz_question_list $qlist) : array {
         $stars = [];
         $blankstars = [];
@@ -171,6 +248,11 @@ class question_attempt_renderer {
         return [$stars, $blankstars, $nostars];
     }
 
+    /**
+     * Returns the display options for the attempt review
+     *
+     * @return \question_display_options
+     */
     private function review_display_options() : \question_display_options {
         $options = new \question_display_options();
         $options->context = $this->capquiz->context();
@@ -183,6 +265,11 @@ class question_attempt_renderer {
         return $options;
     }
 
+    /**
+     * Returns the display options for the attempt
+     *
+     * @return \question_display_options
+     */
     private function attempt_display_options() : \question_display_options {
         $options = new \question_display_options();
         $options->context = $this->capquiz->context();

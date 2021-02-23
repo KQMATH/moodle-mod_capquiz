@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render buttons
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz_urls;
@@ -21,6 +30,8 @@ use mod_capquiz\capquiz_urls;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class basic_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -28,6 +39,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class basic_renderer {
     /**
+     * Renders the home button
+     *
      * @param renderer $renderer
      * @return string
      * @throws \coding_exception
@@ -39,6 +52,8 @@ class basic_renderer {
     }
 
     /**
+     * Renders a button
+     *
      * @param renderer $renderer
      * @param \moodle_url $url
      * @param string $label
