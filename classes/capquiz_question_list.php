@@ -208,7 +208,7 @@ class capquiz_question_list {
     }
 
     /**
-     * Returns the time which the list was created
+     * Returns the time of when the list was created
      *
      * @return string
      */

@@ -29,6 +29,8 @@ namespace mod_capquiz;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_rating_system
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
