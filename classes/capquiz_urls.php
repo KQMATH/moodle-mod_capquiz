@@ -14,6 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class that represents a capquiz url
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 use coding_exception;
@@ -24,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/capquiz/report/reportlib.php');
 
 /**
+ * Class capquiz_urls
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
@@ -45,6 +58,13 @@ class capquiz_urls {
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
     public static $urlviewratingsystemconfig = '/mod/capquiz/view_rating_system.php';
 
+    /**
+     * Returns a redirect url
+     *
+     * @param moodle_url $target
+     * @return moodle_url
+     * @throws coding_exception
+     */
     public static function redirect(moodle_url $target): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'redirect');
@@ -52,6 +72,12 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * @param string $relativeurl
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function create_view_url(string $relativeurl): moodle_url {
         global $CFG;
         $url = new moodle_url($CFG->wwwroot . $relativeurl);
@@ -71,6 +97,10 @@ class capquiz_urls {
         return required_param('cmid', PARAM_INT);
     }
 
+    /**
+
+     * @throws \moodle_exception
+     */
     public static function redirect_to_front_page() {
         global $CFG;
         redirect(new moodle_url($CFG->wwwroot));

@@ -14,11 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class that represents a capquiz matchmaking strategy
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_matchmaking_strategy
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -26,12 +37,36 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class capquiz_matchmaking_strategy {
 
+    /**
+     * Sets a new matchmaking strategy configuration
+     *
+     * @param \stdClass $configuration
+     * @return mixed
+     */
     public abstract function configure(\stdClass $configuration);
 
+    /**
+     * Returns the current configuration
+     *
+     * @return mixed
+     */
     public abstract function configuration();
 
+    /**
+     * Returns the default configuration
+     *
+     * @return mixed
+     */
     public abstract function default_configuration();
 
+    /**
+     * Returns a new question for the user based on the matchmaking strategy configuration
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question_list $qlist
+     * @param array $inactiveattempts
+     * @return mixed
+     */
     public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist,
             array $inactiveattempts);
 
