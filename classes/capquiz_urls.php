@@ -86,6 +86,8 @@ class capquiz_urls {
     }
 
     /**
+     * Returns the course module id
+     *
      * @return int
      * @throws coding_exception
      */
@@ -98,7 +100,8 @@ class capquiz_urls {
     }
 
     /**
-
+     * Redirects to the front page
+     *
      * @throws \moodle_exception
      */
     public static function redirect_to_front_page() {
@@ -106,19 +109,42 @@ class capquiz_urls {
         redirect(new moodle_url($CFG->wwwroot));
     }
 
+    /**
+     * Redirects to the dashboard
+     *
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function redirect_to_dashboard() {
         self::redirect_to_url(self::create_view_url(self::$urlview));
     }
 
+    /**
+     * Redirects to specified url
+     *
+     * @param moodle_url $url
+     * @throws \moodle_exception
+     */
     public static function redirect_to_url(moodle_url $url) {
         redirect($url);
     }
 
+    /**
+     * Redirects to the previous page
+     */
     public static function redirect_to_previous() {
         header('Location: ' . $_SERVER['HTTP_REFERER']);
         exit;
     }
 
+    /**
+     * Sets teh current page url
+     *
+     * @param capquiz $capquiz
+     * @param string $url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function set_page_url(capquiz $capquiz, string $url) {
         global $PAGE;
         $PAGE->set_context($capquiz->context());
@@ -127,40 +153,105 @@ class capquiz_urls {
         $PAGE->set_url(self::create_view_url($url));
     }
 
+    /**
+     * Returns url to the front page of the capquiz dashboard
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_url(): moodle_url {
         return self::create_view_url(self::$urlview);
     }
 
+    /**
+     * Returns the url to the question list view
+     *
+     * @param int $questionpage
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_question_list_url(int $questionpage = 0): moodle_url {
         $url = self::create_view_url(self::$urledit);
         $url->param('qpage', $questionpage);
         return $url;
     }
 
+    /**
+     * Returns the url to the rating system view
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_rating_system_url(): moodle_url {
         return self::create_view_url(self::$urlviewratingsystemconfig);
     }
 
+    /**
+     * Returns the url to the grading view
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_grading_url(): moodle_url {
         return self::create_view_url(self::$urlviewgrading);
     }
 
+    /**
+     * Returns the url to the classlist/leaderboard view
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_classlist_url(): moodle_url {
         return self::create_view_url(self::$urlviewclasslist);
     }
 
+    /**
+     * Returns url to the "create question list" view
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_create_question_list_url(): moodle_url {
         return self::create_view_url(self::$urlviewcreateqlist);
     }
 
+    /**
+     * Returns url to the import view
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function view_import_url(): moodle_url {
         return self::create_view_url(self::$urlviewimport);
     }
 
+    /**
+     * Returns url to the report view
+     *
+     * @param string $mode
+     * @return moodle_url
+     */
     public static function view_report_url($mode = ''): moodle_url {
         return self::report_url(self::$urlviewreport, $mode);
     }
 
+    /**
+     * Generates and returns url to the report view
+     *
+     * @param string $relativeurl
+     * @param $mode
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function report_url(string $relativeurl, $mode): moodle_url {
         $url = self::create_view_url($relativeurl);
         if ($mode !== '') {
@@ -169,6 +260,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to add a qyestion to the list with
+     * the parameters to add question to the list
+     *
+     * @param int $questionid
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function add_question_to_list_url(int $questionid): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'add-question');
@@ -176,6 +276,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to remove a question from a list with
+     * the parameters to remove question from the list
+     *
+     * @param int $questionid
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function remove_question_from_list_url(int $questionid): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'remove-question');
@@ -183,6 +292,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to publish a question list with
+     * the parameters to publish the question list
+     *
+     * @param capquiz_question_list $qlist
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function question_list_publish_url(capquiz_question_list $qlist): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'publish-question-list');
@@ -190,6 +308,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to create a question list template with
+     * the parameters to create the template
+     *
+     * @param capquiz_question_list $qlist
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function question_list_create_template_url(capquiz_question_list $qlist): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'create-question-list-template');
@@ -197,6 +324,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to select a question list with
+     * the parameters to set the question list
+     *
+     * @param capquiz_question_list $qlist
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function question_list_select_url(capquiz_question_list $qlist): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'set-question-list');
@@ -204,6 +340,15 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to set a question rating with
+     * the parameters to set the question rating
+     *
+     * @param int $questionid
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function set_question_rating_url(int $questionid): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'set-question-rating');
@@ -211,12 +356,27 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to regrade all
+     *
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function regrade_all_url(): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'regrade-all');
         return $url;
     }
 
+    /**
+     * Generates and returns url to merge qlist with the parameters to merge the qlist
+     *
+     * @param int $qlistid
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function merge_qlist(int $qlistid): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'merge_qlist');
@@ -224,6 +384,14 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to delete a question list with the parameters to delete the list
+     *
+     * @param int $qlistid
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function delete_qlist(int $qlistid): moodle_url {
         $url = self::create_view_url(self::$urlaction);
         $url->param('action', 'delete_qlist');
@@ -231,6 +399,14 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to submit an attempt
+     *
+     * @param capquiz_question_attempt $attempt
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function response_submit_url(capquiz_question_attempt $attempt): moodle_url {
         $url = self::create_view_url(self::$urlasync);
         $url->param('action', 'answered');
@@ -238,6 +414,14 @@ class capquiz_urls {
         return $url;
     }
 
+    /**
+     * Generates and returns url to mark an attempt as reviewed
+     *
+     * @param capquiz_question_attempt $attempt
+     * @return moodle_url
+     * @throws \moodle_exception
+     * @throws coding_exception
+     */
     public static function response_reviewed_url(capquiz_question_attempt $attempt): moodle_url {
         $url = self::create_view_url(self::$urlasync);
         $url->param('action', 'reviewed');

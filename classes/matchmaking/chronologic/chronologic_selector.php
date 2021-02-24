@@ -14,11 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class which acts as a selector for the chronologic matchmaking strategy
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class chronologic_selector
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -26,19 +37,37 @@ defined('MOODLE_INTERNAL') || die();
  */
 class chronologic_selector extends capquiz_matchmaking_strategy {
 
+    /**
+     * Nothing to configure
+     *
+     * @param \stdClass $configuration
+     * @return mixed|void
+     */
     public function configure(\stdClass $configuration) {
 
     }
 
+    /**
+     * No configuration needed
+     *
+     * @return null
+     */
     public function configuration() {
         return null;
     }
 
+    /**
+     * No configuration needed
+     *
+     * @return null
+     */
     public function default_configuration() {
         return null;
     }
 
     /**
+     * Returns the next question for the user in a chronological order
+     *
      * @param capquiz_user $user
      * @param capquiz_question_list $qlist
      * @param array $inactiveattempts

@@ -17,10 +17,20 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * File to keep track of upgrades to the capquiz plugin
+ *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+/**
+ * Function to upgrade mod_capquiz
+ *
+ * @param int $oldversion the version to be upgraded from
+ * @return bool result
  */
 function xmldb_capquiz_upgrade($oldversion) {
     global $DB, $OUTPUT;

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines a class which acts as a selector for the n_closest strategy
+ * This file defines a class which acts as a selector for the n_closest matchmaking strategy
  *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
