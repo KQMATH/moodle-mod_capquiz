@@ -41,7 +41,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- */
 class capquizreport extends base {
     /**
      * Return URL used for management of plugins of this type.

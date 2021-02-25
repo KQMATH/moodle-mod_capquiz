@@ -213,7 +213,7 @@ define(['jquery'], function($) {
     function listenAddToQuiz() {
         $('.capquiz-add-selected-questions').on('click', function() {
             var questionIds = '';
-            $('#categoryquestions td input[type=checkbox]:checked').each(function () {
+            $('#categoryquestions td input[type=checkbox]:checked').each(function() {
                 questionIds += $(this).attr('name').slice(1) + ',';
             });
             $.post('action.php', {
