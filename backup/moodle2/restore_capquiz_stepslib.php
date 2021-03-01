@@ -63,7 +63,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz
      *
-     * @param $data
+     * @param object $data
      * @throws base_step_exception
      * @throws dml_exception
      * @throws restore_step_exception
@@ -83,7 +83,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz question list
      *
-     * @param $data
+     * @param object $data
      * @throws base_step_exception
      * @throws dml_exception
      * @throws restore_step_exception
