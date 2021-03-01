@@ -39,22 +39,30 @@ defined('MOODLE_INTERNAL') || die();
 abstract class capquiz_rating_system {
 
     /**
+     * Function to configure a rating system
+     *
      * @param \stdClass $configuration
      * @return mixed
      */
     public abstract function configure(\stdClass $configuration);
 
     /**
+     * Function to get the rating system configuration
+     *
      * @return mixed
      */
     public abstract function configuration();
 
     /**
+     * Function to get the default rating system configuration
+     *
      * @return mixed
      */
     public abstract function default_configuration();
 
     /**
+     * Updates the users rating based on the rating system and its configuration
+     *
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @param float $score
@@ -63,6 +71,8 @@ abstract class capquiz_rating_system {
     public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
 
     /**
+     * Updates the winning and losing questions ratings
+     *
      * @param capquiz_question $winner
      * @param capquiz_question $loser
      * @return mixed

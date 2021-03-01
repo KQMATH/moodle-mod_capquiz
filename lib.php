@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file contains functions used by the capquiz interface
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -73,11 +75,10 @@ function capquiz_delete_instance(int $cmid) {
 }
 
 /**
- * Implementation of the reset course functionality, delete all the
- * assignment submissions for course $data->courseid.
+ * Implementation of the reset course functionality, delete all the assignment submissions for course $data->courseid.
  *
  * @param $data
- * @return array
+ * @return array containing the statusreport from execution
  * @throws coding_exception
  * @throws dml_exception
  */

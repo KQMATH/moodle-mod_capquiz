@@ -28,8 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/capquiz/backup/moodle2/restore_capquiz_stepslib.php');
 
 /**
- * CAPQuiz restore task that provides all the settings and steps to perform one
- * complete restore of the activity
+ * CAPQuiz restore task that provides all the settings and steps to perform one complete restore of the activity
  *
  * @package mod_capquiz
  */
@@ -76,7 +75,8 @@ class restore_capquiz_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied
-     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php} when restoring
+     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php}
+     * when restoring
      * activity logs. It must return one array
      * of {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_log_rule.class.php} objects
      *
@@ -88,7 +88,8 @@ class restore_capquiz_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied
-     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php} when restoring
+     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php}
+     * when restoring
      * course logs. It must return one array
      * of {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_log_rule.class.php} objects
      *

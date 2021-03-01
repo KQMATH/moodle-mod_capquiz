@@ -98,7 +98,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display a tabbed view
      *
-     * @param \stdClass $renderer The renderer to render the tab
+     * @param renderer $renderer The renderer to render the tab
      * @param string $activetab The currently active tab
      * @throws \coding_exception
      */
@@ -113,7 +113,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display multiple tabbed views
      *
-     * @param array $renderers The renderers to render the tabs
+     * @param renderer[] $renderers The renderers to render the tabs
      * @param string $activetab The currently active tab
      * @throws \coding_exception
      */
@@ -130,7 +130,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display view
      *
-     * @param \stdClass $renderer renderer to render the view
+     * @param renderer $renderer renderer to render the view
      * @throws \coding_exception
      */
     public function display_view($renderer) {
@@ -143,7 +143,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display multiple views
      *
-     * @param \stdClass[] $renderers renderers to render the views
+     * @param renderer[] $renderers renderers to render the views
      * @throws \coding_exception
      */
     public function display_views(array $renderers) {
@@ -215,11 +215,21 @@ class renderer extends \plugin_renderer_base {
             private $capquiz;
             private $renderer;
 
+            /**
+             *  constructor.
+             * @param capquiz $capquiz
+             * @param renderer $renderer
+             */
             public function __construct(capquiz $capquiz, renderer $renderer) {
                 $this->capquiz = $capquiz;
                 $this->renderer = $renderer;
             }
 
+            /**
+             * Renders question list
+             *
+             * @return string
+             */
             public function render() {
                 $html = '<div class="capquiz-flex">';
                 $r1 = new question_list_renderer($this->capquiz, $this->renderer);

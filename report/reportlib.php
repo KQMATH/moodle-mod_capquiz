@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/filelib.php');
 /**
  * Generates and returns list of available CAPQuiz report sub-plugins
  *
- * @param context context level to check caps against
+ * @param context_module context level to check caps against
  * @return array list of valid reports present
  */
 function capquiz_report_list($context) {

@@ -90,7 +90,7 @@ class grading_configuration_renderer {
     /**
      * Processes the rating configuration formdata
      *
-     * @param $formdata
+     * @param object $formdata
      * @throws \dml_exception
      * @throws \moodle_exception
      */

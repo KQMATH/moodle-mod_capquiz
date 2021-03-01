@@ -495,7 +495,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         $latesstepdata = $dm->load_questions_usages_latest_steps(
             $qubaids, array_map(function($o) {
                 return $o->slot;
-                }, $this->questions));
+            }, $this->questions));
 
         $lateststeps = array();
         foreach ($latesstepdata as $step) {

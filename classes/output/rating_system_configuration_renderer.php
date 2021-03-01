@@ -43,7 +43,10 @@ require_once($CFG->dirroot . '/question/editlib.php');
  */
 class rating_system_configuration_renderer {
 
+    /** @var capquiz $capquiz */
     private $capquiz;
+
+    /** @var renderer $renderer */
     private $renderer;
 
     /** @var capquiz_rating_system_loader $registry */

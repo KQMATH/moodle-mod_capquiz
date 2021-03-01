@@ -78,11 +78,11 @@ class capquiz_attempts_report_options {
     /**
      * Constructor.
      * @param string $mode which report these options are for.
-     * @param object $capquiz the settings for the capquiz being reported on.
+     * @param capquiz $capquiz the settings for the capquiz being reported on.
      * @param object $cm the course module objects for the capquiz being reported on.
      * @param object $course the course settings for the coures this capquiz is in.
      */
-    public function __construct($mode, capquiz $capquiz, $cm, $course) {
+    public function __construct(string $mode, capquiz $capquiz, object $cm, object $course) {
         $this->mode     = $mode;
         $this->capquiz  = $capquiz;
         $this->cm       = $cm;

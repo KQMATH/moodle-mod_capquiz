@@ -28,6 +28,8 @@ namespace mod_capquiz;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class elo_rating_system
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -123,5 +125,4 @@ class elo_rating_system extends capquiz_rating_system {
         $exponent = ($b - $a) / 400.0;
         return 1.0 / (1.0 + pow(10.0, $exponent));
     }
-    
 }

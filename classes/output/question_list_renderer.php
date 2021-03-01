@@ -33,6 +33,8 @@ use mod_capquiz\capquiz_question_list;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_list_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>

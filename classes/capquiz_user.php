@@ -55,6 +55,7 @@ class capquiz_user {
      * capquiz_user constructor.
      *
      * @param \stdClass $record
+     * @param \context_module $context
      * @throws \dml_exception
      */
     public function __construct(\stdClass $record, \context_module $context) {

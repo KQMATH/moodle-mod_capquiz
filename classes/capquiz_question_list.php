@@ -434,7 +434,7 @@ class capquiz_question_list {
      * Loads question list from database based on the question list id
      *
      * @param int $qlistid
-     * @param $context
+     * @param \context_module $context
      * @return capquiz_question_list|null
      * @throws \dml_exception
      */
@@ -447,7 +447,7 @@ class capquiz_question_list {
     /**
      * Loads question list templates
      *
-     * @param $context
+     * @param \context_module $context
      * @return capquiz_question_list[]
      * @throws \dml_exception
      */

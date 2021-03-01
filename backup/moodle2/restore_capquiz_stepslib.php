@@ -61,6 +61,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz
+     *
      * @param $data
      * @throws base_step_exception
      * @throws dml_exception
@@ -79,6 +81,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz question list
+     *
      * @param $data
      * @throws base_step_exception
      * @throws dml_exception
@@ -97,6 +101,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz questions
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -115,6 +121,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz question rating
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -129,6 +137,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz question selection
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -143,6 +153,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz question rating system
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -157,6 +169,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz user
+     *
      * @param $data
      */
     protected function process_capquiz_user($data) {
@@ -167,6 +181,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz user rating
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -181,6 +197,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     * Processes and backs up capquiz question attempt
+     *
      * @param $data
      * @throws dml_exception
      * @throws restore_step_exception
@@ -217,7 +235,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
 
     /**
      *
-     */
+    */
     protected function after_execute() {
         $this->add_related_files('mod_capquiz', 'intro', null);
     }
