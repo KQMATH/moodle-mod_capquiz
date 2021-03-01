@@ -67,7 +67,7 @@ class capquiz_matchmaking_strategy_loader {
     /**
      * Returns localized strategy name
      *
-     * @param $name
+     * @param string $name
      * @return \lang_string|string
      * @throws \coding_exception
      */

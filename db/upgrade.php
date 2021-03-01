@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * File to keep track of upgrades to the capquiz plugin
  *
@@ -25,10 +23,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
 /**
  * Function to upgrade mod_capquiz
  *
+ * @package mod_capquiz
  * @param int $oldversion the version to be upgraded from
  * @return bool result
  */

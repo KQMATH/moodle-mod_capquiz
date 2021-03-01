@@ -76,7 +76,7 @@ class capquiz_user_rating {
      * @param bool $manual
      * @return capquiz_user_rating|null
      */
-    public static function create_user_rating(capquiz_user $user, $rating, bool $manual = false) {
+    public static function create_user_rating($user, $rating, $manual = false) {
         return self::insert_user_rating_entry($user->id(), $rating, $manual);
     }
 

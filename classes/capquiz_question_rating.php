@@ -85,7 +85,7 @@ class capquiz_question_rating {
      *
      * @param int $questionid
      * @param float $rating
-     * @param int|null $attemptid
+     * @param boolean $manual
      * @return capquiz_question_rating|null
      */
     public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
@@ -108,7 +108,7 @@ class capquiz_question_rating {
     /**
      * Load information about the latest question rating for an attempt from the database.
      *
-     * @param int $attemptid
+     * @param int $questionid
      * @return capquiz_question_rating
      * @throws dml_exception
      */

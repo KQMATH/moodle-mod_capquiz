@@ -37,9 +37,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 class n_closest_selector extends capquiz_matchmaking_strategy {
 
+    /** @var capquiz The capquiz */
     private $capquiz;
+
+    /** @var float The propability of the user winning */
     private $userwinprobability;
+
+    /** @var int The number of questions to select */
     private $numquestionstoselect;
+
+    /** @var int The number of turns between each time a question can be selected */
     private $preventsamequestionforturns;
 
     /**

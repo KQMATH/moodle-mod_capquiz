@@ -46,16 +46,37 @@ require_once($CFG->dirroot . '/mod/capquiz/report/reportlib.php');
  */
 class capquiz_urls {
 
+    /** @var string The URL to the entrypoint view for the capquiz */
     public static $urlview = '/mod/capquiz/view.php';
+
+    /** @var string The URL to update the user attempts and return to the dashboard */
     public static $urlasync = '/mod/capquiz/async.php';
+
+    /** @var string The URL to the error page */
     public static $urlerror = '/mod/capquiz/error.php';
+
+    /** @var string The URL to the action page */
     public static $urlaction = '/mod/capquiz/action.php';
+
+    /** @var string The URL to the classlist view */
     public static $urlviewclasslist = '/mod/capquiz/view_classlist.php';
+
+    /** @var string The URL to the grading view */
     public static $urlviewgrading = '/mod/capquiz/view_grading.php';
+
+    /** @var string The URL to the import view */
     public static $urlviewimport = '/mod/capquiz/view_import.php';
+
+    /** @var string The URL to the report view */
     public static $urlviewreport = '/mod/capquiz/view_report.php';
+
+    /** @var string The URL for the capquiz editor */
     public static $urledit = '/mod/capquiz/edit.php';
+
+    /** @var string The URL to the create question list view */
     public static $urlviewcreateqlist = '/mod/capquiz/view_create_question_list.php';
+
+    /** @var string The URL to the rating system view */
     public static $urlviewratingsystemconfig = '/mod/capquiz/view_rating_system.php';
 
     /**
