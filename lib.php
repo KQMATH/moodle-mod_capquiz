@@ -77,7 +77,7 @@ function capquiz_delete_instance(int $cmid) {
 /**
  * Implementation of the reset course functionality, delete all the assignment submissions for course $data->courseid.
  *
- * @param $data
+ * @param object $data
  * @return array containing the statusreport from execution
  * @throws coding_exception
  * @throws dml_exception
@@ -241,7 +241,7 @@ function capquiz_reset_gradebook($courseid, $type = '') {
 /**
  * Checks if $feature is supported
  *
- * @param $feature
+ * @param string $feature
  * @return bool
  */
 function capquiz_supports($feature) {

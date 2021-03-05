@@ -103,7 +103,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz questions
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -123,7 +123,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz question rating
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -139,7 +139,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz question selection
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -155,7 +155,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz question rating system
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -171,7 +171,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz user
      *
-     * @param $data
+     * @param object $data
      */
     protected function process_capquiz_user($data) {
         $data = (object)$data;
@@ -183,7 +183,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz user rating
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -199,7 +199,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     /**
      * Processes and backs up capquiz question attempt
      *
-     * @param $data
+     * @param object $data
      * @throws dml_exception
      * @throws restore_step_exception
      */
@@ -220,6 +220,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
+     *
+     *
      * @param int $newusageid
      * @throws dml_exception
      * @throws restore_step_exception

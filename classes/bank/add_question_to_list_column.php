@@ -38,6 +38,9 @@ defined('MOODLE_INTERNAL') || die();
 class add_question_to_list_column extends \core_question\bank\action_column_base {
 
     /**
+     * Get the internal name for this column. Used as a CSS class name,
+     * and to store information about the current sort. Must match PARAM_ALPHA.
+     *     *
      * @return string
      */
     public function get_name() {
@@ -45,21 +48,27 @@ class add_question_to_list_column extends \core_question\bank\action_column_base
     }
 
     /**
-     * @return string[]
+     * Returns the required fields
+     *
+     * @return array fields required. use table alias 'q' for the question table, or one of the
+     * ones from get_extra_joins. Every field requested must specify a table prefix.
      */
     public function get_required_fields() {
         return ['q.id'];
     }
 
     /**
-     * @param object $question
-     * @param string $rowclasses
+     * Output the contents of this column.
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
     protected function display_content($question, $rowclasses) {
         $this->print_icon($this->icon_id(), $this->icon_hover_text(), $this->icon_action_url($question));
     }
 
     /**
+     * Returns the id of the icon
+     *
      * @return string
      */
     private function icon_id() {

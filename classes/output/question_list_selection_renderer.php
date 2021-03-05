@@ -43,12 +43,12 @@ class question_list_selection_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
-    /** @var $context */
+    /** @var \context_module $context */
     private $context;
 
     /**
      * question_list_selection_renderer constructor.
-     * @param capquiz $capquiz The capquiz whose question list selection should be rendered
+     * @param \context_module $context
      * @param renderer $renderer The renderer used to render the question list selection
      */
     public function __construct(renderer $renderer, $context) {

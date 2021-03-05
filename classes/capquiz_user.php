@@ -255,7 +255,7 @@ class capquiz_user {
     /**
      * Set this users rating
      *
-     * @param $rating
+     * @param capquiz_user_rating $rating
      * @param bool $manual
      * @throws \dml_exception
      */
@@ -273,6 +273,7 @@ class capquiz_user {
      *
      * @param capquiz $capquiz
      * @param int $moodleuserid
+     * @param \context_module $context
      * @return capquiz_user|null
      * @throws \dml_exception
      */

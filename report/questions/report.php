@@ -164,11 +164,10 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *
-     * @param stdClass $cm the course_module information.
-     * @param stdClass $course the course settings.
-     * @param stdClass $capquiz the capquiz settings.
+     * @param \stdClass $cm the course_module information.
+     * @param \stdClass $course the course settings.
+     * @param \stdClass $capquiz the capquiz settings.
      * @param mod_quiz_attempts_report_options $options the current report settings.
-     * @param int $currentgroup the current group.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */

@@ -211,6 +211,9 @@ class renderer extends \plugin_renderer_base {
      * @throws \coding_exception
      */
     public function display_question_list_view(capquiz $capquiz) {
+        /**
+         * @var \stdClass $render
+         */
         $render = new class($capquiz, $this) {
             private $capquiz;
             private $renderer;

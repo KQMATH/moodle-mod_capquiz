@@ -72,7 +72,7 @@ class capquiz_user_rating {
      * Creates and inserts a new user rating to the database
      *
      * @param capquiz_user $user
-     * @param $rating
+     * @param capquiz_user_rating $rating
      * @param bool $manual
      * @return capquiz_user_rating|null
      */
@@ -83,7 +83,7 @@ class capquiz_user_rating {
     /**
      * Load information about the latest user rating for an capquiz user from the database.
      *
-     * @param int $attemptid
+     * @param int $userid
      * @return capquiz_user_rating
      * @throws dml_exception
      */

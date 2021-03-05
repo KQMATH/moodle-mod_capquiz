@@ -94,6 +94,8 @@ class capquiz_urls {
     }
 
     /**
+     * Generates a url based on a relative url
+     *
      * @param string $relativeurl
      * @return moodle_url
      * @throws \moodle_exception
@@ -268,7 +270,7 @@ class capquiz_urls {
      * Generates and returns url to the report view
      *
      * @param string $relativeurl
-     * @param $mode
+     * @param string $mode
      * @return moodle_url
      * @throws \moodle_exception
      * @throws coding_exception

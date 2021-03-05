@@ -53,7 +53,7 @@ class capquiz_rating_system_registry {
     /**
      * Returns rating system
      *
-     * @param $system
+     * @param string $system
      * @return capquiz_rating_system
      * @throws \Exception
      */
@@ -68,7 +68,7 @@ class capquiz_rating_system_registry {
     /**
      * Returns configuration form
      *
-     * @param $system
+     * @param string $system
      * @param \stdClass $configuration
      * @param \moodle_url $url
      * @return mixed
@@ -85,7 +85,7 @@ class capquiz_rating_system_registry {
     /**
      * Checks if this instance has a rating system
      *
-     * @param $system
+     * @param string $system
      * @return bool
      */
     public function has_rating_system($system) : bool {
@@ -137,7 +137,7 @@ class capquiz_rating_system_registry {
     /**
      * Creates and throws exception
      *
-     * @param $system
+     * @param string $system
      * @throws \Exception
      */
     private function throw_rating_system_exception($system) {

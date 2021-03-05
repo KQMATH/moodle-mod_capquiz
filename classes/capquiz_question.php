@@ -145,7 +145,7 @@ class capquiz_question {
     /**
      * Sets this questions rating and capquiz question rating
      *
-     * @param $rating
+     * @param capquiz_question_rating $rating
      * @param bool $manual
      * @throws \dml_exception
      */
