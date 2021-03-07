@@ -17,6 +17,8 @@
 /**
  * Sub-plugin definitions for the capquiz module.
  *
+ * Currently only used for backwards compatibility, the sub-plugin definitions are in subplugins.json
+ *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

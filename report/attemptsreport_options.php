@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
+ * Base class for the options that control what is visible in an {@see quiz_attempts_report}.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
+ * Base class for the options that control what is visible in an {@see  quiz_attempts_report}.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)

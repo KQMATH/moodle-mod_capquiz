@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * Base class for the settings form for {@see capquiz_attempts_report}s.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * Base class for the settings form for {@see capquiz_attempts_report}s.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)

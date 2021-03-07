@@ -51,8 +51,8 @@ class question_list_renderer {
 
     /**
      * question_list_renderer constructor.
-     * @param capquiz $capquiz
-     * @param renderer $renderer
+     * @param capquiz $capquiz The capquiz whose question list should be rendered
+     * @param renderer $renderer The renderer used to render the question list
      */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;

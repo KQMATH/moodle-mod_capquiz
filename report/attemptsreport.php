@@ -112,7 +112,7 @@ abstract class capquiz_attempts_report extends report {
     /**
      * Outputs the things you commonly want at the top of a capquiz report.
      *
-     * Calls through to {@link print_header_and_tabs()} and then
+     * Calls through to {@see print_header_and_tabs()} and then
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *

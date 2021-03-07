@@ -94,7 +94,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $hasstudents = $DB->record_exists_sql($sql, $studentsjoins->params);
         }
 
-        // TODO enable when support for attempt deletion is implemented {@link delete_selected_attempts}.
+        // TODO enable when support for attempt deletion is implemented {@see delete_selected_attempts}.
         // $this->process_actions($capquiz, $cm, $studentsjoins, $this->options->get_url());
 
         $hasquestions = capquiz_has_questions($capquiz->id());

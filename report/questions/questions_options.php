@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class to store the options for a {@link capquiz_questions_report}.
+ * Class to store the options for a {@see capquiz_questions_report}.
  *
  * @package     capquizreport_questions
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_options.php');
 
 
 /**
- * Class to store the options for a {@link capquiz_questions_report}.
+ * Class to store the options for a {@see capquiz_questions_report}.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)

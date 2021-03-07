@@ -75,10 +75,9 @@ class restore_capquiz_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied
-     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php}
-     * when restoring
-     * activity logs. It must return one array
-     * of {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_log_rule.class.php} objects
+     * by the {@see restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@see restore_log_rule} objects
      *
      * @return restore_log_rule[]
      */
@@ -88,10 +87,10 @@ class restore_capquiz_activity_task extends restore_activity_task {
 
     /**
      * Define the restore log rules that will be applied
-     * by the {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_logs_processor.class.php}
+     * by the {@see restore_logs_processor}
      * when restoring
      * course logs. It must return one array
-     * of {@link https://github.com/moodle/moodle/blob/master/backup/util/helper/restore_log_rule.class.php} objects
+     * of {@see restore_log_rule} objects
      *
      * Note this rules are applied when restoring course logs
      * by the restore final task, but are defined here at

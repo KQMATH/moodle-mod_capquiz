@@ -88,7 +88,9 @@ class capquiz_question_rating {
      * @param boolean $manual
      * @return capquiz_question_rating|null
      */
-    public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
+    public static function insert_question_rating_entry(int $questionid, float $rating,
+                                                        bool $manual = false): ?capquiz_question_rating
+    {
         global $DB;
 
         $record = new stdClass();

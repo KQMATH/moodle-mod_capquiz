@@ -51,7 +51,7 @@ class question_list_selection_renderer {
      * @param \context_module $context
      * @param renderer $renderer The renderer used to render the question list selection
      */
-    public function __construct(renderer $renderer, $context) {
+    public function __construct(renderer $renderer, \context_module $context) {
         $this->renderer = $renderer;
         $this->context = $context;
     }
