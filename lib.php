@@ -128,7 +128,7 @@ function capquiz_cron() {
 function capquiz_extend_settings_navigation($settings, $capquiznode) {
     global $PAGE, $CFG;
 
-    // Require {@see questionlib.php}
+    // Require {@link https://github.com/moodle/moodle/blob/master/lib/questionlib.php}
     // Included here as we only ever want to include this file if we really need to.
     require_once($CFG->libdir . '/questionlib.php');
 
