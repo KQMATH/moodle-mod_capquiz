@@ -110,7 +110,7 @@ class report_renderer {
      * Sets pagelayout to "report"
      */
     private function setup_report() {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         $PAGE->set_pagelayout('report');
     }
 }

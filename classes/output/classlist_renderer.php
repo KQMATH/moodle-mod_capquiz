@@ -67,7 +67,7 @@ class classlist_renderer {
      * @return bool|string
      */
     public function render() {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         $cmid = $this->capquiz->course_module()->id;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $users = capquiz_user::list_users($this->capquiz->id(), $this->capquiz->context());

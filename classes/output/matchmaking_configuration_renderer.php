@@ -102,7 +102,7 @@ class matchmaking_configuration_renderer {
      * @throws \moodle_exception
      */
     private function render_form() {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         $url = $PAGE->url;
         if ($form = $this->registry->configuration_form($url)) {
             $formdata = $form->get_data();

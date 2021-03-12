@@ -97,7 +97,7 @@ class question_bank_renderer {
      * Moodle coding standard does not allow us to override $_GET or $_POST before calling question_edit_setup()
      */
     private function setup_question_edit() {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         $params = [];
         $params['cmid'] = capquiz_urls::require_course_module_id_param();
         $params['qpage'] = optional_param('qpage', null, PARAM_INT);

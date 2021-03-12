@@ -83,7 +83,7 @@ class question_attempt_renderer {
      * @throws \coding_exception
      */
     public function render() : string {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         if (!$this->capquiz->is_published()) {
             return get_string('nothing_here_yet', 'capquiz');
         }
@@ -179,7 +179,7 @@ class question_attempt_renderer {
      * @throws \moodle_exception
      */
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
-        $PAGE = $this->capquiz->renderer()->$PAGE;
+        $PAGE = $this->capquiz->renderer()->PAGE;
         $user = $this->capquiz->user();
         $quba = $user->question_usage();
         $PAGE->requires->js_module('core_question_engine');
