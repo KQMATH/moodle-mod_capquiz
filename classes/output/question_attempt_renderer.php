@@ -50,6 +50,9 @@ class question_attempt_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * question_attempt_renderer constructor.
      * @param capquiz $capquiz
@@ -59,6 +62,7 @@ class question_attempt_renderer {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->render_question_head_html();
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -83,11 +87,10 @@ class question_attempt_renderer {
      * @throws \coding_exception
      */
     public function render() : string {
-        $PAGE = $this->capquiz->get_page();
         if (!$this->capquiz->is_published()) {
             return get_string('nothing_here_yet', 'capquiz');
         }
-        $PAGE->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
+        $this->page->requires->js_call_amd('mod_capquiz/attempt', 'initialize', []);
         $user = $this->capquiz->user();
         $qengine = $this->capquiz->question_engine($user);
         $attempt = $qengine->attempt_for_user($user);
@@ -179,10 +182,9 @@ class question_attempt_renderer {
      * @throws \moodle_exception
      */
     public function render_question_attempt(capquiz_question_attempt $attempt, \question_display_options $options) : string {
-        $PAGE = $this->capquiz->get_page();
         $user = $this->capquiz->user();
         $quba = $user->question_usage();
-        $PAGE->requires->js_module('core_question_engine');
+        $this->page->requires->js_module('core_question_engine');
         return $this->renderer->render_from_template('capquiz/student_question_attempt', [
             'attempt' => [
                 'url' => capquiz_urls::response_submit_url($attempt)->out(false),

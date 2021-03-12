@@ -62,7 +62,7 @@ class capquiz {
     private $qlist;
 
     /** @var \moodle_page $PAGE  */
-    private $PAGE;
+    private $page;
 
     /**
      * capquiz constructor.
@@ -99,7 +99,7 @@ class capquiz {
      * @return mixed|\moodle_page
      */
     public function get_page() {
-        return $this->PAGE;
+        return $this->page;
     }
 
     /**

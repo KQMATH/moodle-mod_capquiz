@@ -51,6 +51,9 @@ class report_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * report_renderer constructor.
      * @param capquiz $capquiz
@@ -59,6 +62,7 @@ class report_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -110,8 +114,7 @@ class report_renderer {
      * Sets pagelayout to "report"
      */
     private function setup_report() {
-        $PAGE = $this->capquiz->get_page();
-        $PAGE->set_pagelayout('report');
+        $this->page->set_pagelayout('report');
     }
 }
 

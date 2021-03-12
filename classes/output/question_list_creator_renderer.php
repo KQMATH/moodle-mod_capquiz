@@ -50,7 +50,7 @@ class question_list_creator_renderer {
     private $renderer;
 
     /** @var \moodle_page $PAGE */
-    private $PAGE;
+    private $page;
 
     /**
      * question_list_creator_renderer constructor.
@@ -70,7 +70,7 @@ class question_list_creator_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        $url = $this->PAGE->url;
+        $url = $this->page->url;
         $form = new question_list_create_form($url);
         $formdata = $form->get_data();
         if ($formdata) {

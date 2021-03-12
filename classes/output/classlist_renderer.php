@@ -50,6 +50,8 @@ class classlist_renderer {
 
     /** @var renderer $renderer */
     private $renderer;
+    /** @var \moodle_page $page */
+    private $page;
 
     /**
      * classlist_renderer constructor.
@@ -59,6 +61,7 @@ class classlist_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -67,9 +70,8 @@ class classlist_renderer {
      * @return bool|string
      */
     public function render() {
-        $PAGE = $this->capquiz->get_page();
         $cmid = $this->capquiz->course_module()->id;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        $this->page->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $users = capquiz_user::list_users($this->capquiz->id(), $this->capquiz->context());
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {

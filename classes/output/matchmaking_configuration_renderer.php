@@ -52,6 +52,9 @@ class matchmaking_configuration_renderer {
     /** @var \mod_capquiz\capquiz_matchmaking_strategy_loader $registry */
     private $registry;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * matchmaking_configuration_renderer constructor.
      * @param capquiz $capquiz
@@ -61,6 +64,7 @@ class matchmaking_configuration_renderer {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->registry = new capquiz_matchmaking_strategy_loader($this->capquiz);
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -102,8 +106,7 @@ class matchmaking_configuration_renderer {
      * @throws \moodle_exception
      */
     private function render_form() {
-        $PAGE = $this->capquiz->get_page();
-        $url = $PAGE->url;
+        $url = $this->page->url;
         if ($form = $this->registry->configuration_form($url)) {
             $formdata = $form->get_data();
             if ($formdata) {

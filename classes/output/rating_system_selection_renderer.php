@@ -52,6 +52,9 @@ class rating_system_selection_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * rating_system_selection_renderer constructor.
      *
@@ -62,6 +65,7 @@ class rating_system_selection_renderer {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->url = capquiz_urls::view_rating_system_url();
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -80,8 +84,7 @@ class rating_system_selection_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->get_page();
-        $url = $PAGE->url;
+        $url = $this->page->url;
         $form = new rating_system_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {

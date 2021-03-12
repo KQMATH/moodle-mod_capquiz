@@ -52,6 +52,9 @@ class matchmaking_strategy_selection_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * matchmaking_strategy_selection_renderer constructor.
      *
@@ -62,6 +65,7 @@ class matchmaking_strategy_selection_renderer {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->url = capquiz_urls::view_rating_system_url();
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -80,8 +84,7 @@ class matchmaking_strategy_selection_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->get_page();
-        $url = $PAGE->url;
+        $url = $this->page->url;
         $form = new matchmaking_strategy_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {

@@ -49,6 +49,9 @@ class question_list_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * question_list_renderer constructor.
      * @param capquiz $capquiz The capquiz whose question list should be rendered
@@ -57,6 +60,7 @@ class question_list_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -66,9 +70,8 @@ class question_list_renderer {
      * @throws \coding_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->get_page();
         $cmid = $this->capquiz->course_module()->id;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        $this->page->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $qlist = $this->capquiz->question_list();
         if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);

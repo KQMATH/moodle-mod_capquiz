@@ -49,6 +49,9 @@ class grading_configuration_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * grading_configuration_renderer constructor.
      * @param capquiz $capquiz
@@ -57,6 +60,7 @@ class grading_configuration_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -77,8 +81,7 @@ class grading_configuration_renderer {
      * @return string
      */
     private function get_rating_configuration() {
-        $PAGE = $this->capquiz->get_page();
-        $url = $PAGE->url;
+        $url = $this->page->url;
         $form = new grading_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {

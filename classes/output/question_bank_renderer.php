@@ -49,6 +49,9 @@ class question_bank_renderer {
     /** @var array $pagevars */
     private $pagevars;
 
+    /** @var \moodle_page $page */
+    private $page;
+
     /**
      * question_bank_renderer constructor.
      * @param capquiz $capquiz
@@ -57,6 +60,7 @@ class question_bank_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
     /**
@@ -97,7 +101,6 @@ class question_bank_renderer {
      * Moodle coding standard does not allow us to override $_GET or $_POST before calling question_edit_setup()
      */
     private function setup_question_edit() {
-        $PAGE = $this->capquiz->get_page();
         $params = [];
         $params['cmid'] = capquiz_urls::require_course_module_id_param();
         $params['qpage'] = optional_param('qpage', null, PARAM_INT);
@@ -117,7 +120,7 @@ class question_bank_renderer {
         $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_BOOL);
         $params['cpage'] = optional_param('cpage', null, PARAM_INT);
         $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
-        $PAGE->set_pagelayout('admin');
+        $this->page->set_pagelayout('admin');
         $edittab = 'editq';
         return question_build_edit_resources($edittab,  capquiz_urls::$urledit, $params);
     }
