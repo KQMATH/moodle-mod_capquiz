@@ -61,6 +61,9 @@ class capquiz {
     /** @var capquiz_question_list $qlist */
     private $qlist;
 
+    /** @var \moodle_page $PAGE  */
+    private $PAGE;
+
     /**
      * capquiz constructor.
      * @param int $cmid
@@ -69,6 +72,7 @@ class capquiz {
      */
     public function __construct(int $cmid) {
         global $DB, $PAGE;
+        $this->PAGE = $PAGE;
         $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
         $this->context = \context_module::instance($cmid);
         $PAGE->set_context($this->context);
@@ -87,6 +91,15 @@ class capquiz {
         if (!$this->is_grading_completed() || $force) {
             capquiz_update_grades($this->record);
         }
+    }
+
+    /**
+     * Returns the page of the CapQuiz
+     *
+     * @return mixed|\moodle_page
+     */
+    public function get_page() {
+        return $this->PAGE;
     }
 
     /**

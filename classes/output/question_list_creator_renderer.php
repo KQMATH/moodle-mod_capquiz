@@ -66,7 +66,7 @@ class question_list_creator_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->renderer()->PAGE;
+        $PAGE = $this->capquiz->get_page();
         $url = $PAGE->url;
         $form = new question_list_create_form($url);
         $formdata = $form->get_data();

@@ -66,7 +66,7 @@ class question_list_renderer {
      * @throws \coding_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->renderer()->PAGE;
+        $PAGE = $this->capquiz->get_page();
         $cmid = $this->capquiz->course_module()->id;
         $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $qlist = $this->capquiz->question_list();
