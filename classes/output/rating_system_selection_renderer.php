@@ -80,7 +80,7 @@ class rating_system_selection_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        global $PAGE;
+        $PAGE = $this->capquiz->renderer()->$PAGE;
         $url = $PAGE->url;
         $form = new rating_system_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();

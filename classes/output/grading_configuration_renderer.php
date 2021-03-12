@@ -77,7 +77,7 @@ class grading_configuration_renderer {
      * @return string
      */
     private function get_rating_configuration() {
-        global $PAGE;
+        $PAGE = $this->capquiz->renderer()->$PAGE;
         $url = $PAGE->url;
         $form = new grading_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
