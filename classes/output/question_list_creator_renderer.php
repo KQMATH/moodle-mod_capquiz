@@ -49,6 +49,9 @@ class question_list_creator_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $PAGE */
+    private $PAGE;
+
     /**
      * question_list_creator_renderer constructor.
      * @param capquiz $capquiz The capquiz whose question list creator should be rendered
@@ -57,6 +60,7 @@ class question_list_creator_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->PAGE = $capquiz->get_page();
     }
 
     /**
@@ -66,8 +70,7 @@ class question_list_creator_renderer {
      * @throws \moodle_exception
      */
     public function render() {
-        $PAGE = $this->capquiz->get_page();
-        $url = $PAGE->url;
+        $url = $this->PAGE->url;
         $form = new question_list_create_form($url);
         $formdata = $form->get_data();
         if ($formdata) {
