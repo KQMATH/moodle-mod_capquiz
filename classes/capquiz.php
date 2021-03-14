@@ -61,7 +61,7 @@ class capquiz {
     /** @var capquiz_question_list $qlist */
     private $qlist;
 
-    /** @var \moodle_page $PAGE  */
+    /** @var \moodle_page $page  */
     private $page;
 
     /**
@@ -72,7 +72,6 @@ class capquiz {
      */
     public function __construct(int $cmid) {
         global $DB, $PAGE;
-        $this->PAGE = $PAGE;
         $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
         $this->context = \context_module::instance($cmid);
         $PAGE->set_context($this->context);
@@ -80,6 +79,7 @@ class capquiz {
         $this->courserecord = $DB->get_record('course', ['id' => $this->cm->course], '*', MUST_EXIST);
         $this->record = $DB->get_record('capquiz', ['id' => $this->cm->instance], '*', MUST_EXIST);
         $this->qlist = capquiz_question_list::load_question_list($this);
+        $this->page = $PAGE;
     }
 
     /**
