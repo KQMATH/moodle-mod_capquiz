@@ -48,8 +48,8 @@ class question_list_selection_renderer {
 
     /**
      * question_list_selection_renderer constructor.
-     * @param \context_module $context
      * @param renderer $renderer The renderer used to render the question list selection
+     * @param \context_module $context
      */
     public function __construct(renderer $renderer, \context_module $context) {
         $this->renderer = $renderer;

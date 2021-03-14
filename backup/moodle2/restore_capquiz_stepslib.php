@@ -220,7 +220,7 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
-     *
+     * Updates a users usageid and maps the users old and new ids
      *
      * @param int $newusageid
      * @throws dml_exception
@@ -236,8 +236,8 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
     }
 
     /**
-     *
-    */
+     * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
+     */
     protected function after_execute() {
         $this->add_related_files('mod_capquiz', 'intro', null);
     }

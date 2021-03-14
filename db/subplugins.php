@@ -32,4 +32,4 @@ $subplugins = array(
 );
 */
 
-$subplugins = (array) json_decode(file_get_contents(__DIR__."/subplugins.json")) -> plugintypes;
+$subplugins = (array) json_decode(file_get_contents(__DIR__."/subplugins.json"))->plugintypes;
