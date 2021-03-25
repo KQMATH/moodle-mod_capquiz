@@ -114,7 +114,8 @@ class elo_rating_system extends capquiz_rating_system {
         $winner->set_rating($newwinrating);
     }
 
-    /** Calculates the expected score in favour of the player with rating $a,
+    /**
+     * Calculates the expected score in favour of the player with rating $a,
      * against a player with rating $b
      *
      * @param float $a

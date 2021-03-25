@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_form.php');
 class capquizreport_questions_settings_form extends capquiz_attempts_report_form {
 
     /**
-     * defines the form
+     * Defines the form
      */
     protected function definition() {
         $mform = $this->_form;

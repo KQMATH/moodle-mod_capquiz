@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays teh import view
+ * Displays the import view
  *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>

@@ -24,7 +24,7 @@ define(['jquery', 'core/str'], function($, mString) {
 
     /**
      * Show star tooltip.
-     * @param {*} $element
+     * @param {Object} $element
      * @param {string} text
      */
     function showTooltip($element, text) {

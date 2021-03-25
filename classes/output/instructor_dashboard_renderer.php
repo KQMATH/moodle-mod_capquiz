@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
- * Class  instructor_dashboard_renderer
+ * Class instructor_dashboard_renderer
  *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>

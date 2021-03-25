@@ -60,7 +60,7 @@ class question_list_creator_renderer {
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
-        $this->PAGE = $capquiz->get_page();
+        $this->page = $capquiz->get_page();
     }
 
     /**

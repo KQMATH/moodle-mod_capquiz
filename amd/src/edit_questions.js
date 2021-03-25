@@ -28,9 +28,9 @@ define(['jquery'], function($) {
 
     /**
      * Send an action to the server.
-     * @param {object} data
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * @param {Object} data
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendAction(data, onSuccess, onError) {
         $.ajax({
@@ -44,10 +44,10 @@ define(['jquery'], function($) {
 
     /**
      * Send the new default rating for the question list to the server.
-     * @param {object} data
+     * @param {Object} data
      * @param {number} rating
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendDefaultQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
@@ -59,10 +59,10 @@ define(['jquery'], function($) {
 
     /**
      * Send the new rating for the question to the server.
-     * @param {object} data
+     * @param {Object} data
      * @param {number} rating
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
@@ -75,9 +75,9 @@ define(['jquery'], function($) {
 
     /**
      * Send the new value, and avoid race condition.
-     * @param {object} $input
-     * @param {callback} sendInput
-     * @param {object} data
+     * @param {Object} $input
+     * @param {Object} sendInput
+     * @param {Object} data
      */
     function submitInput($input, sendInput, data) {
         $input.data('saving', true);
@@ -99,7 +99,7 @@ define(['jquery'], function($) {
 
     /**
      * Send the new rating for the question, and avoid race condition.
-     * @param {object} $input
+     * @param {Object} $input
      */
     function submitQuestionRating($input) {
         submitInput($input, sendQuestionRating, {questionId: $input.data('question-id')});
@@ -107,7 +107,7 @@ define(['jquery'], function($) {
 
     /**
      * Send the new default rating for the question list, and avoid race condition.
-     * @param {object} $input
+     * @param {Object} $input
      */
     function submitDefaultQuestionRating($input) {
         submitInput($input, sendDefaultQuestionRating, null);
@@ -116,7 +116,7 @@ define(['jquery'], function($) {
     /**
      * Register an input event listener for submission.
      * @param {string} query
-     * @param {callback} submit
+     * @param {Object} submit
      */
     function registerListener(query, submit) {
         $(document).on('input', query, function(event) {
@@ -140,7 +140,7 @@ define(['jquery'], function($) {
      *
      * The first column in the table must be an index of the row.
      *
-     * @param {column} $header The header column for which to sort the table by.
+     * @param {Object} $header The header column for which to sort the table by.
      */
     function sortTable($header) {
         var column = $header.index();
