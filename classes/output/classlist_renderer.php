@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render a capquiz' classlist
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -25,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
+ * Class classlist_renderer used for rendering a capquiz' class in the form of a list/leaderboard
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
@@ -38,16 +50,28 @@ class classlist_renderer {
 
     /** @var renderer $renderer */
     private $renderer;
+    /** @var \moodle_page $page */
+    private $page;
 
+    /**
+     * classlist_renderer constructor.
+     * @param capquiz $capquiz The capquiz whose classlist should be rendered
+     * @param renderer $renderer The renderer used to render the classlist
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
+    /**
+     * Renders the entire classlist of the $capquiz in the constructor
+     *
+     * @return bool|string
+     */
     public function render() {
-        global $PAGE ;
         $cmid = $this->capquiz->course_module()->id;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        $this->page->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $users = capquiz_user::list_users($this->capquiz->id(), $this->capquiz->context());
         $rows = [];
         for ($i = 0; $i < count($users); $i++) {

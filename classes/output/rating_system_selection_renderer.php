@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render the rating system selection form
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -25,6 +34,8 @@ use mod_capquiz\form\view\rating_system_selection_form;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class rating_system_selection_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -41,19 +52,39 @@ class rating_system_selection_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
+    /**
+     * rating_system_selection_renderer constructor.
+     *
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->url = capquiz_urls::view_rating_system_url();
+        $this->page = $capquiz->get_page();
     }
 
+    /**
+     * Sets redirect url
+     *
+     * @param \moodle_url $url
+     */
     public function set_redirect_url(\moodle_url $url) {
         $this->url = $url;
     }
 
+    /**
+     * Renders the rating system selection form
+     * @return bool|string
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     public function render() {
-        global $PAGE;
-        $url = $PAGE->url;
+        $url = $this->page->url;
         $form = new rating_system_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
         if ($formdata) {

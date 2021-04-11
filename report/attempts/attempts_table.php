@@ -50,8 +50,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
      * Constructor
      * @param object $capquiz
      * @param context $context
-     * @param quiz_responses_options $options
-     * @param sql_join $groupstudentsjoins
+     * @param capquiz_attempts_report_options $options
      * @param sql_join $studentsjoins
      * @param array $questions
      * @param moodle_url $reporturl
@@ -62,6 +61,14 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
             $options, $studentsjoins, $questions, $reporturl);
     }
 
+    /**
+     * Take the data returned from the db_query and go through all the rows
+     * processing each col using either col_{columnname} method or other_cols
+     * method or if other_cols returns NULL then put the data straight into the
+     * table.
+     *
+     * After calling this function, don't forget to call close_recordset.
+     */
     public function build_table() {
         if (!$this->rawdata) {
             return;
@@ -71,6 +78,13 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         parent::build_table();
     }
 
+    /**
+     * Format the submission and feedback columns.
+     *
+     * @param string $colname The column name
+     * @param stdClass $attempt The attempt
+     * @return mixed string or NULL
+     */
     public function other_cols($colname, $attempt) {
         switch ($colname) {
             case 'question':
@@ -84,6 +98,14 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         }
     }
 
+    /**
+     * Format a single column, used in other_cols
+     *
+     * @param integer $slot  attempts slot
+     * @param string $field
+     * @param object $attempt
+     * @return string
+     */
     public function data_col($slot, $field, $attempt) {
         if ($attempt->usageid == 0) {
             return '-';
@@ -232,6 +254,12 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         return $manualprevqrating;
     }
 
+    /**
+     * Does this report require the detailed information for each question from the
+     * question_attempts_steps table?
+     *
+     * @return bool
+     */
     protected function requires_latest_steps_loaded() {
         if ($this->options->showansstate
             || $this->options->showqtext
@@ -243,6 +271,13 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         }
     }
 
+    /**
+     * Is this a column that depends on joining to the latest state information?
+     * If so, return the corresponding slot. If not, return false.
+     *
+     * @param string $column
+     * @return false|int|mixed
+     */
     protected function is_latest_step_column($column) {
         if (preg_match('/^(?:question|response|right)/', $column, $matches)) {
             return $matches[1];
@@ -250,6 +285,15 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         return false;
     }
 
+    /**
+     * A chance for subclasses to modify the SQL after the count query has been generated,
+     * and before the full query is constructed.
+     * @param string $fields SELECT list.
+     * @param string $from JOINs part of the SQL.
+     * @param string $where WHERE clauses.
+     * @param array $params Query params.
+     * @return array with 4 elements ($fields, $from, $where, $params) as from base_sql.
+     */
     protected function update_sql_after_count($fields, $from, $where, $params) {
         $fields .= ',
                     cq.question_id AS moodlequestionid,

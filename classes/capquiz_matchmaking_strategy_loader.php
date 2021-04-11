@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to load capquiz matchmaking strategies
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
@@ -24,6 +33,8 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_close
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_closest_configuration_form.php');
 
 /**
+ * Class capquiz_matchmaking_strategy_loader
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -43,12 +54,23 @@ class capquiz_matchmaking_strategy_loader {
     /** @var \stdClass $configuration */
     private $configuration;
 
+    /**
+     * capquiz_matchmaking_strategy_loader constructor.
+     * @param capquiz $capquiz
+     */
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
         $this->registry = new capquiz_matchmaking_strategy_registry($capquiz);
         $this->load_configuration();
     }
 
+    /**
+     * Returns localized strategy name
+     *
+     * @param string $name
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public static function localized_strategy_name($name) {
         // TODO: This is a hack. The database records currently store the names, which makes localization hard.
         switch ($name) {
@@ -62,6 +84,8 @@ class capquiz_matchmaking_strategy_loader {
     }
 
     /**
+     * Returns the selected strategy
+     *
      * @return capquiz_matchmaking_strategy|null
      * @throws \Exception
      */
@@ -77,6 +101,13 @@ class capquiz_matchmaking_strategy_loader {
         return $strategy;
     }
 
+    /**
+     * Returns configuration form for the current matchmaking strategy
+     *
+     * @param \moodle_url $url
+     * @return mixed|null
+     * @throws \Exception
+     */
     public function configuration_form(\moodle_url $url) {
         if ($this->record && $this->configuration) {
             return $this->registry->configuration_form($this->record->strategy, $this->configuration, $url);
@@ -84,10 +115,22 @@ class capquiz_matchmaking_strategy_loader {
         return null;
     }
 
+    /**
+     * Returns true if this instance has a strategy set
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function has_strategy() : bool {
         return $this->selector() != null;
     }
 
+    /**
+     * Returns the name of the current strategy
+     *
+     * @return string
+     * @throws \coding_exception
+     */
     public function current_strategy_name() : string {
         if ($this->record) {
             return $this->record->strategy;
@@ -95,6 +138,12 @@ class capquiz_matchmaking_strategy_loader {
         return get_string('no_strategy_specified', 'capquiz');
     }
 
+    /**
+     * Configures teh current strategy
+     *
+     * @param \stdClass $candidateconfig
+     * @throws \Exception
+     */
     public function configure_current_strategy(\stdClass $candidateconfig) {
         if (!$this->record) {
             return;
@@ -110,10 +159,19 @@ class capquiz_matchmaking_strategy_loader {
         $this->update_configuration($this->record);
     }
 
+    /**
+     * Sets the default strategy
+     */
     public function set_default_strategy() {
         $this->set_strategy($this->registry->default_selection_strategy());
     }
 
+    /**
+     * Sets strategy based on the strategy name
+     *
+     * @param string $strategy
+     * @throws \dml_exception
+     */
     public function set_strategy(string $strategy) {
         $selector = $this->registry->selector($strategy);
         $record = new \stdClass;
@@ -135,6 +193,11 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    /**
+     * Loads the strategy configuration from the database
+     *
+     * @throws \dml_exception
+     */
     private function load_configuration() {
         global $DB;
         $conditions = ['capquiz_id' => $this->capquiz->id()];
@@ -144,6 +207,12 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    /**
+     * Updates the strategy configuration and updates the database record
+     *
+     * @param \stdClass $configuration
+     * @throws \dml_exception
+     */
     private function update_configuration(\stdClass $configuration) {
         global $DB;
         if ($DB->update_record('capquiz_question_selection', $configuration)) {
@@ -151,6 +220,11 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    /**
+     * Sets this configuration as a new configuration
+     *
+     * @param \stdClass $record
+     */
     private function set_configuration(\stdClass $record) {
         $this->record = $record;
         $configuration = $this->deserialize($record->configuration);
@@ -161,10 +235,22 @@ class capquiz_matchmaking_strategy_loader {
         }
     }
 
+    /**
+     * Returns the current configuration as a JSON string
+     *
+     * @param \stdClass $configuration
+     * @return string
+     */
     private function serialize(\stdClass $configuration) : string {
         return json_encode($configuration);
     }
 
+    /**
+     * Takes in JSON encoded configuration string and returns a decoded configuration
+     *
+     * @param string $configuration
+     * @return mixed
+     */
     private function deserialize(string $configuration) {
         return json_decode($configuration, false);
     }

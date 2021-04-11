@@ -51,8 +51,7 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
      * Constructor
      * @param object $capquiz
      * @param context $context
-     * @param quiz_responses_options $options
-     * @param sql_join $groupstudentsjoins
+     * @param capquiz_attempts_report_options $options
      * @param sql_join $studentsjoins
      * @param array $questions
      * @param moodle_url $reporturl
@@ -63,6 +62,18 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
             $options, $studentsjoins, $questions, $reporturl);
     }
 
+    /**
+     * Take the data returned from the db_query and go through all the rows
+     * processing each col using either col_{columnname} method or other_cols
+     * method or if other_cols returns NULL then put the data straight into the
+     * table.
+     *
+     * This overwrites the parent method because full SQL query may fail on Mysql
+     * because of the limit in the number of tables in the join. Therefore we only
+     * join 59 tables in the main query and add the rest here.
+     *
+     * @return void
+     */
     public function build_table() {
         if (!$this->rawdata) {
             return;
@@ -72,6 +83,13 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
         parent::build_table();
     }
 
+    /**
+     * Format the submission and feedback columns.
+     *
+     * @param string $colname The column name
+     * @param stdClass $attempt The attempt
+     * @return mixed string or NULL
+     */
     public function other_cols($colname, $attempt) {
         switch ($colname) {
             case 'question':
@@ -81,6 +99,14 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
         }
     }
 
+    /**
+     * Format a single column, used in other_cols
+     *
+     * @param integer $slot  attempts slot
+     * @param string $field
+     * @param object $attempt
+     * @return string
+     */
     public function data_col($slot, $field, $attempt) {
         if ($attempt->usageid == 0) {
             return '-';
@@ -270,6 +296,12 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
         return $manualprevqrating;
     }
 
+    /**
+     * Contruct all the parts of the main database query.
+     * @param \core\dml\sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
+     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
+     *     build the actual database query.
+     */
     public function base_sql(sql_join $allowedstudentsjoins) {
         global $DB;
         list($fields, $from, $where, $params) = parent::base_sql($allowedstudentsjoins);
@@ -307,7 +339,8 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
                  \nFROM {$from}{$from2}
                  \nWHERE {$where}";
 
-        $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier') . ' AS uniqueidquestion,';
+        $fields = 'DISTINCT ' . $DB->sql_concat('userid', "'#'", 'COALESCE(attempt, 0)', "'#'", 'identifier')
+            . ' AS uniqueidquestion,';
         $fields .= "ratings.*";
         $from = "(\n{$sql1} \nUNION ALL\n {$sql2}) AS ratings";
 
@@ -315,6 +348,12 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
         return [$fields, $from, '1=1', $params];
     }
 
+    /**
+     * Does this report require the detailed information for each question from the
+     * question_attempts_steps table?
+     *
+     * @return bool
+     */
     protected function requires_latest_steps_loaded() {
         if ($this->options->showqtext) {
             return true;

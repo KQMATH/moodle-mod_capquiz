@@ -36,8 +36,7 @@ require_once(__DIR__ . '/questions_table.php');
 require_once(__DIR__ . '/questions_options.php');
 
 /**
- * The capquiz questions report provides summary information about the questions in
- * a capquiz (mainly ratings).
+ * The capquiz questions report provides summary information about the questions in a capquiz (mainly ratings).
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
@@ -45,6 +44,13 @@ require_once(__DIR__ . '/questions_options.php');
  */
 class capquizreport_questions_report extends capquiz_attempts_report {
 
+    /**
+     * Displays the full report
+     * @param capquiz $capquiz capquiz object
+     * @param stdClass $cm - course_module object
+     * @param stdClass $course - course object
+     * @param string $download - type of download being requested
+     */
     public function display($capquiz, $cm, $course, $download) {
         global $OUTPUT, $DB;
 
@@ -151,6 +157,20 @@ class capquizreport_questions_report extends capquiz_attempts_report {
         return true;
     }
 
+    /**
+     * Outputs the things you commonly want at the top of a capquiz report.
+     *
+     * Calls through to {@see print_header_and_tabs()} and then
+     * outputs the standard group selector, number of attempts summary,
+     * and messages to cover common cases when the report can't be shown.
+     *
+     * @param \stdClass $cm the course_module information.
+     * @param \stdClass $course the course settings.
+     * @param \stdClass $capquiz the capquiz settings.
+     * @param mod_quiz_attempts_report_options $options the current report settings.
+     * @param bool $hasquestions whether there are any questions in the capquiz.
+     * @param bool $hasstudents whether there are any relevant students.
+     */
     protected function print_standard_header_and_messages($cm, $course, $capquiz,
                                                           $options, $hasquestions, $hasstudents) {
         global $OUTPUT;
@@ -167,16 +187,34 @@ class capquizreport_questions_report extends capquiz_attempts_report {
 
     }
 
+    /**
+     * Adds column with question rating
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_question_rating_columns(array &$columns, array &$headers) {
         $this->add_question_rating_column($columns, $headers);
         $this->add_question_previous_rating_column($columns, $headers);
     }
 
+    /**
+     * Adds column with question rating
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_question_rating_column(array &$columns, array &$headers) {
         $columns[] = 'questionrating';
         $headers[] = get_string('questionrating', 'capquiz');
     }
 
+    /**
+     * Adds column with previous question ratings
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_question_previous_rating_column(array &$columns, array &$headers) {
         $columns[] = 'questionprevrating';
         $headers[] = get_string('questionprevrating', 'capquizreport_questions');

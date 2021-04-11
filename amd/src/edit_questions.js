@@ -28,9 +28,9 @@ define(['jquery'], function($) {
 
     /**
      * Send an action to the server.
-     * @param data
-     * @param onSuccess
-     * @param onError
+     * @param {Object} data
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendAction(data, onSuccess, onError) {
         $.ajax({
@@ -44,10 +44,10 @@ define(['jquery'], function($) {
 
     /**
      * Send the new default rating for the question list to the server.
-     * @param {object} data
+     * @param {Object} data
      * @param {number} rating
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendDefaultQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
@@ -59,10 +59,10 @@ define(['jquery'], function($) {
 
     /**
      * Send the new rating for the question to the server.
-     * @param {object} data
+     * @param {Object} data
      * @param {number} rating
-     * @param {callback} onSuccess
-     * @param {callback} onError
+     * @param {Object} onSuccess
+     * @param {Object} onError
      */
     function sendQuestionRating(data, rating, onSuccess, onError) {
         sendAction({
@@ -75,9 +75,9 @@ define(['jquery'], function($) {
 
     /**
      * Send the new value, and avoid race condition.
-     * @param {object} $input
-     * @param {callback} sendInput
-     * @param {object} data
+     * @param {Object} $input
+     * @param {Object} sendInput
+     * @param {Object} data
      */
     function submitInput($input, sendInput, data) {
         $input.data('saving', true);
@@ -99,7 +99,7 @@ define(['jquery'], function($) {
 
     /**
      * Send the new rating for the question, and avoid race condition.
-     * @param $input
+     * @param {Object} $input
      */
     function submitQuestionRating($input) {
         submitInput($input, sendQuestionRating, {questionId: $input.data('question-id')});
@@ -107,7 +107,7 @@ define(['jquery'], function($) {
 
     /**
      * Send the new default rating for the question list, and avoid race condition.
-     * @param $input
+     * @param {Object} $input
      */
     function submitDefaultQuestionRating($input) {
         submitInput($input, sendDefaultQuestionRating, null);
@@ -116,7 +116,7 @@ define(['jquery'], function($) {
     /**
      * Register an input event listener for submission.
      * @param {string} query
-     * @param {callback} submit
+     * @param {Object} submit
      */
     function registerListener(query, submit) {
         $(document).on('input', query, function(event) {
@@ -140,18 +140,18 @@ define(['jquery'], function($) {
      *
      * The first column in the table must be an index of the row.
      *
-     * @param $header The header column for which to sort the table by.
+     * @param {Object} $header The header column for which to sort the table by.
      */
     function sortTable($header) {
         var column = $header.index();
         var $table = $header.parent().parent();
-        var $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
+        var $rows = $table.find('tr:gt(0)').toArray().sort(function(rowA, rowB) {
             var $colA = $(rowA).children('td').eq(0);
             var $colB = $(rowB).children('td').eq(0);
             return parseInt($colA.text()) - parseInt($colB.text());
         });
         $table.append($rows);
-        $rows = $table.find('tr:gt(0)').toArray().sort(function (rowA, rowB) {
+        $rows = $table.find('tr:gt(0)').toArray().sort(function(rowA, rowB) {
             var $colA = $(rowA).children('td').eq(column);
             var $colB = $(rowB).children('td').eq(column);
             var $itemA = $colA.find('.capquiz-sortable-item');
@@ -167,7 +167,7 @@ define(['jquery'], function($) {
         var ascending = ($table.data('asc') === 'true');
         $table.data('asc', ascending ? 'false' : 'true');
         var iconName = (ascending ? 'fa-arrow-up' : 'fa-arrow-down');
-        $.each($table.find('.capquiz-sortable'), function () {
+        $.each($table.find('.capquiz-sortable'), function() {
             $(this).find('.fa').remove();
         });
         $header.prepend('<i class="fa ' + iconName + '"></i>');
@@ -176,7 +176,7 @@ define(['jquery'], function($) {
         }
         $table.append($rows);
         var i = 1;
-        $table.find('tr:gt(0)').each(function () {
+        $table.find('tr:gt(0)').each(function() {
             $(this).find('td:first-child').html(i);
             i++;
         });
@@ -189,11 +189,11 @@ define(['jquery'], function($) {
         $(document).on('click', '.capquiz-sortable', function() {
             sortTable($(this));
         });
-        $('.capquiz-sortable-default-asc').each(function () {
+        $('.capquiz-sortable-default-asc').each(function() {
             sortTable($(this));
             sortTable($(this));
         });
-        $('.capquiz-sortable-default-desc').each(function () {
+        $('.capquiz-sortable-default-desc').each(function() {
             sortTable($(this));
         });
     }
@@ -211,16 +211,16 @@ define(['jquery'], function($) {
      * Register click event listener for "Add to quiz" button.
      */
     function listenAddToQuiz() {
-        $('.capquiz-add-selected-questions').on('click', function () {
+        $('.capquiz-add-selected-questions').on('click', function() {
             var questionIds = '';
-            $('#categoryquestions td input[type=checkbox]:checked').each(function () {
+            $('#categoryquestions td input[type=checkbox]:checked').each(function() {
                 questionIds += $(this).attr('name').slice(1) + ',';
             });
             $.post('action.php', {
                 'action': 'add-question',
                 'id': parameters.courseModuleId,
                 'question-id': questionIds,
-            }, function () {
+            }, function() {
                 location.reload();
             });
         });

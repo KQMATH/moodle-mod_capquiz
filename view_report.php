@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Displays capquiz report
+ *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)

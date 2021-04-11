@@ -14,11 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class which acts as a selector for the n_closest matchmaking strategy
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class n_closest_selector
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -26,16 +37,33 @@ defined('MOODLE_INTERNAL') || die();
  */
 class n_closest_selector extends capquiz_matchmaking_strategy {
 
+    /** @var capquiz The capquiz */
     private $capquiz;
+
+    /** @var float The propability of the user winning */
     private $userwinprobability;
+
+    /** @var int The number of questions to select */
     private $numquestionstoselect;
+
+    /** @var int The number of turns between each time a question can be selected */
     private $preventsamequestionforturns;
 
+    /**
+     * n_closest_selector constructor.
+     * @param capquiz $capquiz
+     */
     public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
         $this->configure($this->default_configuration());
     }
 
+    /**
+     * Configure the strategy
+     *
+     * @param \stdClass $configuration
+     * @return mixed|void
+     */
     public function configure(\stdClass $configuration) /*: void*/ {
         if ($configuration->user_win_probability > 0) {
             $this->userwinprobability = $configuration->user_win_probability;
@@ -48,6 +76,11 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         }
     }
 
+    /**
+     * Returns the current strategy configuration
+     *
+     * @return \stdClass
+     */
     public function configuration() : \stdClass {
         $config = new \stdClass;
         $config->prevent_same_question_for_turns = $this->preventsamequestionforturns;
@@ -56,6 +89,11 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return $config;
     }
 
+    /**
+     * Returns the default strategy configuration
+     *
+     * @return \stdClass
+     */
     public function default_configuration() : \stdClass {
         $config = new \stdClass;
         $config->user_win_probability = 0.75;
@@ -65,6 +103,8 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
     }
 
     /**
+     * Selects the next question for the user based on the configuration
+     *
      * @param capquiz_user $user
      * @param capquiz_question_list $qlist
      * @param array $inactiveattempts
@@ -83,6 +123,14 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return null;
     }
 
+    /**
+     * Finds the questions closest to the users rating
+     *
+     * @param capquiz_user $user
+     * @param array $excludedquestions
+     * @return array
+     * @throws \dml_exception
+     */
     private function find_questions_closest_to_rating(capquiz_user $user, array $excludedquestions) : array {
         global $DB;
         $sql = 'SELECT * FROM {capquiz_question} WHERE question_list_id = ?';
@@ -102,10 +150,22 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         return $questions;
     }
 
+    /**
+     * Returns the ideal question rating
+     *
+     * @param capquiz_user $user
+     * @return float
+     */
     private function ideal_question_rating(capquiz_user $user) : float {
         return 400.0 * log((1.0 / $this->userwinprobability) - 1.0, 10.0) + $user->rating();
     }
 
+    /**
+     * Identifies questions to exclude and returns them in an array
+     *
+     * @param array $inactiveattempts
+     * @return array
+     */
     private function determine_excluded_questions(array $inactiveattempts) : array {
         $it = new \ArrayIterator(array_reverse($inactiveattempts, true));
         $excluded = [];

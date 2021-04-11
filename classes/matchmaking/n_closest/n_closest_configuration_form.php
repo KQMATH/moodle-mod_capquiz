@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines the configuration form for the n_closest matchmaking strategy
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 use mod_capquiz\capquiz;
@@ -23,6 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
+ * Class n_closest_configuration_form
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -33,11 +44,21 @@ class n_closest_configuration_form extends \moodleform {
     /** @var \stdClass $configuration */
     private $configuration;
 
+    /**
+     * n_closest_configuration_form constructor.
+     * @param \stdClass $configuration
+     * @param \moodle_url $url
+     */
     public function __construct(\stdClass $configuration, \moodle_url $url) {
         $this->configuration = $configuration;
         parent::__construct($url);
     }
 
+    /**
+     * Defines form
+     *
+     * @throws \coding_exception
+     */
     public function definition() {
         $form = $this->_form;
 
@@ -65,6 +86,16 @@ class n_closest_configuration_form extends \moodleform {
         $this->add_action_buttons(false);
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     * @throws \coding_exception
+     */
     public function validations($data, $files) {
         $errors = [];
         if (empty($data['user_win_probability'])) {

@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class represeting a capquiz question rating
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 use dml_exception;
@@ -22,6 +31,8 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_question_rating
+ *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 NTNU
@@ -41,6 +52,13 @@ class capquiz_question_rating {
         $this->record = $record;
     }
 
+    /**
+     * Loads a question rating from the database with a matching id
+     *
+     * @param int $questionratingid
+     * @return capquiz_question_rating|null
+     * @throws dml_exception
+     */
     public static function load_question_rating(int $questionratingid) {
         global $DB;
         $record = $DB->get_record('capquiz_question_rating', ['id' => $questionratingid]);
@@ -50,14 +68,24 @@ class capquiz_question_rating {
         return new capquiz_question_rating($record);
     }
 
+    /**
+     * Creates a new question rating and inserts it to the database
+     *
+     * @param capquiz_question $question
+     * @param float $rating
+     * @param bool $manual
+     * @return capquiz_question_rating|null
+     */
     public static function create_question_rating(capquiz_question $question, float $rating, bool $manual = false) {
         return self::insert_question_rating_entry($question->id(), $rating, $manual);
     }
 
     /**
+     * Insert new question rating to database
+     *
      * @param int $questionid
      * @param float $rating
-     * @param int|null $attemptid
+     * @param boolean $manual
      * @return capquiz_question_rating|null
      */
     public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
@@ -80,7 +108,7 @@ class capquiz_question_rating {
     /**
      * Load information about the latest question rating for an attempt from the database.
      *
-     * @param int $attemptid
+     * @param int $questionid
      * @return capquiz_question_rating
      * @throws dml_exception
      */
@@ -101,18 +129,39 @@ class capquiz_question_rating {
         return $record ? new capquiz_question_rating($record) : null;
     }
 
+    /**
+     * Returns this question ratings id
+     *
+     * @return int
+     */
     public function id(): int {
         return $this->record->id;
     }
 
+    /**
+     * Returns the time of when the question rating was created
+     *
+     * @return string
+     */
     public function timecreated(): string {
         return $this->record->timecreated;
     }
 
+    /**
+     * Returns the question rating
+     *
+     * @return float
+     */
     public function rating(): float {
         return $this->record->rating;
     }
 
+    /**
+     * Sets the question rating
+     *
+     * @param float $rating
+     * @throws dml_exception
+     */
     public function set_rating(float $rating) {
         global $DB;
         $this->record->rating = $rating;

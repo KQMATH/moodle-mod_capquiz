@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render question list
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -23,6 +33,8 @@ use mod_capquiz\capquiz_question_list;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_list_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
@@ -37,15 +49,29 @@ class question_list_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /** @var \moodle_page $page */
+    private $page;
+
+    /**
+     * question_list_renderer constructor.
+     * @param capquiz $capquiz The capquiz whose question list should be rendered
+     * @param renderer $renderer The renderer used to render the question list
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
+    /**
+     * Renders question list
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     */
     public function render() {
-        global $PAGE;
         $cmid = $this->capquiz->course_module()->id;
-        $PAGE->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
+        $this->page->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $qlist = $this->capquiz->question_list();
         if ($qlist && $qlist->has_questions()) {
             return $this->render_questions($qlist);
@@ -55,6 +81,14 @@ class question_list_renderer {
         return "<h3>$title</h3><p>$noquestions</p>";
     }
 
+    /**
+     * Renders all the individual questions
+     *
+     * @param capquiz_question_list $qlist
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     private function render_questions(capquiz_question_list $qlist) {
         global $CFG;
         $rows = [];

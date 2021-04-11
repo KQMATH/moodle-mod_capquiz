@@ -24,8 +24,8 @@ define(['jquery', 'core/str'], function($, mString) {
 
     /**
      * Show star tooltip.
-     * @param $element
-     * @param text
+     * @param {Object} $element
+     * @param {string} text
      */
     function showTooltip($element, text) {
         var $tooltip = $('.capquiz-star-tooltip');
@@ -48,27 +48,27 @@ define(['jquery', 'core/str'], function($, mString) {
      * Register event listeners for showing tooltips on the stars.
      */
     function enableTooltips() {
-        $(document).on('mouseover', '.capquiz-quiz-stars span', function () {
+        $(document).on('mouseover', '.capquiz-quiz-stars span', function() {
             var $self = $(this);
             if ($self.hasClass('capquiz-star')) {
-                $.when(mString.get_string('tooltip_achieved_star', 'capquiz')).done(function (text) {
+                $.when(mString.get_string('tooltip_achieved_star', 'capquiz')).done(function(text) {
                     showTooltip($self, text);
                 });
             } else if ($self.hasClass('capquiz-lost-star')) {
-                $.when(mString.get_string('tooltip_lost_star', 'capquiz')).done(function (text) {
+                $.when(mString.get_string('tooltip_lost_star', 'capquiz')).done(function(text) {
                     showTooltip($self, text);
                 });
             } else if ($self.hasClass('capquiz-no-star')) {
-                $.when(mString.get_string('tooltip_no_star', 'capquiz')).done(function (text) {
+                $.when(mString.get_string('tooltip_no_star', 'capquiz')).done(function(text) {
                     showTooltip($self, text);
                 });
             } else if ($self.hasClass('capquiz-help-stars')) {
-                $.when(mString.get_string('tooltip_help_star', 'capquiz')).done(function (text) {
+                $.when(mString.get_string('tooltip_help_star', 'capquiz')).done(function(text) {
                     showTooltip($self, text);
                 });
             }
         });
-        $(document).on('mouseleave', '.capquiz-quiz-stars span', function () {
+        $(document).on('mouseleave', '.capquiz-quiz-stars span', function() {
             hideTooltip();
         });
     }

@@ -33,9 +33,10 @@ require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-/* Generates and returns list of available CAPQuiz report sub-plugins
+/**
+ * Generates and returns list of available CAPQuiz report sub-plugins
  *
- * @param context context level to check caps against
+ * @param context_module $context the context level to check caps against
  * @return array list of valid reports present
  */
 function capquiz_report_list($context) {
@@ -87,9 +88,11 @@ function capquiz_has_questions($capquizid) {
 
 /**
  * Get the questions in this capquiz, in order.
- * @param object $capquiz the capquiz.
+ *
+ * @param capquiz $capquiz the capquiz.
  * @return array of slot => $question object with fields
  *      ->slot, ->id, ->qtype, ->length.
+ * @throws dml_exception
  */
 function capquiz_report_get_questions(capquiz $capquiz) {
     global $DB;

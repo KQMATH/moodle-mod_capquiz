@@ -14,11 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used as a registry for the rating system
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class elo_rating_system
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -32,6 +43,11 @@ class elo_rating_system extends capquiz_rating_system {
     /** @var float $questionkfactor */
     private $questionkfactor;
 
+    /**
+     * Configures the rating system
+     *
+     * @param \stdClass $configuration
+     */
     public function configure(\stdClass $configuration) {
         if ($configuration->student_k_factor) {
             $this->studentkfactor = $configuration->student_k_factor;
@@ -41,6 +57,11 @@ class elo_rating_system extends capquiz_rating_system {
         }
     }
 
+    /**
+     * Returns the current configuration
+     *
+     * @return \stdClass
+     */
     public function configuration() {
         $config = new \stdClass;
         $config->student_k_factor = $this->studentkfactor;
@@ -48,6 +69,11 @@ class elo_rating_system extends capquiz_rating_system {
         return $config;
     }
 
+    /**
+     * Returns the default configuration
+     *
+     * @return \stdClass
+     */
     public function default_configuration() {
         $config = new \stdClass;
         $config->student_k_factor = 32;
@@ -55,6 +81,15 @@ class elo_rating_system extends capquiz_rating_system {
         return $config;
     }
 
+    /**
+     * Updates the users rating
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question $question
+     * @param float $score
+     * @return mixed|void
+     * @throws \dml_exception
+     */
     public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) {
         $current = $user->rating();
         $factor = $this->studentkfactor;
@@ -62,6 +97,13 @@ class elo_rating_system extends capquiz_rating_system {
         $user->set_rating($newrating);
     }
 
+    /**
+     * Updates the winning and losing questions ratings
+     *
+     * @param capquiz_question $winner
+     * @param capquiz_question $loser
+     * @return mixed|void
+     */
     public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {
         $loserating = $loser->rating();
         $winrating = $winner->rating();
@@ -72,11 +114,16 @@ class elo_rating_system extends capquiz_rating_system {
         $winner->set_rating($newwinrating);
     }
 
-    /* Calculates the expected score in favour of the player with rating $a,
-     * against a player with rating $b */
+    /**
+     * Calculates the expected score in favour of the player with rating $a,
+     * against a player with rating $b
+     *
+     * @param float $a
+     * @param float $b
+     * @return float
+     */
     private function expected_result(float $a, float $b) : float {
         $exponent = ($b - $a) / 400.0;
         return 1.0 / (1.0 + pow(10.0, $exponent));
     }
-
 }

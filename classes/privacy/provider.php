@@ -237,6 +237,14 @@ class provider implements
         }
     }
 
+    /**
+     * Export the rating data from a specified user
+     *
+     * @param context $context The context to export the users rating for
+     * @param int $userid the specified users id
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public static function export_user_rating(context $context, int $userid) {
         global $DB;
         $sql = "SELECT cur.id                AS ratingid,

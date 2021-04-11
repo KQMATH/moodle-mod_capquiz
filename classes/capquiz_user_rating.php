@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class represeting a capquiz user rating
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 use dml_exception;
@@ -22,6 +31,8 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_user_rating
+ *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 NTNU
@@ -41,6 +52,13 @@ class capquiz_user_rating {
         $this->record = $record;
     }
 
+    /**
+     * Loads and returns user rating from database
+     *
+     * @param int $questionratingid
+     * @return capquiz_user_rating|null
+     * @throws dml_exception
+     */
     public static function load_user_rating(int $questionratingid) {
         global $DB;
         $record = $DB->get_record('capquiz_question_rating', ['id' => $questionratingid]);
@@ -50,14 +68,22 @@ class capquiz_user_rating {
         return new capquiz_user_rating($record);
     }
 
-    public static function create_user_rating(capquiz_user $user, $rating, bool $manual = false) {
+    /**
+     * Creates and inserts a new user rating to the database
+     *
+     * @param capquiz_user $user
+     * @param capquiz_user_rating $rating
+     * @param bool $manual
+     * @return capquiz_user_rating|null
+     */
+    public static function create_user_rating($user, $rating, $manual = false) {
         return self::insert_user_rating_entry($user->id(), $rating, $manual);
     }
 
     /**
      * Load information about the latest user rating for an capquiz user from the database.
      *
-     * @param int $attemptid
+     * @param int $userid
      * @return capquiz_user_rating
      * @throws dml_exception
      */
@@ -79,6 +105,8 @@ class capquiz_user_rating {
     }
 
     /**
+     * Inserts a new user rating record to the database
+     *
      * @param int $userid capquiz_user id
      * @param float $rating
      * @param null $attemptid
@@ -102,18 +130,39 @@ class capquiz_user_rating {
         }
     }
 
+    /**
+     * Returns this user ratings id
+     *
+     * @return int
+     */
     public function id(): int {
         return $this->record->id;
     }
 
+    /**
+     * Returns the time this user rating was created
+     *
+     * @return string
+     */
     public function timecreated(): string {
         return $this->user->timecreated;
     }
 
+    /**
+     * Returns this user ratings rating
+     *
+     * @return float
+     */
     public function rating(): float {
         return $this->record->rating;
     }
 
+    /**
+     * Sets this user ratings rating and updates the database record
+     *
+     * @param float $rating
+     * @throws dml_exception
+     */
     public function set_rating(float $rating) {
         global $DB;
         $this->record->rating = $rating;

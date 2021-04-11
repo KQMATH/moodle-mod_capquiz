@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class represeting a capquiz question engine
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_question_engine
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -38,6 +50,13 @@ class capquiz_question_engine {
     /** @var capquiz_rating_system_loader $ratingsystemloader */
     private $ratingsystemloader;
 
+    /**
+     * capquiz_question_engine constructor.
+     * @param capquiz $capquiz
+     * @param \question_usage_by_activity $quba
+     * @param capquiz_matchmaking_strategy_loader $strategyloader
+     * @param capquiz_rating_system_loader $ratingsystemloader
+     */
     public function __construct(capquiz $capquiz, \question_usage_by_activity $quba,
                                 capquiz_matchmaking_strategy_loader $strategyloader,
                                 capquiz_rating_system_loader $ratingsystemloader) {
@@ -47,6 +66,12 @@ class capquiz_question_engine {
         $this->ratingsystemloader = $ratingsystemloader;
     }
 
+    /**
+     * Checks if the user has finished their attempt
+     *
+     * @param capquiz_user $user
+     * @return bool
+     */
     public function user_is_completed(capquiz_user $user) : bool {
         if (capquiz_question_attempt::active_attempt($user)) {
             return false;
@@ -57,6 +82,12 @@ class capquiz_question_engine {
         return true;
     }
 
+    /**
+     * Gets an attempt for the user, returns a new one if there are no active attempts
+     *
+     * @param capquiz_user $user
+     * @return capquiz_question_attempt|null
+     */
     public function attempt_for_user(capquiz_user $user) {
         if ($attempt = capquiz_question_attempt::active_attempt($user)) {
             return $attempt;
@@ -64,10 +95,21 @@ class capquiz_question_engine {
         return $this->new_attempt_for_user($user);
     }
 
+    /**
+     * Calls attempt_for_user with the user parameter as the current user
+     *
+     * @return capquiz_question_attempt|null
+     * @throws \Exception
+     */
     public function attempt_for_current_user() {
         return $this->attempt_for_user($this->capquiz->user());
     }
 
+    /**
+     * Deletes attempt if it is invalid
+     *
+     * @param capquiz_user $user
+     */
     public function delete_invalid_attempt(capquiz_user $user) {
         $attempt = $this->attempt_for_user($user);
 
@@ -76,6 +118,12 @@ class capquiz_question_engine {
         }
     }
 
+    /**
+     * Handles answer
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question_attempt $attempt
+     */
     public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) {
         if (!$attempt->is_question_valid()) {
             return;
@@ -97,6 +145,12 @@ class capquiz_question_engine {
         }
     }
 
+    /**
+     * Sets a new "highest star" score if the new score is the highest score yet
+     *
+     * @param capquiz_user $user
+     * @throws \dml_exception
+     */
     private function set_new_highest_star_if_attained(capquiz_user $user) {
         $qlist = $this->capquiz->question_list();
         for ($star = $qlist->max_stars(); $star > 0; $star--) {
@@ -108,15 +162,33 @@ class capquiz_question_engine {
         }
     }
 
+    /**
+     * Marks attempt as reviewed
+     *
+     * @param capquiz_question_attempt $attempt
+     */
     public function attempt_reviewed(capquiz_question_attempt $attempt) {
         $attempt->mark_as_reviewed();
     }
 
+    /**
+     * Creates a new attempt for the user
+     *
+     * @param capquiz_user $user
+     * @return capquiz_question_attempt|null
+     */
     private function new_attempt_for_user(capquiz_user $user) {
         $question = $this->find_question_for_user($user);
         return $question ? capquiz_question_attempt::create_attempt($user, $question) : null;
     }
 
+    /**
+     * Finds a new question for the user
+     *
+     * @param capquiz_user $user
+     * @return mixed
+     * @throws \dml_exception
+     */
     private function find_question_for_user(capquiz_user $user) {
         $selector = $this->matchmakingloader->selector();
         $questionlist = $this->capquiz->question_list();
@@ -124,6 +196,12 @@ class capquiz_question_engine {
         return $selector->next_question_for_user($user, $questionlist, $inactiveattempts);
     }
 
+    /**
+     * Updates the question ratings
+     *
+     * @param capquiz_question_attempt $previous
+     * @param capquiz_question_attempt $current
+     */
     private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $currentcorrect = $current->is_correctly_answered();
