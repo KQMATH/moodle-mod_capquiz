@@ -74,6 +74,7 @@ class chronologic_selector extends capquiz_matchmaking_strategy {
      * @return capquiz_question|null
      */
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist, array $inactiveattempts) {
+	debugging( "Chronological next question for user" );
         $answered = function (capquiz_question $q) use ($inactiveattempts) {
             foreach ($inactiveattempts as $attempt) {
                 if ($attempt->question_id() === $q->id()) {

@@ -111,6 +111,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
      * @return capquiz_question|null
      */
     public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist, array $inactiveattempts) {
+	debugging( "DEBUG next" ) ;
         $excluded = $this->determine_excluded_questions($inactiveattempts);
         $candidates = $this->find_questions_closest_to_rating($user, $excluded);
         if (count($candidates) === 0) {
@@ -133,6 +134,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
      */
     private function find_questions_closest_to_rating(capquiz_user $user, array $excludedquestions) : array {
         global $DB;
+	debugging( "DEBUG find" ) ;
         $sql = 'SELECT * FROM {capquiz_question} WHERE question_list_id = ?';
         $sql .= str_repeat(' AND id <> ?', count($excludedquestions));
         $sql .= ' ORDER BY ABS(? - rating)';
@@ -157,7 +159,10 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
      * @return float
      */
     private function ideal_question_rating(capquiz_user $user) : float {
-        return 400.0 * log((1.0 / $this->userwinprobability) - 1.0, 10.0) + $user->rating();
+	$r = 400.0 * log((1.0 / $this->userwinprobability) - 1.0, 10.0) + $user->rating();
+	debugging( "User rating: " . $user->rating()) ;
+	debugging( "Ideal rating: " . $r) ;
+        return $r ;
     }
 
     /**

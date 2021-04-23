@@ -60,6 +60,7 @@ class capquiz_user {
      */
     public function __construct(\stdClass $record, \context_module $context) {
         global $DB;
+	debugging("DEBUG capquiz user" ) ;
         $this->record = $record;
         $this->user = $DB->get_record('user', ['id' => $this->record->user_id]);
 
