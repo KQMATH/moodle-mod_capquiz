@@ -118,6 +118,7 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
             return null;
         }
         $index = mt_rand(0, count($candidates) - 1);
+	debugging( "Random index: " . $index ) ;
         if ($question = $candidates[$index]) {
             return $question;
         }
@@ -146,9 +147,13 @@ class n_closest_selector extends capquiz_matchmaking_strategy {
         $params[] = $this->ideal_question_rating($user);
         $questionentries = $DB->get_records_sql($sql, $params, 0, $this->numquestionstoselect);
         $questions = [];
+	$qrs = "" ; // DEBUG string
         foreach ($questionentries as $questionentry) {
-            $questions[] = new capquiz_question($questionentry);
+           $q = new capquiz_question($questionentry);
+           $questions[] = $q ;
+	   $qrs = $qrs . $q->rating() . " " ; // DEBUG string
         }
+	debugging("Available q ratings: " . $qrs ) ;
         return $questions;
     }
 
