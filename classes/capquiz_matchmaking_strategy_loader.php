@@ -59,6 +59,7 @@ class capquiz_matchmaking_strategy_loader {
      * @param capquiz $capquiz
      */
     public function __construct(capquiz $capquiz) {
+	    debugging( "Construct matchmaking_strategy_loader" ) ;
         $this->capquiz = $capquiz;
         $this->registry = new capquiz_matchmaking_strategy_registry($capquiz);
         $this->load_configuration();
@@ -200,6 +201,7 @@ class capquiz_matchmaking_strategy_loader {
      */
     private function load_configuration() {
         global $DB;
+	debugging( "Construct matchmaking_strategy_loader load_configuarion" ) ;
         $conditions = ['capquiz_id' => $this->capquiz->id()];
         $configuration = $DB->get_record('capquiz_question_selection', $conditions);
         if ($configuration) {

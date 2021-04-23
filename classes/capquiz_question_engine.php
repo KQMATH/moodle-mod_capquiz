@@ -90,8 +90,10 @@ class capquiz_question_engine {
      */
     public function attempt_for_user(capquiz_user $user) {
         if ($attempt = capquiz_question_attempt::active_attempt($user)) {
+            debugging( "active attempt" ) ;
             return $attempt;
         }
+        debugging( "call new_attempt_for_user" ) ;
         return $this->new_attempt_for_user($user);
     }
 
@@ -178,6 +180,7 @@ class capquiz_question_engine {
      * @return capquiz_question_attempt|null
      */
     private function new_attempt_for_user(capquiz_user $user) {
+	debugging( "DEBUG ready to call find_question_for_user" ) ;
         $question = $this->find_question_for_user($user);
         return $question ? capquiz_question_attempt::create_attempt($user, $question) : null;
     }
@@ -193,6 +196,7 @@ class capquiz_question_engine {
         $selector = $this->matchmakingloader->selector();
         $questionlist = $this->capquiz->question_list();
         $inactiveattempts = capquiz_question_attempt::inactive_attempts($user);
+	debugging( "DEBUG ready to call next_question_for_user" ) ;
         return $selector->next_question_for_user($user, $questionlist, $inactiveattempts);
     }
 
