@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+- Compliance with continuous integration (CI) tests
+    - Improved Code Style 
+    - Added PHP Doc
+- Some refactoring
+
 ## [0.6.1]
 
 ### Fixed
