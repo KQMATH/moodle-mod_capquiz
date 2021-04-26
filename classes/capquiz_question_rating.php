@@ -83,6 +83,7 @@ class capquiz_question_rating {
     /**
      * Insert new question rating to database
      *
+     * @global mixed $DB
      * @param int $questionid
      * @param float $rating
      * @param boolean $manual
