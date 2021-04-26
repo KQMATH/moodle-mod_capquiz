@@ -85,7 +85,7 @@ class capquiz_question_rating {
      *
      * @param int $questionid
      * @param float $rating
-     * @param boolean $manual
+     * @param bool $manual
      * @return capquiz_question_rating|null
      */
     public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
