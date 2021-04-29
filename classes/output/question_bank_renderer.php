@@ -13,6 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * This file defines a class used to render a question bank
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace mod_capquiz\output;
 
@@ -23,6 +31,8 @@ use mod_capquiz\bank\question_bank_view;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_bank_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -39,17 +49,37 @@ class question_bank_renderer {
     /** @var array $pagevars */
     private $pagevars;
 
+    /** @var \moodle_page $page */
+    private $page;
+
+    /**
+     * question_bank_renderer constructor.
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
+        $this->page = $capquiz->get_page();
     }
 
+    /**
+     * Creates question bank view
+     *
+     * @return question_bank_view
+     */
     public function create_view() {
         list($url, $contexts, $cmid, $cm, $capquizrecord, $pagevars) = $this->setup_question_edit();
         $this->pagevars = $pagevars;
         return new question_bank_view($contexts, $url, $this->capquiz->course(), $this->capquiz->course_module());
     }
 
+    /**
+     * Renders question bank
+     *
+     * @return string
+     * @throws \coding_exception
+     */
     public function render() {
         $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         $questionpage = optional_param('qpage', 0, PARAM_INT);
@@ -71,7 +101,6 @@ class question_bank_renderer {
      * Moodle coding standard does not allow us to override $_GET or $_POST before calling question_edit_setup()
      */
     private function setup_question_edit() {
-        global $PAGE;
         $params = [];
         $params['cmid'] = capquiz_urls::require_course_module_id_param();
         $params['qpage'] = optional_param('qpage', null, PARAM_INT);
@@ -91,7 +120,7 @@ class question_bank_renderer {
         $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_BOOL);
         $params['cpage'] = optional_param('cpage', null, PARAM_INT);
         $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
-        $PAGE->set_pagelayout('admin');
+        $this->page->set_pagelayout('admin');
         $edittab = 'editq';
         return question_build_edit_resources($edittab,  capquiz_urls::$urledit, $params);
     }

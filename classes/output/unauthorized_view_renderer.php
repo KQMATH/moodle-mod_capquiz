@@ -14,23 +14,46 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render the unauthorized view
+ *
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class unauthorized_view_renderer
+ *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class unauthorized_view_renderer {
+    /** @var renderer  */
     private $renderer;
 
+    /**
+     * unauthorized_view_renderer constructor.
+     *
+     * @param renderer $renderer
+     */
     public function __construct(renderer $renderer) {
         $this->renderer = $renderer;
     }
 
+    /**
+     * Renders the "unauthorized" view
+     *
+     * @return bool|string
+     * @throws \moodle_exception
+     */
     public function render() {
         return $this->renderer->render_from_template('capquiz/unauthorized', []);
     }

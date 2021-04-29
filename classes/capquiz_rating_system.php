@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines an abstract capquiz rating system
+ *
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_rating_system
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -26,14 +38,45 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class capquiz_rating_system {
 
+    /**
+     * Function to configure a rating system
+     *
+     * @param \stdClass $configuration
+     * @return mixed
+     */
     public abstract function configure(\stdClass $configuration);
 
+    /**
+     * Function to get the rating system configuration
+     *
+     * @return mixed
+     */
     public abstract function configuration();
 
+    /**
+     * Function to get the default rating system configuration
+     *
+     * @return mixed
+     */
     public abstract function default_configuration();
 
+    /**
+     * Updates the users rating based on the rating system and its configuration
+     *
+     * @param capquiz_user $user
+     * @param capquiz_question $question
+     * @param float $score
+     * @return mixed
+     */
     public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
 
+    /**
+     * Updates the winning and losing questions ratings
+     *
+     * @param capquiz_question $winner
+     * @param capquiz_question $loser
+     * @return mixed
+     */
     public abstract function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
 
 }

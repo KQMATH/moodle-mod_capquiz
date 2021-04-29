@@ -14,8 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Define all the restore steps that will be used by the restore_capquiz_activity_task
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Structure step to restore one assignment activity
+ *
+ * @package mod_capquiz
+ */
 class restore_capquiz_activity_structure_step extends restore_questions_activity_structure_step {
 
     /**
@@ -23,6 +37,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      */
     private $currentquestionlist;
 
+    /**
+     * Define the structure to be processed by this backup step.
+     */
     protected function define_structure() {
         $paths = [];
         $paths[] = new restore_path_element('capquiz', '/activity/capquiz');
@@ -43,6 +60,14 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Processes and backs up capquiz
+     *
+     * @param object $data
+     * @throws base_step_exception
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz($data) {
         global $DB;
         $data = (object)$data;
@@ -55,6 +80,14 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz question list
+     *
+     * @param object $data
+     * @throws base_step_exception
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_list($data) {
         global $DB;
         $data = (object)$data;
@@ -67,6 +100,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_list', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz questions
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question($data) {
         global $DB;
         $data = (object)$data;
@@ -80,6 +120,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz question rating
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_rating($data) {
         global $DB;
         $data = (object)$data;
@@ -89,6 +136,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_rating', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz question selection
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_question_selection($data) {
         global $DB;
         $data = (object)$data;
@@ -98,6 +152,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_question_selection', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz question rating system
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_rating_system($data) {
         global $DB;
         $data = (object)$data;
@@ -107,6 +168,11 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_rating_system', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz user
+     *
+     * @param object $data
+     */
     protected function process_capquiz_user($data) {
         $data = (object)$data;
         $data->user_id = $this->get_mappingid('user', $data->user_id);
@@ -114,6 +180,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->currentcapuser = clone($data);
     }
 
+    /**
+     * Processes and backs up capquiz user rating
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_user_rating($data) {
         global $DB;
         $data = (object)$data;
@@ -123,6 +196,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_user_rating', $oldid, $newitemid);
     }
 
+    /**
+     * Processes and backs up capquiz question attempt
+     *
+     * @param object $data
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function process_capquiz_attempt($data) {
         global $DB;
         $data = (object)$data;
@@ -139,6 +219,13 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_attempt', $oldid, $newitemid);
     }
 
+    /**
+     * Updates a users usageid and maps the users old and new ids
+     *
+     * @param int $newusageid
+     * @throws dml_exception
+     * @throws restore_step_exception
+     */
     protected function inform_new_usage_id($newusageid) {
         global $DB;
         $data = $this->currentcapuser;
@@ -148,6 +235,9 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $this->set_mapping('capquiz_user', $oldid, $newitemid);
     }
 
+    /**
+     * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
+     */
     protected function after_execute() {
         $this->add_related_files('mod_capquiz', 'intro', null);
     }

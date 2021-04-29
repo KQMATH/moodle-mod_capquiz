@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.6.2]
+
+This release is made primarily because of 0.6.1 did not get new
+version numbers and is therefore not detected by Moodle's upgrade
+system.
+
+- Compliance with continuous integration (CI) tests
+    - Improved Code Style 
+    - Added PHP Doc
+- Some refactoring
+
 ## [0.6.1]
 
 ### Fixed
@@ -103,8 +114,9 @@ Tested for Moodle 3.10 and 3.9.
 
 ## 0.1.0 - 2018-09-28
 
-[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.6.0...HEAD
 
+[0.6.2]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/KQMATH/moodle-mod_capquiz/compare/v0.4.2...v0.5.0

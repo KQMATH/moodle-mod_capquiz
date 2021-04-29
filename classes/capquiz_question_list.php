@@ -14,11 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines the class capquiz_question_list
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_question_list
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
@@ -33,6 +45,11 @@ class capquiz_question_list {
     /** @var capquiz_question[] $questions */
     private $questions;
 
+    /**
+     * capquiz_question_list constructor.
+     * @param \stdClass $record
+     * @throws \dml_exception
+     */
     public function __construct(\stdClass $record) {
         global $DB;
         $this->record = $record;
@@ -43,6 +60,11 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Returns array of ratings
+     *
+     * @return false|string[]
+     */
     public function star_ratings_array() {
         $ratings = explode(',', $this->record->star_ratings);
         foreach ($ratings as &$rating) {
@@ -51,16 +73,29 @@ class capquiz_question_list {
         return $ratings;
     }
 
+    /**
+     * Returns the count of all ratings (The value needed for a full star score)
+     *
+     * @return int
+     */
     public function max_stars() {
         return count($this->star_ratings_array());
     }
 
+    /**
+     * Returns the value of the star rating $star
+     *
+     * @param int $star
+     * @return mixed|string
+     */
     public function star_rating(int $star) {
         $stars = $this->star_ratings_array();
         return $stars[$star - 1];
     }
 
     /**
+     * Sets the star ratings to new values and updates database
+     *
      * @param int[] $ratings
      * @throws \dml_exception
      */
@@ -73,6 +108,13 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Returns the completion level to the next rating as a percent value
+     *
+     * @param capquiz $capquiz
+     * @param int $rating
+     * @return int
+     */
     public function next_level_percent(capquiz $capquiz, int $rating) : int {
         $goal = 0;
         for ($star = 1; $star <= $this->max_stars(); $star++) {
@@ -87,61 +129,126 @@ class capquiz_question_list {
         return $goal >= 1 ? (int)($rating / $goal * 100) : 0;
     }
 
+    /**
+     * Returns the id
+     *
+     * @return int
+     */
     public function id() : int {
         return $this->record->id;
     }
 
+    /**
+     * Returns the author user
+     *
+     * @return mixed|\stdClass|null
+     * @throws \dml_exception
+     */
     public function author() {
         global $DB;
         $record = $DB->get_record('user', ['id' => $this->record->author]);
         return $record ? $record : null;
     }
 
+    /**
+     * Returns true if the list contains questions
+     *
+     * @return bool
+     */
     public function has_questions() : bool {
         return count($this->questions) > 0;
     }
 
+    /**
+     * Returns true if the question list is a template
+     *
+     * @return bool
+     */
     public function is_template() : bool {
         return $this->record->is_template;
     }
 
+    /**
+     * Returns the default question rating
+     *
+     * @return float
+     */
     public function default_question_rating() : float {
         return $this->record->default_question_rating;
     }
 
+    /**
+     * Sets teh default question rating
+     *
+     * @param float $rating
+     * @throws \dml_exception
+     */
     public function set_default_question_rating(float $rating) {
         global $DB;
         $this->record->default_question_rating = $rating;
         $DB->update_record('capquiz_question_list', $this->record);
     }
 
+    /**
+     * Returns the title of the question list
+     *
+     * @return string
+     */
     public function title() : string {
         return $this->record->title;
     }
 
+    /**
+     * Returns the description of the question list
+     *
+     * @return string
+     */
     public function description() : string {
         return $this->record->description;
     }
 
+    /**
+     * Returns the time of when the list was created
+     *
+     * @return string
+     */
     public function time_created() : string {
         return $this->record->time_created;
     }
 
+    /**
+     * Returns the last time when the list was modified
+     *
+     * @return string
+     */
     public function time_modified() : string {
         return $this->record->time_modified;
     }
 
+    /**
+     * Returns the amount of questions in the list
+     *
+     * @return int
+     */
     public function question_count() : int {
         return count($this->questions);
     }
 
     /**
+     * Returns all the questions in the list in an array
+     *
      * @return capquiz_question[]
      */
     public function questions() : array {
         return $this->questions;
     }
 
+    /**
+     * Returns the question with the id of $questionid
+     *
+     * @param int $questionid
+     * @return mixed|capquiz_question|null
+     */
     public function question(int $questionid) {
         foreach ($this->questions as $question) {
             if ($question->id() === $questionid) {
@@ -151,6 +258,12 @@ class capquiz_question_list {
         return null;
     }
 
+    /**
+     * Checks if the list has the question with questionid $questionid
+     *
+     * @param int $questionid
+     * @return mixed|capquiz_question|null
+     */
     public function has_question(int $questionid) {
         foreach ($this->questions as $question) {
             if ($question->question_id() === $questionid) {
@@ -180,10 +293,23 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Creates a copy of this instance
+     *
+     * @param capquiz $capquiz
+     * @return capquiz_question_list|null
+     */
     public function create_instance_copy(capquiz $capquiz) {
         return $this->create_copy($capquiz, false);
     }
 
+    /**
+     * Updates database record
+     *
+     * @param int $capquizid
+     * @return bool
+     * @throws \dml_exception
+     */
     public function convert_to_instance(int $capquizid) : bool {
         global $DB;
         if ($this->id() || !$this->is_template()) {
@@ -195,10 +321,22 @@ class capquiz_question_list {
         return true;
     }
 
+    /**
+     * Creates a copy of this instance as template
+     *
+     * @param capquiz $capquiz
+     * @return capquiz_question_list|null
+     */
     public function create_template_copy(capquiz $capquiz) {
         return $this->create_copy($capquiz, true);
     }
 
+    /**
+     * Copies the questions in this list to database
+     *
+     * @param int $qlistid
+     * @throws \dml_exception
+     */
     private function copy_questions_to_list(int $qlistid) {
         global $DB;
         foreach ($this->questions() as $question) {
@@ -210,6 +348,16 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Creates a copy of this instance and inserts the new copy into the database
+     *
+     * @param capquiz $capquiz
+     * @param bool $template
+     * @return capquiz_question_list|null The new but identical (apart from identicators) question list instance
+     * @throws \Throwable
+     * @throws \coding_exception
+     * @throws \dml_transaction_exception
+     */
     private function create_copy(capquiz $capquiz, bool $template) {
         global $DB;
         $record = $this->record;
@@ -232,6 +380,15 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Create new question list instance and insert it in database
+     *
+     * @param capquiz $capquiz
+     * @param string $title
+     * @param string $description
+     * @param array $ratings
+     * @return capquiz_question_list|null
+     */
     public static function create_new_instance(capquiz $capquiz, string $title, string $description, array $ratings) {
         global $DB, $USER;
         if (count($ratings) < 5) {
@@ -260,12 +417,27 @@ class capquiz_question_list {
         }
     }
 
+    /**
+     * Loads question list from database based on the capquiz
+     *
+     * @param capquiz $capquiz
+     * @return capquiz_question_list|null
+     * @throws \dml_exception
+     */
     public static function load_question_list(capquiz $capquiz) {
         global $DB;
         $record = $DB->get_record('capquiz_question_list', ['capquiz_id' => $capquiz->id()]);
         return $record ? new capquiz_question_list($record, $capquiz->context()) : null;
     }
 
+    /**
+     * Loads question list from database based on the question list id
+     *
+     * @param int $qlistid
+     * @param \context_module $context
+     * @return capquiz_question_list|null
+     * @throws \dml_exception
+     */
     public static function load_any(int $qlistid, $context) {
         global $DB;
         $record = $DB->get_record('capquiz_question_list', ['id' => $qlistid]);
@@ -273,7 +445,9 @@ class capquiz_question_list {
     }
 
     /**
-     * @param $context
+     * Loads question list templates
+     *
+     * @param \context_module $context
      * @return capquiz_question_list[]
      * @throws \dml_exception
      */

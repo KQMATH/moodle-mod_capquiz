@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the table used by a {@link quiz_attempts_report}.
+ * Base class for the table used by a {@see quiz_attempts_report}.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -46,7 +46,7 @@ require_once($CFG->libdir . '/tablelib.php');
 
 
 /**
- * Base class for the table used by a {@link capquiz_attempts_report}.
+ * Base class for the table used by a {@see capquiz_attempts_report}.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -54,6 +54,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class capquiz_attempts_report_table extends table_sql {
+
+    /** @var string the name of the userid field  */
     public $useridfield = 'userid';
 
     /** @var moodle_url the URL of this report. */
@@ -64,7 +66,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
     /**
      * @var array information about the latest step of each question.
-     * Loaded by {@link load_question_latest_steps()}, if applicable.
+     * Loaded by {@see load_question_latest_steps()}, if applicable.
      */
     protected $lateststeps = null;
 
@@ -91,8 +93,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * @param string $uniqueid
      * @param object $quiz
      * @param context $context
-     * @param mod_quiz_attempts_report_options $options
-     * @param sql_join $groupstudentsjoins Contains joins, wheres, params
+     * @param capquiz_attempts_report_options $options
      * @param sql_join $studentsjoins Contains joins, wheres, params
      * @param array $questions
      * @param moodle_url $reporturl
@@ -278,6 +279,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Find the state for $slot given after this try.
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return question_state
@@ -288,6 +291,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * Returns the id of the question
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return question_id
@@ -311,6 +316,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
+     * The grade for this slot after this try.
+     *
      * @param object $attempt the row data
      * @param int $slot
      * @return float
@@ -427,6 +434,13 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return [$fields, $from, $where, $params];
     }
 
+    /**
+     * Query the db. Store results in the table object for use by build_table.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar. Bar
+     * will only be used if there is a fullname column defined for the table.
+     */
     public function query_db($pagesize, $useinitialsbar = true) {
         parent::query_db($pagesize, $useinitialsbar);
 
@@ -439,7 +453,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * Does this report require loading any more data after the main query. After the main query then
      * you can use $this->get
      *
-     * @return bool should {@link query_db()} call {@link load_extra_data}?
+     * @return bool should {@see query_db()} call {@see load_extra_data}?
      */
     protected function requires_extra_data() {
         return $this->requires_latest_steps_loaded();
@@ -448,14 +462,14 @@ abstract class capquiz_attempts_report_table extends table_sql {
     /**
      * Does this report require the detailed information for each question from the
      * question_attempts_steps table?
-     * @return bool should {@link load_extra_data} call {@link load_question_latest_steps}?
+     * @return bool should {@see load_extra_data} call {@see load_question_latest_steps}?
      */
     protected function requires_latest_steps_loaded() {
         return false;
     }
 
     /**
-     * Load any extra data after main query. At this point you can call {@link get_qubaids_condition} to get the condition that
+     * Load any extra data after main query. At this point you can call {@see get_qubaids_condition} to get the condition that
      * limits the query to just the question usages shown in this report page or alternatively for all attempts if downloading a
      * full report.
      */
@@ -469,7 +483,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * The results are returned as an two dimensional array $qubaid => $slot => $dataobject
      *
      * @param qubaid_condition|null $qubaids used to restrict which usages are included
-     * in the query. See {@link qubaid_condition}.
+     * in the query. See {@see qubaid_condition}.
      * @return array of records. See the SQL in this function to see the fields available.
      */
     protected function load_question_latest_steps(qubaid_condition $qubaids = null) {
@@ -479,7 +493,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
         $dm = new question_engine_data_mapper();
         $latesstepdata = $dm->load_questions_usages_latest_steps(
-            $qubaids, array_map(function($o) { return $o->slot; }, $this->questions));
+            $qubaids, array_map(function($o) {
+                return $o->slot;
+            }, $this->questions));
 
         $lateststeps = array();
         foreach ($latesstepdata as $step) {
@@ -508,6 +524,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return new qubaid_list($qubaids);
     }
 
+    /**
+     * Get the columns to sort by, in the form required by {@see construct_order_by()}.
+     * @return array column name => SORT_... constant.
+     */
     public function get_sort_columns() {
         // Add attemptid as a final tie-break to the sort. This ensures that
         // Attempts by the same student appear in order when just sorting by name.
@@ -516,6 +536,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
         return $sortcolumns;
     }
 
+    /**
+     * Wrap start of table
+     */
     public function wrap_html_start() {
         if ($this->is_downloading() || !$this->includecheckboxes) {
             return;
@@ -531,6 +554,11 @@ abstract class capquiz_attempts_report_table extends table_sql {
         echo '<div>';
     }
 
+    /**
+     * End of table wrap
+     *
+     * @throws coding_exception
+     */
     public function wrap_html_finish() {
         global $PAGE;
         if ($this->is_downloading() || !$this->includecheckboxes) {
@@ -555,7 +583,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         });");
         echo '&nbsp;&nbsp;';
 
-        // TODO enable when support for attempt deletion is added {@link delete_selected_attempts}.
+        // TODO enable when support for attempt deletion is added {@see delete_selected_attempts}.
         // $this->submit_buttons();
         echo '</div>';
 

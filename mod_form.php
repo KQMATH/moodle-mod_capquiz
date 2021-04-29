@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This files defines a form used to add/modify the capquiz module
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -25,8 +27,20 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
+/**
+ * Class mod_capquiz_mod_form
+ *
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_capquiz_mod_form extends moodleform_mod {
 
+    /**
+     * Defines the corm
+     *
+     * @throws coding_exception
+     */
     public function definition() {
         $form = $this->_form;
         $form->addElement('text', 'name', get_string('name'), ['size' => '64']);

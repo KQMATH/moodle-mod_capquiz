@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class represeting a question bank view
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\bank;
 
 use \core_question\bank\checkbox_column;
@@ -30,6 +39,8 @@ use mod_capquiz\capquiz_urls;
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class question_bank_view
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -37,6 +48,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_bank_view extends \core_question\bank\view {
 
+    /**
+     * Returns an array containing the required columns
+     *
+     * @return array
+     */
     protected function wanted_columns() : array {
         $this->requiredcolumns = [
             new add_question_to_list_column($this),
@@ -50,6 +66,20 @@ class question_bank_view extends \core_question\bank\view {
         return $this->requiredcolumns;
     }
 
+    /**
+     * Renders the question bank view
+     *
+     * @param string $tabname
+     * @param int $page
+     * @param int $perpage
+     * @param string $category
+     * @param bool $subcategories
+     * @param bool $showhidden
+     * @param bool $showquestiontext
+     * @param array $tagids
+     * @return string
+     * @throws \coding_exception
+     */
     public function render(string $tabname, int $page, int $perpage, string $category,
             bool $subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
         global $PAGE;
@@ -84,6 +114,11 @@ class question_bank_view extends \core_question\bank\view {
         return ob_get_clean();
     }
 
+    /**
+     * Displays the add selected questions button
+     *
+     * @throws \coding_exception
+     */
     private function display_add_selected_questions_button() {
         $straddtoquiz = get_string('add_to_quiz', 'capquiz');
         echo '<button class="btn btn-secondary capquiz-add-selected-questions">' . $straddtoquiz . '</button>';

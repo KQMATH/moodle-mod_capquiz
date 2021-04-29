@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render the instructor dashboard
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -25,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
+ * Class instructor_dashboard_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -38,11 +49,21 @@ class instructor_dashboard_renderer {
     /** @var renderer $renderer */
     private $renderer;
 
+    /**
+     * instructor_dashboard_renderer constructor.
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
+    /**
+     * Render instructor dashboard
+     *
+     * @return string
+     */
     public function render() {
         $html = $this->render_summary();
         $html .= $this->render_publish();
@@ -50,6 +71,14 @@ class instructor_dashboard_renderer {
         return $html;
     }
 
+    /**
+     * Render the instructor dashboard summary
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     private function render_summary() {
         $qlist = $this->capquiz->question_list();
         if (!$qlist) {
@@ -67,6 +96,13 @@ class instructor_dashboard_renderer {
         ]);
     }
 
+    /**
+     * Renders publish button
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     private function render_publish() {
         $published = $this->capquiz->is_published();
         $canpublish = $this->capquiz->can_publish();
@@ -88,6 +124,13 @@ class instructor_dashboard_renderer {
         ]);
     }
 
+    /**
+     * Renders template
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     private function render_template() {
         $qlist = $this->capquiz->question_list();
         if (!$qlist) {
@@ -103,6 +146,12 @@ class instructor_dashboard_renderer {
         ]);
     }
 
+    /**
+     * Creates publish button
+     *
+     * @return array
+     * @throws \coding_exception
+     */
     private function publish_button() {
         return [
             'primary' => true,
@@ -113,6 +162,12 @@ class instructor_dashboard_renderer {
         ];
     }
 
+    /**
+     * Creates create template button
+     *
+     * @return array
+     * @throws \coding_exception
+     */
     private function create_template_button() {
         return [
             'primary' => true,

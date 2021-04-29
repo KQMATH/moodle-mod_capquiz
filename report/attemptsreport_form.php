@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * Base class for the settings form for {@see capquiz_attempts_report}s.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the settings form for {@link capquiz_attempts_report}s.
+ * Base class for the settings form for {@see capquiz_attempts_report}s.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
@@ -42,11 +42,22 @@ require_once($CFG->libdir . '/formslib.php');
  */
 abstract class capquiz_attempts_report_form extends moodleform {
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         return $errors;
     }
 
+    /**
+     * Defines the form
+     */
     protected function definition() {
         $mform = $this->_form;
 
@@ -66,6 +77,11 @@ abstract class capquiz_attempts_report_form extends moodleform {
             get_string('showreport', 'quiz'));
     }
 
+    /**
+     * Adds the standard attempt fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add attempt fields to
+     */
     protected function standard_attempt_fields(MoodleQuickForm $mform) {
 
         $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
@@ -80,14 +96,29 @@ abstract class capquiz_attempts_report_form extends moodleform {
         $mform->addHelpButton('onlyanswered', 'reportshowonlyanswered', 'capquiz');
     }
 
+    /**
+     * Adds any additional attempt fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add attempt fields to
+     */
     protected function other_attempt_fields(MoodleQuickForm $mform) {
     }
 
+    /**
+     * Adds the standard preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function standard_preference_fields(MoodleQuickForm $mform) {
         $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz'));
         $mform->setType('pagesize', PARAM_INT);
     }
 
+    /**
+     * Adds any additional preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function other_preference_fields(MoodleQuickForm $mform) {
     }
 }

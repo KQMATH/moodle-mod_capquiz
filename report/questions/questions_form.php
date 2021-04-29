@@ -42,6 +42,9 @@ require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_form.php');
  */
 class capquizreport_questions_settings_form extends capquiz_attempts_report_form {
 
+    /**
+     * Defines the form
+     */
     protected function definition() {
         $mform = $this->_form;
 
@@ -58,6 +61,11 @@ class capquizreport_questions_settings_form extends capquiz_attempts_report_form
             get_string('showreport', 'quiz'));
     }
 
+    /**
+     * Adds the standard attempt fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add attempt fields to
+     */
     protected function standard_attempt_fields(MoodleQuickForm $mform) {
         $mform->addElement('hidden', 'attempts', capquiz_attempts_report::ALL_WITH);
         $mform->setType('attempts', PARAM_ALPHAEXT);
@@ -66,6 +74,11 @@ class capquizreport_questions_settings_form extends capquiz_attempts_report_form
         $mform->setType('onlyanswered', PARAM_INT);
     }
 
+    /**
+     * Adds any additional preference fields to form
+     *
+     * @param MoodleQuickForm $mform the form to add preference fields to
+     */
     protected function other_preference_fields(MoodleQuickForm $mform) {
         $mform->addGroup(array(
             $mform->createElement('advcheckbox', 'qtext', '',

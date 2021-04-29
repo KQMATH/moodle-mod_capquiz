@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * CAPQuiz matchmaking strategy selection form definition.
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
@@ -25,6 +34,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
+ * matchmaking_strategy_selection form class
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -35,11 +45,19 @@ class matchmaking_strategy_selection_form extends \moodleform {
     /** @var capquiz $capquiz */
     private $capquiz;
 
+    /**
+     * matchmaking_strategy_selection_form constructor.
+     * @param capquiz $capquiz
+     * @param \moodle_url $url
+     */
     public function __construct(capquiz $capquiz, \moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
     }
 
+    /**
+     * Defines form
+     */
     public function definition() {
         $form = $this->_form;
         $loader = new capquiz_matchmaking_strategy_loader($this->capquiz);
@@ -63,6 +81,14 @@ class matchmaking_strategy_selection_form extends \moodleform {
         }
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validations($data, $files) {
         return [];
     }

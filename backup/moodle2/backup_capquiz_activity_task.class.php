@@ -14,12 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines backup_capquiz_activity_task class
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/backup/moodle2/backup_capquiz_stepslib.php');
 
 /**
  * Backup task that provides all the settings and steps to perform one complete backup.
+ *
+ * @package mod_capquiz
  */
 class backup_capquiz_activity_task extends backup_activity_task {
 

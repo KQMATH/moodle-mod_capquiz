@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class used to render the matchmaking configuration view
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
@@ -25,6 +34,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/editlib.php');
 
 /**
+ * Class matchmaking_configuration_renderer
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -41,12 +52,28 @@ class matchmaking_configuration_renderer {
     /** @var \mod_capquiz\capquiz_matchmaking_strategy_loader $registry */
     private $registry;
 
+    /** @var \moodle_page $page */
+    private $page;
+
+    /**
+     * matchmaking_configuration_renderer constructor.
+     * @param capquiz $capquiz
+     * @param renderer $renderer
+     */
     public function __construct(capquiz $capquiz, renderer $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->registry = new capquiz_matchmaking_strategy_loader($this->capquiz);
+        $this->page = $capquiz->get_page();
     }
 
+    /**
+     * Calls submethod that renders the matchmaking_configuration view
+     *
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function render() {
         if ($this->registry->has_strategy()) {
             return $this->render_configuration();
@@ -55,6 +82,12 @@ class matchmaking_configuration_renderer {
         }
     }
 
+    /**
+     * Renders the matchmaking configuration view
+     *
+     * @return bool|string
+     * @throws \moodle_exception
+     */
     private function render_configuration() {
         $html = $this->render_form();
         $strategy = $this->registry->current_strategy_name();
@@ -65,9 +98,15 @@ class matchmaking_configuration_renderer {
         ]);
     }
 
+    /**
+     * Returns the rendered matchmaking configuration form
+     *
+     * @return \lang_string|string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     private function render_form() {
-        global $PAGE;
-        $url = $PAGE->url;
+        $url = $this->page->url;
         if ($form = $this->registry->configuration_form($url)) {
             $formdata = $form->get_data();
             if ($formdata) {

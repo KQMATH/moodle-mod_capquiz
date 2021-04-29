@@ -14,11 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines a class represeting a capquiz question attempt
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Class capquiz_question_attempt
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -43,6 +54,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Creates a new question attempt for a user
+     *
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @return capquiz_question_attempt|null
@@ -62,6 +75,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Returns the users currently active attempt
+     *
      * @param capquiz_user $user
      * @return capquiz_question_attempt|null
      */
@@ -79,6 +94,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Loads a users attempt based on the user and attempt id
+     *
      * @param capquiz_user $user
      * @param int $attemptid
      * @return capquiz_question_attempt|null
@@ -97,6 +114,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Returns the users previous attempt
+     *
      * @param capquiz_user $user
      * @return capquiz_question_attempt|null
      */
@@ -116,6 +135,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Returns the users inactive attempts (Answered and reviewed)
+     *
      * @param capquiz_user $user
      * @return capquiz_question_attempt[]
      * @throws \dml_exception
@@ -134,22 +155,47 @@ class capquiz_question_attempt {
         return $records;
     }
 
+    /**
+     * Returns the attempts id
+     *
+     * @return int
+     */
     public function id() : int {
         return $this->record->id;
     }
 
+    /**
+     * Returns the id of the question
+     *
+     * @return int
+     */
     public function question_id() : int {
         return $this->record->question_id;
     }
 
+    /**
+     * Returns the slot of the question
+     *
+     * @return int
+     */
     public function question_slot() : int {
         return $this->record->slot;
     }
 
+    /**
+     * Returns true if the attempt has an answer
+     *
+     * @return bool
+     */
     public function is_answered() : bool {
         return $this->record->answered;
     }
 
+    /**
+     * Returns true if the answer is correct
+     *
+     * @return bool
+     */
     public function is_correctly_answered() : bool {
         if (!$this->is_answered()) {
             return false;
@@ -158,19 +204,40 @@ class capquiz_question_attempt {
         return $moodleattempt->get_state()->is_correct();
     }
 
+    /**
+     * Returns the state of the question
+     *
+     * @return \question_state
+     */
     public function get_state() : \question_state {
         $moodleattempt = $this->quba->get_question_attempt($this->question_slot());
         return $moodleattempt->get_state();
     }
 
+    /**
+     * Returns true if the attempt is reviewed
+     *
+     * @return bool
+     */
     public function is_reviewed() : bool {
         return $this->record->reviewed;
     }
 
+    /**
+     * Returns true if the attempt is not reviewed
+     *
+     * @return bool
+     */
     public function is_pending() : bool {
         return !$this->is_reviewed();
     }
 
+    /**
+     * Checks if the question is valid
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
     public function is_question_valid() : bool {
         global $DB;
         $sql = 'SELECT cq.id
@@ -182,11 +249,21 @@ class capquiz_question_attempt {
         return $result !== false;
     }
 
+    /**
+     * Deletes attempt from database
+     *
+     * @throws \dml_exception
+     */
     public function delete() {
         global $DB;
         $DB->execute('DELETE FROM {capquiz_attempt} WHERE id = :id', ['id' => $this->id()]);
     }
 
+    /**
+     * Marks attempt as answered
+     *
+     * @throws \dml_exception
+     */
     public function mark_as_answered() {
         global $DB;
         $submitteddata = $this->quba->extract_responses($this->question_slot());
@@ -198,6 +275,11 @@ class capquiz_question_attempt {
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
+    /**
+     * Marks attempt as viewed
+     *
+     * @throws \dml_exception
+     */
     public function mark_as_reviewed() {
         global $DB;
         $this->record->reviewed = true;
@@ -205,6 +287,13 @@ class capquiz_question_attempt {
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
+    /**
+     * Sets current question rating
+     *
+     * @param capquiz_question_rating $rating
+     * @param false $previous
+     * @throws \dml_exception
+     */
     public function set_question_rating(capquiz_question_rating $rating, $previous = false) {
         global $DB;
         if (!$previous) {
@@ -215,6 +304,13 @@ class capquiz_question_attempt {
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
+    /**
+     * Sets rating for the previous rating
+     *
+     * @param capquiz_question_rating $rating
+     * @param false $previous
+     * @throws \dml_exception
+     */
     public function set_previous_question_rating(capquiz_question_rating $rating, $previous = false) {
         global $DB;
         if (!$previous) {
@@ -225,6 +321,13 @@ class capquiz_question_attempt {
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
+    /**
+     * Sets the user rating of the attempt
+     *
+     * @param capquiz_user_rating $rating
+     * @param false $previous
+     * @throws \dml_exception
+     */
     public function set_user_rating(capquiz_user_rating $rating, $previous = false) {
         global $DB;
         if (!$previous) {
@@ -236,6 +339,8 @@ class capquiz_question_attempt {
     }
 
     /**
+     * Inserts an attempt into the database
+     *
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @param int $slot

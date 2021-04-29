@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Stack.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Capquiz report factory. Provides a convenient way to create an capquiz report of any type.
+ *
+ * @package     mod_capquiz
+ * @author      André Storhaug <andr3.storhaug@gmail.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\report;
 
 use capquiz_exception;
@@ -34,10 +43,8 @@ class capquiz_report_factory {
 
     /**
      * Create an capquiz report of a given type and return it.
+     *
      * @param string $type the required type.
-     * @param $capquiz
-     * @param $cm
-     * @param $course
      * @return capquiz_attempts_report the requested capquiz report.
      * @throws capquiz_exception
      */

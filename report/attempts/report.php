@@ -36,8 +36,7 @@ require_once(__DIR__ . '/attempts_table.php');
 require_once(__DIR__ . '/attempts_options.php');
 
 /**
- * The capquiz attempts report provides summary information about each attempt in
- * a capquiz.
+ * The capquiz attempts report provides summary information about each attempt in a capquiz.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
@@ -45,6 +44,13 @@ require_once(__DIR__ . '/attempts_options.php');
  */
 class capquizreport_attempts_report extends capquiz_attempts_report {
 
+    /**
+     * Displays the full report
+     * @param capquiz $capquiz capquiz object
+     * @param stdClass $cm - course_module object
+     * @param stdClass $course - course object
+     * @param string $download - type of download being requested
+     */
     public function display($capquiz, $cm, $course, $download) {
         global $OUTPUT, $DB;
 
@@ -88,7 +94,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $hasstudents = $DB->record_exists_sql($sql, $studentsjoins->params);
         }
 
-        // TODO enable when support for attempt deletion is implemented {@link delete_selected_attempts}.
+        // TODO enable when support for attempt deletion is implemented {@see delete_selected_attempts}.
         // $this->process_actions($capquiz, $cm, $studentsjoins, $this->options->get_url());
 
         $hasquestions = capquiz_has_questions($capquiz->id());
@@ -174,6 +180,12 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         return true;
     }
 
+    /**
+     * Adds rating columns to this report
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_rating_columns(array &$columns, array &$headers) {
         if ($this->options->showurating) {
             $this->add_user_rating_column($columns, $headers);
@@ -181,29 +193,52 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         if ($this->options->showuprevrating) {
             $this->add_user_previous_rating_column($columns, $headers);
         }
-
         if ($this->options->showqprevrating) {
             $this->add_question_previous_rating_column($columns, $headers);
         }
     }
 
+    /**
+     * Adds a user rating column to this report
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_user_rating_column(array &$columns, array &$headers) {
         $columns[] = 'userrating';
         $headers[] = get_string('userrating', 'capquiz');
     }
 
+    /**
+     * Adds a column with a users previous rating
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_user_previous_rating_column(array &$columns, array &$headers) {
         $columns[] = 'userprevrating';
         $headers[] = get_string('userprevrating', 'capquizreport_attempts');
     }
 
+    /**
+     * Adds column with question rating
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_question_rating_column(array &$columns, array &$headers) {
         $columns[] = 'questionrating';
         $headers[] = get_string('questionrating', 'capquiz');
     }
 
+    /**
+     * Adds column with previous question ratings
+     *
+     * @param array $columns columns to be added
+     * @param array $headers column headers
+     */
     protected function add_question_previous_rating_column(array &$columns, array &$headers) {
-            $columns[] = 'questionprevrating';
-            $headers[] = get_string('questionprevrating', 'capquizreport_attempts');
+        $columns[] = 'questionprevrating';
+        $headers[] = get_string('questionprevrating', 'capquizreport_attempts');
     }
 }

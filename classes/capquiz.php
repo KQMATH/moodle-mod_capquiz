@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * This file defines the class capquiz representing a capquiz
+ *
+ * @package     mod_capquiz
+ * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2019 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
@@ -23,6 +33,8 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
 
 /**
+ * Class capquiz
+ *
  * @package     mod_capquiz
  * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
@@ -49,6 +61,15 @@ class capquiz {
     /** @var capquiz_question_list $qlist */
     private $qlist;
 
+    /** @var \moodle_page $page  */
+    private $page;
+
+    /**
+     * capquiz constructor.
+     * @param int $cmid
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct(int $cmid) {
         global $DB, $PAGE;
         $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
@@ -58,56 +79,125 @@ class capquiz {
         $this->courserecord = $DB->get_record('course', ['id' => $this->cm->course], '*', MUST_EXIST);
         $this->record = $DB->get_record('capquiz', ['id' => $this->cm->instance], '*', MUST_EXIST);
         $this->qlist = capquiz_question_list::load_question_list($this);
+        $this->page = $PAGE;
     }
 
+    /**
+     * Updates the grades if the grading is completed or if forced
+     *
+     * @param bool $force
+     */
     public function update_grades(bool $force = false) {
         if (!$this->is_grading_completed() || $force) {
             capquiz_update_grades($this->record);
         }
     }
 
+    /**
+     * Returns the page of the CapQuiz
+     *
+     * @return mixed|\moodle_page
+     */
+    public function get_page() {
+        return $this->page;
+    }
+
+    /**
+     * Returns the capquiz' id
+     *
+     * @return int
+     */
     public function id() : int {
         return $this->record->id;
     }
 
+    /**
+     * Returns the capquiz' name
+     *
+     * @return string
+     */
     public function name() : string {
         return $this->record->name;
     }
 
+    /**
+     * Returns true if the capquiz is published
+     *
+     * @return bool
+     */
     public function is_published() : bool {
         return $this->record->published;
     }
 
+    /**
+     * Returns true if the capquiz is completely graded
+     *
+     * @return bool
+     */
     public function is_grading_completed() : bool {
         return $this->record->timedue < time() && $this->record->timedue > 0;
     }
 
+    /**
+     * Returns the amount of stars needed to pass
+     *
+     * @return int
+     */
     public function stars_to_pass() : int {
         return $this->record->stars_to_pass;
     }
 
+    /**
+     * Returns the time when the quiz is due
+     *
+     * @return int
+     */
     public function time_due() : int {
         return $this->record->timedue;
     }
 
+    /**
+     * Sets a new value for stars to pass
+     *
+     * @param int $stars
+     * @throws \dml_exception
+     */
     public function set_stars_to_pass(int $stars) {
         global $DB;
         $this->record->stars_to_pass = $stars;
         $DB->update_record('capquiz', $this->record);
     }
 
+    /**
+     * Sets a new due time
+     *
+     * @param int $time
+     * @throws \dml_exception
+     */
     public function set_time_due(int $time) {
         global $DB;
         $this->record->timedue = $time;
         $DB->update_record('capquiz', $this->record);
     }
 
+    /**
+     * Sets a new default rating
+     *
+     * @param float $rating
+     * @throws \dml_exception
+     */
     public function set_default_user_rating(float $rating) {
         global $DB;
         $this->record->default_user_rating = $rating;
         $DB->update_record('capquiz', $this->record);
     }
 
+    /**
+     * Publishes the capquiz if it can publish it
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
     public function publish() : bool {
         global $DB;
         if (!$this->can_publish()) {
@@ -118,6 +208,11 @@ class capquiz {
         return $this->is_published();
     }
 
+    /**
+     * Returns true if the capquiz is publishable
+     *
+     * @return bool
+     */
     public function can_publish() : bool {
         if (!$this->has_question_list() || $this->is_published()) {
             return false;
@@ -125,6 +220,12 @@ class capquiz {
         return $this->question_list()->has_questions();
     }
 
+    /**
+     * Returns a new question engine based on the user
+     *
+     * @param capquiz_user $user
+     * @return capquiz_question_engine|null
+     */
     public function question_engine(capquiz_user $user) {
         $quba = $user->question_usage();
         if (!$quba) {
@@ -135,39 +236,83 @@ class capquiz {
         return new capquiz_question_engine($this, $quba, $strategyloader, $ratingsystemloader);
     }
 
+    /**
+     * Returns the capquiz user
+     *
+     * @return capquiz_user
+     * @throws \Exception
+     */
     public function user() : capquiz_user {
         global $USER;
         return capquiz_user::load_user($this, $USER->id, $this->context());
     }
 
+    /**
+     * Returns the default rating
+     *
+     * @return float
+     */
     public function default_user_rating() : float {
         return $this->record->default_user_rating;
     }
 
+    /**
+     * Returns true if the capquiz has a question list
+     *
+     * @return bool
+     */
     public function has_question_list() : bool {
         return $this->qlist !== null;
     }
 
+    /**
+     * Returns the quiz' question list
+     *
+     * @return capquiz_question_list|null
+     */
     public function question_list() {
         return $this->qlist;
     }
 
+    /**
+     * Returns the current context
+     *
+     * @return \context_module
+     */
     public function context() : \context_module {
         return $this->context;
     }
 
+    /**
+     * Returns teh current course module
+     *
+     * @return \stdClass
+     */
     public function course_module() : \stdClass {
         return $this->cm;
     }
 
+    /**
+     * Returns the current course
+     *
+     * @return \stdClass
+     */
     public function course() : \stdClass {
         return $this->courserecord;
     }
 
+    /**
+     * Returns the current renderer
+     *
+     * @return \renderer_base
+     */
     public function renderer() : \renderer_base {
         return $this->renderer;
     }
 
+    /**
+     * Validates the matchmaking and rating systems
+     */
     public function validate_matchmaking_and_rating_systems() {
         $ratingsystemloader = new capquiz_rating_system_loader($this);
         if (!$ratingsystemloader->has_rating_system()) {

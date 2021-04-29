@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * CAPQuiz question list form definition.
+ *
+ * @package     mod_capquiz
+ * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
+ * @copyright   2018 NTNU
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_capquiz\form\view;
 
 defined('MOODLE_INTERNAL') || die();
@@ -21,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 /**
+ * question_list_create_form class
+ *
  * @package     mod_capquiz
  * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
  * @copyright   2018 NTNU
@@ -28,6 +39,9 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class question_list_create_form extends \moodleform {
 
+    /**
+     * Defines form
+     */
     public function definition() {
         $form = $this->_form;
         $form->addElement('text', 'title', get_string('title', 'capquiz'));
@@ -52,6 +66,14 @@ class question_list_create_form extends \moodleform {
         $form->addElement('submit', 'submitbutton', get_string('create_question_list', 'capquiz'));
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validations($data, $files) {
         $errors = [];
         if (empty($data['title'])) {

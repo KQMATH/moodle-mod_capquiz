@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
+ * Base class for the options that control what is visible in an {@see quiz_attempts_report}.
  *
  * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 
 /**
- * Base class for the options that control what is visible in an {@link quiz_attempts_report}.
+ * Base class for the options that control what is visible in an {@see  quiz_attempts_report}.
  *
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
@@ -78,11 +78,11 @@ class capquiz_attempts_report_options {
     /**
      * Constructor.
      * @param string $mode which report these options are for.
-     * @param object $capquiz the settings for the capquiz being reported on.
+     * @param capquiz $capquiz the settings for the capquiz being reported on.
      * @param object $cm the course module objects for the capquiz being reported on.
-     * @param object $coures the course settings for the coures this capquiz is in.
+     * @param object $course the course settings for the coures this capquiz is in.
      */
-    public function __construct($mode, capquiz $capquiz, $cm, $course) {
+    public function __construct(string $mode, capquiz $capquiz, object $cm, object $course) {
         $this->mode     = $mode;
         $this->capquiz  = $capquiz;
         $this->cm       = $cm;
