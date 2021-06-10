@@ -102,3 +102,29 @@ jobs:
       - name: Behat features
         if: ${{ always() }}
         run: moodle-plugin-ci behat --profile chrome
+
+      - name: Convert Coverage (clover2lcov)
+        uses: andstor/clover2lcov-action@v1
+        if: ${{ always() }}
+        with:
+          src: ./coverage.xml
+          dst: ./coverage/lcov.info
+
+      - name: Coveralls Parallel
+        if: ${{ always() }}
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.test_number }}
+          parallel: true
+  
+  finish:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
