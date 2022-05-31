@@ -94,3 +94,4 @@ class matchmaking_strategy_selection_form extends \moodleform {
     }
 
 }
+
