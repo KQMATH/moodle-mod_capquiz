@@ -46,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_bank_view extends \core_question\local\bank\view {
+class question_bank_view extends \core_question\bank\view {
 	
 
     /**
