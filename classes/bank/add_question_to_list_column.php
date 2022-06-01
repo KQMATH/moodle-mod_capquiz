@@ -55,7 +55,7 @@ class add_question_to_list_column extends \core_question\local\bank\action_colum
      * @return array fields required. use table alias 'q' for the question table, or one of the
      * ones from get_extra_joins. Every field requested must specify a table prefix.
      */
-    public function get_required_fields() {
+    public function get_required_fields(): array {
         return ['q.id'];
     }
 
