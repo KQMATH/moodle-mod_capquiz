@@ -25,12 +25,12 @@
 
 namespace mod_capquiz\bank;
 
-use \core_question\bank\checkbox_column;
-use \core_question\bank\creator_name_column;
-use \core_question\bank\delete_action_column;
+use \core_question\local\bank\checkbox_column;
+use \core_question\local\bank\creator_name_column;
+use \core_question\local\bank\delete_action_column;
 use \core_question\bank\preview_action_column;
-use \core_question\bank\question_name_column;
-use \core_question\bank\question_type_column;
+use \core_question\local\bank\question_name_column;
+use \core_question\local\bank\question_type_column;
 use \core_question\bank\search\tag_condition as tag_condition;
 use \core_question\bank\search\hidden_condition as hidden_condition;
 use \core_question\bank\search\category_condition;
