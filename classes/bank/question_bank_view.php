@@ -84,9 +84,6 @@ class question_bank_view extends \core_question\local\bank\view {
     public function render(string $tabname, int $page, int $perpage, string $category,
             bool $subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
         global $PAGE;
-        if ($this->process_actions_needing_ui()) {
-            return '';
-        }
         ob_start();
         $contexts = $this->contexts->having_one_edit_tab_cap($tabname);
         list($categoryid, $contextid) = explode(',', $category);
