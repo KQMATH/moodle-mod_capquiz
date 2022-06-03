@@ -25,12 +25,12 @@
 
 namespace mod_capquiz\bank;
 
-use \core_question\bank\checkbox_column;
-use \core_question\bank\creator_name_column;
-use \core_question\bank\delete_action_column;
-use \core_question\bank\preview_action_column;
-use \core_question\bank\question_name_column;
-use \core_question\bank\question_type_column;
+use \core_question\local\bank\checkbox_column;
+use \qbank_viewcreator\creator_name_column;
+use \qbank_deletequestion\delete_action_column;
+use \qbank_previewquestion\preview_action_column;
+use \qbank_viewquestionname\viewquestionname_column_helper;
+use \qbank_viewquestiontype\question_type_column;
 use \core_question\bank\search\tag_condition as tag_condition;
 use \core_question\bank\search\hidden_condition as hidden_condition;
 use \core_question\bank\search\category_condition;
@@ -59,7 +59,7 @@ class question_bank_view extends \core_question\local\bank\view {
             new add_question_to_list_column($this),
             new checkbox_column($this),
             new question_type_column($this),
-            new question_name_column($this),
+            new viewquestionname_column_helper($this),
             new creator_name_column($this),
             new delete_action_column($this),
             new preview_action_column($this)
@@ -111,7 +111,7 @@ class question_bank_view extends \core_question\local\bank\view {
             $this->contexts->having_cap('moodle/question:add')
         );
         $this->display_add_selected_questions_button();
-        $PAGE->requires->js_call_amd('core_question/edit_tags', 'init', ['#questionscontainer']);
+        $PAGE->requires->js_call_amd('/core_question/edit_tags', 'init', ['#questionscontainer']);
         return ob_get_clean();
     }
 
