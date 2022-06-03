@@ -41,7 +41,7 @@ try {
     capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
     $bankview = $bankrenderer->create_view();
-    $bankview->process_actions();
+    
     $renderer = $capquiz->renderer();
     $renderer->display_question_list_view($capquiz);
 } catch (\coding_exception $e) {
