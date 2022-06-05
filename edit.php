@@ -40,10 +40,10 @@ try {
     $capquiz = new capquiz($cmid);
     capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
     $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
-    $bankview = $bankrenderer->create_view();
-    
+    $bankview = $bankrenderer->create_view();  
     $renderer = $capquiz->renderer();
     $renderer->display_question_list_view($capquiz);
+
 } catch (\coding_exception $e) {
     capquiz_urls::redirect_to_front_page();
 }
