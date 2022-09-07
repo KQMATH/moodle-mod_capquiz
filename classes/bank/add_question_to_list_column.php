@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_question_to_list_column extends \core_question\bank\action_column_base {
+class add_question_to_list_column extends \core_question\local\bank\action_column_base {
 
     /**
      * Get the internal name for this column. Used as a CSS class name,
@@ -55,7 +55,7 @@ class add_question_to_list_column extends \core_question\bank\action_column_base
      * @return array fields required. use table alias 'q' for the question table, or one of the
      * ones from get_extra_joins. Every field requested must specify a table prefix.
      */
-    public function get_required_fields() {
+    public function get_required_fields(): array {
         return ['q.id'];
     }
 

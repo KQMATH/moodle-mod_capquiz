@@ -25,7 +25,7 @@
 
 namespace mod_capquiz\bank;
 
-use \core_question\bank\checkbox_column;
+use \core_question\local\bank\checkbox_column;
 use \core_question\bank\creator_name_column;
 use \core_question\bank\delete_action_column;
 use \core_question\bank\preview_action_column;
@@ -46,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_bank_view extends \core_question\bank\view {
+class question_bank_view extends \core_question\local\bank\view {
 
     /**
      * Returns an array containing the required columns
@@ -57,11 +57,11 @@ class question_bank_view extends \core_question\bank\view {
         $this->requiredcolumns = [
             new add_question_to_list_column($this),
             new checkbox_column($this),
-            new question_type_column($this),
-            new question_name_column($this),
-            new creator_name_column($this),
-            new delete_action_column($this),
-            new preview_action_column($this)
+            new \qbank_viewquestiontype\question_type_column($this),
+            new \qbank_viewquestionname\viewquestionname_column_helper($this),
+            new \qbank_viewcreator\creator_name_column($this),
+            new \qbank_deletequestion\delete_action_column($this),
+            new \qbank_previewquestion\preview_action_column($this)
         ];
         return $this->requiredcolumns;
     }
