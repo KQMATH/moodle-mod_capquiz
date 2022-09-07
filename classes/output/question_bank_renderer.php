@@ -91,7 +91,8 @@ class question_bank_renderer {
             $this->pagevars['cat'],
             $this->pagevars['recurse'],
             $this->pagevars['showhidden'],
-            true);
+            $this->pagevars['qbshowtext']
+            );
         return $html;
     }
 
