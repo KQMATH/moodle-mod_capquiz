@@ -188,7 +188,12 @@ class capquiz_question {
         $sql = 'SELECT c.id AS id
                   FROM {capquiz_question} cq
                   JOIN {question} q ON q.id = cq.question_id
-                  JOIN {question_categories} qc ON qc.id = q.category
+                  JOIN {question_versions} qv
+                    ON q.id = qv.questionid
+                  JOIN {question_bank_entries} qbe
+                    ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc 
+                    ON qc.id = qbe.questioncategoryid
                   JOIN {context} ctx ON ctx.id = qc.contextid
              LEFT JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = 70
                   JOIN {course} c ON (ctx.contextlevel = 50 AND c.id = ctx.instanceid)
