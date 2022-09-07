@@ -23,9 +23,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// REDUNDANT: namespace mod_capquiz;
+namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
+// REDUNDANT: defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class capquiz_matchmaking_strategy
