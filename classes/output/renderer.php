@@ -211,11 +211,6 @@ class renderer extends \plugin_renderer_base {
      * @throws \coding_exception
      */
     public function display_question_list_view(capquiz $capquiz) {
-        /** 
-         * Implicit class definition.
-         *
-         * Dummy comment to please the PHPDoc checket.
-         */
         $render = new class($capquiz, $this) {
             private $capquiz;
             private $renderer;

@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz;
+// REDUNDANT: namespace mod_capquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,21 +43,21 @@ abstract class capquiz_matchmaking_strategy {
      * @param \stdClass $configuration
      * @return mixed
      */
-    public abstract function configure(\stdClass $configuration);
+    abstract public function configure(\stdClass $configuration);
 
     /**
      * Returns the current configuration
      *
      * @return mixed
      */
-    public abstract function configuration();
+    abstract public function configuration();
 
     /**
      * Returns the default configuration
      *
      * @return mixed
      */
-    public abstract function default_configuration();
+    abstract public function default_configuration();
 
     /**
      * Returns a new question for the user based on the matchmaking strategy configuration
@@ -67,7 +67,7 @@ abstract class capquiz_matchmaking_strategy {
      * @param array $inactiveattempts
      * @return mixed
      */
-    public abstract function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist,
+    abstract public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist,
             array $inactiveattempts);
 
 }
