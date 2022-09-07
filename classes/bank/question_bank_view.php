@@ -48,7 +48,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_bank_view extends \core_question\local\bank\view {
 	
-
     /**
      * Returns an array containing the required columns
      *
