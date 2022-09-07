@@ -27,6 +27,7 @@ namespace mod_capquiz\bank;
 
 use \core_question\local\bank\checkbox_column;
 use \qbank_viewcreator\creator_name_column;
+use \qbank_editquestion\edit_action_column;
 use \qbank_deletequestion\delete_action_column;
 use \qbank_previewquestion\preview_action_column;
 use \qbank_viewquestionname\viewquestionname_column_helper;
@@ -35,6 +36,7 @@ use \core_question\bank\search\tag_condition as tag_condition;
 use \core_question\bank\search\hidden_condition as hidden_condition;
 use \core_question\bank\search\category_condition;
 use mod_capquiz\local\capquiz_urls;
+use mod_capquiz\bank\add_question_to_list_column;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,6 +56,7 @@ class question_bank_view extends \core_question\local\bank\view {
      * @return array
      */
     protected function wanted_columns() : array {
+/*
         $this->requiredcolumns = [
             new add_question_to_list_column($this),
             new checkbox_column($this),
@@ -63,6 +66,29 @@ class question_bank_view extends \core_question\local\bank\view {
             new delete_action_column($this),
             new preview_action_column($this)
         ];
+*/      
+        /* This has been rewritten following the pattern from JazzQuiz. */
+        $columns = [
+            'mod_capquiz\\bank\\add_question_to_list_column',
+            'core_question\\local\\bank\\checkbox_column',
+            'qbank_viewquestiontype\\question_type_column',
+            'qbank_viewquestionname\\viewquestionname_column_helper',
+            'qbank_previewquestion\\preview_action_column'
+            // 'checkbox_column',
+            // 'question_type_column',
+            // 'viewquestionname_column_helper',
+            // 'edit_action_column',
+            // 'preview_action_column'
+        ];
+        foreach ($columns as $column) {
+            $this->requiredcolumns[$column] = new $column($this);
+        }
+        /* edit_action_column is handled separately because the dictionary 
+         * lookup is hardcoded in core.  This is not clean, and should be revised. */
+        $this->requiredcolumns['edit_action_column'] = new edit_action_column($this);
+        /* TODO - this may look cleaner if we follow the pattern from
+         * /question/classes/local/bank/view.php */
+
         return $this->requiredcolumns;
     }
 
@@ -88,22 +114,22 @@ class question_bank_view extends \core_question\local\bank\view {
         list($categoryid, $contextid) = explode(',', $category);
         $catcontext = \context::instance_by_id($contextid);
         $thiscontext = $this->get_most_specific_context();
-        $this->display_question_bank_header();
+        // $this->display_question_bank_header();
         $this->add_searchcondition(new tag_condition([$catcontext, $thiscontext], $tagids));
         $this->add_searchcondition(new hidden_condition(!$showhidden));
         $this->add_searchcondition(new category_condition($category, $subcategories,
             $contexts, $this->baseurl, $this->course));
         $this->display_options_form($showquestiontext, $this->baseurl->raw_out());
         $this->display_question_list(
-            $contexts,
+            // $contexts,
             $this->baseurl,
             $category,
-            $this->cm,
+            // $this->cm,
             $subcategories,
             $page,
             $perpage,
-            $showhidden,
-            $showquestiontext,
+            // $showhidden,
+            // $showquestiontext,
             $this->contexts->having_cap('moodle/question:add')
         );
         $this->display_add_selected_questions_button();
