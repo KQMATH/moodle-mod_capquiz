@@ -26,7 +26,7 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
+// REDUNDANT: defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class capquiz_rating_system
@@ -44,21 +44,21 @@ abstract class capquiz_rating_system {
      * @param \stdClass $configuration
      * @return mixed
      */
-    public abstract function configure(\stdClass $configuration);
+    abstract public function configure(\stdClass $configuration);
 
     /**
      * Function to get the rating system configuration
      *
      * @return mixed
      */
-    public abstract function configuration();
+    abstract public function configuration();
 
     /**
      * Function to get the default rating system configuration
      *
      * @return mixed
      */
-    public abstract function default_configuration();
+    abstract public function default_configuration();
 
     /**
      * Updates the users rating based on the rating system and its configuration
@@ -68,7 +68,7 @@ abstract class capquiz_rating_system {
      * @param float $score
      * @return mixed
      */
-    public abstract function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
+    abstract public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
 
     /**
      * Updates the winning and losing questions ratings
@@ -77,6 +77,6 @@ abstract class capquiz_rating_system {
      * @param capquiz_question $loser
      * @return mixed
      */
-    public abstract function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
+    abstract public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
 
 }
