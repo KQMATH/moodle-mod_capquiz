@@ -19,7 +19,10 @@ namespace mod_capquiz\bank;
 /**
  * A column type for the add this question to the quiz action.
  *
- * @package    mod_quiz
+ * This class is copied to CAPQuiz from the Core Quiz, without
+ * modification (as of Fri  9 Sep 08:29:48 UTC 2022  ).
+ * 
+ * @package    mod_capquiz/mod_quiz
  * @category   question
  * @copyright  2009 Tim Hunt
  * @author     2021 Safat Shahin <safatshahin@catalyst-au.net>

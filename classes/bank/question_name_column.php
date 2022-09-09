@@ -21,7 +21,10 @@ use \html_writer;
 /**
  * A column type for the name of the question name.
  *
- * @package   mod_capquiz
+ * This class is copied to CAPQuiz from the Core Quiz, without
+ * modification (as of Fri  9 Sep 08:29:48 UTC 2022  ).
+ * 
+ * @package   mod_capquiz/mod_quiz
  * @category  question
  * @copyright 2009 Tim Hunt
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>

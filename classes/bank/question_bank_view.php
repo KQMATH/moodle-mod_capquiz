@@ -15,11 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines a class represeting a question bank view
+ * This file defines a class represeting a question bank view.
+ *
+ * It is based on similar implementations from the Core Quiz,
+ * but intended to run in a pane rather than a modal overlay,
+ * some differences are needed. It includes legacy code from
+ * different versions of moodle, and should have been refactored.
  *
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Hans Georg Schaathun <hasc@ntnu.no>
+ * @copyright   2018/2022 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
