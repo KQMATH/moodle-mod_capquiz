@@ -36,7 +36,7 @@ use \core_question\bank\search\tag_condition as tag_condition;
 use \core_question\bank\search\hidden_condition as hidden_condition;
 use \core_question\bank\search\category_condition;
 use mod_capquiz\local\capquiz_urls;
-use mod_capquiz\bank\add_question_to_list_column;
+use mod_capquiz\bank\add_action_column;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -49,92 +49,101 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_view extends \core_question\local\bank\view {
-	
-    /**
-     * Returns an array containing the required columns
-     *
-     * @return array
-     */
-    protected function wanted_columns() : array {
-/*
-        $this->requiredcolumns = [
-            new add_question_to_list_column($this),
-            new checkbox_column($this),
-            new question_type_column($this),
-            new viewquestionname_column_helper($this),
-            new creator_name_column($this),
-            new delete_action_column($this),
-            new preview_action_column($this)
-        ];
-*/      
-        /* This has been rewritten following the pattern from JazzQuiz. */
-        $columns = [
-            'mod_capquiz\\bank\\add_question_to_list_column',
-            'core_question\\local\\bank\\checkbox_column',
-            'qbank_viewquestiontype\\question_type_column',
-            'qbank_viewquestionname\\viewquestionname_column_helper',
-            'qbank_previewquestion\\preview_action_column'
-            // 'checkbox_column',
-            // 'question_type_column',
-            // 'viewquestionname_column_helper',
-            // 'edit_action_column',
-            // 'preview_action_column'
-        ];
-        foreach ($columns as $column) {
-            $this->requiredcolumns[$column] = new $column($this);
-        }
-        /* edit_action_column is handled separately because the dictionary 
-         * lookup is hardcoded in core.  This is not clean, and should be revised. */
-        $this->requiredcolumns['edit_action_column'] = new edit_action_column($this);
-        /* TODO - this may look cleaner if we follow the pattern from
-         * /question/classes/local/bank/view.php */
 
-        return $this->requiredcolumns;
+    /**
+     * URL of add to quiz.
+     *
+     * @param $questionid
+     * @return \moodle_url
+     */
+    public function add_to_quiz_url($questionid) {
+        return \mod_capquiz\capquiz_urls::add_question_to_list_url( $questionid ) ;
+    }
+	
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $corequestionbankcolumns = [
+            'add_action_column',
+            'checkbox_column',
+            'question_type_column',
+            'question_name_text_column',
+            'preview_action_column',
+            'edit_action_column'
+        ];
+
+        if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new \moodle_url(''))) {
+            $corequestionbankcolumns[] = 'question_text_row';
+        }
+
+        foreach ($corequestionbankcolumns as $fullname) {
+            $shortname = $fullname;
+            if (class_exists('mod_capquiz\\bank\\' . $fullname)) {
+                $fullname = 'mod_capquiz\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else if (class_exists('core_question\\local\\bank\\' . $fullname)) {
+                $fullname = 'core_question\\local\\bank\\' . $fullname;
+                $questionbankclasscolumns[$shortname] = new $fullname($this);
+            } else {
+                $questionbankclasscolumns[$shortname] = '';
+            }
+        }
+        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+        foreach ($plugins as $componentname => $plugin) {
+            $pluginentrypointobject = new $plugin();
+            $plugincolumnobjects = $pluginentrypointobject->get_question_columns($this);
+            // Don't need the plugins without column objects.
+            if (empty($plugincolumnobjects)) {
+                unset($plugins[$componentname]);
+                continue;
+            }
+            foreach ($plugincolumnobjects as $columnobject) {
+                $columnname = $columnobject->get_column_name();
+                foreach ($corequestionbankcolumns as $key => $corequestionbankcolumn) {
+                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                        unset($questionbankclasscolumns[$columnname]);
+                        continue;
+                    }
+                    // Check if it has custom preference selector to view/hide.
+                    if ($columnobject->has_preference() && !$columnobject->get_preference()) {
+                        continue;
+                    }
+                    if ($corequestionbankcolumn === $columnname) {
+                        $questionbankclasscolumns[$columnname] = $columnobject;
+                    }
+                }
+            }
+        }
+
+        // Mitigate the error in case of any regression.
+        foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
+            if (empty($questionbankclasscolumn)) {
+                unset($questionbankclasscolumns[$shortname]);
+            }
+        }
+
+        return $questionbankclasscolumns;
+    }
+
+    protected function heading_column(): string {
+        return 'mod_capquiz\\bank\\question_name_text_column';
     }
 
     /**
-     * Renders the question bank view
+     * Renders the html question bank (same as display, but returns the result).
      *
+     * Note that you can only output this rendered result once per page, as
+     * it contains IDs which must be unique.
+     *
+     * @param array $pagevars
      * @param string $tabname
-     * @param int $page
-     * @param int $perpage
-     * @param string $category
-     * @param bool $subcategories
-     * @param bool $showhidden
-     * @param bool $showquestiontext
-     * @param array $tagids
-     * @return string
-     * @throws \coding_exception
+     * @return string HTML code for the form
      */
-    public function render(string $tabname, int $page, int $perpage, string $category,
-            bool $subcategories, bool $showhidden, bool $showquestiontext, array $tagids = []) : string {
-        global $PAGE;
+    public function render($pagevars, $tabname): string {
         ob_start();
-        $contexts = $this->contexts->having_one_edit_tab_cap($tabname);
-        list($categoryid, $contextid) = explode(',', $category);
-        $catcontext = \context::instance_by_id($contextid);
-        $thiscontext = $this->get_most_specific_context();
-        // $this->display_question_bank_header();
-        $this->add_searchcondition(new tag_condition([$catcontext, $thiscontext], $tagids));
-        $this->add_searchcondition(new hidden_condition(!$showhidden));
-        $this->add_searchcondition(new category_condition($category, $subcategories,
-            $contexts, $this->baseurl, $this->course));
-        $this->display_options_form($showquestiontext, $this->baseurl->raw_out());
-        $this->display_question_list(
-            // $contexts,
-            $this->baseurl,
-            $category,
-            // $this->cm,
-            $subcategories,
-            $page,
-            $perpage,
-            // $showhidden,
-            // $showquestiontext,
-            $this->contexts->having_cap('moodle/question:add')
-        );
-        $this->display_add_selected_questions_button();
-        $PAGE->requires->js_call_amd('/core_question/edit_tags', 'init', ['#questionscontainer']);
-        return ob_get_clean();
+        $this->display($pagevars, $tabname);
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
     }
 
     /**

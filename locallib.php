@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// REDUNDANT: defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Base class for all the types of exception we throw.

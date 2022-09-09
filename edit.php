@@ -45,5 +45,6 @@ try {
     $renderer->display_question_list_view($capquiz);
 
 } catch (\coding_exception $e) {
+    debugging ( "Exception: ".$e );
     capquiz_urls::redirect_to_front_page();
-}
+} /* */
