@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -33,7 +34,9 @@ Tested for Moodle 3.10 and 3.9.
 - #193 fix foreign key user id for capquiz attempt
 
 ## [0.5.0] - 2020-09-16
+
 ### Removed
+
 - Commenting system for student feedback is removed in favour of the [QTracker plugin](https://github.com/KQMATH/moodle-local_qtracker).
 
 ## [0.4.2] - 2020-09-15
