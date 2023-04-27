@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.7.0] - 2023-04-28
+
++ Upgraded to work with Moodle 4.0
+
+Note that it is no longer testet with Moodle 3.x.
+
+## [0.6.3] - 2023-04-28
+
+### Fixed
+
+- Fixed some code style problems and CI integration
+
 ## [0.6.2]
 
 This release is made primarily because of 0.6.1 did not get new
