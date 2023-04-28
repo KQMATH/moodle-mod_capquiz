@@ -54,7 +54,7 @@ class restore_capquiz_activity_task extends restore_activity_task {
      *
      * @return restore_decode_content[]
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         return [
             new restore_decode_content('capquiz', ['intro'])
         ];
@@ -66,7 +66,7 @@ class restore_capquiz_activity_task extends restore_activity_task {
      *
      * @return restore_decode_rule[]
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         return [
             new restore_decode_rule('CAPQUIZVIEWBYID', '/mod/capquiz/view.php?id=$1', 'course_module'),
             new restore_decode_rule('CAPQUIZINDEX', '/mod/capquiz/index.php?id=$1', 'course')
@@ -81,7 +81,7 @@ class restore_capquiz_activity_task extends restore_activity_task {
      *
      * @return restore_log_rule[]
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         return [];
     }
 
@@ -98,7 +98,7 @@ class restore_capquiz_activity_task extends restore_activity_task {
      *
      * @return restore_log_rule[]
      */
-    static public function define_restore_log_rules_for_course() {
+    public static function define_restore_log_rules_for_course() {
         return [];
     }
 

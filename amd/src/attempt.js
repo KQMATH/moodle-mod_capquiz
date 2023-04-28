@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_capquiz
+ * @module     mod_capquiz
  * @author     Sebastian S. Gundersen <sebastian@sgundersen.com>
  * @copyright  2019 NTNU
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

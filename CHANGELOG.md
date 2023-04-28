@@ -1,10 +1,25 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
+
+## [0.7.0] - planned 2023-04-28
+
++ Upgraded to work with Moodle 4.0
+
+Note that it is no longer testet with Moodle 3.x.
+
+## [0.6.3] - 2023-04-28
+
+Tested for Moodle 3.11 and 3.9.
+
+### Fixed
+
+- Fixed some code style problems and CI integration
 
 ## [0.6.2]
 
@@ -33,7 +48,9 @@ Tested for Moodle 3.10 and 3.9.
 - #193 fix foreign key user id for capquiz attempt
 
 ## [0.5.0] - 2020-09-16
+
 ### Removed
+
 - Commenting system for student feedback is removed in favour of the [QTracker plugin](https://github.com/KQMATH/moodle-local_qtracker).
 
 ## [0.4.2] - 2020-09-15

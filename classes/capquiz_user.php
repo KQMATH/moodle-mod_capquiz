@@ -26,7 +26,7 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
+// REDUNDANT: defined('MOODLE_INTERNAL') || die();
 
 /**
  * capquiz_user class

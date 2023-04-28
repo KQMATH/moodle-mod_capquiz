@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+// REDUNDANT: defined('MOODLE_INTERNAL') || die();
 
 /**
 /**
@@ -291,8 +291,8 @@ function xmldb_capquiz_upgrade($oldversion) {
                 // Update user's question attempts.
                 $attempts = $DB->get_records_sql(
                     ' SELECT DISTINCT qa.id, qa.slot, qa.questionusageid ' .
-                    '   FROM {question_attempts}      AS qa ' .
-                    '   JOIN {question_attempt_steps} AS qas' .
+                    '   FROM {question_attempts}         qa ' .
+                    '   JOIN {question_attempt_steps}    qas' .
                     '     ON qas.questionattemptid = qa.id '  .
                     '    AND qas.userid = ? ' .
                     '  WHERE qa.questionusageid = ?'
