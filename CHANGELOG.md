@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
-## [0.7.0] - 2023-04-28
+## [0.7.0] - planned 2023-04-28
 
 + Upgraded to work with Moodle 4.0
 
 Note that it is no longer testet with Moodle 3.x.
 
 ## [0.6.3] - 2023-04-28
+
+Tested for Moodle 3.11 and 3.9.
 
 ### Fixed
 
