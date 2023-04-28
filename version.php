@@ -32,4 +32,4 @@ $plugin->requires = 2020061521;
 $plugin->cron = 0;
 $plugin->component = 'mod_capquiz';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '0.6.3beta';
+$plugin->release = '0.6.3';
