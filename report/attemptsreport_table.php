@@ -254,7 +254,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         $output = html_writer::tag('span', html_writer::tag('span', $data),
             array('class' => 'que'));
 
-        $url = question_preview_url($questionid)->out(false);
+        $url = \qbank_previewquestion\helper::question_preview_url($questionid)->out(false);
 
         $output = $OUTPUT->action_link($url, $output,
             new \popup_action('click', $url, 'previewquestion',
