@@ -125,20 +125,6 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
-     * Generate the display of the user's picture column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_picture($attempt) {
-        global $OUTPUT;
-        $user = new stdClass();
-        $additionalfields = explode(',', user_picture::fields());
-        $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
-        $user->id = $attempt->userid;
-        return $OUTPUT->user_picture($user);
-    }
-
-    /**
      * Generate the display of the user's full name column.
      * @param object $attempt the table row being output.
      * @return string HTML content to go inside the td.
@@ -354,15 +340,18 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
         $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(ca.id, 0)') . ' AS uniqueid,';
 
-        $extrafields = get_extra_user_fields_sql($this->context, 'u', '',
-            array('id', 'idnumber', 'firstname', 'lastname', 'picture',
-                'imagealt', 'institution', 'department', 'email'));
-        $allnames = get_all_user_name_fields(true, 'u');
+        $extrafields =
+           \core_user\fields::for_identity($this->context)->including(
+                'id', 'idnumber', 'firstname', 'lastname', 'picture',
+                'imagealt', 'institution', 'department', 'email'
+             )->get_sql('u')->selects ;
+        // $allnames = get_all_user_name_fields(true, 'u');
+        $allnames = \core_user\fields::for_name()->with_identity($this->context)->get_sql('u')->selects;
         $fields .= '
                 cu.question_usage_id AS usageid,
                 ca.id AS attempt,
                 u.id AS userid,
-                u.idnumber, ' . $allnames . ',
+                u.idnumber' . $allnames . ',
                 u.picture,
                 u.imagealt,
                 u.institution,
