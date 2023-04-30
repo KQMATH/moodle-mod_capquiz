@@ -168,11 +168,15 @@ abstract class capquiz_attempts_report extends report {
 
         // When downloading, some extra fields are always displayed (because
         // there's no space constraint) so do not include in extra-field list.
-        $extrafields = get_extra_user_fields($this->context,
-            $table->is_downloading() ? array('institution', 'department', 'email') : array());
+        $extrafields = 
+            $table->is_downloading() ?
+                  \core_user\fields::for_identity($this->context)->including(
+                       'institution', 'department', 'email')->get_required_fields() :
+                  \core_user\fields::for_identity($this->context)->get_required_fields() ;
+
         foreach ($extrafields as $field) {
             $columns[] = $field;
-            $headers[] = get_user_field_name($field);
+            $headers[] = \core_user\fields::get_display_name($field);
         }
 
         if ($table->is_downloading()) {
@@ -238,7 +242,7 @@ abstract class capquiz_attempts_report extends report {
     protected function configure_user_columns($table) {
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
-        $extrafields = get_extra_user_fields($this->context);
+        $extrafields = \core_user\fields::for_identity($this->context)->get_required_fields();
         foreach ($extrafields as $field) {
             $table->column_suppress($field);
         }

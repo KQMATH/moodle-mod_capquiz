@@ -18,6 +18,18 @@ See the [migration guide](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Migr
 
 + [CAPQuiz](https://moodle.org/plugins/pluginversions.php?plugin=mod_capquiz) in the Moodle Plugin Repository
 
+## Known Bugs
+
+1.  Users have to take care not to delete questions used by 
+    instances of CAPQuiz.  At present, there is no mechanism to
+    prevent accidental deletion.
+2.  Issues have been reported with the class list in old quizzes
+    after upgrading to the most recent versions.  New quizzes created
+    in the new version seem to work as they should.
+3.  Further testing is required, so if you use CAPQuiz, please report
+    any trouble, preferably using 
+    [githun issues](https://github.com/KQMATH/moodle-mod_capquiz/issues).
+
 ## History
 The idea of an adaptive learning system at NTNU in Ålesund (then Ålesund University College) was first conceived by Siebe van Albada.  His efforts led to a prototype, known as [MathGen](https://github.com/MathGen/oppgavegenerator), written as a standalone server in python.
 
@@ -28,7 +40,7 @@ CAPQuiz includes the work of many [contributors](https://github.com/KQMATH/moodl
 
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
-**Developers:**
+**Previos Developers:**
 * Aleksander Skrede <aleksander.l.skrede@ntnu.no>
 * Sebastian S. Gundersen <sebastian@sgundersen.com>
 * [André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
