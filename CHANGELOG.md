@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 + Upgraded to work with Moodle 4.0
 
+Tested for Moodle 4.0, 4.1, 4.0.  Moodle 3.x is no longer supported,
+due to the changes in the core quiz/question API.
+
 Note that it is no longer testet with Moodle 3.x.
 
 ## [0.6.3] - 2023-04-28
