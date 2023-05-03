@@ -22,9 +22,9 @@ use \html_writer;
 /**
  * A column type for the name followed by the start of the question text.
  *
- * This class is copied to CAPQuiz from the Core Quiz, with the addition of 
+ * This class is copied to CAPQuiz from the Core Quiz, with the addition of
  * the `quiz_question_tostring` method copied from Core Quiz' locallib.
- * 
+ *
  * @package    mod_capquiz
  * @package    mod_capquiz
  * @category   question
@@ -34,6 +34,12 @@ use \html_writer;
  */
 class question_name_text_column extends question_name_column {
 
+    /**
+     * Get the internal name for this column. Used as a CSS class name,
+     * and to store information about the current sort. Must match PARAM_ALPHA.
+     *
+     * @return string column name.
+     */
     public function get_name(): string {
         return 'questionnametext';
     }
@@ -69,7 +75,7 @@ class question_name_text_column extends question_name_column {
                     html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
                     ' ' . s($question->idnumber), 'badge badge-primary');
         }
-    
+
         // Question tags.
         if (is_array($showtags)) {
             $tags = $showtags;
@@ -81,7 +87,7 @@ class question_name_text_column extends question_name_column {
         if ($tags) {
             $result .= $OUTPUT->tag_list($tags, null, 'd-inline', 0, null, true);
         }
-    
+
         // Question text.
         if ($showquestiontext) {
             $questiontext = \question_utils::to_plain_text($question->questiontext,
@@ -91,9 +97,15 @@ class question_name_text_column extends question_name_column {
                 $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
             }
         }
-    
+
         return $result;
     }
+
+    /**
+     * Output the contents of this column.
+     * @param object $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
     protected function display_content($question, $rowclasses): void {
         echo \html_writer::start_tag('div');
         $labelfor = $this->label_for($question);
@@ -107,6 +119,12 @@ class question_name_text_column extends question_name_column {
         echo \html_writer::end_tag('div');
     }
 
+    /**
+     * Use table alias 'q' for the question table, or one of the
+     * ones from get_extra_joins. Every field requested must specify a table prefix.
+     *
+     * @return array fields required.
+     */
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
         $fields[] = 'q.questiontext';
@@ -115,6 +133,15 @@ class question_name_text_column extends question_name_column {
         return $fields;
     }
 
+    /**
+     * If this column needs extra data (e.g. tags) then load that here.
+     *
+     * The extra data should be added to the question object in the array.
+     * Probably a good idea to check that another column has not already
+     * loaded the data you want.
+     *
+     * @param \stdClass[] $questions the questions that will be displayed.
+     */
     public function load_additional_data(array $questions) {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);

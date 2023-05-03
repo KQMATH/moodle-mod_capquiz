@@ -32,8 +32,6 @@ use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question;
 use mod_capquiz\capquiz_question_attempt;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class question_attempt_renderer
  *

@@ -27,8 +27,6 @@ namespace capquizreport_attempts\privacy;
 
 use core_privacy\local\metadata\null_provider;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for capquizreport_attempts implementing null_provider.
  *

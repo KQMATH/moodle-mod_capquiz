@@ -31,8 +31,6 @@ use mod_capquiz\capquiz_matchmaking_strategy_registry;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\matchmaking_strategy_selection_form;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * class matchmaking_strategy_selection_renderer
  *

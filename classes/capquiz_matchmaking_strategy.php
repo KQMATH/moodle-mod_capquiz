@@ -25,8 +25,6 @@
 
 namespace mod_capquiz;
 
-// REDUNDANT: defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquiz_matchmaking_strategy
  *

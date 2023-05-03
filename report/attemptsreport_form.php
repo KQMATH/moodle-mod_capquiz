@@ -86,8 +86,10 @@ abstract class capquiz_attempts_report_form extends moodleform {
 
         $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
             capquiz_attempts_report::ENROLLED_WITH => get_string('reportuserswith', 'quiz'),
+            // phpcs:disable
             // capquiz_attempts_report::ENROLLED_WITHOUT => get_string('reportuserswithout', 'quiz'),
             // capquiz_attempts_report::ENROLLED_ALL     => get_string('reportuserswithorwithout', 'quiz'),
+            // phpcs:enable
             capquiz_attempts_report::ALL_WITH => get_string('reportusersall', 'quiz'),
         ));
 

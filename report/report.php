@@ -25,8 +25,6 @@
 
 namespace mod_capquiz\report;
 
-defined('MOODLE_INTERNAL') || die();
-
 use context_module;
 use mod_capquiz\capquiz;
 use stdClass;

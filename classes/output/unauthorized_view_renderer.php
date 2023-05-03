@@ -25,8 +25,6 @@
 
 namespace mod_capquiz\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class unauthorized_view_renderer
  *

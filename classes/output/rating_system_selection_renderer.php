@@ -31,8 +31,6 @@ use mod_capquiz\capquiz_rating_system_registry;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\rating_system_selection_form;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class rating_system_selection_renderer
  *

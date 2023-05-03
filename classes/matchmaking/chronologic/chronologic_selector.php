@@ -25,8 +25,6 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class chronologic_selector
  *

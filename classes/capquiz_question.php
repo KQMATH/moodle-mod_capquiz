@@ -26,8 +26,6 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquiz_question
  *
@@ -192,7 +190,7 @@ class capquiz_question {
                     ON q.id = qv.questionid
                   JOIN {question_bank_entries} qbe
                     ON qbe.id = qv.questionbankentryid
-                  JOIN {question_categories} qc 
+                  JOIN {question_categories} qc
                     ON qc.id = qbe.questioncategoryid
                   JOIN {context} ctx ON ctx.id = qc.contextid
              LEFT JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = 70

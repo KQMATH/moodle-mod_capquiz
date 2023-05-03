@@ -29,8 +29,6 @@ use mod_capquiz\capquiz_urls;
 use mod_capquiz\bank\question_bank_view;
 use \html_writer;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class question_bank_renderer
  *
@@ -82,10 +80,14 @@ class question_bank_renderer {
      * @throws \coding_exception
      */
     public function render( ) {
+        // phpcs:disable
         // $questionsperpage = optional_param('qperpage', 10, PARAM_INT);
         // $questionpage = optional_param('qpage', 0, PARAM_INT);
+        // phpcs:enable
         $questionview = $this->create_view();
+        // phpcs:disable
         // $html = "<h3>" . get_string('available_questions', 'capquiz') . "</h3>";
+        // phpcs:enable
         $qbank = $questionview->render( $this->pagevars, 'editq' );
         return html_writer::div(html_writer::div($qbank, 'bd'), 'questionbankformforpopup');
     }

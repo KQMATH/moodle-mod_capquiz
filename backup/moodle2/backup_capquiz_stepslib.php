@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// REDUNDANT: defined('MOODLE_INTERNAL') || die();
-
 /**
  * Define the complete choice structure for backup, with file and id annotations.
  *
