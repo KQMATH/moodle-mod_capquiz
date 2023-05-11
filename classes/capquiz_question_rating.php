@@ -28,8 +28,6 @@ namespace mod_capquiz;
 use dml_exception;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquiz_question_rating
  *

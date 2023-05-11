@@ -8,54 +8,42 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - php: '8.1'
+            moodle-branch: 'MOODLE_402_STABLE'
+            database: 'mariadb'
+          - php: '8.1'
+            moodle-branch: 'MOODLE_402_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_402_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_402_STABLE'
+            database: 'mariadb'
+          - php: '8.1'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
+          - php: '8.1'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
           - php: '7.4'
-            moodle-branch: 'MOODLE_310_STABLE'
+            moodle-branch: 'MOODLE_401_STABLE'
             database: 'mariadb'
-            node: '14.15.0'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'mariadb'
-            node: '14.15.0'
-          - php: '7.2'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'mariadb'
-            node: '14.15.0'
           - php: '7.4'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
-          - php: '7.2'
-            moodle-branch: 'MOODLE_310_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
+            moodle-branch: 'MOODLE_401_STABLE'
+            database: 'mariadb'
           - php: '7.4'
-            moodle-branch: 'MOODLE_39_STABLE'
+            moodle-branch: 'MOODLE_400_STABLE'
             database: 'mariadb'
-            node: '14.15.0'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_39_STABLE'
-            database: 'mariadb'
-            node: '14.15.0'
-          - php: '7.2'
-            moodle-branch: 'MOODLE_39_STABLE'
-            database: 'mariadb'
-            node: '14.15.0'
           - php: '7.4'
-            moodle-branch: 'MOODLE_39_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
-          - php: '7.3'
-            moodle-branch: 'MOODLE_39_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
-          - php: '7.2'
-            moodle-branch: 'MOODLE_39_STABLE'
-            database: 'pgsql'
-            node: '14.15.0'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'mariadb'
 
     services:
       postgres:
@@ -82,14 +70,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: plugin
-
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

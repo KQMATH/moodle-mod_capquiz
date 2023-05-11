@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// REDUNDANT: defined('MOODLE_INTERNAL') || die();
-
 /**
  * Structure step to restore one assignment activity
  *

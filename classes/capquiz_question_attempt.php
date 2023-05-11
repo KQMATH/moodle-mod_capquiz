@@ -25,8 +25,6 @@
 
 namespace mod_capquiz;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquiz_question_attempt
  *

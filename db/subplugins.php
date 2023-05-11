@@ -26,10 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// phpcs:disable
 /*
 $subplugins = array(
     'capquizreport' => 'mod/capquiz/report',
 );
 */
+// phpcs:enable
 
 $subplugins = (array) json_decode(file_get_contents(__DIR__."/subplugins.json"))->plugintypes;

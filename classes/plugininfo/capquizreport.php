@@ -31,8 +31,6 @@ use core_plugin_manager;
 use moodle_url;
 use part_of_admin_tree;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquizreport
  *
@@ -114,7 +112,7 @@ class capquizreport extends base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
         $section = $this->get_settings_section_name();

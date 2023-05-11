@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Base class for all the types of exception we throw.
  *
@@ -33,17 +31,4 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_exception extends moodle_exception {
-    /**
-     * capquiz_exception constructor.
-     * @param string $errorcode The name of the language string containing the error message.
-     *      Normally this should be in the error.php lang file.
-     * @param string $module The language file to get the error message from.
-     * @param string $link The url where the user will be prompted to continue.
-     *      If no url is provided the user will be directed to the site index page.
-     * @param object $a Extra words and phrases that might be required in the error string
-     * @param string $debuginfo optional debugging information
-     */
-    public function __construct($errorcode, $module = 'capquiz', $link = '', $a = null, $debuginfo = null) {
-        parent::__construct($errorcode, $module, $link, $a, $debuginfo);
-    }
 }

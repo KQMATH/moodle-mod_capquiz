@@ -28,8 +28,6 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz_question_list;
 use mod_capquiz\capquiz_urls;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class question_list_selection_renderer
  *

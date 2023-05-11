@@ -43,8 +43,6 @@ use \core_question\bank\search\category_condition;
 use mod_capquiz\local\capquiz_urls;
 use mod_capquiz\bank\add_action_column;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class question_bank_view
  *
@@ -58,13 +56,20 @@ class question_bank_view extends \core_question\local\bank\view {
     /**
      * URL of add to quiz.
      *
-     * @param $questionid
+     * @param int $questionid the question id
      * @return \moodle_url
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public function add_to_quiz_url($questionid) {
-        return \mod_capquiz\capquiz_urls::add_question_to_list_url( $questionid ) ;
+        return \mod_capquiz\capquiz_urls::add_question_to_list_url($questionid);
     }
-	
+
+    /**
+     * Get the list of qbank plugins with available objects for features.
+     *
+     * @return array
+     */
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
         $corequestionbankcolumns = [
@@ -129,6 +134,11 @@ class question_bank_view extends \core_question\local\bank\view {
         return $questionbankclasscolumns;
     }
 
+    /**
+     * Specify the column heading
+     *
+     * @return string Column name for the heading
+     */
     protected function heading_column(): string {
         return 'mod_capquiz\\bank\\question_name_text_column';
     }

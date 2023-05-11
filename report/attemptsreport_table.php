@@ -134,9 +134,12 @@ abstract class capquiz_attempts_report_table extends table_sql {
         if ($this->is_downloading() || empty($attempt->attempt)) {
             return $html;
         }
-        return $html; /*. html_writer::empty_tag('br') . html_writer::link(
+        return $html;
+        // phpcs:disable
+        /*. html_writer::empty_tag('br') . html_writer::link(
                 new moodle_url('/mod/capquiz/review.php', array('attempt' => $attempt->attempt)),
                 get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'))*/
+        // phpcs:enable
     }
 
     /**
@@ -230,12 +233,13 @@ abstract class capquiz_attempts_report_table extends table_sql {
         }
 
         // TODO enable this when capquiz implements a "review question attempt" page.
+        // phpcs:disable
         /*$url = new moodle_url('/mod/capquiz/reviewquestion.php', $reviewparams);
         $output = $OUTPUT->action_link($url, $output,
                 new popup_action('click', $url, 'reviewquestion',
                         array('height' => 450, 'width' => 650)),
                 array('title' => get_string('reviewresponse', 'quiz')));*/
-
+        // phpcs:enable
         return $output;
     }
 
@@ -344,8 +348,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
            \core_user\fields::for_identity($this->context)->including(
                 'id', 'idnumber', 'firstname', 'lastname', 'picture',
                 'imagealt', 'institution', 'department', 'email'
-             )->get_sql('u')->selects ;
+             )->get_sql('u')->selects;
+        // phpcs:disable
         // $allnames = get_all_user_name_fields(true, 'u');
+        // phpcs:enable
         $allnames = \core_user\fields::for_name()->with_identity($this->context)->get_sql('u')->selects;
         $fields .= '
                 cu.question_usage_id AS usageid,
@@ -387,6 +393,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 $where = "ca.id IS NOT NULL AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
+            // phpcs:disable
             /*
             case capquiz_attempts_report::ENROLLED_WITHOUT:
                 // Show only students without attempts.
@@ -401,6 +408,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
             */
+            // phpcs:enable
         }
 
         if ($this->options->onlyanswered) {
@@ -573,7 +581,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
         echo '&nbsp;&nbsp;';
 
         // TODO enable when support for attempt deletion is added {@see delete_selected_attempts}.
+        // phpcs:disable
         // $this->submit_buttons();
+        // phpcs:enable
         echo '</div>';
 
         // Close the form.

@@ -28,8 +28,6 @@ namespace mod_capquiz;
 use dml_exception;
 use stdClass;
 
-// REDUNDANT: defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class capquiz_user_rating
  *

@@ -40,8 +40,6 @@ use moodle_exception;
 use question_display_options;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem implementation for mod_capquiz.
  *

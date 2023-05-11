@@ -28,8 +28,6 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class import_renderer
  *
