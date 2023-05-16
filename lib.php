@@ -238,11 +238,20 @@ function capquiz_reset_gradebook($courseid, $type = '') {
     }
 }
 
+
+// Ugly hack to make 3.11 and 4.0 work seamlessly.
+if (!defined('FEATURE_MOD_PURPOSE')) {
+    define('FEATURE_MOD_PURPOSE', 'mod_purpose');
+}
+if (!defined('MOD_PURPOSE_ASSESSMENT')) {
+    define('MOD_PURPOSE_ASSESSMENT', 'assessment');
+}
+
 /**
  * Checks if $feature is supported
  *
  * @param string $feature
- * @return bool
+ * @return mixed
  */
 function capquiz_supports($feature) {
     switch ($feature) {
@@ -252,7 +261,10 @@ function capquiz_supports($feature) {
         case FEATURE_USES_QUESTIONS:
         case FEATURE_GRADE_HAS_GRADE:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
         default:
             return false;
     }
 }
+
