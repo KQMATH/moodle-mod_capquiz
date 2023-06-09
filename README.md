@@ -12,9 +12,10 @@ In CAPQuiz, the proficiency is measured by a rating.  Good answers increase the 
 Estimating question difficulty is known to be difficult. CAPQuiz automates this process to some extent. The question author must provide an initial estimate, but CAPQuiz improves the estimates based by comparing how the same student answers different questions. Hence the rated question sets will improve over time.
 
 ## Documentation
-Documentation is available [here](https://github.com/KQMATH/moodle-mod_capquiz/wiki), including [installation instructions](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Installation-instructions).
 
-See the [migration guide](https://github.com/KQMATH/moodle-mod_capquiz/wiki/Migration) for details on how to update to a newer version of CAPQuiz.
+Documentation is available as
+[github pages](https://kqmath.github.io/) at
+[https://kqmath.github.io/docs/capquiz/](https://kqmath.github.io/docs/capquiz/)
 
 + [CAPQuiz](https://moodle.org/plugins/pluginversions.php?plugin=mod_capquiz) in the Moodle Plugin Repository
 
