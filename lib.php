@@ -63,15 +63,60 @@ function capquiz_update_instance(stdClass $capquiz) {
  *
  * @param int $cmid Course module id for the instance to be deleted
  */
-function capquiz_delete_instance(int $cmid) {
-    $capquiz = new capquiz($cmid);
-    if ($capquiz) {
-        $user = $capquiz->user();
-        if ($user) {
-            $quba = $user->question_usage();
-            \question_engine::delete_questions_usage_by_activity($quba->get_id());
+function capquiz_delete_instance($id) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/capquiz/locallib.php');
+    if (! $capquiz = $DB->get_record('capquiz', array('id' => $id))) {
+        return false;
+    }
+    // Delete question usage from core question.
+    question_engine::delete_questions_usage_by_activities(new qubaids_for_capquiz($capquiz->id));
+    // Delete any dependent records here.
+    $records = array();
+    if($records = $DB->get_records('capquiz_question_list', array('capquiz_id' => $capquiz->id))) {
+        foreach($records as $record) {
+            $recordsquestion = $DB->get_records('capquiz_question', array('question_list_id' => $record->id));
+            foreach($recordsquestion as $recordquestion) {
+                if (! $DB->delete_records('capquiz_question_rating', array('capquiz_question_id' => $recordquestion->id))) {
+                    return false;
+                }
+            }
+            if (! $DB->delete_records('capquiz_question', array('question_list_id' => $record->id))) {
+                return false;
+            }
         }
     }
+    $records = array();
+    if($records = $DB->get_records('capquiz_user', array('capquiz_id' => $capquiz->id))) {
+        foreach($records as $record) {
+            if (! $DB->delete_records('capquiz_attempt', array('user_id' => $record->id))) {
+                return false;
+            }
+            if (! $DB->delete_records('capquiz_user_rating', array('capquiz_user_id' => $record->id))) {
+                return false;
+            }
+        }
+    }
+    if (! $DB->delete_records('capquiz', array('id' => $capquiz->id))) {
+        return false;
+    }
+    if (! $DB->delete_records('capquiz_question_list', array('capquiz_id' => $capquiz->id))) {
+        return false;
+    }
+    if (! $DB->delete_records('capquiz_user', array('capquiz_id' => $capquiz->id))) {
+        return false;
+    }
+    if (! $DB->delete_records('capquiz_question_selection', array('capquiz_id' => $capquiz->id))) {
+        return false;
+    }
+    if (! $DB->delete_records('capquiz_rating_system', array('capquiz_id' => $capquiz->id))) {
+        return false;
+    }
+    if (! $DB->delete_records('event', array('modulename' => 'capquiz', 'instance' => $capquiz->id))) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
