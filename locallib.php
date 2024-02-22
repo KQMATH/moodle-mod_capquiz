@@ -32,3 +32,20 @@
  */
 class capquiz_exception extends moodle_exception {
 }
+
+/**
+ * A {@link qubaid_condition} for finding all the question usages belonging to
+ * a particular capquiz.
+ *
+ * @author      sumaiya Javed <sumaiya.javed@catalyst.net.nz>
+ * @copyright   2023 Catalyst IT Ltd
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qubaids_for_capquiz extends qubaid_join {
+    public function __construct($capquizid) {
+        $where = 'capquiza.capquiz_id = :quizaquiz';
+        $params = array('quizaquiz' => $capquizid);
+
+        parent::__construct('{capquiz_user} capquiza', 'capquiza.question_usage_id', $where, $params);
+    }
+}
