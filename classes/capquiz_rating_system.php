@@ -26,6 +26,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 /**
  * Class capquiz_rating_system
  *
@@ -39,24 +41,19 @@ abstract class capquiz_rating_system {
     /**
      * Function to configure a rating system
      *
-     * @param \stdClass $configuration
-     * @return mixed
+     * @param stdClass $config
      */
-    abstract public function configure(\stdClass $configuration);
+    abstract public function configure(stdClass $config): void;
 
     /**
      * Function to get the rating system configuration
-     *
-     * @return mixed
      */
-    abstract public function configuration();
+    abstract public function configuration(): stdClass;
 
     /**
      * Function to get the default rating system configuration
-     *
-     * @return mixed
      */
-    abstract public function default_configuration();
+    abstract public function default_configuration(): stdClass;
 
     /**
      * Updates the users rating based on the rating system and its configuration
@@ -64,17 +61,15 @@ abstract class capquiz_rating_system {
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @param float $score
-     * @return mixed
      */
-    abstract public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score);
+    abstract public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score): void;
 
     /**
      * Updates the winning and losing questions ratings
      *
      * @param capquiz_question $winner
      * @param capquiz_question $loser
-     * @return mixed
      */
-    abstract public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser);
+    abstract public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser): void;
 
 }

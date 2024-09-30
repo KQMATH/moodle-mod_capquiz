@@ -26,6 +26,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 /**
  * Class capquiz_question
  *
@@ -37,19 +39,18 @@ namespace mod_capquiz;
  */
 class capquiz_question {
 
-    /** @var \stdClass $record */
-    private $record;
+    /** @var stdClass $record */
+    private stdClass $record;
 
     /** @var capquiz_question_rating $rating */
-    private $rating;
+    private capquiz_question_rating $rating;
 
     /**
-     * capquiz_question constructor.
-     * @param \stdClass $record
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * Constructor.
+     *
+     * @param stdClass $record
      */
-    public function __construct(\stdClass $record) {
+    public function __construct(stdClass $record) {
         global $DB;
         $this->record = $record;
         // TODO: This query should probably be done in question list.
@@ -62,7 +63,7 @@ class capquiz_question {
             $this->record->text = $this->record->name;
         }
         $rating = capquiz_question_rating::latest_question_rating_by_question($record->id);
-        if (is_null($rating)) {
+        if ($rating === null) {
             $this->rating = capquiz_question_rating::insert_question_rating_entry($this->id(), $this->rating());
         } else {
             $this->rating = $rating;
@@ -73,61 +74,45 @@ class capquiz_question {
      * Loads a specific question from the database
      *
      * @param int $questionid
-     * @return capquiz_question|null
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    public static function load(int $questionid) {
+    public static function load(int $questionid): ?capquiz_question {
         global $DB;
         $record = $DB->get_record('capquiz_question', ['id' => $questionid]);
-        if ($record === false) {
-            return null;
-        }
-        return new capquiz_question($record);
+        return empty($record) ? null : new capquiz_question($record);
     }
 
     /**
      * Returns this questions database entry
-     *
-     * @return \stdClass
      */
-    public function entry() : \stdClass {
+    public function entry(): stdClass {
         return $this->record;
     }
 
     /**
      * Returns this questions database entry id
-     *
-     * @return int
      */
-    public function id() : int {
+    public function id(): int {
         return $this->record->id;
     }
 
     /**
-     * Returns this questions question id
-     *
-     * @return int
+     * Returns this question's question bank question id
      */
-    public function question_id() : int {
+    public function question_id(): int {
         return $this->record->question_id;
     }
 
     /**
      * Returns the id of the question list this question is in
-     *
-     * @return int
      */
-    public function question_list_id() : int {
+    public function question_list_id(): int {
         return $this->record->question_list_id;
     }
 
     /**
      * Returns this questions rating
-     *
-     * @return float
      */
-    public function rating() : float {
+    public function rating(): float {
         return $this->record->rating;
     }
 
@@ -136,33 +121,28 @@ class capquiz_question {
      *
      * @return capquiz_question_rating
      */
-    public function get_capquiz_question_rating() : capquiz_question_rating {
+    public function get_capquiz_question_rating(): capquiz_question_rating {
         return $this->rating;
     }
 
     /**
      * Sets this questions rating and capquiz question rating
      *
-     * @param capquiz_question_rating $rating
+     * @param float $rating
      * @param bool $manual
-     * @throws \dml_exception
      */
-    public function set_rating($rating, bool $manual = false) {
+    public function set_rating(float $rating, bool $manual = false) {
         global $DB;
         $this->record->rating = $rating;
         $DB->update_record('capquiz_question', $this->record);
-
         $questionrating = capquiz_question_rating::create_question_rating($this, $rating, $manual);
         $this->rating = $questionrating;
-
     }
 
     /**
      * Returns this questions name
-     *
-     * @return string
      */
-    public function name() : string {
+    public function name(): string {
         return $this->record->name;
     }
 
@@ -171,7 +151,7 @@ class capquiz_question {
      *
      * @return string
      */
-    public function text() : string {
+    public function text(): string {
         return $this->record->text;
     }
 
@@ -181,7 +161,7 @@ class capquiz_question {
      * @return int
      * @throws \dml_exception
      */
-    public function course_id() : int {
+    public function course_id(): int {
         global $DB;
         $sql = 'SELECT c.id AS id
                   FROM {capquiz_question} cq

@@ -143,30 +143,40 @@ define(['jquery'], function($) {
      * @param {Object} $header The header column for which to sort the table by.
      */
     function sortTable($header) {
-        var column = $header.index();
-        var $table = $header.parent().parent();
-        var $rows = $table.find('tr:gt(0)').toArray().sort(function(rowA, rowB) {
-            var $colA = $(rowA).children('td').eq(0);
-            var $colB = $(rowB).children('td').eq(0);
+        const column = $header.index();
+        const $table = $header.parent().parent();
+        let $rows = $table.find('tr:gt(0)').toArray().sort(function(rowA, rowB) {
+            const $colA = $(rowA).children('td').eq(0);
+            const $colB = $(rowB).children('td').eq(0);
             return parseInt($colA.text()) - parseInt($colB.text());
         });
         $table.append($rows);
         $rows = $table.find('tr:gt(0)').toArray().sort(function(rowA, rowB) {
-            var $colA = $(rowA).children('td').eq(column);
-            var $colB = $(rowB).children('td').eq(column);
-            var $itemA = $colA.find('.capquiz-sortable-item');
-            var $itemB = $colB.find('.capquiz-sortable-item');
-            var valA = ($itemA.length === 0 ? $colA.html() : ($itemA.val().length === 0 ? $itemA.html() : $itemA.val()));
-            var valB = ($itemB.length === 0 ? $colB.html() : ($itemB.val().length === 0 ? $itemB.html() : $itemB.val()));
+            const $colA = $(rowA).children('td').eq(column);
+            const $colB = $(rowB).children('td').eq(column);
+            const $itemA = $colA.find('.capquiz-sortable-item');
+            const $itemB = $colB.find('.capquiz-sortable-item');
+            let valA;
+            if ($itemA.length === 0) {
+                valA = $colA.html();
+            } else {
+                valA = $itemA.val().length === 0 ? $itemA.html() : $itemA.val();
+            }
+            let valB;
+            if ($itemB.length === 0) {
+                valB = $colB.html();
+            } else {
+                valB = $itemB.val().length === 0 ? $itemB.html() : $itemB.val();
+            }
             if ($.isNumeric(valA) && $.isNumeric(valB)) {
                 return valA - valB;
             } else {
                 return valA.toString().localeCompare(valB);
             }
         });
-        var ascending = ($table.data('asc') === 'true');
+        const ascending = ($table.data('asc') === 'true');
         $table.data('asc', ascending ? 'false' : 'true');
-        var iconName = (ascending ? 'fa-arrow-up' : 'fa-arrow-down');
+        const iconName = (ascending ? 'fa-arrow-up' : 'fa-arrow-down');
         $.each($table.find('.capquiz-sortable'), function() {
             $(this).find('.fa').remove();
         });
@@ -175,7 +185,7 @@ define(['jquery'], function($) {
             $rows = $rows.reverse();
         }
         $table.append($rows);
-        var i = 1;
+        let i = 1;
         $table.find('tr:gt(0)').each(function() {
             $(this).find('td:first-child').html(i);
             i++;

@@ -25,8 +25,10 @@
 
 namespace mod_capquiz\output;
 
+use context_module;
 use mod_capquiz\capquiz_question_list;
 use mod_capquiz\capquiz_urls;
+use renderer_base;
 
 /**
  * Class question_list_selection_renderer
@@ -38,38 +40,31 @@ use mod_capquiz\capquiz_urls;
  */
 class question_list_selection_renderer {
 
-    /** @var renderer $renderer */
-    private $renderer;
-
-    /** @var \context_module $context */
-    private $context;
+    /** @var renderer_base $renderer */
+    private renderer_base $renderer;
 
     /**
-     * question_list_selection_renderer constructor.
-     * @param renderer $renderer The renderer used to render the question list selection
-     * @param \context_module $context
+     * Constructor.
+     *
+     * @param renderer_base $renderer The renderer used to render the question list selection
      */
-    public function __construct(renderer $renderer, \context_module $context) {
+    public function __construct(renderer_base $renderer) {
         $this->renderer = $renderer;
-        $this->context = $context;
     }
 
     /**
      * Renders the question list selection
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
-        $templates = capquiz_question_list::load_question_list_templates($this->context);
+    public function render(): bool|string {
+        $templates = capquiz_question_list::load_question_list_templates();
         $lists = [];
         foreach ($templates as $template) {
             $lists[] = [
                 'title' => $template->title(),
                 'description' => $template->description(),
                 'author' => $template->author()->username,
-                'created' => date("Y-m-d H:i:s", substr($template->time_created(), 0, 10)),
-                'url' => capquiz_urls::question_list_select_url($template)
+                'created' => date('Y-m-d H:i:s', substr($template->time_created(), 0, 10)),
+                'url' => capquiz_urls::question_list_select_url($template),
             ];
         }
 
@@ -77,11 +72,10 @@ class question_list_selection_renderer {
         $params = $createurl->params();
         $createurl->remove_all_params();
         $createlabel = get_string('create_question_list', 'capquiz');
-        $create = basic_renderer::render_action_button($this->renderer, $createurl, $createlabel, 'get', $params);
 
         return $this->renderer->render_from_template('capquiz/question_list_selection', [
             'lists' => $lists,
-            'create' => $create
+            'create' => basic_renderer::render_action_button($this->renderer, $createurl, $createlabel, 'get', $params),
         ]);
     }
 

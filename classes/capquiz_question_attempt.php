@@ -25,6 +25,12 @@
 
 namespace mod_capquiz;
 
+use question_bank;
+use question_engine;
+use question_state;
+use question_usage_by_activity;
+use stdClass;
+
 /**
  * Class capquiz_question_attempt
  *
@@ -35,18 +41,19 @@ namespace mod_capquiz;
  */
 class capquiz_question_attempt {
 
-    /** @var \stdClass $record */
-    private $record;
+    /** @var stdClass $record */
+    private stdClass $record;
 
-    /** @var \question_usage_by_activity $quba */
-    private $quba;
+    /** @var question_usage_by_activity $quba */
+    private question_usage_by_activity $quba;
 
     /**
-     * capquiz_question_attempt constructor.
-     * @param \question_usage_by_activity $quba
-     * @param \stdClass $record
+     * Constructor.
+     *
+     * @param question_usage_by_activity $quba
+     * @param stdClass $record
      */
-    public function __construct(\question_usage_by_activity $quba, \stdClass $record) {
+    public function __construct(question_usage_by_activity $quba, stdClass $record) {
         $this->record = $record;
         $this->quba = $quba;
     }
@@ -56,19 +63,18 @@ class capquiz_question_attempt {
      *
      * @param capquiz_user $user
      * @param capquiz_question $question
-     * @return capquiz_question_attempt|null
      */
-    public static function create_attempt(capquiz_user $user, capquiz_question $question) {
+    public static function create_attempt(capquiz_user $user, capquiz_question $question): ?capquiz_question_attempt {
         $quba = $user->question_usage();
         $questions = question_load_questions([$question->question_id()]);
         $targetquestion = reset($questions);
         if (!$targetquestion) {
             return null;
         }
-        $questiondefinition = \question_bank::make_question($targetquestion);
+        $questiondefinition = question_bank::make_question($targetquestion);
         $slot = $quba->add_question($questiondefinition);
         $quba->start_question($slot);
-        \question_engine::save_questions_usage_by_activity($quba);
+        question_engine::save_questions_usage_by_activity($quba);
         return self::insert_attempt_entry($user, $question, $slot);
     }
 
@@ -76,19 +82,14 @@ class capquiz_question_attempt {
      * Returns the users currently active attempt
      *
      * @param capquiz_user $user
-     * @return capquiz_question_attempt|null
      */
-    public static function active_attempt(capquiz_user $user) {
+    public static function active_attempt(capquiz_user $user): ?capquiz_question_attempt {
         global $DB;
-        try {
-            $entry = $DB->get_record('capquiz_attempt', [
-                'user_id' => $user->id(),
-                'reviewed' => false
-            ], '*', MUST_EXIST);
-            return new capquiz_question_attempt($user->question_usage(), $entry);
-        } catch (\dml_exception $e) {
+        $entry = $DB->get_record('capquiz_attempt', ['user_id' => $user->id(), 'reviewed' => false]);
+        if (empty($entry)) {
             return null;
         }
+        return new capquiz_question_attempt($user->question_usage(), $entry);
     }
 
     /**
@@ -96,40 +97,30 @@ class capquiz_question_attempt {
      *
      * @param capquiz_user $user
      * @param int $attemptid
-     * @return capquiz_question_attempt|null
      */
-    public static function load_attempt(capquiz_user $user, int $attemptid) {
+    public static function load_attempt(capquiz_user $user, int $attemptid): ?capquiz_question_attempt {
         global $DB;
-        try {
-            $entry = $DB->get_record('capquiz_attempt', [
-                'id' => $attemptid,
-                'user_id' => $user->id()
-            ], '*', MUST_EXIST);
-            return new capquiz_question_attempt($user->question_usage(), $entry);
-        } catch (\dml_exception $e) {
+        $entry = $DB->get_record('capquiz_attempt', ['id' => $attemptid, 'user_id' => $user->id()]);
+        if (empty($entry)) {
             return null;
         }
+        return new capquiz_question_attempt($user->question_usage(), $entry);
     }
 
     /**
      * Returns the users previous attempt
      *
      * @param capquiz_user $user
-     * @return capquiz_question_attempt|null
      */
-    public static function previous_attempt(capquiz_user $user) {
+    public static function previous_attempt(capquiz_user $user): ?capquiz_question_attempt {
         global $DB;
-        try {
-            $sql = 'SELECT *
-                      FROM {capquiz_attempt}
-                     WHERE user_id = :userid
-                  ORDER BY time_reviewed DESC
-                     LIMIT 1';
-            $attempt = $DB->get_record_sql($sql, ['userid' => $user->id()], MUST_EXIST);
-            return new capquiz_question_attempt($user->question_usage(), $attempt);
-        } catch (\dml_exception $e) {
-            return null;
-        }
+        $sql = 'SELECT *
+                  FROM {capquiz_attempt}
+                 WHERE user_id = :userid
+              ORDER BY time_reviewed DESC
+                 LIMIT 1';
+        $attempt = $DB->get_record_sql($sql, ['userid' => $user->id()], MUST_EXIST);
+        return new capquiz_question_attempt($user->question_usage(), $attempt);
     }
 
     /**
@@ -137,64 +128,51 @@ class capquiz_question_attempt {
      *
      * @param capquiz_user $user
      * @return capquiz_question_attempt[]
-     * @throws \dml_exception
      */
-    public static function inactive_attempts(capquiz_user $user) : array {
+    public static function inactive_attempts(capquiz_user $user): array {
         global $DB;
-        $entries = $DB->get_records('capquiz_attempt', [
+        $records = $DB->get_records('capquiz_attempt', [
             'user_id' => $user->id(),
             'answered' => true,
-            'reviewed' => true
+            'reviewed' => true,
         ]);
-        $records = [];
-        foreach ($entries as $entry) {
-            array_push($records, new capquiz_question_attempt($user->question_usage(), $entry));
-        }
-        return $records;
+        return array_map(function (stdClass $record) use ($user) {
+            return new capquiz_question_attempt($user->question_usage(), $record);
+        }, array_values($records));
     }
 
     /**
      * Returns the attempts id
-     *
-     * @return int
      */
-    public function id() : int {
+    public function id(): int {
         return $this->record->id;
     }
 
     /**
      * Returns the id of the question
-     *
-     * @return int
      */
-    public function question_id() : int {
+    public function question_id(): int {
         return $this->record->question_id;
     }
 
     /**
      * Returns the slot of the question
-     *
-     * @return int
      */
-    public function question_slot() : int {
+    public function question_slot(): int {
         return $this->record->slot;
     }
 
     /**
      * Returns true if the attempt has an answer
-     *
-     * @return bool
      */
-    public function is_answered() : bool {
+    public function is_answered(): bool {
         return $this->record->answered;
     }
 
     /**
      * Returns true if the answer is correct
-     *
-     * @return bool
      */
-    public function is_correctly_answered() : bool {
+    public function is_correctly_answered(): bool {
         if (!$this->is_answered()) {
             return false;
         }
@@ -204,39 +182,30 @@ class capquiz_question_attempt {
 
     /**
      * Returns the state of the question
-     *
-     * @return \question_state
      */
-    public function get_state() : \question_state {
+    public function get_state(): question_state {
         $moodleattempt = $this->quba->get_question_attempt($this->question_slot());
         return $moodleattempt->get_state();
     }
 
     /**
      * Returns true if the attempt is reviewed
-     *
-     * @return bool
      */
-    public function is_reviewed() : bool {
+    public function is_reviewed(): bool {
         return $this->record->reviewed;
     }
 
     /**
      * Returns true if the attempt is not reviewed
-     *
-     * @return bool
      */
-    public function is_pending() : bool {
+    public function is_pending(): bool {
         return !$this->is_reviewed();
     }
 
     /**
      * Checks if the question is valid
-     *
-     * @return bool
-     * @throws \dml_exception
      */
-    public function is_question_valid() : bool {
+    public function is_question_valid(): bool {
         global $DB;
         $sql = 'SELECT cq.id
                   FROM {capquiz_attempt} ca
@@ -249,36 +218,30 @@ class capquiz_question_attempt {
 
     /**
      * Deletes attempt from database
-     *
-     * @throws \dml_exception
      */
-    public function delete() {
+    public function delete(): void {
         global $DB;
-        $DB->execute('DELETE FROM {capquiz_attempt} WHERE id = :id', ['id' => $this->id()]);
+        $DB->delete_records('capquiz_attempt', ['id' => $this->id()]);
     }
 
     /**
      * Marks attempt as answered
-     *
-     * @throws \dml_exception
      */
-    public function mark_as_answered() {
+    public function mark_as_answered(): void {
         global $DB;
         $submitteddata = $this->quba->extract_responses($this->question_slot());
         $this->quba->process_action($this->question_slot(), $submitteddata);
         $this->record->answered = true;
         $this->record->time_answered = time();
         $this->quba->finish_question($this->question_slot(), time());
-        \question_engine::save_questions_usage_by_activity($this->quba);
+        question_engine::save_questions_usage_by_activity($this->quba);
         $DB->update_record('capquiz_attempt', $this->record);
     }
 
     /**
      * Marks attempt as viewed
-     *
-     * @throws \dml_exception
      */
-    public function mark_as_reviewed() {
+    public function mark_as_reviewed(): void {
         global $DB;
         $this->record->reviewed = true;
         $this->record->time_reviewed = time();
@@ -289,15 +252,14 @@ class capquiz_question_attempt {
      * Sets current question rating
      *
      * @param capquiz_question_rating $rating
-     * @param false $previous
-     * @throws \dml_exception
+     * @param bool $previous
      */
-    public function set_question_rating(capquiz_question_rating $rating, $previous = false) {
+    public function set_question_rating(capquiz_question_rating $rating, bool $previous = false): void {
         global $DB;
-        if (!$previous) {
-            $this->record->question_rating_id = $rating->id();
-        } else {
+        if ($previous) {
             $this->record->question_prev_rating_id = $rating->id();
+        } else {
+            $this->record->question_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
     }
@@ -306,15 +268,14 @@ class capquiz_question_attempt {
      * Sets rating for the previous rating
      *
      * @param capquiz_question_rating $rating
-     * @param false $previous
-     * @throws \dml_exception
+     * @param bool $previous
      */
-    public function set_previous_question_rating(capquiz_question_rating $rating, $previous = false) {
+    public function set_previous_question_rating(capquiz_question_rating $rating, bool $previous = false): void {
         global $DB;
-        if (!$previous) {
-            $this->record->prev_question_rating_id = $rating->id();
-        } else {
+        if ($previous) {
             $this->record->prev_question_prev_rating_id = $rating->id();
+        } else {
+            $this->record->prev_question_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
     }
@@ -323,15 +284,14 @@ class capquiz_question_attempt {
      * Sets the user rating of the attempt
      *
      * @param capquiz_user_rating $rating
-     * @param false $previous
-     * @throws \dml_exception
+     * @param bool $previous
      */
-    public function set_user_rating(capquiz_user_rating $rating, $previous = false) {
+    public function set_user_rating(capquiz_user_rating $rating, bool $previous = false): void {
         global $DB;
-        if (!$previous) {
-            $this->record->user_rating_id = $rating->id();
-        } else {
+        if ($previous) {
             $this->record->user_prev_rating_id = $rating->id();
+        } else {
+            $this->record->user_rating_id = $rating->id();
         }
         $DB->update_record('capquiz_attempt', $this->record);
     }
@@ -342,20 +302,16 @@ class capquiz_question_attempt {
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @param int $slot
-     * @return capquiz_question_attempt|null
      */
-    private static function insert_attempt_entry(capquiz_user $user, capquiz_question $question, int $slot) {
+    private static function insert_attempt_entry(capquiz_user $user, capquiz_question $question,
+                                                 int $slot): ?capquiz_question_attempt {
         global $DB;
-        $record = new \stdClass();
+        $record = new stdClass();
         $record->slot = $slot;
         $record->user_id = $user->id();
         $record->question_id = $question->id();
-        try {
-            $DB->insert_record('capquiz_attempt', $record);
-            return self::active_attempt($user);
-        } catch (\dml_exception $e) {
-            return null;
-        }
+        $DB->insert_record('capquiz_attempt', $record);
+        return self::active_attempt($user);
     }
 
 }

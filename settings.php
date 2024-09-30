@@ -27,20 +27,23 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 
 $modcapquizfolder = new admin_category('modcapquizfolder',
-                           new lang_string('pluginname', 'capquiz'),
-                           $module->is_enabled() === false);
+    new lang_string('pluginname', 'capquiz'), $module->is_enabled() === false);
+
 $ADMIN->add('modsettings', $modcapquizfolder);
 
-$settings = new admin_settingpage($section, get_string('settings', 'capquiz'), 'moodle/site:config', !$module->is_enabled());
+$settings = new admin_settingpage($section,
+    get_string('settings', 'capquiz'), 'moodle/site:config', !$module->is_enabled());
+
 $ADMIN->add('modcapquizfolder', $settings);
+
 // Tell core we already added the settings structure.
 $settings = null;
 
 // Folder 'capquiz report'.
 $ADMIN->add('modcapquizfolder', new admin_category('capquizreportplugins',
     new lang_string('reportplugin', 'capquiz'), !$module->is_enabled()));
-$ADMIN->add('capquizreportplugins', new capquiz_admin_page_manage_capquiz_plugins('capquizreport'));
 
+$ADMIN->add('capquizreportplugins', new capquiz_admin_page_manage_capquiz_plugins('capquizreport'));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('capquizreport') as $plugin) {
     $plugin->load_settings($ADMIN, 'capquizreportplugins', $hassiteconfig);

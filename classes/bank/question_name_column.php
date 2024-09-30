@@ -16,7 +16,7 @@
 
 namespace mod_capquiz\bank;
 
-use \html_writer;
+use stdClass;
 
 /**
  * A column type for the name of the question name.
@@ -59,10 +59,10 @@ class question_name_column extends \core_question\local\bank\column_base {
     /**
      * Lable for this column.
      *
-     * @param object $question the row from the $question table, augmented with extra information.
+     * @param stdClass $question the row from the $question table, augmented with extra information.
      * @return string column label.
      */
-    protected function label_for($question): string {
+    protected function label_for(stdClass $question): string {
         if (is_null($this->checkboxespresent)) {
             $this->checkboxespresent = $this->qbank->has_column('core_question\local\bank\checkbox_column');
         }
@@ -75,6 +75,7 @@ class question_name_column extends \core_question\local\bank\column_base {
 
     /**
      * Output the contents of this column.
+     *
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */

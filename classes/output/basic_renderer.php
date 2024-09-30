@@ -26,6 +26,8 @@
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz_urls;
+use moodle_url;
+use renderer_base;
 
 /**
  * Class basic_renderer
@@ -39,48 +41,39 @@ class basic_renderer {
     /**
      * Renders the home button
      *
-     * @param renderer $renderer
-     * @return string
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     * @param renderer_base $renderer
      */
-    public static function render_home_button(renderer $renderer) {
-        return self::render_action_button($renderer, capquiz_urls::redirect(capquiz_urls::view_url()),
-            get_string('home', 'capquiz'));
+    public static function render_home_button(renderer_base $renderer): string {
+        $url = capquiz_urls::redirect(capquiz_urls::view_url());
+        return self::render_action_button($renderer, $url, get_string('home', 'capquiz'));
     }
 
     /**
      * Renders a button
      *
-     * @param renderer $renderer
-     * @param \moodle_url $url
+     * @param renderer_base $renderer
+     * @param moodle_url $url
      * @param string $label
      * @param string $httpmethod The HTTP method to use for the form
      * @param string[] $params The keys are used as names
      * @param string $id
-     * @return string
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    public static function render_action_button(renderer $renderer, \moodle_url $url,
-            string $label, string $httpmethod = 'post', array $params = [], string $id = '') {
+    public static function render_action_button(renderer_base $renderer, moodle_url $url, string $label,
+                                                string $httpmethod = 'post', array $params = [], string $id = ''): string {
         $paramobjects = [];
         foreach ($params as $name => $value) {
             $paramobjects = [
                 'name' => $name,
-                'value' => $value
+                'value' => $value,
             ];
         }
-        $html = $renderer->render_from_template('capquiz/button', [
-            'button' => [
-                'primary' => true,
-                'method' => $httpmethod,
-                'url' => $url->out(false),
-                'label' => $label,
-                'params' => $paramobjects,
-                'id' => $id
-            ]
+        return $renderer->render_from_template('core/single_button', [
+            'type' => 'primary',
+            'method' => $httpmethod,
+            'url' => $url->out(false),
+            'label' => $label,
+            'params' => $paramobjects,
+            'id' => $id,
         ]);
-        return $html;
     }
 }

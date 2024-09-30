@@ -33,16 +33,14 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_action_performer.php'
 $cmid = capquiz_urls::require_course_module_id_param();
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
+
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
 $action = required_param('action', PARAM_TEXT);
 
-$cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);
-if ($capquiz) {
-    capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
-    capquiz_action_performer::perform($action, $capquiz);
-}
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlasync);
+capquiz_action_performer::perform($action, $capquiz);
 
 capquiz_urls::redirect_to_dashboard();

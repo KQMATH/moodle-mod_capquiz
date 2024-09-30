@@ -45,20 +45,16 @@ class capquizreport_questions_settings_form extends capquiz_attempts_report_form
     /**
      * Defines the form
      */
-    protected function definition() {
+    protected function definition(): void {
         $mform = $this->_form;
 
         $this->standard_attempt_fields($mform);
         $this->other_attempt_fields($mform);
-
-        $mform->addElement('header', 'preferencesuser',
-            get_string('reportdisplayoptions', 'quiz'));
+        $mform->addElement('header', 'preferencesuser', get_string('reportdisplayoptions', 'quiz'));
 
         $this->standard_preference_fields($mform);
         $this->other_preference_fields($mform);
-
-        $mform->addElement('submit', 'submitbutton',
-            get_string('showreport', 'quiz'));
+        $mform->addElement('submit', 'submitbutton', get_string('showreport', 'quiz'));
     }
 
     /**
@@ -66,7 +62,7 @@ class capquizreport_questions_settings_form extends capquiz_attempts_report_form
      *
      * @param MoodleQuickForm $mform the form to add attempt fields to
      */
-    protected function standard_attempt_fields(MoodleQuickForm $mform) {
+    protected function standard_attempt_fields(MoodleQuickForm $mform): void {
         $mform->addElement('hidden', 'attempts', capquiz_attempts_report::ALL_WITH);
         $mform->setType('attempts', PARAM_ALPHAEXT);
 
@@ -79,10 +75,9 @@ class capquizreport_questions_settings_form extends capquiz_attempts_report_form
      *
      * @param MoodleQuickForm $mform the form to add preference fields to
      */
-    protected function other_preference_fields(MoodleQuickForm $mform) {
-        $mform->addGroup(array(
-            $mform->createElement('advcheckbox', 'qtext', '',
-                get_string('questiontext', 'quiz_responses')),
-        ), 'coloptions', get_string('showthe', 'quiz_responses'), array(' '), false);
+    protected function other_preference_fields(MoodleQuickForm $mform): void {
+        $mform->addGroup([
+            $mform->createElement('advcheckbox', 'qtext', '', get_string('questiontext', 'quiz_responses')),
+        ], 'coloptions', get_string('showthe', 'quiz_responses'), [' '], false);
     }
 }

@@ -44,13 +44,14 @@ use stdClass;
  */
 class report {
     /**
-     * displays the full report
-     * @param capquiz $capquiz capquiz object
-     * @param stdClass $cm - course_module object
-     * @param stdClass $course - course object
-     * @param string $download - type of download being requested
+     * Displays the full report.
+     *
+     * @param capquiz $capquiz
+     * @param stdClass $cm
+     * @param stdClass $course
+     * @param string $download type of download being requested
      */
-    public function display($capquiz, $cm, $course, $download) {
+    public function display(capquiz $capquiz, stdClass $cm, stdClass $course, string $download): bool {
         // This function renders the html for the report.
         return true;
     }
@@ -58,29 +59,27 @@ class report {
     /**
      * Allows the plugin to control who can see this plugin.
      *
-     * @param context_module $contextmodule Course mocule context class
-     * @return boolean
+     * @param context_module $contextmodule
      */
-    public function canview($contextmodule) {
+    public function canview(context_module $contextmodule): bool {
         return true;
     }
 
     /**
      * Initialise some parts of $PAGE and start output.
      *
-     * @param object $cm the course_module information.
-     * @param object $course the course settings.
-     * @param object $capquiz the capquiz settings.
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
+     * @param capquiz $capquiz the capquiz settings.
      * @param string $reportmode the report name.
      */
-    public function print_header_and_tabs($cm, $course, $capquiz, $reportmode = 'attempts') {
+    public function print_header_and_tabs(stdClass $cm, stdClass $course, capquiz $capquiz, string $reportmode = 'attempts'): void {
         global $PAGE, $OUTPUT;
-        // Print the page header.
         $PAGE->set_title($capquiz->name());
         $PAGE->set_heading($course->fullname);
         $context = context_module::instance($cm->id);
         echo $OUTPUT->heading(format_string(
             get_string('pluginname', 'capquizreport_' . $reportmode) . ' ' . get_string('report', 'capquiz'),
-            true, array('context' => $context)));
+            true, ['context' => $context]));
     }
 }

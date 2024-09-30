@@ -42,24 +42,21 @@ require_once($CFG->dirroot . '/mod/capquiz/locallib.php');
 class capquiz_report_factory {
 
     /**
-     * Create an capquiz report of a given type and return it.
+     * Create a capquiz report of a given type and return it.
      *
      * @param string $type the required type.
-     * @return capquiz_attempts_report the requested capquiz report.
-     * @throws capquiz_exception
      */
-    public static function make($type) {
+    public static function make(string $type): capquiz_attempts_report {
         $class = self::class_for_type($type);
-
         return new $class();
     }
 
     /**
-     * The class name corresponding to an report type.
+     * The class name corresponding to a report type.
+     *
      * @param string $type report type name.
-     * @return string corresponding class name.
      */
-    protected static function class_for_type($type) {
+    protected static function class_for_type(string $type): string {
         global $CFG;
         $typelc = strtolower($type);
         $file = $CFG->dirroot . '/mod/capquiz/report/' . $type . '/report.php';

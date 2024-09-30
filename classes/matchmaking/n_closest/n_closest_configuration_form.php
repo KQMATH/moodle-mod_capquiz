@@ -25,7 +25,8 @@
 
 namespace mod_capquiz;
 
-use mod_capquiz\capquiz;
+use moodle_url;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,25 +42,24 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class n_closest_configuration_form extends \moodleform {
 
-    /** @var \stdClass $configuration */
-    private $configuration;
+    /** @var stdClass $configuration */
+    private stdClass $configuration;
 
     /**
-     * n_closest_configuration_form constructor.
-     * @param \stdClass $configuration
-     * @param \moodle_url $url
+     * Constructor.
+     *
+     * @param stdClass $configuration
+     * @param moodle_url $url
      */
-    public function __construct(\stdClass $configuration, \moodle_url $url) {
+    public function __construct(stdClass $configuration, moodle_url $url) {
         $this->configuration = $configuration;
         parent::__construct($url);
     }
 
     /**
      * Defines form
-     *
-     * @throws \coding_exception
      */
-    public function definition() {
+    public function definition(): void {
         $form = $this->_form;
 
         $form->addElement('text', 'number_of_questions_to_select', get_string('number_of_questions_to_select', 'capquiz'));
@@ -89,14 +89,12 @@ class n_closest_configuration_form extends \moodleform {
     /**
      * Validate the data from the form.
      *
-     *
      * @param array $data array of ("fieldname"=>value) of submitted data
      * @param array $files array of uploaded files "element_name"=>tmp_file_path
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
-     * @throws \coding_exception
      */
-    public function validations($data, $files) {
+    public function validations($data, $files): array {
         $errors = [];
         if (empty($data['user_win_probability'])) {
             $errors['user_win_probability'] = get_string('user_win_probability_required', 'capquiz');

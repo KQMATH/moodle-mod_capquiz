@@ -28,6 +28,7 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
+use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,27 +45,26 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class instructor_dashboard_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var renderer $renderer */
-    private $renderer;
+    /** @var renderer_base $renderer */
+    private renderer_base $renderer;
 
     /**
-     * instructor_dashboard_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
-     * @param renderer $renderer
+     * @param renderer_base $renderer
      */
-    public function __construct(capquiz $capquiz, renderer $renderer) {
+    public function __construct(capquiz $capquiz, renderer_base $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
 
     /**
      * Render instructor dashboard
-     *
-     * @return string
      */
-    public function render() {
+    public function render(): string {
         $html = $this->render_summary();
         $html .= $this->render_publish();
         $html .= $this->render_template();
@@ -73,37 +73,24 @@ class instructor_dashboard_renderer {
 
     /**
      * Render the instructor dashboard summary
-     *
-     * @return bool|string
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
-    private function render_summary() {
+    private function render_summary(): bool|string {
         $qlist = $this->capquiz->question_list();
         if (!$qlist) {
             return 'question list error';
         }
-        $strpublished = get_string('published', 'capquiz');
-        $strnotpublished = get_string('not_published', 'capquiz');
-        $strnoqlistassigned = get_string('no_question_list_assigned', 'capquiz');
-        $strnoquestions = get_string('no_questions', 'capquiz');
         return $this->renderer->render_from_template('capquiz/instructor_dashboard_summary', [
-            'published_status' => $this->capquiz->is_published() ? $strpublished : $strnotpublished,
-            'question_list_title' => $qlist ? $qlist->title() : $strnoqlistassigned,
-            'question_count' => $qlist ? $qlist->question_count() : $strnoquestions,
-            'enrolled_student_count' => capquiz_user::user_count($this->capquiz->id())
+            'published_status' => get_string($this->capquiz->is_published() ? 'published' : 'not_published', 'capquiz'),
+            'question_list_title' => $qlist->title(),
+            'question_count' => $qlist->question_count(),
+            'enrolled_student_count' => capquiz_user::user_count($this->capquiz->id()),
         ]);
     }
 
     /**
      * Renders publish button
-     *
-     * @return bool|string
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    private function render_publish() {
+    private function render_publish(): bool|string {
         $published = $this->capquiz->is_published();
         $canpublish = $this->capquiz->can_publish();
         $qlist = $this->capquiz->question_list();
@@ -120,18 +107,14 @@ class instructor_dashboard_renderer {
         }
         return $this->renderer->render_from_template('capquiz/instructor_dashboard_publish', [
             'publish' => $this->publish_button(),
-            'message' => $message ? $message : false
+            'message' => $message ?: false,
         ]);
     }
 
     /**
      * Renders template
-     *
-     * @return bool|string
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    private function render_template() {
+    private function render_template(): bool|string {
         $qlist = $this->capquiz->question_list();
         if (!$qlist) {
             return 'question list error';
@@ -142,39 +125,33 @@ class instructor_dashboard_renderer {
         }
         return $this->renderer->render_from_template('capquiz/instructor_dashboard_template', [
             'create_template' => $this->create_template_button(),
-            'message' => $message ? $message : false
+            'message' => $message ?: false,
         ]);
     }
 
     /**
      * Creates publish button
-     *
-     * @return array
-     * @throws \coding_exception
      */
-    private function publish_button() {
+    private function publish_button(): array {
         return [
-            'primary' => true,
+            'type' => 'primary',
             'method' => 'post',
             'url' => capquiz_urls::question_list_publish_url($this->capquiz->question_list())->out(false),
             'label' => get_string('publish', 'capquiz'),
-            'disabled' => !$this->capquiz->can_publish() ? true : false
+            'disabled' => !$this->capquiz->can_publish(),
         ];
     }
 
     /**
      * Creates create template button
-     *
-     * @return array
-     * @throws \coding_exception
      */
-    private function create_template_button() {
+    private function create_template_button(): array {
         return [
-            'primary' => true,
+            'type' => 'primary',
             'method' => 'post',
             'url' => capquiz_urls::question_list_create_template_url($this->capquiz->question_list())->out(false),
             'label' => get_string('create_template', 'capquiz'),
-            'disabled' => !$this->capquiz->question_list()->has_questions() ? true : false
+            'disabled' => !$this->capquiz->question_list()->has_questions(),
         ];
     }
 }

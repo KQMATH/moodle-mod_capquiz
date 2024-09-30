@@ -26,6 +26,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -48,9 +50,8 @@ class capquiz_action_performer {
      *
      * @param string $action The action to perform
      * @param capquiz $capquiz The capquiz on which the action will be performed
-     * @throws \Exception
      */
-    public static function perform(string $action, capquiz $capquiz) {
+    public static function perform(string $action, capquiz $capquiz): void {
         switch ($action) {
             case 'redirect':
                 self::redirect();
@@ -93,11 +94,8 @@ class capquiz_action_performer {
 
     /**
      * Redirects the user to another page
-     *
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    public static function redirect() {
+    public static function redirect(): void {
         $url = optional_param('target-url', null, PARAM_TEXT);
         if ($url) {
             capquiz_urls::redirect_to_url(new \moodle_url($url));
@@ -108,12 +106,10 @@ class capquiz_action_performer {
      * Assigns a question list to the capquiz
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    public static function assign_question_list(capquiz $capquiz) {
+    public static function assign_question_list(capquiz $capquiz): void {
         $qlistid = optional_param('question-list-id', 0, PARAM_INT);
-        $qlist = capquiz_question_list::load_any($qlistid, $capquiz->context());
+        $qlist = capquiz_question_list::load_any($qlistid);
         if ($qlist) {
             $capquiz->validate_matchmaking_and_rating_systems();
             $qlist->create_instance_copy($capquiz);
@@ -124,9 +120,8 @@ class capquiz_action_performer {
      * Adds questions from the capquiz' question to the capquiz
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
      */
-    public static function add_question_to_list(capquiz $capquiz) {
+    public static function add_question_to_list(capquiz $capquiz): void {
         $qlist = $capquiz->question_list();
         $questionids = required_param('question-id', PARAM_TEXT);
         $questionids = explode(',', $questionids);
@@ -140,9 +135,8 @@ class capquiz_action_performer {
      * Removes a question
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
      */
-    public static function remove_question_from_list(capquiz $capquiz) {
+    public static function remove_question_from_list(capquiz $capquiz): void {
         $questionid = optional_param('question-id', 0, PARAM_INT);
         if ($questionid && $capquiz->has_question_list()) {
             self::remove_capquiz_question($questionid, $capquiz->question_list()->id());
@@ -154,9 +148,8 @@ class capquiz_action_performer {
      * Publishes the capquiz
      *
      * @param capquiz $capquiz
-     * @throws \dml_exception
      */
-    public static function publish_capquiz(capquiz $capquiz) {
+    public static function publish_capquiz(capquiz $capquiz): void {
         $capquiz->publish();
     }
 
@@ -164,9 +157,8 @@ class capquiz_action_performer {
      * Sets a new question rating on a question
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
      */
-    public static function set_question_rating(capquiz $capquiz) {
+    public static function set_question_rating(capquiz $capquiz): void {
         $questionid = required_param('question-id', PARAM_INT);
         $question = $capquiz->question_list()->question($questionid);
         if (!$question) {
@@ -183,10 +175,8 @@ class capquiz_action_performer {
      * Sets a new default question rating
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    public static function set_default_question_rating(capquiz $capquiz) {
+    public static function set_default_question_rating(capquiz $capquiz): void {
         $rating = optional_param('rating', null, PARAM_FLOAT);
         if ($rating !== null) {
             $capquiz->question_list()->set_default_question_rating($rating);
@@ -199,9 +189,8 @@ class capquiz_action_performer {
      *
      * @param capquiz $capquiz
      * @return capquiz_question_list
-     * @throws \Exception
      */
-    public static function create_question_list_template(capquiz $capquiz) {
+    public static function create_question_list_template(capquiz $capquiz): capquiz_question_list {
         $qlist = $capquiz->question_list();
         if (!$qlist) {
             throw new \Exception('Failed to find question list for this CAPQuiz.');
@@ -221,14 +210,13 @@ class capquiz_action_performer {
      * @param int $questionid
      * @param capquiz_question_list $list
      * @param float $rating
-     * @throws \dml_exception
      */
-    private static function create_capquiz_question(int $questionid, capquiz_question_list $list, float $rating) {
+    private static function create_capquiz_question(int $questionid, capquiz_question_list $list, float $rating): void {
         global $DB;
         if ($questionid === 0) {
             return;
         }
-        $ratedquestion = new \stdClass();
+        $ratedquestion = new stdClass();
         $ratedquestion->question_list_id = $list->id();
         $ratedquestion->question_id = $questionid;
         $ratedquestion->rating = $rating;
@@ -241,9 +229,8 @@ class capquiz_action_performer {
      *
      * @param int $questionid
      * @param int $qlistid
-     * @throws \dml_exception
      */
-    private static function remove_capquiz_question(int $questionid, int $qlistid) {
+    private static function remove_capquiz_question(int $questionid, int $qlistid): void {
         global $DB;
         $DB->delete_records('capquiz_question', ['id' => $questionid, 'question_list_id' => $qlistid]);
     }
@@ -252,26 +239,21 @@ class capquiz_action_performer {
      * Merges the capquiz' question list to its current context
      *
      * @param capquiz $capquiz
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    private static function merge_question_list(capquiz $capquiz) {
+    private static function merge_question_list(capquiz $capquiz): void {
         global $DB;
         $srcqlistid = required_param('qlistid', PARAM_INT);
         $srcqlistrecord = $DB->get_record('capquiz_question_list', ['id' => $srcqlistid]);
         if ($srcqlistrecord) {
-            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord, $capquiz->context()));
+            $capquiz->question_list()->merge(new capquiz_question_list($srcqlistrecord));
         }
         capquiz_urls::redirect_to_url(capquiz_urls::view_question_list_url());
     }
 
     /**
      * Deletes the question list and its questions from the database
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
-    private static function delete_question_list() {
+    private static function delete_question_list(): void {
         global $DB;
         $srcqlistid = required_param('qlistid', PARAM_INT);
         $DB->delete_records('capquiz_question', ['question_list_id' => $srcqlistid]);

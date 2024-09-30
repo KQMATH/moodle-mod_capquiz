@@ -29,6 +29,8 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_user;
+use moodle_page;
+use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -46,19 +48,21 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class classlist_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var renderer $renderer */
-    private $renderer;
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var renderer_base $renderer */
+    private renderer_base $renderer;
+
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
-     * classlist_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz The capquiz whose classlist should be rendered
-     * @param renderer $renderer The renderer used to render the classlist
+     * @param renderer_base $renderer The renderer used to render the classlist
      */
-    public function __construct(capquiz $capquiz, renderer $renderer) {
+    public function __construct(capquiz $capquiz, renderer_base $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
         $this->page = $capquiz->get_page();
@@ -66,10 +70,8 @@ class classlist_renderer {
 
     /**
      * Renders the entire classlist of the $capquiz in the constructor
-     *
-     * @return bool|string
      */
-    public function render() {
+    public function render(): bool|string {
         $cmid = $this->capquiz->course_module()->id;
         $this->page->requires->js_call_amd('mod_capquiz/edit_questions', 'initialize', [$cmid]);
         $users = capquiz_user::list_users($this->capquiz->id(), $this->capquiz->context());
@@ -84,21 +86,20 @@ class classlist_renderer {
                 'rating' => round($user->rating(), 2),
                 'stars' => $user->highest_stars_achieved(),
                 'graded_stars' => $user->highest_stars_graded(),
-                'passing_grade' => $user->highest_stars_graded() >= $this->capquiz->stars_to_pass()
+                'passing_grade' => $user->highest_stars_graded() >= $this->capquiz->stars_to_pass(),
             ];
         }
-        $leaderboard = $this->renderer->render_from_template('capquiz/classlist', [
+        return $this->renderer->render_from_template('capquiz/classlist', [
             'users' => $rows,
             'regrade' => [
+                'type' => 'primary',
                 'method' => 'post',
                 'classes' => 'capquiz-regrade-all',
                 'url' => capquiz_urls::regrade_all_url()->out(false),
-                'primary' => true,
                 'label' => get_string('regrade_all', 'capquiz'),
-                'disabled' => !$this->capquiz->is_grading_completed()
-            ]
+                'disabled' => !$this->capquiz->is_grading_completed(),
+            ],
         ]);
-        return $leaderboard;
     }
 
 }

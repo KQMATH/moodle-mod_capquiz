@@ -25,6 +25,10 @@
 
 namespace mod_capquiz;
 
+use coding_exception;
+use moodle_url;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy.php');
@@ -43,13 +47,14 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_close
 class capquiz_matchmaking_strategy_registry {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var array $strategies */
-    private $strategies;
+    private array $strategies;
 
     /**
-     * capquiz_matchmaking_strategy_registry constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
      */
     public function __construct(capquiz $capquiz) {
@@ -61,11 +66,10 @@ class capquiz_matchmaking_strategy_registry {
      * Returns the specified matchmaking strategy or throws an error if it does not exist
      *
      * @param string $strategy
-     * @return capquiz_matchmaking_strategy
-     * @throws \Exception
      */
-    public function selector(string $strategy) {
-        if ($value = $this->strategies[$strategy]) {
+    public function selector(string $strategy): capquiz_matchmaking_strategy {
+        $value = $this->strategies[$strategy];
+        if ($value) {
             return array_values($value)[0]();
         }
         $this->throw_strategy_exception($strategy);
@@ -75,12 +79,10 @@ class capquiz_matchmaking_strategy_registry {
      * Returns a configuration form for the matchmaking strategy
      *
      * @param string $strategy
-     * @param \stdClass $config
-     * @param \moodle_url $url
-     * @return mixed
-     * @throws \Exception
+     * @param stdClass $config
+     * @param moodle_url $url
      */
-    public function configuration_form(string $strategy, \stdClass $config, \moodle_url $url) {
+    public function configuration_form(string $strategy, stdClass $config, moodle_url $url) {
         $value = $this->strategies[$strategy];
         if ($value) {
             $configfunc = array_values($value)[1];
@@ -93,21 +95,15 @@ class capquiz_matchmaking_strategy_registry {
      * Returns true if the registry has the specified strategy
      *
      * @param string $strategy
-     * @return bool
      */
-    public function has_strategy(string $strategy) : bool {
-        if ($value = $this->strategies[$strategy]) {
-            return true;
-        }
-        return false;
+    public function has_strategy(string $strategy): bool {
+        return isset($this->strategies[$strategy]);
     }
 
     /**
      * Returns the default selection strategy
-     *
-     * @return string
      */
-    public function default_selection_strategy() : string {
+    public function default_selection_strategy(): string {
         // The default selection strategy is added first.
         // Modify capquiz_matchmaking_strategy_registry::register_selection_strategies() to change this.
         $selectionstrategies = $this->selection_strategies();
@@ -119,7 +115,7 @@ class capquiz_matchmaking_strategy_registry {
      *
      * @return string[]
      */
-    public function selection_strategies() : array {
+    public function selection_strategies(): array {
         $names = [];
         foreach (array_keys($this->strategies) as $value) {
             $names[] = $value;
@@ -130,26 +126,18 @@ class capquiz_matchmaking_strategy_registry {
     /**
      * Registers the selection strategies, the first registered will be the default strategy
      */
-    private function register_selection_strategies() {
+    private function register_selection_strategies(): void {
         // The first listed will be selected by default when creating a new activity.
         $capquiz = $this->capquiz;
         $this->strategies = [
             'N-closest' => [
-                function () use ($capquiz) {
-                    return new n_closest_selector($capquiz);
-                },
-                function (\moodle_url $url, \stdClass $configuration) {
-                    return new n_closest_configuration_form($configuration, $url);
-                }
+                fn() => new n_closest_selector($capquiz),
+                fn(moodle_url $url, stdClass $config) => new n_closest_configuration_form($config, $url),
             ],
             'Chronological' => [
-                function () use ($capquiz) {
-                    return new chronologic_selector();
-                },
-                function (\moodle_url $url, \stdClass $configuration) {
-                    return null;
-                }
-            ]
+                fn() => new chronologic_selector(),
+                fn(moodle_url $url, stdClass $config) => null,
+            ],
         ];
     }
 
@@ -157,12 +145,11 @@ class capquiz_matchmaking_strategy_registry {
      * Creates and throws a strategy exception
      *
      * @param string $strategy
-     * @throws \Exception
      */
     private function throw_strategy_exception(string $strategy) {
         $msg = "The specified strategy '$strategy' does not exist.";
         $msg .= " Options are {'" . implode("', '", $this->selection_strategies());
         $msg .= "'}. This issue must be fixed by a programmer";
-        throw new \Exception($msg);
+        throw new coding_exception($msg);
     }
 }

@@ -28,6 +28,7 @@ namespace mod_capquiz\form\view;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_rating_system_loader;
 use mod_capquiz\capquiz_rating_system_registry;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,15 +43,17 @@ require_once($CFG->libdir . '/formslib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rating_system_selection_form extends \moodleform {
+
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /**
-     * rating_system_selection_form constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
-     * @param \moodle_url $url
+     * @param moodle_url $url
      */
-    public function __construct(capquiz $capquiz, \moodle_url $url) {
+    public function __construct(capquiz $capquiz, moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
     }
@@ -58,7 +61,7 @@ class rating_system_selection_form extends \moodleform {
     /**
      * Defines form
      */
-    public function definition() {
+    public function definition(): void {
         $form = $this->_form;
         $loader = new capquiz_rating_system_loader($this->capquiz);
         $registry = new capquiz_rating_system_registry();
@@ -69,9 +72,7 @@ class rating_system_selection_form extends \moodleform {
             if ($loader->current_rating_system_name() === $ratingsystem) {
                 $selectedindex = $index;
             }
-            $radioarray[] = $form->createElement('radio', 'rating_system', '', $ratingsystem, $index, [
-                $ratingsystem
-            ]);
+            $radioarray[] = $form->createElement('radio', 'rating_system', '', $ratingsystem, $index, [$ratingsystem]);
             $index++;
         }
         $form->addGroup($radioarray, 'radioar', '', '</br>', false);
@@ -89,7 +90,7 @@ class rating_system_selection_form extends \moodleform {
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    public function validations($data, $files) {
+    public function validations($data, $files): array {
         return [];
     }
 

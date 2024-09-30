@@ -26,9 +26,11 @@
 namespace mod_capquiz\report;
 
 use context_module;
+use core\context\module;
 use core\dml\sql_join;
-use mod_quiz_attempts_report_form;
-use mod_quiz_attempts_report_options;
+use mod_capquiz\capquiz;
+use mod_quiz\local\reports\attempts_report_options;
+use mod_quiz\local\reports\attempts_report_options_form;
 use moodle_url;
 use stdClass;
 use table_sql;
@@ -37,7 +39,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->dirroot . '/mod/capquiz/report/report.php');
-
 
 /**
  * Base class for capquiz reports that are basically a table with one row for each attempt.
@@ -62,13 +63,13 @@ abstract class capquiz_attempts_report extends report {
     /** @var string the mode this report is. */
     protected $mode;
 
-    /** @var object the capquiz context. */
-    protected $context;
+    /** @var module the capquiz context. */
+    protected module $context;
 
-    /** @var mod_quiz_attempts_report_form The settings form to use. */
+    /** @var attempts_report_options_form The settings form to use. */
     protected $form;
 
-    /** @var object mod_quiz_attempts_report_options the options affecting this report. */
+    /** @var attempts_report_options the options affecting this report. */
     protected $options = null;
 
     /**
@@ -86,27 +87,20 @@ abstract class capquiz_attempts_report extends report {
      *      3 => \core\dml\sql_join Contains joins, wheres, params for all the students to show in the report.
      *              Will be the same as either element 1 or 2.
      */
-    protected function init($mode, $formclass, $capquiz, $cm, $course) {
+    protected function init(string $mode, string $formclass, $capquiz, $cm, $course) {
         $this->mode = $mode;
-
         $this->context = context_module::instance($cm->id);
-
         $studentsjoins = get_enrolled_with_capabilities_join($this->context);
-
-        $this->form = new $formclass($this->get_base_url(),
-            array('capquiz' => $capquiz, 'context' => $this->context));
-
-        return array($studentsjoins);
+        $this->form = new $formclass($this->get_base_url(), ['capquiz' => $capquiz, 'context' => $this->context]);
+        return [$studentsjoins];
     }
 
 
     /**
      * Get the base URL for this report.
-     * @return moodle_url the URL.
      */
-    protected function get_base_url() {
-        return new moodle_url('/mod/capquiz/view_report.php',
-            array('id' => $this->context->instanceid, 'mode' => $this->mode));
+    protected function get_base_url(): moodle_url {
+        return new moodle_url('/mod/capquiz/view_report.php', ['id' => $this->context->instanceid, 'mode' => $this->mode]);
     }
 
     /**
@@ -118,19 +112,21 @@ abstract class capquiz_attempts_report extends report {
      *
      * @param stdClass $cm the course_module information.
      * @param stdClass $course the course settings.
-     * @param stdClass $capquiz the capquiz settings.
-     * @param mod_quiz_attempts_report_options $options the current report settings.
+     * @param capquiz $capquiz the capquiz settings.
+     * @param attempts_report_options $options the current report settings.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */
-    protected function print_standard_header_and_messages($cm, $course, $capquiz,
-                                                          $options, $hasquestions, $hasstudents) {
+    protected function print_standard_header_and_messages(stdClass $cm, stdClass $course, capquiz $capquiz,
+                                                          attempts_report_options $options, bool $hasquestions,
+                                                          bool $hasstudents): void {
         global $OUTPUT;
 
-        echo $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);
+        $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);
 
         // Print information on the number of existing attempts.
-        if ($strattemptnum = capquiz_num_attempt_summary($capquiz, true)) {
+        $strattemptnum = capquiz_num_attempt_summary($capquiz, true);
+        if (!empty($strattemptnum)) {
             echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
         }
 
@@ -141,16 +137,16 @@ abstract class capquiz_attempts_report extends report {
         } else if (!$hasstudents) {
             echo $OUTPUT->notification(get_string('nostudentsyet'));
         }
-
     }
 
     /**
      * Add all the user-related columns to the $columns and $headers arrays.
+     *
      * @param table_sql $table the table being constructed.
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_user_columns($table, &$columns, &$headers) {
+    protected function add_user_columns(table_sql $table, array &$columns, array &$headers): void {
         global $CFG;
         if (!$table->is_downloading() && $CFG->grade_report_showuserimage) {
             $columns[] = 'picture';
@@ -168,11 +164,11 @@ abstract class capquiz_attempts_report extends report {
 
         // When downloading, some extra fields are always displayed (because
         // there's no space constraint) so do not include in extra-field list.
-        $extrafields =
-            $table->is_downloading() ?
-                \core_user\fields::for_identity($this->context)->including(
-                    'institution', 'department', 'email')->get_required_fields() :
-                \core_user\fields::for_identity($this->context)->get_required_fields();
+        $fields = \core_user\fields::for_identity($this->context);
+        if ($table->is_downloading()) {
+            $fields = $fields->including('institution', 'department', 'email')->get_required_fields();
+        }
+        $extrafields = $fields->get_required_fields();
 
         foreach ($extrafields as $field) {
             $columns[] = $field;
@@ -193,60 +189,63 @@ abstract class capquiz_attempts_report extends report {
 
     /**
      * Add the state column to the $columns and $headers arrays.
+     *
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_questionid_column(&$columns, &$headers) {
+    protected function add_questionid_column(array &$columns, array &$headers): void {
         $columns[] = 'questionid';
         $headers[] = get_string('questionid', 'capquiz');
     }
 
     /**
      * Add the state column to the $columns and $headers arrays.
+     *
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_moodlequestionid_column(&$columns, &$headers) {
+    protected function add_moodlequestionid_column(array &$columns, array &$headers): void {
         $columns[] = 'moodlequestionid';
         $headers[] = get_string('moodlequestionid', 'capquiz');
     }
 
     /**
      * Add the state column to the $columns and $headers arrays.
+     *
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_uesrid_column(&$columns, &$headers) {
+    protected function add_uesrid_column(array &$columns, array &$headers): void {
         $columns[] = 'userid';
         $headers[] = get_string('userid', 'capquiz');
     }
 
     /**
      * Add all the time-related columns to the $columns and $headers arrays.
+     *
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_time_columns(&$columns, &$headers) {
+    protected function add_time_columns(array &$columns, array &$headers): void {
         $columns[] = 'timeanswered';
         $headers[] = get_string('timeanswered', 'capquiz');
 
         $columns[] = 'timereviewed';
         $headers[] = get_string('timereviewed', 'capquiz');
-
     }
 
     /**
      * Set the display options for the user-related columns in the table.
+     *
      * @param table_sql $table the table being constructed.
      */
-    protected function configure_user_columns($table) {
+    protected function configure_user_columns(table_sql $table): void {
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
         $extrafields = \core_user\fields::for_identity($this->context)->get_required_fields();
         foreach ($extrafields as $field) {
             $table->column_suppress($field);
         }
-
         $table->column_class('picture', 'picture');
         $table->column_class('lastname', 'bold');
         $table->column_class('firstname', 'bold');
@@ -255,34 +254,33 @@ abstract class capquiz_attempts_report extends report {
 
     /**
      * Process any submitted actions.
-     * @param object $quiz the capquiz settings.
-     * @param object $cm the cm object for the capquiz.
+     *
+     * @param stdClass $capquiz
+     * @param stdClass $cm the cm object for the capquiz.
      * @param sql_join $allowedjoins (joins, wheres, params) the users whose attempt this user is allowed to modify.
      * @param moodle_url $redirecturl where to redircet to after a successful action.
      */
-    protected function process_actions($quiz, $cm, sql_join $allowedjoins, $redirecturl) {
+    protected function process_actions(stdClass $capquiz, stdClass $cm, sql_join $allowedjoins, moodle_url $redirecturl): void {
         if (optional_param('delete', 0, PARAM_BOOL) && confirm_sesskey()) {
-            if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
+            if ($attemptids = optional_param_array('attemptid', [], PARAM_INT)) {
                 require_capability('mod/capquiz:deleteattempts', $this->context);
-                $this->delete_selected_attempts($quiz, $cm, $attemptids, $allowedjoins);
+                $this->delete_selected_attempts($capquiz, $cm, $attemptids, $allowedjoins);
                 redirect($redirecturl);
             }
         }
     }
 
     /**
-     * Delete the capquiz attempts
-     * @param object $capquiz the capquiz settings. Attempts that don't belong to
-     * this capquiz are not deleted.
-     * @param object $cm the course_module object.
+     * Delete the capquiz attempts.
+     *
+     * @param stdClass $capquiz the capquiz settings. Attempts that don't belong to this capquiz are not deleted.
+     * @param stdClass $cm the course_module object.
      * @param array $attemptids the list of attempt ids to delete.
      * @param sql_join $allowedjoins (joins, wheres, params) This list of userids that are visible in the report.
      *      Users can only delete attempts that they are allowed to see in the report.
      *      Empty means all users.
      */
-    protected function delete_selected_attempts($capquiz, $cm, $attemptids, sql_join $allowedjoins) {
-        global $DB;
+    protected function delete_selected_attempts(stdClass $capquiz, stdClass $cm, array $attemptids, sql_join $allowedjoins) {
         // TODO implement to add support for attempt deletion.
-
     }
 }

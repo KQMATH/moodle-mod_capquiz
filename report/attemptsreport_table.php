@@ -26,24 +26,21 @@
 namespace mod_capquiz\report;
 
 use coding_exception;
+use core\context;
+use core\context\module;
 use core\dml\sql_join;
 use html_writer;
-use mod_capquiz\capquiz_question_attempt;
-use mod_quiz_attempts_report_options;
 use moodle_url;
 use qubaid_condition;
 use qubaid_list;
 use question_engine_data_mapper;
 use question_state;
-use quiz_attempt;
 use stdClass;
 use table_sql;
-use user_picture;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
-
 
 /**
  * Base class for the table used by a {@see capquiz_attempts_report}.
@@ -89,7 +86,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     protected $includecheckboxes;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $uniqueid
      * @param object $quiz
      * @param context $context
@@ -98,9 +96,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * @param array $questions
      * @param moodle_url $reporturl
      */
-    public function __construct($uniqueid, $quiz, $context,
-                                capquiz_attempts_report_options $options, sql_join $studentsjoins,
-                                $questions, $reporturl) {
+    public function __construct($uniqueid, $quiz, context $context, capquiz_attempts_report_options $options,
+                                sql_join $studentsjoins, $questions, $reporturl) {
         parent::__construct($uniqueid);
         $this->capquiz = $quiz;
         $this->context = $context;
@@ -113,11 +110,11 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
     /**
      * Generate the display of the checkbox column.
-     * @param object $attempt the table row being output.
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_checkbox($attempt) {
-        if ($attempt->attempt) {
+    public function col_checkbox(stdClass $attempt): string {
+        if (property_exists($attempt, 'attempt')) {
             return '<input type="checkbox" name="attemptid[]" value="' . $attempt->attempt . '" />';
         } else {
             return '';
@@ -126,10 +123,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
     /**
      * Generate the display of the user's full name column.
+     *
      * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
      */
-    public function col_fullname($attempt) {
+    public function col_fullname($attempt): string {
         $html = parent::col_fullname($attempt);
         if ($this->is_downloading() || empty($attempt->attempt)) {
             return $html;
@@ -144,68 +141,48 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
     /**
      * Generate the display of the time answered column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_timeanswered($attempt) {
-        if ($attempt->attempt) {
-            return userdate($attempt->timeanswered, $this->strtimeformat);
-        } else {
-            return '-';
-        }
+    public function col_timeanswered(stdClass $attempt): string {
+        return property_exists($attempt, 'attempt') ? userdate($attempt->timeanswered, $this->strtimeformat) : '-';
     }
 
     /**
      * Generate the display of the time answered column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_timereviewed($attempt) {
-        if ($attempt->attempt) {
-            return userdate($attempt->timereviewed, $this->strtimeformat);
-        } else {
-            return '-';
-        }
+    public function col_timereviewed(stdClass $attempt) {
+        return property_exists($attempt, 'attempt') ? userdate($attempt->timereviewed, $this->strtimeformat) : '-';
     }
 
 
     /**
      * Generate the display of the question id column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionid($attempt) {
-        if ($attempt->questionid) {
-            return $attempt->questionid;
-        } else {
-            return '-';
-        }
+    public function col_questionid(stdClass $attempt): string {
+        return $attempt->questionid ?: '-';
     }
 
     /**
      * Generate the display of the moodle question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_moodlequestionid($attempt) {
-        if ($attempt->moodlequestionid) {
-            return $attempt->moodlequestionid;
-        } else {
-            return '-';
-        }
+    public function col_moodlequestionid(stdClass $attempt): string {
+        return $attempt->moodlequestionid ?: '-';
     }
 
     /**
      * Generate the display of the user id column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_userid($attempt) {
-        if ($attempt->userid) {
-            return $attempt->userid;
-        } else {
-            return '-';
-        }
+    public function col_userid(stdClass $attempt): string {
+        return $attempt->userid ?: '-';
     }
 
     /**
@@ -215,9 +192,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * @param object $attempt data for the row of the table being output.
      * @param int $slot the number used to identify this question within this usage.
      */
-    public function make_review_link($data, $attempt, $slot) {
-        global $OUTPUT;
-
+    public function make_review_link($data, $attempt, $slot): string {
         $feedbackimg = '';
         $state = $this->slot_state($attempt, $slot);
         if ($state->is_finished() && $state != question_state::$needsgrading) {
@@ -225,9 +200,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
         }
 
         $output = html_writer::tag('span', $feedbackimg . html_writer::tag('span',
-                $data, array('class' => $state->get_state_class(true))), array('class' => 'que'));
+                $data, ['class' => $state->get_state_class(true)]), ['class' => 'que']);
 
-        $reviewparams = array('attempt' => $attempt->attempt, 'slot' => $slot);
+        $reviewparams = ['attempt' => $attempt->attempt, 'slot' => $slot];
         if (isset($attempt->try)) {
             $reviewparams['step'] = $this->step_no_for_try($attempt->usageid, $slot, $attempt->try);
         }
@@ -236,8 +211,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         // phpcs:disable
         /*$url = new moodle_url('/mod/capquiz/reviewquestion.php', $reviewparams);
         $output = $OUTPUT->action_link($url, $output,
-                new popup_action('click', $url, 'reviewquestion',
-                        array('height' => 450, 'width' => 650)),
+                new popup_action('click', $url, 'reviewquestion', array('height' => 450, 'width' => 650)),
                 array('title' => get_string('reviewresponse', 'quiz')));*/
         // phpcs:enable
         return $output;
@@ -252,30 +226,21 @@ abstract class capquiz_attempts_report_table extends table_sql {
      */
     public function make_preview_link($data, $attempt, $slot) {
         global $OUTPUT;
-
         $questionid = $this->slot_questionid($attempt, $slot);
-
-        $output = html_writer::tag('span', html_writer::tag('span', $data),
-            array('class' => 'que'));
-
+        $output = html_writer::tag('span', html_writer::tag('span', $data), ['class' => 'que']);
         $url = \qbank_previewquestion\helper::question_preview_url($questionid)->out(false);
-
-        $output = $OUTPUT->action_link($url, $output,
-            new \popup_action('click', $url, 'previewquestion',
-                array('height' => 450, 'width' => 650)),
-            array('title' => get_string('previewquestion', 'quiz')));
-
-        return $output;
+        return $OUTPUT->action_link($url, $output, new \popup_action('click', $url, 'previewquestion', [
+            'height' => 450, 'width' => 650]), ['title' => get_string('previewquestion', 'quiz')]);
     }
 
     /**
      * Find the state for $slot given after this try.
      *
-     * @param object $attempt the row data
+     * @param stdClass $attempt
      * @param int $slot
      * @return question_state
      */
-    protected function slot_state($attempt, $slot) {
+    protected function slot_state(stdClass $attempt, int $slot): question_state {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
         return question_state::get($stepdata->state);
     }
@@ -283,36 +248,33 @@ abstract class capquiz_attempts_report_table extends table_sql {
     /**
      * Returns the id of the question
      *
-     * @param object $attempt the row data
+     * @param stdClass $attempt
      * @param int $slot
-     * @return question_id
      */
-    protected function slot_questionid($attempt, $slot) {
+    protected function slot_questionid(stdClass $attempt, int $slot): int {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
         return $stepdata->questionid;
     }
 
     /**
      * Return an appropriate icon (green tick, red cross, etc.) for a grade.
+     *
      * @param float $fraction grade on a scale 0..1.
-     * @return string html fragment.
      */
-    protected function icon_for_fraction($fraction) {
+    protected function icon_for_fraction(float $fraction): string {
         global $OUTPUT;
-
         $feedbackclass = question_state::graded_state_for_fraction($fraction)->get_feedback_class();
-        return $OUTPUT->pix_icon('i/grade_' . $feedbackclass, get_string($feedbackclass, 'question'),
-            'moodle', array('class' => 'icon'));
+        $feedbackalt = get_string($feedbackclass, 'question');
+        return $OUTPUT->pix_icon('i/grade_' . $feedbackclass, $feedbackalt, 'moodle', ['class' => 'icon']);
     }
 
     /**
      * The grade for this slot after this try.
      *
-     * @param object $attempt the row data
+     * @param stdClass $attempt
      * @param int $slot
-     * @return float
      */
-    protected function slot_fraction($attempt, $slot) {
+    protected function slot_fraction(stdClass $attempt, int $slot): float {
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
         return $stepdata->fraction;
     }
@@ -322,7 +284,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
      *
      * @param sql_join $allowedjoins (joins, wheres, params) defines allowed users for the report.
      */
-    public function setup_sql_queries($allowedjoins) {
+    public function setup_sql_queries(sql_join $allowedjoins): void {
         list($fields, $from, $where, $params) = $this->base_sql($allowedjoins);
 
         // The WHERE clause is vital here, because some parts of tablelib.php will expect to
@@ -344,11 +306,11 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
         $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(ca.id, 0)') . ' AS uniqueid,';
 
-        $extrafields =
-           \core_user\fields::for_identity($this->context)->including(
-                'id', 'idnumber', 'firstname', 'lastname', 'picture',
-                'imagealt', 'institution', 'department', 'email'
-             )->get_sql('u')->selects;
+        $extrafields = \core_user\fields::for_identity($this->context)
+            ->including(
+                'id', 'idnumber', 'firstname', 'lastname', 'picture', 'imagealt', 'institution', 'department', 'email'
+            )
+            ->get_sql('u')->selects;
         // phpcs:disable
         // $allnames = get_all_user_name_fields(true, 'u');
         // phpcs:enable
@@ -380,7 +342,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
         $from .= "\nJOIN {capquiz_attempt} ca ON ca.user_id = cu.id AND ca.slot = qa.slot";
         $from .= "\nJOIN {capquiz_question} cq ON cq.question_list_id = cql.id AND cq.id = ca.question_id";
 
-        $params = array('capquizid' => $this->capquiz->id());
+        $params = ['capquizid' => $this->capquiz->id()];
 
         switch ($this->options->attempts) {
             case capquiz_attempts_report::ALL_WITH:
@@ -415,7 +377,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
             $where .= " AND ca.answered = 1";
         }
 
-        return array($fields, $from, $where, $params);
+        return [$fields, $from, $where, $params];
     }
 
     /**
@@ -438,9 +400,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
-    public function query_db($pagesize, $useinitialsbar = true) {
+    public function query_db($pagesize, $useinitialsbar = true): void {
         parent::query_db($pagesize, $useinitialsbar);
-
         if ($this->requires_extra_data()) {
             $this->load_extra_data();
         }
@@ -457,8 +418,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
     }
 
     /**
-     * Does this report require the detailed information for each question from the
-     * question_attempts_steps table?
+     * Does this report require the detailed information for each question from the question_attempts_steps table?
+     *
      * @return bool should {@see load_extra_data} call {@see load_question_latest_steps}?
      */
     protected function requires_latest_steps_loaded() {
@@ -470,49 +431,40 @@ abstract class capquiz_attempts_report_table extends table_sql {
      * limits the query to just the question usages shown in this report page or alternatively for all attempts if downloading a
      * full report.
      */
-    protected function load_extra_data() {
+    protected function load_extra_data(): void {
         $this->lateststeps = $this->load_question_latest_steps();
     }
 
     /**
      * Load information about the latest state of selected questions in selected attempts.
-     *
      * The results are returned as an two dimensional array $qubaid => $slot => $dataobject
      *
-     * @param qubaid_condition|null $qubaids used to restrict which usages are included
-     * in the query. See {@see qubaid_condition}.
+     * @param ?qubaid_condition $qubaids used to restrict which usages are included in the query. See {@see qubaid_condition}.
      * @return array of records. See the SQL in this function to see the fields available.
      */
-    protected function load_question_latest_steps(qubaid_condition $qubaids = null) {
+    protected function load_question_latest_steps(?qubaid_condition $qubaids = null): array {
         if ($qubaids === null) {
             $qubaids = $this->get_qubaids_condition();
         }
-
         $dm = new question_engine_data_mapper();
-        $latesstepdata = $dm->load_questions_usages_latest_steps(
-            $qubaids, array_map(function($o) {
-                return $o->slot;
-            }, $this->questions));
-
-        $lateststeps = array();
+        $latesstepdata = $dm->load_questions_usages_latest_steps($qubaids, array_map(fn($o) => $o->slot, $this->questions));
+        $lateststeps = [];
         foreach ($latesstepdata as $step) {
             $lateststeps[$step->questionusageid][$step->slot] = $step;
         }
-
         return $lateststeps;
     }
 
     /**
-     * Get an appropriate qubaid_condition for loading more data about the
-     * attempts we are displaying.
-     * @return qubaid_condition
+     * Get an appropriate qubaid_condition for loading more data about the attempts we are displaying.
+     *
+     * @return qubaid_list
      */
-    protected function get_qubaids_condition() {
-        if (is_null($this->rawdata)) {
-            throw new coding_exception(
-                'Cannot call get_qubaids_condition until the main data has been loaded.');
+    protected function get_qubaids_condition(): qubaid_list {
+        if ($this->rawdata === null) {
+            throw new coding_exception('Cannot call get_qubaids_condition until the main data has been loaded.');
         }
-        $qubaids = array();
+        $qubaids = [];
         foreach ($this->rawdata as $attempt) {
             if ($attempt->usageid > 0) {
                 $qubaids[] = $attempt->usageid;
@@ -523,9 +475,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
 
     /**
      * Get the columns to sort by, in the form required by {@see construct_order_by()}.
+     *
      * @return array column name => SORT_... constant.
      */
-    public function get_sort_columns() {
+    public function get_sort_columns(): array {
         // Add attemptid as a final tie-break to the sort. This ensures that
         // Attempts by the same student appear in order when just sorting by name.
         $sortcolumns = parent::get_sort_columns();
@@ -540,13 +493,10 @@ abstract class capquiz_attempts_report_table extends table_sql {
         if ($this->is_downloading() || !$this->includecheckboxes) {
             return;
         }
-
         $url = $this->options->get_url();
         $url->param('sesskey', sesskey());
-
         echo '<div id="tablecontainer">';
         echo '<form id="attemptsform" method="post" action="' . $url->out_omit_querystring() . '">';
-
         echo html_writer::input_hidden_params($url);
         echo '<div>';
     }
@@ -563,10 +513,8 @@ abstract class capquiz_attempts_report_table extends table_sql {
         }
 
         echo '<div id="commands">';
-        echo '<a id="checkattempts" href="#">' .
-            get_string('selectall', 'quiz') . '</a> / ';
-        echo '<a id="uncheckattempts" href="#">' .
-            get_string('selectnone', 'quiz') . '</a> ';
+        echo '<a id="checkattempts" href="#">' . get_string('selectall', 'quiz') . '</a> / ';
+        echo '<a id="uncheckattempts" href="#">' . get_string('selectnone', 'quiz') . '</a> ';
         $PAGE->requires->js_amd_inline("
         require(['jquery'], function($) {
             $('#checkattempts').click(function(e) {
@@ -610,7 +558,7 @@ abstract class capquiz_attempts_report_table extends table_sql {
             echo '<input type="submit" class="btn btn-secondary m-r-1" id="deleteattemptsbutton" name="delete" value="' .
                 get_string('deleteselected', 'quiz_overview') . '"/>';
             $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
-                array('message' => get_string('deleteattemptcheck', 'quiz')));
+                ['message' => get_string('deleteattemptcheck', 'quiz')]);
         }
     }
 

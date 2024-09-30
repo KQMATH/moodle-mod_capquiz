@@ -33,7 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-
 /**
  * Base class for the options that control what is visible in an {@see  quiz_attempts_report}.
  *
@@ -83,42 +82,40 @@ class capquiz_attempts_report_options {
      * @param object $course the course settings for the coures this capquiz is in.
      */
     public function __construct(string $mode, capquiz $capquiz, object $cm, object $course) {
-        $this->mode     = $mode;
-        $this->capquiz  = $capquiz;
-        $this->cm       = $cm;
-        $this->course   = $course;
+        $this->mode = $mode;
+        $this->capquiz = $capquiz;
+        $this->cm = $cm;
+        $this->course = $course;
     }
 
     /**
      * Get the URL parameters required to show the report with these options.
+     *
      * @return array URL parameter name => value.
      */
-    protected function get_url_params() {
-        $params = array(
-            'id'         => $this->cm->id,
-            'mode'       => $this->mode,
-            'attempts'   => $this->attempts,
+    protected function get_url_params(): array {
+        return [
+            'id' => $this->cm->id,
+            'mode' => $this->mode,
+            'attempts' => $this->attempts,
             'onlyanswered' => $this->onlyanswered,
-        );
-
-        return $params;
+        ];
     }
 
     /**
      * Get the URL to show the report with these options.
-     * @return moodle_url the URL.
      */
-    public function get_url() {
+    public function get_url(): moodle_url {
         return new moodle_url('/mod/capquiz/view_report.php', $this->get_url_params());
     }
 
     /**
      * Process the data we get when the settings form is submitted. This includes
-     * updating the fields of this class, and updating the user preferences
-     * where appropriate.
-     * @param object $fromform The data from $mform->get_data() from the settings form.
+     * updating the fields of this class, and updating the user preferences where appropriate.
+     *
+     * @param stdClass $fromform The data from $mform->get_data() from the settings form.
      */
-    public function process_settings_from_form($fromform) {
+    public function process_settings_from_form(stdClass $fromform): void {
         $this->setup_from_form_data($fromform);
         $this->resolve_dependencies();
         $this->update_user_preferences();
@@ -128,7 +125,7 @@ class capquiz_attempts_report_options {
      * Set up this preferences object using optional_param (using user_preferences
      * to set anything not specified by the params.
      */
-    public function process_settings_from_params() {
+    public function process_settings_from_params(): void {
         $this->setup_from_user_preferences();
         $this->setup_from_params();
         $this->resolve_dependencies();
@@ -137,59 +134,57 @@ class capquiz_attempts_report_options {
     /**
      * Get the current value of the settings to pass to the settings form.
      */
-    public function get_initial_form_data() {
+    public function get_initial_form_data(): stdClass {
         $toform = new stdClass();
-        $toform->attempts   = $this->attempts;
+        $toform->attempts = $this->attempts;
         $toform->onlyanswered = $this->onlyanswered;
-        $toform->pagesize   = $this->pagesize;
-
+        $toform->pagesize = $this->pagesize;
         return $toform;
     }
 
     /**
      * Set the fields of this object from the form data.
-     * @param object $fromform The data from $mform->get_data() from the settings form.
+     * @param stdClass $fromform The data from $mform->get_data() from the settings form.
      */
-    public function setup_from_form_data($fromform) {
-        $this->attempts   = $fromform->attempts;
+    public function setup_from_form_data(stdClass $fromform): void {
+        $this->attempts = $fromform->attempts;
         $this->onlyanswered = !empty($fromform->onlyanswered);
-        $this->pagesize   = $fromform->pagesize;
+        $this->pagesize = $fromform->pagesize;
     }
 
     /**
      * Set the fields of this object from the URL parameters.
      */
-    public function setup_from_params() {
-        $this->attempts   = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
+    public function setup_from_params(): void {
+        $this->attempts = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
         $this->onlyanswered = optional_param('onlyanswered', $this->onlyanswered, PARAM_BOOL);
-        $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
-        $this->download   = optional_param('download', $this->download, PARAM_ALPHA);
+        $this->pagesize = optional_param('pagesize', $this->pagesize, PARAM_INT);
+        $this->download = optional_param('download', $this->download, PARAM_ALPHA);
     }
 
     /**
      * Set the fields of this object from the user's preferences.
      * (For those settings that are backed by user-preferences).
      */
-    public function setup_from_user_preferences() {
+    public function setup_from_user_preferences(): void {
         $this->pagesize = get_user_preferences('capquiz_report_pagesize', $this->pagesize);
     }
 
     /**
-     * Update the user preferences so they match the settings in this object.
+     * Update the user preferences, so they match the settings in this object.
      * (For those settings that are backed by user-preferences).
      */
-    public function update_user_preferences() {
+    public function update_user_preferences(): void {
         set_user_preference('capquiz_report_pagesize', $this->pagesize);
     }
 
     /**
      * Check the settings, and remove any 'impossible' combinations.
      */
-    public function resolve_dependencies() {
+    public function resolve_dependencies(): void {
         if ($this->pagesize < 1) {
             $this->pagesize = capquiz_attempts_report::DEFAULT_PAGE_SIZE;
         }
     }
-
 
 }

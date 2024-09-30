@@ -25,17 +25,17 @@
 
 namespace capquizreport_attempts;
 
+use core\context;
 use core\dml\sql_join;
 use mod_capquiz\report\capquiz_attempts_report_options;
 use mod_capquiz\report\capquiz_attempts_report_table;
 use moodle_url;
-use quiz_responses_options;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_table.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
 
 /**
  * This is a table subclass for displaying the capquiz attempts report.
@@ -55,7 +55,7 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
      * @param array $questions
      * @param moodle_url $reporturl
      */
-    public function __construct($capquiz, $context, capquiz_attempts_report_options $options,
+    public function __construct($capquiz, context $context, capquiz_attempts_report_options $options,
                                 sql_join $studentsjoins, $questions, $reporturl) {
         parent::__construct('mod-capquiz-report-attempts-report', $capquiz, $context,
             $options, $studentsjoins, $questions, $reporturl);
@@ -73,7 +73,6 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
         if (!$this->rawdata) {
             return;
         }
-
         $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetimeseconds', 'capquiz'));
         parent::build_table();
     }
@@ -83,75 +82,58 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
      *
      * @param string $colname The column name
      * @param stdClass $attempt The attempt
-     * @return mixed string or NULL
+     * @return ?string
      */
-    public function other_cols($colname, $attempt) {
-        switch ($colname) {
-            case 'question':
-                return $this->data_col($attempt->slot, 'questionsummary', $attempt);
-            case 'response':
-                return $this->data_col($attempt->slot, 'responsesummary', $attempt);
-            case 'right':
-                return $this->data_col($attempt->slot, 'rightanswer', $attempt);
-            default:
-                return null;
-        }
+    public function other_cols($colname, $attempt): ?string {
+        return match ($colname) {
+            'question' => $this->data_col($attempt->slot, 'questionsummary', $attempt),
+            'response' => $this->data_col($attempt->slot, 'responsesummary', $attempt),
+            'right' => $this->data_col($attempt->slot, 'rightanswer', $attempt),
+            default => null,
+        };
     }
 
     /**
      * Format a single column, used in other_cols
      *
-     * @param integer $slot  attempts slot
+     * @param int $slot
      * @param string $field
-     * @param object $attempt
-     * @return string
+     * @param stdClass $attempt
      */
-    public function data_col($slot, $field, $attempt) {
+    public function data_col(int $slot, string $field, stdClass $attempt): string {
         if ($attempt->usageid == 0) {
             return '-';
         }
         $value = $this->field_from_extra_data($attempt, $slot, $field);
-
-        if (is_null($value)) {
-            $summary = '-';
-        } else {
-            $summary = trim($value);
-        }
-
+        $summary = $value !== null ? trim($value) : '-';
         if ($this->is_downloading() && $this->is_downloading() != 'html') {
             return $summary;
         }
         $summary = s($summary);
-
         if ($this->is_downloading()) {
             return $summary;
         }
-
         if ($field === 'responsesummary') {
             return $this->make_review_link($summary, $attempt, $slot);
-
-        } else if ($field === 'questionsummary') {
-            return $this->make_preview_link($summary, $attempt, $slot);
-
-        } else {
-            return $summary;
         }
+        if ($field === 'questionsummary') {
+            return $this->make_preview_link($summary, $attempt, $slot);
+        }
+        return $summary;
     }
 
     /**
      * Column text from the extra data loaded in load_extra_data(), before html formatting etc.
      *
-     * @param object $attempt
+     * @param stdClass $attempt
      * @param int $slot
      * @param string $field
-     * @return string
      */
-    protected function field_from_extra_data($attempt, $slot, $field) {
+    protected function field_from_extra_data(stdClass $attempt, int $slot, string $field): string {
         if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
             return '-';
         }
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-
         if (property_exists($stepdata, $field . 'full')) {
             $value = $stepdata->{$field . 'full'};
         } else {
@@ -162,14 +144,12 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the answer state column.
-     * @param object $attempt the table row being output.
+     *
+     * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.
      */
-    public function col_answerstate($attempt) {
-        if (is_null($attempt->attempt)) {
-            return '-';
-        }
-        if ($attempt->usageid == 0) {
+    public function col_answerstate(stdClass $attempt): string {
+        if ($attempt->attempt === null || $attempt->usageid === 0) {
             return '-';
         }
         $state = $this->slot_state($attempt, $attempt->slot);
@@ -182,54 +162,41 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the user rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_userrating($attempt) {
-        if ($attempt->userrating) {
-            return $attempt->userrating;
-        } else {
-            return '-';
-        }
+    public function col_userrating(stdClass $attempt): string {
+        return $attempt->userrating ?: '-';
     }
 
     /**
      * Generate the display of the question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionrating($attempt) {
-        if ($attempt->questionrating) {
-            return $attempt->questionrating;
-        } else {
-            return '-';
-        }
+    public function col_questionrating(stdClass $attempt): string {
+        return $attempt->questionrating ?: '-';
     }
 
     /**
      * Generate the display of the users's previous rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_userprevrating($attempt) {
-        if ($attempt->userrating) {
-            return $attempt->prevuserrating;
-        } else {
-            return '-';
-        }
+    public function col_userprevrating(stdClass $attempt): string {
+        return $attempt->userrating ? $attempt->prevuserrating : '-';
     }
 
     /**
      * Generate the display of the question's previous rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionprevrating($attempt) {
+    public function col_questionprevrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->prevquestionrating) {
-            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_attempts'),
-                'moodle', array('class' => 'icon'));
-
+            $warningalt = get_string('rating_manually_updated', 'capquizreport_attempts');
+            $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->prevquestionrating;
             } else {
@@ -242,25 +209,20 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the question's previous rating manual column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionprevratingmanual($attempt) {
-        if (is_null($attempt->manualprevqrating)) {
+    public function col_questionprevratingmanual(stdClass $attempt): string {
+        if ($attempt->manualprevqrating === null) {
             return '-';
         }
-        $ismanual = ($attempt->manualprevqrating) ? 'true' : 'false';
-        $manualprevqrating = get_string($ismanual, 'capquiz');
-        return $manualprevqrating;
+        return get_string($attempt->manualprevqrating ? 'true' : 'false', 'capquiz');
     }
 
     /**
-     * Does this report require the detailed information for each question from the
-     * question_attempts_steps table?
-     *
-     * @return bool
+     * Does this report require the detailed information for each question from the question_attempts_steps table?
      */
-    protected function requires_latest_steps_loaded() {
+    protected function requires_latest_steps_loaded(): bool {
         if ($this->options->showansstate
             || $this->options->showqtext
             || $this->options->showresponses
@@ -288,13 +250,14 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     /**
      * A chance for subclasses to modify the SQL after the count query has been generated,
      * and before the full query is constructed.
+     *
      * @param string $fields SELECT list.
      * @param string $from JOINs part of the SQL.
      * @param string $where WHERE clauses.
      * @param array $params Query params.
      * @return array with 4 elements ($fields, $from, $where, $params) as from base_sql.
      */
-    protected function update_sql_after_count($fields, $from, $where, $params) {
+    protected function update_sql_after_count($fields, $from, $where, $params): array {
         $fields .= ',
                     cq.question_id AS moodlequestionid,
                     cqr.rating AS questionrating,

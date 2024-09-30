@@ -49,35 +49,31 @@ class restore_capquiz_activity_task extends restore_activity_task {
     }
 
     /**
-     * Define the contents in the activity that must be
-     * processed by the link decoder
+     * Define the contents in the activity that must be processed by the link decoder
      *
      * @return restore_decode_content[]
      */
     public static function define_decode_contents() {
         return [
-            new restore_decode_content('capquiz', ['intro'])
+            new restore_decode_content('capquiz', ['intro']),
         ];
     }
 
     /**
-     * Define the decoding rules for links belonging
-     * to the activity to be executed by the link decoder
+     * Define the decoding rules for links belonging to the activity to be executed by the link decoder
      *
      * @return restore_decode_rule[]
      */
     public static function define_decode_rules() {
         return [
             new restore_decode_rule('CAPQUIZVIEWBYID', '/mod/capquiz/view.php?id=$1', 'course_module'),
-            new restore_decode_rule('CAPQUIZINDEX', '/mod/capquiz/index.php?id=$1', 'course')
+            new restore_decode_rule('CAPQUIZINDEX', '/mod/capquiz/index.php?id=$1', 'course'),
         ];
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@see restore_logs_processor} when restoring
-     * course logs. It must return one array
-     * of {@see restore_log_rule} objects
+     * Define the restore log rules that will be applied by the {@see restore_logs_processor} when restoring
+     * course logs. It must return one array of {@see restore_log_rule} objects
      *
      * @return restore_log_rule[]
      */
@@ -86,14 +82,10 @@ class restore_capquiz_activity_task extends restore_activity_task {
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@see restore_logs_processor}
-     * when restoring
-     * course logs. It must return one array
-     * of {@see restore_log_rule} objects
+     * Define the restore log rules that will be applied by the {@see restore_logs_processor} when restoring
+     * course logs. It must return one array of {@see restore_log_rule} objects
      *
-     * Note this rules are applied when restoring course logs
-     * by the restore final task, but are defined here at
+     * Note this rules are applied when restoring course logs by the restore final task, but are defined here at
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      *
      * @return restore_log_rule[]

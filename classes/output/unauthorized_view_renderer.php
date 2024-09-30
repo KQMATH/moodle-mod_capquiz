@@ -34,11 +34,12 @@ namespace mod_capquiz\output;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class unauthorized_view_renderer {
+
     /** @var renderer  */
-    private $renderer;
+    private renderer $renderer;
 
     /**
-     * unauthorized_view_renderer constructor.
+     * Constructor.
      *
      * @param renderer $renderer
      */
@@ -48,11 +49,8 @@ class unauthorized_view_renderer {
 
     /**
      * Renders the "unauthorized" view
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         return $this->renderer->render_from_template('capquiz/unauthorized', []);
     }
 

@@ -26,6 +26,11 @@
 
 namespace mod_capquiz;
 
+use context_module;
+use moodle_page;
+use renderer_base;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -43,37 +48,36 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_
  */
 class capquiz {
 
-    /** @var \context_module $context */
+    /** @var context_module $context */
     private $context;
 
-    /** @var \stdClass $cm */
+    /** @var stdClass $cm */
     private $cm;
 
-    /** @var \stdClass $courserecord */
+    /** @var stdClass $courserecord */
     private $courserecord;
 
-    /** @var \stdClass $record */
+    /** @var stdClass $record */
     private $record;
 
-    /** @var \renderer_base|output\renderer $renderer */
-    private $renderer;
+    /** @var renderer_base $renderer */
+    private renderer_base $renderer;
 
-    /** @var capquiz_question_list $qlist */
-    private $qlist;
+    /** @var ?capquiz_question_list $qlist */
+    private ?capquiz_question_list $qlist;
 
-    /** @var \moodle_page $page  */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
-     * capquiz constructor.
+     * Constructor.
+     *
      * @param int $cmid
-     * @throws \coding_exception
-     * @throws \dml_exception
      */
     public function __construct(int $cmid) {
         global $DB, $PAGE;
         $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
-        $this->context = \context_module::instance($cmid);
+        $this->context = context_module::instance($cmid);
         $PAGE->set_context($this->context);
         $this->renderer = $PAGE->get_renderer('mod_capquiz');
         $this->courserecord = $DB->get_record('course', ['id' => $this->cm->course], '*', MUST_EXIST);
@@ -87,7 +91,7 @@ class capquiz {
      *
      * @param bool $force
      */
-    public function update_grades(bool $force = false) {
+    public function update_grades(bool $force = false): void {
         if (!$this->is_grading_completed() || $force) {
             capquiz_update_grades($this->record);
         }
@@ -95,64 +99,50 @@ class capquiz {
 
     /**
      * Returns the page of the CapQuiz
-     *
-     * @return mixed|\moodle_page
      */
-    public function get_page() {
+    public function get_page(): moodle_page {
         return $this->page;
     }
 
     /**
      * Returns the capquiz' id
-     *
-     * @return int
      */
-    public function id() : int {
+    public function id(): int {
         return $this->record->id;
     }
 
     /**
      * Returns the capquiz' name
-     *
-     * @return string
      */
-    public function name() : string {
+    public function name(): string {
         return $this->record->name;
     }
 
     /**
      * Returns true if the capquiz is published
-     *
-     * @return bool
      */
-    public function is_published() : bool {
+    public function is_published(): bool {
         return $this->record->published;
     }
 
     /**
      * Returns true if the capquiz is completely graded
-     *
-     * @return bool
      */
-    public function is_grading_completed() : bool {
+    public function is_grading_completed(): bool {
         return $this->record->timedue < time() && $this->record->timedue > 0;
     }
 
     /**
      * Returns the amount of stars needed to pass
-     *
-     * @return int
      */
-    public function stars_to_pass() : int {
+    public function stars_to_pass(): int {
         return $this->record->stars_to_pass;
     }
 
     /**
      * Returns the time when the quiz is due
-     *
-     * @return int
      */
-    public function time_due() : int {
+    public function time_due(): int {
         return $this->record->timedue;
     }
 
@@ -160,9 +150,8 @@ class capquiz {
      * Sets a new value for stars to pass
      *
      * @param int $stars
-     * @throws \dml_exception
      */
-    public function set_stars_to_pass(int $stars) {
+    public function set_stars_to_pass(int $stars): void {
         global $DB;
         $this->record->stars_to_pass = $stars;
         $DB->update_record('capquiz', $this->record);
@@ -172,9 +161,8 @@ class capquiz {
      * Sets a new due time
      *
      * @param int $time
-     * @throws \dml_exception
      */
-    public function set_time_due(int $time) {
+    public function set_time_due(int $time): void {
         global $DB;
         $this->record->timedue = $time;
         $DB->update_record('capquiz', $this->record);
@@ -184,9 +172,8 @@ class capquiz {
      * Sets a new default rating
      *
      * @param float $rating
-     * @throws \dml_exception
      */
-    public function set_default_user_rating(float $rating) {
+    public function set_default_user_rating(float $rating): void {
         global $DB;
         $this->record->default_user_rating = $rating;
         $DB->update_record('capquiz', $this->record);
@@ -194,11 +181,8 @@ class capquiz {
 
     /**
      * Publishes the capquiz if it can publish it
-     *
-     * @return bool
-     * @throws \dml_exception
      */
-    public function publish() : bool {
+    public function publish(): bool {
         global $DB;
         if (!$this->can_publish()) {
             return false;
@@ -210,10 +194,8 @@ class capquiz {
 
     /**
      * Returns true if the capquiz is publishable
-     *
-     * @return bool
      */
-    public function can_publish() : bool {
+    public function can_publish(): bool {
         if (!$this->has_question_list() || $this->is_published()) {
             return false;
         }
@@ -224,9 +206,8 @@ class capquiz {
      * Returns a new question engine based on the user
      *
      * @param capquiz_user $user
-     * @return capquiz_question_engine|null
      */
-    public function question_engine(capquiz_user $user) {
+    public function question_engine(capquiz_user $user): ?capquiz_question_engine {
         $quba = $user->question_usage();
         if (!$quba) {
             return null;
@@ -238,82 +219,65 @@ class capquiz {
 
     /**
      * Returns the capquiz user
-     *
-     * @return capquiz_user
-     * @throws \Exception
      */
-    public function user() : capquiz_user {
+    public function user(): ?capquiz_user {
         global $USER;
         return capquiz_user::load_user($this, $USER->id, $this->context());
     }
 
     /**
      * Returns the default rating
-     *
-     * @return float
      */
-    public function default_user_rating() : float {
+    public function default_user_rating(): float {
         return $this->record->default_user_rating;
     }
 
     /**
      * Returns true if the capquiz has a question list
-     *
-     * @return bool
      */
-    public function has_question_list() : bool {
+    public function has_question_list(): bool {
         return $this->qlist !== null;
     }
 
     /**
      * Returns the quiz' question list
-     *
-     * @return capquiz_question_list|null
      */
-    public function question_list() {
+    public function question_list(): ?capquiz_question_list {
         return $this->qlist;
     }
 
     /**
      * Returns the current context
-     *
-     * @return \context_module
      */
-    public function context() : \context_module {
+    public function context(): context_module {
         return $this->context;
     }
 
     /**
      * Returns teh current course module
-     *
-     * @return \stdClass
      */
-    public function course_module() : \stdClass {
+    public function course_module(): stdClass {
         return $this->cm;
     }
 
     /**
      * Returns the current course
-     *
-     * @return \stdClass
      */
-    public function course() : \stdClass {
+    public function course(): stdClass {
         return $this->courserecord;
     }
 
     /**
      * Returns the current renderer
-     *
-     * @return \renderer_base
      */
-    public function renderer() : \renderer_base {
+    public function renderer(): renderer_base {
         return $this->renderer;
     }
 
     /**
      * Validates the matchmaking and rating systems
      */
-    public function validate_matchmaking_and_rating_systems() {
+    public function validate_matchmaking_and_rating_systems(): void {
         $ratingsystemloader = new capquiz_rating_system_loader($this);
         if (!$ratingsystemloader->has_rating_system()) {
             $ratingsystemloader->set_default_rating_system();

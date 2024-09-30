@@ -25,6 +25,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 /**
  * Class chronologic_selector
  *
@@ -38,29 +40,23 @@ class chronologic_selector extends capquiz_matchmaking_strategy {
     /**
      * Nothing to configure
      *
-     * @param \stdClass $configuration
-     * @return mixed|void
+     * @param stdClass $config
      */
-    public function configure(\stdClass $configuration) {
-
+    public function configure(stdClass $config): void {
     }
 
     /**
      * No configuration needed
-     *
-     * @return null
      */
-    public function configuration() {
-        return null;
+    public function configuration(): stdClass {
+        return new stdClass();
     }
 
     /**
      * No configuration needed
-     *
-     * @return null
      */
-    public function default_configuration() {
-        return null;
+    public function default_configuration(): stdClass {
+        return new stdClass();
     }
 
     /**
@@ -68,13 +64,13 @@ class chronologic_selector extends capquiz_matchmaking_strategy {
      *
      * @param capquiz_user $user
      * @param capquiz_question_list $qlist
-     * @param array $inactiveattempts
-     * @return capquiz_question|null
+     * @param capquiz_question_attempt[] $inactiveattempts
      */
-    public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist, array $inactiveattempts) {
+    public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist,
+                                           array $inactiveattempts): ?capquiz_question {
         $answered = function (capquiz_question $q) use ($inactiveattempts) {
-            foreach ($inactiveattempts as $attempt) {
-                if ($attempt->question_id() === $q->id()) {
+            foreach ($inactiveattempts as $inactiveattempt) {
+                if ($inactiveattempt->question_id() === $q->id()) {
                     return true;
                 }
             }

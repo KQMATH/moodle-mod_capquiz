@@ -26,7 +26,7 @@
 namespace mod_capquiz\form\view;
 
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_question_list;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,14 +43,15 @@ require_once($CFG->libdir . '/formslib.php');
 class grading_configuration_form extends \moodleform {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /**
-     * grading_configuration_form constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
-     * @param \moodle_url $url
+     * @param moodle_url $url
      */
-    public function __construct(capquiz $capquiz, \moodle_url $url) {
+    public function __construct(capquiz $capquiz, moodle_url $url) {
         $this->capquiz = $capquiz;
         parent::__construct($url);
     }
@@ -58,7 +59,7 @@ class grading_configuration_form extends \moodleform {
     /**
      * Defines form
      */
-    public function definition() {
+    public function definition(): void {
         $qlist = $this->capquiz->question_list();
         $form = $this->_form;
         $form->addElement('text', 'default_user_rating', get_string('default_user_rating', 'capquiz'));
@@ -106,7 +107,7 @@ class grading_configuration_form extends \moodleform {
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    public function validations($data, $files) {
+    public function validations($data, $files): array {
         $errors = [];
         if (empty($data['default_user_rating'])) {
             $errors['default_user_rating'] = get_string('default_user_rating_required', 'capquiz');

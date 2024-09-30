@@ -116,14 +116,13 @@ $string['question_rating'] = 'Question rating';
 
 $string['need_to_log_in'] = 'You need to log in';
 
-$string['no_questions'] = 'No questions';
 $string['no_enrolled_students'] = 'No students are enrolled';
 $string['no_questions_added_to_list'] = 'No questions added to the list';
 $string['no_matchmaking_strategy_selected'] = 'No selection strategy has been specified';
 $string['nothing_to_configure_for_strategy'] = 'There is nothing to configure for this strategy';
 
 $string['update_rating_explanation'] = '<p>The question ratings can be edited below. Changes are saved automatically.</p>';
-$string['question_list_no_questions'] = 'This capquiz has no questions. Add some questions from the list to the right';
+$string['question_list_no_questions'] = 'This capquiz has no questions. Add some questions from the question bank below.';
 $string['n_closest'] = 'N-closest';
 $string['chronological'] = 'Chronological';
 $string['no_strategy_specified'] = 'No strategy specified';
@@ -178,7 +177,6 @@ $string['template_no_questions_in_list'] = '<p>There doesn\'t seem to be any que
 $string['publish_no_questions_in_list'] = '<p>There doesn\'t seem to be any questions in the question list for this CAPQuiz instance. You must have at least one question before you can publish</p>';
 $string['publish_already_published'] = '<p>This CAPQuiz is already published</p>';
 
-$string['no_question_list_assigned'] = 'No question list has been assigned';
 $string['published'] = 'Published';
 $string['not_published'] = 'Not published';
 $string['question_list_not_published'] = 'The question list is not yet published';

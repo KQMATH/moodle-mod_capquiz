@@ -25,6 +25,9 @@
 
 namespace mod_capquiz;
 
+use moodle_url;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/capquiz_matchmaking_strategy_registry.php');
@@ -43,19 +46,20 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/matchmaking/n_closest/n_close
 class capquiz_matchmaking_strategy_loader {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var \stdClass $record */
-    private $record;
+    /** @var ?stdClass $record */
+    private ?stdClass $record = null;
 
     /** @var capquiz_matchmaking_strategy_registry $registry */
-    private $registry;
+    private capquiz_matchmaking_strategy_registry $registry;
 
-    /** @var \stdClass $configuration */
-    private $configuration;
+    /** @var ?stdClass $configuration */
+    private ?stdClass $configuration;
 
     /**
-     * capquiz_matchmaking_strategy_loader constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
      */
     public function __construct(capquiz $capquiz) {
@@ -68,35 +72,28 @@ class capquiz_matchmaking_strategy_loader {
      * Returns localized strategy name
      *
      * @param string $name
-     * @return \lang_string|string
-     * @throws \coding_exception
      */
-    public static function localized_strategy_name($name) {
+    public static function localized_strategy_name(string $name): string {
         // TODO: This is a hack. The database records currently store the names, which makes localization hard.
-        switch ($name) {
-            case 'N-closest':
-                return get_string('n_closest', 'capquiz');
-            case 'Chronological':
-                return get_string('chronological', 'capquiz');
-            default:
-                return get_string('no_strategy_specified', 'capquiz');
-        }
+        return match ($name) {
+            'N-closest' => get_string('n_closest', 'capquiz'),
+            'Chronological' => get_string('chronological', 'capquiz'),
+            default => get_string('no_strategy_specified', 'capquiz'),
+        };
     }
 
     /**
      * Returns the selected strategy
      *
-     * @return capquiz_matchmaking_strategy|null
-     * @throws \Exception
+     * @return ?capquiz_matchmaking_strategy
      */
-    public function selector() {
+    public function selector(): ?capquiz_matchmaking_strategy {
         if (!$this->record) {
             return null;
         }
         $strategy = $this->registry->selector($this->record->strategy);
-        $config = $this->configuration;
-        if ($config) {
-            $strategy->configure($config);
+        if ($this->configuration) {
+            $strategy->configure($this->configuration);
         }
         return $strategy;
     }
@@ -104,11 +101,9 @@ class capquiz_matchmaking_strategy_loader {
     /**
      * Returns configuration form for the current matchmaking strategy
      *
-     * @param \moodle_url $url
-     * @return mixed|null
-     * @throws \Exception
+     * @param moodle_url $url
      */
-    public function configuration_form(\moodle_url $url) {
+    public function configuration_form(moodle_url $url): mixed {
         if ($this->record && $this->configuration) {
             return $this->registry->configuration_form($this->record->strategy, $this->configuration, $url);
         }
@@ -117,21 +112,15 @@ class capquiz_matchmaking_strategy_loader {
 
     /**
      * Returns true if this instance has a strategy set
-     *
-     * @return bool
-     * @throws \Exception
      */
-    public function has_strategy() : bool {
-        return $this->selector() != null;
+    public function has_strategy(): bool {
+        return $this->selector() !== null;
     }
 
     /**
      * Returns the name of the current strategy
-     *
-     * @return string
-     * @throws \coding_exception
      */
-    public function current_strategy_name() : string {
+    public function current_strategy_name(): string {
         if ($this->record) {
             return $this->record->strategy;
         }
@@ -141,28 +130,23 @@ class capquiz_matchmaking_strategy_loader {
     /**
      * Configures teh current strategy
      *
-     * @param \stdClass $candidateconfig
-     * @throws \Exception
+     * @param stdClass $candidateconfig
      */
-    public function configure_current_strategy(\stdClass $candidateconfig) {
+    public function configure_current_strategy(stdClass $candidateconfig): void {
         if (!$this->record) {
             return;
         }
         $selector = $this->selector();
         $selector->configure($candidateconfig);
-        $configuration = $selector->configuration();
-        if ($configuration) {
-            $this->record->configuration = $this->serialize($configuration);
-        } else {
-            $this->record->configuration = '';
-        }
+        $config = $selector->configuration();
+        $this->record->configuration = empty((array)$config) ? '' : $this->serialize($config);
         $this->update_configuration($this->record);
     }
 
     /**
      * Sets the default strategy
      */
-    public function set_default_strategy() {
+    public function set_default_strategy(): void {
         $this->set_strategy($this->registry->default_selection_strategy());
     }
 
@@ -170,19 +154,14 @@ class capquiz_matchmaking_strategy_loader {
      * Sets strategy based on the strategy name
      *
      * @param string $strategy
-     * @throws \dml_exception
      */
-    public function set_strategy(string $strategy) {
+    public function set_strategy(string $strategy): void {
         $selector = $this->registry->selector($strategy);
-        $record = new \stdClass;
+        $record = new stdClass;
         $record->strategy = $strategy;
         $record->capquiz_id = $this->capquiz->id();
         $defaultconfig = $selector->default_configuration();
-        if ($defaultconfig) {
-            $record->configuration = $this->serialize($defaultconfig);
-        } else {
-            $record->configuration = '';
-        }
+        $record->configuration = empty((array)$defaultconfig) ? '' : $this->serialize($defaultconfig);
         global $DB;
         if ($this->record) {
             $record->id = $this->record->id;
@@ -195,53 +174,44 @@ class capquiz_matchmaking_strategy_loader {
 
     /**
      * Loads the strategy configuration from the database
-     *
-     * @throws \dml_exception
      */
-    private function load_configuration() {
+    private function load_configuration(): void {
         global $DB;
         $conditions = ['capquiz_id' => $this->capquiz->id()];
-        $configuration = $DB->get_record('capquiz_question_selection', $conditions);
-        if ($configuration) {
-            $this->set_configuration($configuration);
+        $config = $DB->get_record('capquiz_question_selection', $conditions);
+        if ($config) {
+            $this->set_configuration($config);
         }
     }
 
     /**
      * Updates the strategy configuration and updates the database record
      *
-     * @param \stdClass $configuration
-     * @throws \dml_exception
+     * @param stdClass $config
      */
-    private function update_configuration(\stdClass $configuration) {
+    private function update_configuration(stdClass $config): void {
         global $DB;
-        if ($DB->update_record('capquiz_question_selection', $configuration)) {
-            $this->set_configuration($configuration);
+        if ($DB->update_record('capquiz_question_selection', $config)) {
+            $this->set_configuration($config);
         }
     }
 
     /**
      * Sets this configuration as a new configuration
      *
-     * @param \stdClass $record
+     * @param stdClass $record
      */
-    private function set_configuration(\stdClass $record) {
+    private function set_configuration(stdClass $record): void {
         $this->record = $record;
-        $configuration = $this->deserialize($record->configuration);
-        if ($configuration) {
-            $this->configuration = $configuration;
-        } else {
-            $this->configuration = null;
-        }
+        $this->configuration = $this->deserialize($record->configuration) ?: null;
     }
 
     /**
      * Returns the current configuration as a JSON string
      *
-     * @param \stdClass $configuration
-     * @return string
+     * @param stdClass $configuration
      */
-    private function serialize(\stdClass $configuration) : string {
+    private function serialize(stdClass $configuration): string {
         return json_encode($configuration);
     }
 
@@ -249,9 +219,8 @@ class capquiz_matchmaking_strategy_loader {
      * Takes in JSON encoded configuration string and returns a decoded configuration
      *
      * @param string $configuration
-     * @return mixed
      */
-    private function deserialize(string $configuration) {
+    private function deserialize(string $configuration): mixed {
         return json_decode($configuration, false);
     }
 

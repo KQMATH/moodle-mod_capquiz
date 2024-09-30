@@ -25,8 +25,10 @@
 
 namespace mod_capquiz\output;
 
+use context_course;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use renderer_base;
 
 /**
  * Class import_renderer
@@ -39,17 +41,18 @@ use mod_capquiz\capquiz_urls;
 class import_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var renderer $renderer */
-    private $renderer;
+    /** @var renderer_base $renderer */
+    private renderer_base $renderer;
 
     /**
-     * import_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz The current capquiz
-     * @param renderer $renderer The renderer to be used by this instance
+     * @param renderer_base $renderer The renderer to be used by this instance
      */
-    public function __construct(capquiz $capquiz, renderer $renderer) {
+    public function __construct(capquiz $capquiz, renderer_base $renderer) {
         $this->capquiz = $capquiz;
         $this->renderer = $renderer;
     }
@@ -59,9 +62,8 @@ class import_renderer {
      *
      * @param int $qlistid the id of the list with the question
      * @return array Array of all questions in list $qlistid
-     * @throws \dml_exception
      */
-    private function get_questions_in_list(int $qlistid) : array {
+    private function get_questions_in_list(int $qlistid): array {
         global $DB;
         $sql = 'SELECT cq.id     AS id,
                        cq.rating AS rating,
@@ -76,13 +78,10 @@ class import_renderer {
 
     /**
      * Get list of all questions
-     *
-     * @return array
-     * @throws \dml_exception
      */
-    private function get_question_lists() : array {
+    private function get_question_lists(): array {
         global $DB;
-        $path = \context_course::instance($this->capquiz->course()->id)->path;
+        $path = context_course::instance($this->capquiz->course()->id)->path;
         $sql = 'SELECT DISTINCT cql.*
                   FROM {capquiz_question_list} cql
                   JOIN {context} ctx
@@ -95,13 +94,8 @@ class import_renderer {
 
     /**
      * Render
-     *
-     * @return bool|string
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         $srcqlists = $this->get_question_lists();
         $qlists = [];
         foreach ($srcqlists as $srcqlist) {
@@ -115,17 +109,17 @@ class import_renderer {
                 'description' => $srcqlist->description,
                 'questions' => $questions,
                 'merge' => [
-                    'primary' => true,
+                    'type' => 'primary',
                     'method' => 'post',
                     'url' => capquiz_urls::merge_qlist($srcqlist->id)->out(false),
-                    'label' => get_string('merge', 'capquiz')
+                    'label' => get_string('merge', 'capquiz'),
                 ],
                 'delete' => [
-                    'primary' => false,
+                    'type' => 'danger',
                     'method' => 'post',
                     'url' => capquiz_urls::delete_qlist($srcqlist->id)->out(false),
-                    'label' => get_string('delete')
-                ]
+                    'label' => get_string('delete'),
+                ],
             ];
         }
         return $this->renderer->render_from_template('capquiz/merge_with_question_list', ['lists' => $qlists]);

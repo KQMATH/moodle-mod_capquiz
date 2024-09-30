@@ -28,6 +28,7 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_rating_system_loader;
 use mod_capquiz\capquiz_urls;
+use moodle_page;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,16 +45,16 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class rating_system_configuration_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var renderer $renderer */
-    private $renderer;
+    private renderer $renderer;
 
     /** @var capquiz_rating_system_loader $registry */
-    private $registry;
+    private capquiz_rating_system_loader $registry;
 
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
      * rating_system_configuration_renderer constructor.
@@ -69,11 +70,8 @@ class rating_system_configuration_renderer {
 
     /**
      * Calls submethod that renders the rating_system_configuration view
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         if ($this->registry->has_rating_system()) {
             return $this->render_configuration();
         } else {
@@ -83,25 +81,18 @@ class rating_system_configuration_renderer {
 
     /**
      * Renders the rating configuration view
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    private function render_configuration() {
-        $html = $this->render_form();
+    private function render_configuration(): bool|string {
         return $this->renderer->render_from_template('capquiz/rating_system_configuration', [
             'strategy' => $this->registry->current_rating_system_name(),
-            'form' => $html
+            'form' => $this->render_form(),
         ]);
     }
 
     /**
      * Renders the rating configuration form
-     *
-     * @return string
-     * @throws \moodle_exception
      */
-    private function render_form() {
+    private function render_form(): string {
         $url = $this->page->url;
         if ($form = $this->registry->configuration_form($url)) {
             $formdata = $form->get_data();

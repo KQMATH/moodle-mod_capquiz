@@ -28,11 +28,11 @@ namespace capquizreport_attempts;
 use context_module;
 use mod_capquiz\report\capquiz_attempts_report;
 use mod_capquiz\report\capquiz_attempts_report_options;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_options.php');
-
 
 /**
  * Class to store the options for a {@see capquiz_attempts_report}.
@@ -67,7 +67,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
     /**
      * Get the current value of the settings to pass to the settings form.
      */
-    public function get_initial_form_data() {
+    public function get_initial_form_data(): stdClass {
         $toform = parent::get_initial_form_data();
         $toform->ansstate = $this->showansstate;
         $toform->urating = $this->showurating;
@@ -84,7 +84,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
      * Set the fields of this object from the form data.
      * @param object $fromform The data from $mform->get_data() from the settings form.
      */
-    public function setup_from_form_data($fromform) {
+    public function setup_from_form_data($fromform): void {
         parent::setup_from_form_data($fromform);
 
         $this->showansstate = $fromform->ansstate;
@@ -99,7 +99,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
     /**
      * Set the fields of this object from the URL parameters.
      */
-    public function setup_from_params() {
+    public function setup_from_params(): void {
         parent::setup_from_params();
 
         $this->showansstate = optional_param('ansstate', $this->showansstate, PARAM_BOOL);
@@ -115,7 +115,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
      * Set the fields of this object from the user's preferences.
      * (For those settings that are backed by user-preferences).
      */
-    public function setup_from_user_preferences() {
+    public function setup_from_user_preferences(): void {
         parent::setup_from_user_preferences();
 
         $this->showansstate = get_user_preferences('capquizreport_attempts_ansstate', $this->showansstate);
@@ -131,7 +131,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
      * Update the user preferences so they match the settings in this object.
      * (For those settings that are backed by user-preferences).
      */
-    public function update_user_preferences() {
+    public function update_user_preferences(): void {
         parent::update_user_preferences();
 
         set_user_preference('capquizreport_attempts_ansstate', $this->showansstate);
@@ -146,7 +146,7 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
     /**
      * Check the settings, and remove any 'impossible' combinations.
      */
-    public function resolve_dependencies() {
+    public function resolve_dependencies(): void {
         parent::resolve_dependencies();
 
         if (!$this->showansstate
@@ -170,9 +170,10 @@ class capquizreport_attempts_options extends capquiz_attempts_report_options {
 
     /**
      * Get the URL parameters required to show the report with these options.
+     *
      * @return array URL parameter name => value.
      */
-    protected function get_url_params() {
+    protected function get_url_params(): array {
         $params = parent::get_url_params();
         $params['ansstate'] = $this->showansstate;
         $params['urating'] = $this->showurating;

@@ -19,6 +19,7 @@
  *
  * Currently only used for backwards compatibility, the sub-plugin definitions are in subplugins.json
  *
+ * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
  * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 
 // phpcs:disable
 /*
-$subplugins = array(
+$subplugins = [
     'capquizreport' => 'mod/capquiz/report',
-);
+];
 */
 // phpcs:enable
 
-$subplugins = (array) json_decode(file_get_contents(__DIR__."/subplugins.json"))->plugintypes;
+$subplugins = (array)json_decode(file_get_contents(__DIR__ . '/subplugins.json'))->plugintypes;

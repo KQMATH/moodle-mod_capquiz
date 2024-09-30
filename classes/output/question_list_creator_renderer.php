@@ -22,12 +22,14 @@
  * @copyright   2018 NTNU
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_capquiz\output;
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\capquiz_question_list;
 use mod_capquiz\form\view\question_list_create_form;
+use moodle_page;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,16 +46,17 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class question_list_creator_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var renderer $renderer */
-    private $renderer;
+    private renderer $renderer;
 
-    /** @var \moodle_page $PAGE */
-    private $page;
+    /** @var moodle_page $PAGE */
+    private moodle_page $page;
 
     /**
-     * question_list_creator_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz The capquiz whose question list creator should be rendered
      * @param renderer $renderer The renderer used to render the question list creator
      */
@@ -65,11 +68,8 @@ class question_list_creator_renderer {
 
     /**
      * Renders the question list creator
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         $url = $this->page->url;
         $form = new question_list_create_form($url);
         $formdata = $form->get_data();
@@ -79,7 +79,7 @@ class question_list_creator_renderer {
                 $formdata->level_2_rating,
                 $formdata->level_3_rating,
                 $formdata->level_4_rating,
-                $formdata->level_5_rating
+                $formdata->level_5_rating,
             ];
             $title = $formdata->title;
             $description = $formdata->description;
@@ -90,7 +90,7 @@ class question_list_creator_renderer {
             capquiz_urls::redirect_to_front_page();
         }
         return $this->renderer->render_from_template('capquiz/create_question_list', [
-            'form' => $form->render()
+            'form' => $form->render(),
         ]);
     }
 

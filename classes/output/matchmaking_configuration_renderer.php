@@ -28,6 +28,7 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_matchmaking_strategy_loader;
 use mod_capquiz\capquiz_urls;
+use moodle_page;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,16 +45,16 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class matchmaking_configuration_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var renderer $renderer */
-    private $renderer;
+    private renderer $renderer;
 
-    /** @var \mod_capquiz\capquiz_matchmaking_strategy_loader $registry */
-    private $registry;
+    /** @var capquiz_matchmaking_strategy_loader $registry */
+    private capquiz_matchmaking_strategy_loader $registry;
 
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
      * matchmaking_configuration_renderer constructor.
@@ -69,12 +70,8 @@ class matchmaking_configuration_renderer {
 
     /**
      * Calls submethod that renders the matchmaking_configuration view
-     *
-     * @return bool|string
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         if ($this->registry->has_strategy()) {
             return $this->render_configuration();
         } else {
@@ -84,28 +81,19 @@ class matchmaking_configuration_renderer {
 
     /**
      * Renders the matchmaking configuration view
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    private function render_configuration() {
-        $html = $this->render_form();
+    private function render_configuration(): bool|string {
         $strategy = $this->registry->current_strategy_name();
-        $localized = capquiz_matchmaking_strategy_loader::localized_strategy_name($strategy);
         return $this->renderer->render_from_template('capquiz/matchmaking_configuration', [
-            'strategy' => $localized,
-            'form' => $html
+            'strategy' => capquiz_matchmaking_strategy_loader::localized_strategy_name($strategy),
+            'form' => $this->render_form(),
         ]);
     }
 
     /**
      * Returns the rendered matchmaking configuration form
-     *
-     * @return \lang_string|string
-     * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    private function render_form() {
+    private function render_form(): string {
         $url = $this->page->url;
         if ($form = $this->registry->configuration_form($url)) {
             $formdata = $form->get_data();

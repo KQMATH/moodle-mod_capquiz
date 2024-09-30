@@ -25,6 +25,7 @@
  */
 
 use mod_capquiz\capquiz;
+use mod_capquiz\output\question_attempt_renderer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,9 +35,8 @@ require_once($CFG->dirroot . '/lib/gradelib.php');
  * Add this capquiz instance to the database
  *
  * @param stdClass $modformdata The data submitted from the form
- * @return bool|int
  */
-function capquiz_add_instance(stdClass $modformdata) {
+function capquiz_add_instance(stdClass $modformdata): bool|int {
     global $DB;
     $modformdata->time_modified = time();
     $modformdata->time_created = time();
@@ -48,9 +48,8 @@ function capquiz_add_instance(stdClass $modformdata) {
  * Update this instance in the database
  *
  * @param stdClass $capquiz database record
- * @return bool
  */
-function capquiz_update_instance(stdClass $capquiz) {
+function capquiz_update_instance(stdClass $capquiz): bool {
     global $DB;
     $capquiz->id = $capquiz->instance;
     $DB->update_record('capquiz', $capquiz);
@@ -63,26 +62,22 @@ function capquiz_update_instance(stdClass $capquiz) {
  *
  * @param int $cmid Course module id for the instance to be deleted
  */
-function capquiz_delete_instance(int $cmid) {
+function capquiz_delete_instance(int $cmid): void {
     $capquiz = new capquiz($cmid);
-    if ($capquiz) {
-        $user = $capquiz->user();
-        if ($user) {
-            $quba = $user->question_usage();
-            \question_engine::delete_questions_usage_by_activity($quba->get_id());
-        }
+    $user = $capquiz->user();
+    if ($user !== null) {
+        $quba = $user->question_usage();
+        question_engine::delete_questions_usage_by_activity($quba->get_id());
     }
 }
 
 /**
  * Implementation of the reset course functionality, delete all the assignment submissions for course $data->courseid.
  *
- * @param object $data
+ * @param stdClass $data
  * @return array containing the statusreport from execution
- * @throws coding_exception
- * @throws dml_exception
  */
-function capquiz_reset_userdata($data) {
+function capquiz_reset_userdata(stdClass $data): array {
     global $DB;
     $status = [];
     $strmodname = get_string('modulenameplural', 'capquiz');
@@ -99,7 +94,7 @@ function capquiz_reset_userdata($data) {
             continue;
         }
         foreach ($users as $user) {
-            \question_engine::delete_questions_usage_by_activity($user->question_usage_id);
+            question_engine::delete_questions_usage_by_activity($user->question_usage_id);
             $DB->delete_records('capquiz_attempt', ['user_id' => $user->id]);
         }
         $DB->delete_records('capquiz_user', ['capquiz_id' => $instance->id]);
@@ -112,9 +107,8 @@ function capquiz_reset_userdata($data) {
  * Finds all assignment notifications that have yet to be mailed out, and mails them.
  *
  * Cron function to be run periodically according to the moodle cron.
- * @return bool
  */
-function capquiz_cron() {
+function capquiz_cron(): bool {
     return true;
 }
 
@@ -123,9 +117,8 @@ function capquiz_cron() {
  *
  * @param settings_navigation $settings
  * @param navigation_node $capquiznode
- * @return void
  */
-function capquiz_extend_settings_navigation($settings, $capquiznode) {
+function capquiz_extend_settings_navigation(settings_navigation $settings, navigation_node $capquiznode): void {
     global $PAGE, $CFG;
 
     // Require {@link https://github.com/moodle/moodle/blob/master/lib/questionlib.php}
@@ -140,9 +133,8 @@ function capquiz_extend_settings_navigation($settings, $capquiznode) {
  *
  * @param stdClass $capquiz database record
  * @param int $userid int or 0 for all users
- * @return array
  */
-function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
+function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0): array {
     global $DB;
     $params = ['capquiz_id' => $capquiz->id];
     if ($userid > 0) {
@@ -168,15 +160,15 @@ function capquiz_get_user_grades(stdClass $capquiz, int $userid = 0) {
  * Create grade item for given assignment.
  *
  * @param stdClass $capquiz record with extra cmidnumber
- * @param array $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @param array|string|null $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
+function capquiz_grade_item_update(stdClass $capquiz, $grades = null): int {
     global $DB;
     $capquiz->cmidnumber = get_coursemodule_from_instance('capquiz', $capquiz->id)->id;
     $params = [
         'itemname' => $capquiz->name,
-        'idnumber' => $capquiz->cmidnumber
+        'idnumber' => $capquiz->cmidnumber,
     ];
     $params['gradetype'] = GRADE_TYPE_VALUE;
     $params['grademax'] = 5;
@@ -191,7 +183,7 @@ function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
         'itemtype' => 'mod',
         'itemmodule' => 'capquiz',
         'iteminstance' => $capquiz->id,
-        'outcomeid' => null
+        'outcomeid' => null,
     ]);
     $item->gradepass = $capquiz->stars_to_pass;
     $item->update();
@@ -210,7 +202,7 @@ function capquiz_grade_item_update(stdClass $capquiz, $grades = null) {
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
  */
-function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone = true) {
+function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone = true): void {
     $grades = capquiz_get_user_grades($capquiz, $userid);
     if ($grades) {
         capquiz_grade_item_update($capquiz, $grades);
@@ -230,7 +222,7 @@ function capquiz_update_grades(stdClass $capquiz, int $userid = 0, $nullifnone =
  * @param int $courseid  id of the course to be reset
  * @param string $type Optional type of assignment to limit the reset to a particular assignment type
  */
-function capquiz_reset_gradebook($courseid, $type = '') {
+function capquiz_reset_gradebook($courseid, $type = ''): void {
     global $DB;
     $instances = $DB->get_records('capquiz', ['course' => $courseid]);
     foreach ($instances as $instance) {
@@ -238,6 +230,40 @@ function capquiz_reset_gradebook($courseid, $type = '') {
     }
 }
 
+/**
+ * Serve question files.
+ *
+ * @param stdClass $course
+ * @param stdClass $context
+ * @param string $component
+ * @param string $filearea
+ * @param int $qubaid
+ * @param int $slot
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @see quiz_question_pluginfile
+ */
+function capquiz_question_pluginfile(stdClass $course, stdClass $context, string $component, string $filearea,
+                                     int $qubaid, int $slot, array $args, bool $forcedownload, array $options = []): void {
+    global $DB;
+    $user = $DB->get_record('capquiz_user', ['question_usage_id' => $qubaid]);
+    $cm = get_coursemodule_from_instance('capquiz', $user->capquiz_id, $course->id, false, MUST_EXIST);
+    require_login($course, false, $cm);
+    $quba = question_engine::load_questions_usage_by_activity($qubaid);
+    $displayoptions = question_attempt_renderer::attempt_display_options(context_module::instance($cm->id));
+    if (!$quba->check_file_access($slot, $displayoptions, $component, $filearea, $args, $forcedownload)) {
+        send_file_not_found();
+    }
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+    if (!$file || $file->is_directory()) {
+        send_file_not_found();
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
+}
 
 // Ugly hack to make 3.11 and 4.0 work seamlessly.
 if (!defined('FEATURE_MOD_PURPOSE')) {
@@ -251,9 +277,8 @@ if (!defined('MOD_PURPOSE_ASSESSMENT')) {
  * Checks if $feature is supported
  *
  * @param string $feature
- * @return mixed
  */
-function capquiz_supports($feature) {
+function capquiz_supports(string $feature) {
     switch ($feature) {
         case FEATURE_MOD_INTRO:
         case FEATURE_BACKUP_MOODLE2:

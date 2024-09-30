@@ -26,7 +26,10 @@
 namespace capquizreport_questions;
 
 use context_course;
+use mod_capquiz\capquiz;
 use mod_capquiz\report\capquiz_attempts_report;
+use mod_quiz\local\reports\attempts_report_options;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -45,14 +48,15 @@ require_once(__DIR__ . '/questions_options.php');
 class capquizreport_questions_report extends capquiz_attempts_report {
 
     /**
-     * Displays the full report
-     * @param capquiz $capquiz capquiz object
-     * @param stdClass $cm - course_module object
-     * @param stdClass $course - course object
-     * @param string $download - type of download being requested
+     * Displays the full report.
+     *
+     * @param capquiz $capquiz
+     * @param stdClass $cm
+     * @param stdClass $course
+     * @param string $download type of download being requested
      */
-    public function display($capquiz, $cm, $course, $download) {
-        global $OUTPUT, $DB;
+    public function display($capquiz, $cm, $course, $download): bool {
+        global $DB;
 
         list($studentsjoins) = $this->init(
             'questions', 'capquizreport_questions\capquizreport_questions_settings_form', $capquiz, $cm, $course);
@@ -72,15 +76,15 @@ class capquizreport_questions_report extends capquiz_attempts_report {
         $questions = capquiz_report_get_questions($capquiz);
 
         // Prepare for downloading, if applicable.
-        $courseshortname = format_string($course->shortname, true,
-            array('context' => context_course::instance($course->id)));
+        $courseshortname = format_string($course->shortname, true, ['context' => context_course::instance($course->id)]);
 
         $table = new capquizreport_questions_table($capquiz, $this->context,
             $this->options, $studentsjoins, $questions, $this->options->get_url());
+
         $filename = capquiz_report_download_filename(get_string('questionsfilename', 'capquizreport_questions'),
             $courseshortname, $capquiz->name());
-        $table->is_downloading($this->options->download, $filename,
-            $courseshortname . ' ' . format_string($capquiz->name(), true));
+
+        $table->is_downloading($this->options->download, $filename, $courseshortname . ' ' . format_string($capquiz->name()));
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
         }
@@ -98,8 +102,7 @@ class capquizreport_questions_report extends capquiz_attempts_report {
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_standard_header_and_messages($cm, $course, $capquiz,
-                $this->options, $hasquestions, $hasstudents);
+            $this->print_standard_header_and_messages($cm, $course, $capquiz, $this->options, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
@@ -110,8 +113,8 @@ class capquizreport_questions_report extends capquiz_attempts_report {
             $table->setup_sql_queries($studentsjoins);
 
             // Define table columns.
-            $columns = array();
-            $headers = array();
+            $columns = [];
+            $headers = [];
 
             if ($table->is_downloading()) {
                 $columns[] = 'attemptid';
@@ -164,19 +167,17 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * outputs the standard group selector, number of attempts summary,
      * and messages to cover common cases when the report can't be shown.
      *
-     * @param \stdClass $cm the course_module information.
-     * @param \stdClass $course the course settings.
-     * @param \stdClass $capquiz the capquiz settings.
-     * @param mod_quiz_attempts_report_options $options the current report settings.
+     * @param stdClass $cm the course_module information.
+     * @param stdClass $course the course settings.
+     * @param capquiz $capquiz the capquiz settings.
+     * @param attempts_report_options $options the current report settings.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */
-    protected function print_standard_header_and_messages($cm, $course, $capquiz,
-                                                          $options, $hasquestions, $hasstudents) {
+    protected function print_standard_header_and_messages($cm, $course, capquiz $capquiz, attempts_report_options $options,
+                                                          bool $hasquestions, bool $hasstudents): void {
         global $OUTPUT;
-
-        echo $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);
-
+        $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);
         if (!$hasquestions) {
             echo capquiz_no_questions_message($capquiz, $cm, $this->context);
         } else if (!$capquiz->is_published()) {
@@ -184,7 +185,6 @@ class capquizreport_questions_report extends capquiz_attempts_report {
         } else if (!$hasstudents) {
             echo $OUTPUT->notification(get_string('nostudentsyet'));
         }
-
     }
 
     /**
@@ -193,7 +193,7 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * @param array $columns columns to be added
      * @param array $headers column headers
      */
-    protected function add_question_rating_columns(array &$columns, array &$headers) {
+    protected function add_question_rating_columns(array &$columns, array &$headers): void {
         $this->add_question_rating_column($columns, $headers);
         $this->add_question_previous_rating_column($columns, $headers);
     }
@@ -204,7 +204,7 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * @param array $columns columns to be added
      * @param array $headers column headers
      */
-    protected function add_question_rating_column(array &$columns, array &$headers) {
+    protected function add_question_rating_column(array &$columns, array &$headers): void {
         $columns[] = 'questionrating';
         $headers[] = get_string('questionrating', 'capquiz');
     }
@@ -215,7 +215,7 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * @param array $columns columns to be added
      * @param array $headers column headers
      */
-    protected function add_question_previous_rating_column(array &$columns, array &$headers) {
+    protected function add_question_previous_rating_column(array &$columns, array &$headers): void {
         $columns[] = 'questionprevrating';
         $headers[] = get_string('questionprevrating', 'capquizreport_questions');
     }

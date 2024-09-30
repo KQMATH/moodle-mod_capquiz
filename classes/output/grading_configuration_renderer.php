@@ -28,6 +28,8 @@ namespace mod_capquiz\output;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\grading_configuration_form;
+use moodle_page;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,16 +46,17 @@ require_once($CFG->dirroot . '/question/editlib.php');
 class grading_configuration_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var renderer $renderer */
-    private $renderer;
+    private renderer $renderer;
 
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
-     * grading_configuration_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
      * @param renderer $renderer
      */
@@ -65,22 +68,17 @@ class grading_configuration_renderer {
 
     /**
      * Render grading configuration view
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         return $this->renderer->render_from_template('capquiz/configure_grading', [
-            'rating_form' => $this->get_rating_configuration()
+            'rating_form' => $this->get_rating_configuration(),
         ]);
     }
 
     /**
      * Returns rating configuration form
-     *
-     * @return string
      */
-    private function get_rating_configuration() {
+    private function get_rating_configuration(): string {
         $url = $this->page->url;
         $form = new grading_configuration_form($this->capquiz, $url);
         $formdata = $form->get_data();
@@ -93,11 +91,9 @@ class grading_configuration_renderer {
     /**
      * Processes the rating configuration formdata
      *
-     * @param object $formdata
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @param stdClass $formdata
      */
-    private function process_rating_configuration($formdata) {
+    private function process_rating_configuration(stdClass $formdata): void {
         $star = 1;
         $ratings = [];
         while (isset($formdata->{"star_rating_$star"})) {
