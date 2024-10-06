@@ -23,26 +23,33 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Questions';
-$string['privacy:metadata'] = 'The capquizreport questions plugin does not store any personal data.';
-$string['questionsfilename'] = 'questions';
-
-$string['userprevrating'] = 'User\'s previous rating';
-$string['questionprevrating'] = 'Question\'s previous rating';
-$string['uprevrating'] = 'user\'s previous rating';
-$string['qprevrating'] = 'question\'s previous rating';
-$string['qrating'] = 'question rating';
-$string['urating'] = 'user rating';
 $string['ansstate'] = 'answer state';
 $string['answerstate'] = 'Answer state';
+$string['attemptid'] = 'Attempt id';
+
+$string['correct'] = 'Correct';
+
+$string['false'] = 'False';
+
+$string['pluginname'] = 'Questions';
+$string['privacy:metadata'] = 'The capquizreport questions plugin does not store any personal data.';
+
+$string['qprevrating'] = 'question\'s previous rating';
+$string['qrating'] = 'question rating';
 $string['question'] = 'Question';
+$string['questionprevrating'] = 'Question\'s previous rating';
+$string['questionprevratingmanual'] = 'Previous rating manually updated';
+$string['questionsfilename'] = 'questions';
+
+$string['rating_manually_updated'] = 'Previous rating was manually updated';
 $string['response'] = 'Response';
 $string['rightanswer'] = 'Right answer';
-$string['true'] = 'True';
-$string['false'] = 'False';
-$string['correct'] = 'Correct';
-$string['wrong'] = 'Wrong';
-$string['questionprevratingmanual'] = 'Previous rating manually updated';
-$string['rating_manually_updated'] = 'Previous rating was manually updated';
+
 $string['timecreated'] = 'Time created';
-$string['attemptid'] = 'Attempt id';
+$string['true'] = 'True';
+
+$string['uprevrating'] = 'user\'s previous rating';
+$string['urating'] = 'user rating';
+$string['userprevrating'] = 'User\'s previous rating';
+
+$string['wrong'] = 'Wrong';
