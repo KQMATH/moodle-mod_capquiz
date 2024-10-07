@@ -39,12 +39,12 @@ use stdClass;
 class capquiz_question_rating {
 
     /** @var stdClass $record */
-    private $record;
+    private stdClass $record;
 
     /**
-     * capquiz_question constructor.
+     * Constructor.
+     *
      * @param stdClass $record
-     * @throws dml_exception
      */
     public function __construct(stdClass $record) {
         $this->record = $record;
@@ -54,16 +54,11 @@ class capquiz_question_rating {
      * Loads a question rating from the database with a matching id
      *
      * @param int $questionratingid
-     * @return capquiz_question_rating|null
-     * @throws dml_exception
      */
-    public static function load_question_rating(int $questionratingid) {
+    public static function load_question_rating(int $questionratingid): ?capquiz_question_rating {
         global $DB;
         $record = $DB->get_record('capquiz_question_rating', ['id' => $questionratingid]);
-        if ($record === false) {
-            return null;
-        }
-        return new capquiz_question_rating($record);
+        return empty($record) ? null : new capquiz_question_rating($record);
     }
 
     /**
@@ -72,9 +67,9 @@ class capquiz_question_rating {
      * @param capquiz_question $question
      * @param float $rating
      * @param bool $manual
-     * @return capquiz_question_rating|null
      */
-    public static function create_question_rating(capquiz_question $question, float $rating, bool $manual = false) {
+    public static function create_question_rating(capquiz_question $question, float $rating,
+                                                  bool $manual = false): capquiz_question_rating {
         return self::insert_question_rating_entry($question->id(), $rating, $manual);
     }
 
@@ -84,33 +79,26 @@ class capquiz_question_rating {
      * @param int $questionid
      * @param float $rating
      * @param bool $manual
-     * @return capquiz_question_rating|null
      */
-    public static function insert_question_rating_entry(int $questionid, float $rating, bool $manual = false) {
+    public static function insert_question_rating_entry(int $questionid, float $rating,
+                                                        bool $manual = false): capquiz_question_rating {
         global $DB;
-
         $record = new stdClass();
         $record->capquiz_question_id = $questionid;
         $record->rating = $rating;
         $record->manual = $manual;
         $record->timecreated = time();
-        try {
-            $ratingid = $DB->insert_record('capquiz_question_rating', $record);
-            $record->id = $ratingid;
-            return new capquiz_question_rating($record);
-        } catch (dml_exception $e) {
-            return null;
-        }
+        $ratingid = $DB->insert_record('capquiz_question_rating', $record);
+        $record->id = $ratingid;
+        return new capquiz_question_rating($record);
     }
 
     /**
      * Load information about the latest question rating for an attempt from the database.
      *
      * @param int $questionid
-     * @return capquiz_question_rating
-     * @throws dml_exception
      */
-    public static function latest_question_rating_by_question($questionid) {
+    public static function latest_question_rating_by_question(int $questionid): ?capquiz_question_rating {
         global $DB;
         $sql = "SELECT cqr.*
                   FROM {capquiz_question_rating} cqr
@@ -123,14 +111,11 @@ class capquiz_question_rating {
                     )
                 AND cq.id = :question_id";
         $record = $DB->get_record_sql($sql, ['question_id' => $questionid]);
-
-        return $record ? new capquiz_question_rating($record) : null;
+        return empty($record) ? null : new capquiz_question_rating($record);
     }
 
     /**
      * Returns this question ratings id
-     *
-     * @return int
      */
     public function id(): int {
         return $this->record->id;
@@ -138,8 +123,6 @@ class capquiz_question_rating {
 
     /**
      * Returns the time of when the question rating was created
-     *
-     * @return string
      */
     public function timecreated(): string {
         return $this->record->timecreated;
@@ -147,8 +130,6 @@ class capquiz_question_rating {
 
     /**
      * Returns the question rating
-     *
-     * @return float
      */
     public function rating(): float {
         return $this->record->rating;
@@ -158,9 +139,8 @@ class capquiz_question_rating {
      * Sets the question rating
      *
      * @param float $rating
-     * @throws dml_exception
      */
-    public function set_rating(float $rating) {
+    public function set_rating(float $rating): void {
         global $DB;
         $this->record->rating = $rating;
         $DB->update_record('capquiz_question_rating', $this->record);

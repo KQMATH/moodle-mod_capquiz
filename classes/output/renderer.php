@@ -25,8 +25,12 @@
 
 namespace mod_capquiz\output;
 
+use core_renderer;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
+use moodle_url;
+use renderer_base;
+use tabobject;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,10 +58,8 @@ class renderer extends \plugin_renderer_base {
 
     /**
      * Returns a reference to the current renderer
-     *
-     * @return \core_renderer|\renderer_base
      */
-    public function output_renderer() {
+    public function output_renderer(): core_renderer|renderer_base {
         return $this->output;
     }
 
@@ -66,23 +68,18 @@ class renderer extends \plugin_renderer_base {
      *
      * @param string $name Name of the tab
      * @param string $title Title of the tab
-     * @param \moodle_url $link Link
-     * @return \tabobject
-     * @throws \coding_exception
+     * @param moodle_url $link Link
      */
-    private function tab(string $name, string $title, \moodle_url $link) {
-        $title = get_string($title, 'capquiz');
-        return new \tabobject($name, $link, $title);
+    private function tab(string $name, string $title, moodle_url $link): tabobject {
+        return new tabobject($name, $link, get_string($title, 'capquiz'));
     }
 
     /**
      * Creates all tabs
      *
      * @param string $activetab The currently active cab
-     * @return bool|string
-     * @throws \coding_exception
      */
-    private function tabs(string $activetab) {
+    private function tabs(string $activetab): bool|string {
         $tabs = [
             $this->tab('view_dashboard', 'dashboard', capquiz_urls::view_url()),
             $this->tab('view_rating_system', 'rating_system', capquiz_urls::view_rating_system_url()),
@@ -98,162 +95,112 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display a tabbed view
      *
-     * @param renderer $renderer The renderer to render the tab
-     * @param string $activetab The currently active tab
-     * @throws \coding_exception
+     * @param string $view
+     * @param string $activetab
      */
-    public function display_tabbed_view($renderer, string $activetab) {
-        $html = $this->output->header();
-        $html .= $this->tabs($activetab);
-        $html .= $renderer->render();
-        $html .= $this->output->footer();
-        echo $html;
+    public function display_tabbed_view(string $view, string $activetab): void {
+        echo $this->output->header();
+        echo $this->tabs($activetab);
+        echo $view;
+        echo $this->output->footer();
     }
 
     /**
      * Display multiple tabbed views
      *
-     * @param renderer[] $renderers The renderers to render the tabs
+     * @param string[] $views The renderers to render the tabs
      * @param string $activetab The currently active tab
-     * @throws \coding_exception
      */
-    public function display_tabbed_views(array $renderers, string $activetab) {
-        $html = $this->output->header();
-        $html .= $this->tabs($activetab);
-        foreach ($renderers as $renderer) {
-            $html .= $renderer->render();
+    public function display_tabbed_views(array $views, string $activetab): void {
+        echo $this->output->header();
+        echo $this->tabs($activetab);
+        foreach ($views as $view) {
+            echo $view;
         }
-        $html .= $this->output->footer();
-        echo $html;
+        echo $this->output->footer();
     }
 
     /**
-     * Display view
+     * Display view.
      *
-     * @param renderer $renderer renderer to render the view
-     * @throws \coding_exception
+     * @param string $view
      */
-    public function display_view($renderer) {
-        $html = $this->output->header();
-        $html .= $renderer->render();
-        $html .= $this->output->footer();
-        echo $html;
-    }
-
-    /**
-     * Display multiple views
-     *
-     * @param renderer[] $renderers renderers to render the views
-     * @throws \coding_exception
-     */
-    public function display_views(array $renderers) {
-        $html = $this->output->header();
-        foreach ($renderers as $renderer) {
-            $html .= $renderer->render();
-        }
-        $html .= $this->output->footer();
-        echo $html;
+    public function display_view(string $view): void {
+        echo $this->output->header();
+        echo $view;
+        echo $this->output->footer();
     }
 
     /**
      * Display the question attempt view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_question_attempt_view(capquiz $capquiz) {
-        $this->display_view(new question_attempt_renderer($capquiz, $this));
+    public function display_question_attempt_view(capquiz $capquiz): void {
+        $renderer = new question_attempt_renderer($capquiz, $this);
+        $this->display_view($renderer->render());
     }
 
     /**
      * Display the instructor dashboard
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_instructor_dashboard(capquiz $capquiz) {
-        $this->display_tabbed_view(new instructor_dashboard_renderer($capquiz, $this), 'view_dashboard');
+    public function display_instructor_dashboard(capquiz $capquiz): void {
+        $renderer = new instructor_dashboard_renderer($capquiz, $this);
+        $this->display_tabbed_view($renderer->render(), 'view_dashboard');
     }
 
     /**
      * Display the question list create view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_question_list_create_view(capquiz $capquiz) {
-        $this->display_view(new question_list_creator_renderer($capquiz, $this));
+    public function display_question_list_create_view(capquiz $capquiz): void {
+        $renderer = new question_list_creator_renderer($capquiz, $this);
+        $this->display_view($renderer->render());
     }
 
     /**
      * Display the choose question list view
-     *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
      */
-    public function display_choose_question_list_view(capquiz $capquiz) {
-        $this->display_view(new question_list_selection_renderer($this, $capquiz->context()));
+    public function display_choose_question_list_view(): void {
+        $renderer = new question_list_selection_renderer($this);
+        $this->display_view($renderer->render());
     }
 
     /**
      * Display the unauthorized view
-     *
-     * @throws \coding_exception
      */
-    public function display_unauthorized_view() {
-        $this->display_view(new unauthorized_view_renderer($this));
+    public function display_unauthorized_view(): void {
+        $renderer = new unauthorized_view_renderer($this);
+        $this->display_view($renderer->render());
     }
 
     /**
      * Display the question list view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_question_list_view(capquiz $capquiz) {
-        $render = new class($capquiz, $this) {
-            private $capquiz;
-            private $renderer;
-
-            /**
-             *  constructor.
-             * @param capquiz $capquiz
-             * @param renderer $renderer
-             */
-            public function __construct(capquiz $capquiz, renderer $renderer) {
-                $this->capquiz = $capquiz;
-                $this->renderer = $renderer;
-            }
-
-            /**
-             * Renders question list
-             *
-             * @return string
-             */
-            public function render() {
-                $html = '<div class="capquiz-flex">';
-                $r1 = new question_list_renderer($this->capquiz, $this->renderer);
-                $r2 = new question_bank_renderer($this->capquiz, $this->renderer);
-                $html .= '<div class="capquiz-flex-item">' . $r1->render() . '</div>';
-                $html .= '<div class="capquiz-flex-item">' . $r2->render() . '</div >';
-                return $html . '</div>';
-            }
-        };
-        $this->display_tabbed_view($render, 'view_questions');
+    public function display_question_list_view(capquiz $capquiz): void {
+        $r1 = new question_list_renderer($capquiz, $this);
+        $r2 = new question_bank_renderer($capquiz);
+        $html = '<div>' . $r1->render() . '</div>';
+        $html .= '<div>' . $r2->render() . '</div >';
+        $this->display_tabbed_view($html, 'view_questions');
     }
 
     /**
      * Display the rating system configuration
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_rating_system_configuration(capquiz $capquiz) {
+    public function display_rating_system_configuration(capquiz $capquiz): void {
         $this->display_tabbed_views([
-            new matchmaking_strategy_selection_renderer($capquiz, $this),
-            new matchmaking_configuration_renderer($capquiz, $this),
-            new rating_system_selection_renderer($capquiz, $this),
-            new rating_system_configuration_renderer($capquiz, $this)
+            (new matchmaking_strategy_selection_renderer($capquiz, $this))->render(),
+            (new matchmaking_configuration_renderer($capquiz, $this))->render(),
+            (new rating_system_selection_renderer($capquiz, $this))->render(),
+            (new rating_system_configuration_renderer($capquiz, $this))->render(),
         ], 'view_rating_system');
     }
 
@@ -261,40 +208,40 @@ class renderer extends \plugin_renderer_base {
     /**
      * Display the leaderboard view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_leaderboard(capquiz $capquiz) {
-        $this->display_tabbed_view(new classlist_renderer($capquiz, $this), 'view_classlist');
+    public function display_leaderboard(capquiz $capquiz): void {
+        $renderer = new classlist_renderer($capquiz, $this);
+        $this->display_tabbed_view($renderer->render(), 'view_classlist');
     }
 
     /**
      * Display the import view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_import(capquiz $capquiz) {
-        $this->display_tabbed_view(new import_renderer($capquiz, $this), 'view_import');
+    public function display_import(capquiz $capquiz): void {
+        $renderer = new import_renderer($capquiz, $this);
+        $this->display_tabbed_view($renderer->render(), 'view_import');
     }
 
     /**
      * Display the grading configuration view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_grading_configuration(capquiz $capquiz) {
-        $this->display_tabbed_view(new grading_configuration_renderer($capquiz, $this), 'view_grading');
+    public function display_grading_configuration(capquiz $capquiz): void {
+        $renderer = new grading_configuration_renderer($capquiz, $this);
+        $this->display_tabbed_view($renderer->render(), 'view_grading');
     }
 
     /**
      * Display the report view
      *
-     * @param capquiz $capquiz The current capquiz
-     * @throws \coding_exception
+     * @param capquiz $capquiz
      */
-    public function display_report(capquiz $capquiz) {
-        $this->display_tabbed_view(new report_renderer($capquiz, $this), 'view_report');
+    public function display_report(capquiz $capquiz): void {
+        $renderer = new report_renderer($capquiz);
+        $this->display_tabbed_view($renderer->render(), 'view_report');
     }
 }

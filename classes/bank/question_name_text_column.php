@@ -16,8 +16,10 @@
 
 namespace mod_capquiz\bank;
 
-use \html_writer;
-
+use core_tag_tag;
+use html_writer;
+use question_utils;
+use stdClass;
 
 /**
  * A column type for the name followed by the start of the question text.
@@ -25,7 +27,6 @@ use \html_writer;
  * This class is copied to CAPQuiz from the Core Quiz, with the addition of
  * the `quiz_question_tostring` method copied from Core Quiz' locallib.
  *
- * @package    mod_capquiz
  * @package    mod_capquiz
  * @category   question
  * @copyright  2009 Tim Hunt
@@ -37,28 +38,24 @@ class question_name_text_column extends question_name_column {
     /**
      * Get the internal name for this column. Used as a CSS class name,
      * and to store information about the current sort. Must match PARAM_ALPHA.
-     *
-     * @return string column name.
      */
     public function get_name(): string {
         return 'questionnametext';
     }
 
-
     /**
      * Creates a textual representation of a question for display.
      *
-     * @param object $question A question object from the database questions table
+     * @param stdClass $question A question object from the database questions table
      * @param bool $showicon If true, show the question's icon with the question. False by default.
      * @param bool $showquestiontext If true (default), show question text after question name.
      *       If false, show only question name.
      * @param bool $showidnumber If true, show the question's idnumber, if any. False by default.
-     * @param core_tag_tag[]|bool $showtags if array passed, show those tags. Else, if true, get and show tags,
+     * @param bool|core_tag_tag[] $showtags if array passed, show those tags. Else, if true, get and show tags,
      *       else, don't show tags (which is the default).
-     * @return string HTML fragment.
      */
-    protected function quiz_question_tostring($question, $showicon = false, $showquestiontext = true,
-            $showidnumber = false, $showtags = false) {
+    protected function quiz_question_tostring(stdClass $question, bool $showicon = false, bool $showquestiontext = true,
+                                              bool $showidnumber = false, array|bool $showtags = false): string {
         global $OUTPUT;
         $result = '';
 
@@ -71,9 +68,11 @@ class question_name_text_column extends question_name_column {
 
         // Question idnumber.
         if ($showidnumber && $question->idnumber !== null && $question->idnumber !== '') {
-            $result .= ' ' . html_writer::span(
-                    html_writer::span(get_string('idnumber', 'question'), 'accesshide') .
-                    ' ' . s($question->idnumber), 'badge badge-primary');
+            $result .= ' ';
+            $result .= html_writer::span(
+                html_writer::span(get_string('idnumber', 'question'), 'accesshide')
+                . ' ' . s($question->idnumber), 'badge badge-primary'
+            );
         }
 
         // Question tags.
@@ -90,8 +89,8 @@ class question_name_text_column extends question_name_column {
 
         // Question text.
         if ($showquestiontext) {
-            $questiontext = \question_utils::to_plain_text($question->questiontext,
-                    $question->questiontextformat, array('noclean' => true, 'para' => false));
+            $questiontext = question_utils::to_plain_text($question->questiontext,
+                    $question->questiontextformat, ['noclean' => true, 'para' => false]);
             $questiontext = shorten_text($questiontext, 50);
             if ($questiontext) {
                 $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
@@ -107,23 +106,21 @@ class question_name_text_column extends question_name_column {
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
     protected function display_content($question, $rowclasses): void {
-        echo \html_writer::start_tag('div');
+        echo html_writer::start_tag('div');
         $labelfor = $this->label_for($question);
         if ($labelfor) {
-            echo \html_writer::start_tag('label', ['for' => $labelfor]);
+            echo html_writer::start_tag('label', ['for' => $labelfor]);
         }
         echo $this->quiz_question_tostring($question, false, true, true, $question->tags);
         if ($labelfor) {
-            echo \html_writer::end_tag('label');
+            echo html_writer::end_tag('label');
         }
-        echo \html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
     }
 
     /**
      * Use table alias 'q' for the question table, or one of the
      * ones from get_extra_joins. Every field requested must specify a table prefix.
-     *
-     * @return array fields required.
      */
     public function get_required_fields(): array {
         $fields = parent::get_required_fields();
@@ -140,9 +137,9 @@ class question_name_text_column extends question_name_column {
      * Probably a good idea to check that another column has not already
      * loaded the data you want.
      *
-     * @param \stdClass[] $questions the questions that will be displayed.
+     * @param stdClass[] $questions the questions that will be displayed.
      */
-    public function load_additional_data(array $questions) {
+    public function load_additional_data(array $questions): void {
         parent::load_additional_data($questions);
         parent::load_question_tags($questions);
     }

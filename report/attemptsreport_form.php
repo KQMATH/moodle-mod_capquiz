@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-
 /**
  * Base class for the settings form for {@see capquiz_attempts_report}s.
  *
@@ -58,23 +57,18 @@ abstract class capquiz_attempts_report_form extends moodleform {
     /**
      * Defines the form
      */
-    protected function definition() {
+    protected function definition(): void {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'preferencespage',
-            get_string('reportwhattoinclude', 'quiz'));
-
+        $mform->addElement('header', 'preferencespage', get_string('reportwhattoinclude', 'quiz'));
         $this->standard_attempt_fields($mform);
         $this->other_attempt_fields($mform);
 
-        $mform->addElement('header', 'preferencesuser',
-            get_string('reportdisplayoptions', 'quiz'));
-
+        $mform->addElement('header', 'preferencesuser', get_string('reportdisplayoptions', 'quiz'));
         $this->standard_preference_fields($mform);
         $this->other_preference_fields($mform);
 
-        $mform->addElement('submit', 'submitbutton',
-            get_string('showreport', 'quiz'));
+        $mform->addElement('submit', 'submitbutton', get_string('showreport', 'quiz'));
     }
 
     /**
@@ -82,19 +76,17 @@ abstract class capquiz_attempts_report_form extends moodleform {
      *
      * @param MoodleQuickForm $mform the form to add attempt fields to
      */
-    protected function standard_attempt_fields(MoodleQuickForm $mform) {
-
-        $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), array(
+    protected function standard_attempt_fields(MoodleQuickForm $mform): void {
+        $mform->addElement('select', 'attempts', get_string('reportattemptsfrom', 'quiz'), [
             capquiz_attempts_report::ENROLLED_WITH => get_string('reportuserswith', 'quiz'),
             // phpcs:disable
             // capquiz_attempts_report::ENROLLED_WITHOUT => get_string('reportuserswithout', 'quiz'),
             // capquiz_attempts_report::ENROLLED_ALL     => get_string('reportuserswithorwithout', 'quiz'),
             // phpcs:enable
             capquiz_attempts_report::ALL_WITH => get_string('reportusersall', 'quiz'),
-        ));
+        ]);
 
-        $mform->addElement('advcheckbox', 'onlyanswered', '',
-            get_string('reportshowonlyanswered', 'capquiz'));
+        $mform->addElement('advcheckbox', 'onlyanswered', '', get_string('reportshowonlyanswered', 'capquiz'));
         $mform->addHelpButton('onlyanswered', 'reportshowonlyanswered', 'capquiz');
     }
 

@@ -35,43 +35,83 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
      */
     protected function define_structure() {
         $capquiz = new backup_nested_element('capquiz', ['id'], [
-            'name', 'intro', 'introformat', 'timecreated', 'timemodified', 'published', 'default_user_rating'
+            'name',
+            'intro',
+            'introformat',
+            'timecreated',
+            'timemodified',
+            'published',
+            'default_user_rating',
         ]);
         $questionlist = new backup_nested_element('questionlist', null, [
-            'id', 'capquiz_id', 'title', 'author', 'description',
-            'star_ratings', 'is_template', 'time_created', 'time_modified', 'default_question_rating'
+            'id',
+            'capquiz_id',
+            'title',
+            'author',
+            'description',
+            'star_ratings',
+            'is_template',
+            'time_created',
+            'time_modified',
+            'default_question_rating',
         ]);
         $questions = new backup_nested_element('questions');
         $question = new backup_nested_element('question', ['id'], [
-            'question_id', 'question_list_id', 'rating'
+            'question_id',
+            'question_list_id',
+            'rating',
         ]);
         $questionratings = new backup_nested_element('questionratings');
         $questionrating = new backup_nested_element('question_rating', ['id'], [
-            'capquiz_question_id', 'rating', 'manual', 'timecreated'
+            'capquiz_question_id',
+            'rating',
+            'manual',
+            'timecreated',
         ]);
         $questionselections = new backup_nested_element('questionselections');
         $questionselection = new backup_nested_element('questionselection', ['id'], [
-            'capquiz_id', 'strategy', 'configuration'
+            'capquiz_id',
+            'strategy',
+            'configuration',
         ]);
         $ratingsystems = new backup_nested_element('ratingsystems');
         $ratingsystem = new backup_nested_element('ratingsystem', ['id'], [
-            'capquiz_id', 'rating_system', 'configuration'
+            'capquiz_id',
+            'rating_system',
+            'configuration',
         ]);
         $users = new backup_nested_element('users');
         $user = new backup_nested_element('user', ['id'], [
-            'user_id', 'capquiz_id', 'question_usage_id', 'rating', 'highest_level'
+            'user_id',
+            'capquiz_id',
+            'question_usage_id',
+            'rating',
+            'highest_level',
         ]);
         $this->add_question_usages($user, 'question_usage_id');
 
         $userratings = new backup_nested_element('userratings');
         $userrating = new backup_nested_element('user_rating', ['id'], [
-            'capquiz_user_id', 'rating', 'manual', 'timecreated'
+            'capquiz_user_id',
+            'rating',
+            'manual',
+            'timecreated',
         ]);
         $attempts = new backup_nested_element('attempts');
         $attempt = new backup_nested_element('attempt', ['id'], [
-            'slot', 'user_id', 'question_id', 'reviewed', 'answered', 'time_answered', 'time_reviewed',
-            'question_rating_id', 'question_prev_rating_id', 'prev_question_rating_id',
-            'prev_question_prev_rating_id', 'user_rating_id', 'user_prev_rating_id'
+            'slot',
+            'user_id',
+            'question_id',
+            'reviewed',
+            'answered',
+            'time_answered',
+            'time_reviewed',
+            'question_rating_id',
+            'question_prev_rating_id',
+            'prev_question_rating_id',
+            'prev_question_prev_rating_id',
+            'user_rating_id',
+            'user_prev_rating_id',
         ]);
 
         // Build the tree.

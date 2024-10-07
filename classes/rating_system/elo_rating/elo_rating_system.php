@@ -25,6 +25,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 /**
  * Class elo_rating_system
  *
@@ -36,32 +38,30 @@ namespace mod_capquiz;
 class elo_rating_system extends capquiz_rating_system {
 
     /** @var float $studentkfactor */
-    private $studentkfactor;
+    private float $studentkfactor;
 
     /** @var float $questionkfactor */
-    private $questionkfactor;
+    private float $questionkfactor;
 
     /**
      * Configures the rating system
      *
-     * @param \stdClass $configuration
+     * @param stdClass $config
      */
-    public function configure(\stdClass $configuration) {
-        if ($configuration->student_k_factor) {
-            $this->studentkfactor = $configuration->student_k_factor;
+    public function configure(stdClass $config): void {
+        if ($config->student_k_factor) {
+            $this->studentkfactor = $config->student_k_factor;
         }
-        if ($configuration->question_k_factor) {
-            $this->questionkfactor = $configuration->question_k_factor;
+        if ($config->question_k_factor) {
+            $this->questionkfactor = $config->question_k_factor;
         }
     }
 
     /**
      * Returns the current configuration
-     *
-     * @return \stdClass
      */
-    public function configuration() {
-        $config = new \stdClass;
+    public function configuration(): stdClass {
+        $config = new stdClass;
         $config->student_k_factor = $this->studentkfactor;
         $config->question_k_factor = $this->questionkfactor;
         return $config;
@@ -69,11 +69,9 @@ class elo_rating_system extends capquiz_rating_system {
 
     /**
      * Returns the default configuration
-     *
-     * @return \stdClass
      */
-    public function default_configuration() {
-        $config = new \stdClass;
+    public function default_configuration(): stdClass {
+        $config = new stdClass;
         $config->student_k_factor = 32;
         $config->question_k_factor = 8;
         return $config;
@@ -85,10 +83,8 @@ class elo_rating_system extends capquiz_rating_system {
      * @param capquiz_user $user
      * @param capquiz_question $question
      * @param float $score
-     * @return mixed|void
-     * @throws \dml_exception
      */
-    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score) {
+    public function update_user_rating(capquiz_user $user, capquiz_question $question, float $score): void {
         $current = $user->rating();
         $factor = $this->studentkfactor;
         $newrating = $current + $factor * ($score - $this->expected_result($current, $question->rating()));
@@ -100,9 +96,8 @@ class elo_rating_system extends capquiz_rating_system {
      *
      * @param capquiz_question $winner
      * @param capquiz_question $loser
-     * @return mixed|void
      */
-    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser) {
+    public function question_victory_ratings(capquiz_question $winner, capquiz_question $loser): void {
         $loserating = $loser->rating();
         $winrating = $winner->rating();
         $factor = $this->questionkfactor;
@@ -118,9 +113,8 @@ class elo_rating_system extends capquiz_rating_system {
      *
      * @param float $a
      * @param float $b
-     * @return float
      */
-    private function expected_result(float $a, float $b) : float {
+    private function expected_result(float $a, float $b): float {
         $exponent = ($b - $a) / 400.0;
         return 1.0 / (1.0 + pow(10.0, $exponent));
     }

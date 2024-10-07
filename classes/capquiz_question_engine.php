@@ -25,6 +25,8 @@
 
 namespace mod_capquiz;
 
+use question_usage_by_activity;
+
 /**
  * Class capquiz_question_engine
  *
@@ -36,25 +38,27 @@ namespace mod_capquiz;
 class capquiz_question_engine {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var \question_usage_by_activity $quba */
-    private $quba;
+    /** @var question_usage_by_activity $quba */
+    private question_usage_by_activity $quba;
 
     /** @var capquiz_matchmaking_strategy_loader $matchmakingloader */
-    private $matchmakingloader;
+    private capquiz_matchmaking_strategy_loader $matchmakingloader;
 
     /** @var capquiz_rating_system_loader $ratingsystemloader */
-    private $ratingsystemloader;
+    private capquiz_rating_system_loader $ratingsystemloader;
 
     /**
-     * capquiz_question_engine constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
-     * @param \question_usage_by_activity $quba
+     * @param question_usage_by_activity $quba
      * @param capquiz_matchmaking_strategy_loader $strategyloader
      * @param capquiz_rating_system_loader $ratingsystemloader
      */
-    public function __construct(capquiz $capquiz, \question_usage_by_activity $quba,
+    public function __construct(capquiz $capquiz,
+                                question_usage_by_activity $quba,
                                 capquiz_matchmaking_strategy_loader $strategyloader,
                                 capquiz_rating_system_loader $ratingsystemloader) {
         $this->capquiz = $capquiz;
@@ -67,9 +71,8 @@ class capquiz_question_engine {
      * Checks if the user has finished their attempt
      *
      * @param capquiz_user $user
-     * @return bool
      */
-    public function user_is_completed(capquiz_user $user) : bool {
+    public function user_is_completed(capquiz_user $user): bool {
         if (capquiz_question_attempt::active_attempt($user)) {
             return false;
         }
@@ -83,22 +86,16 @@ class capquiz_question_engine {
      * Gets an attempt for the user, returns a new one if there are no active attempts
      *
      * @param capquiz_user $user
-     * @return capquiz_question_attempt|null
      */
-    public function attempt_for_user(capquiz_user $user) {
-        if ($attempt = capquiz_question_attempt::active_attempt($user)) {
-            return $attempt;
-        }
-        return $this->new_attempt_for_user($user);
+    public function attempt_for_user(capquiz_user $user): ?capquiz_question_attempt {
+        $attempt = capquiz_question_attempt::active_attempt($user);
+        return $attempt !== null ? $attempt : $this->new_attempt_for_user($user);
     }
 
     /**
      * Calls attempt_for_user with the user parameter as the current user
-     *
-     * @return capquiz_question_attempt|null
-     * @throws \Exception
      */
-    public function attempt_for_current_user() {
+    public function attempt_for_current_user(): ?capquiz_question_attempt {
         return $this->attempt_for_user($this->capquiz->user());
     }
 
@@ -107,10 +104,9 @@ class capquiz_question_engine {
      *
      * @param capquiz_user $user
      */
-    public function delete_invalid_attempt(capquiz_user $user) {
+    public function delete_invalid_attempt(capquiz_user $user): void {
         $attempt = $this->attempt_for_user($user);
-
-        if (!$attempt->is_question_valid()) {
+        if ($attempt !== null && !$attempt->is_question_valid()) {
             $attempt->delete();
         }
     }
@@ -121,7 +117,7 @@ class capquiz_question_engine {
      * @param capquiz_user $user
      * @param capquiz_question_attempt $attempt
      */
-    public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt) {
+    public function attempt_answered(capquiz_user $user, capquiz_question_attempt $attempt): void {
         if (!$attempt->is_question_valid()) {
             return;
         }
@@ -146,9 +142,8 @@ class capquiz_question_engine {
      * Sets a new "highest star" score if the new score is the highest score yet
      *
      * @param capquiz_user $user
-     * @throws \dml_exception
      */
-    private function set_new_highest_star_if_attained(capquiz_user $user) {
+    private function set_new_highest_star_if_attained(capquiz_user $user): void {
         $qlist = $this->capquiz->question_list();
         for ($star = $qlist->max_stars(); $star > 0; $star--) {
             $required = $qlist->star_rating($star);
@@ -164,7 +159,7 @@ class capquiz_question_engine {
      *
      * @param capquiz_question_attempt $attempt
      */
-    public function attempt_reviewed(capquiz_question_attempt $attempt) {
+    public function attempt_reviewed(capquiz_question_attempt $attempt): void {
         $attempt->mark_as_reviewed();
     }
 
@@ -172,22 +167,25 @@ class capquiz_question_engine {
      * Creates a new attempt for the user
      *
      * @param capquiz_user $user
-     * @return capquiz_question_attempt|null
      */
-    private function new_attempt_for_user(capquiz_user $user) {
+    private function new_attempt_for_user(capquiz_user $user): ?capquiz_question_attempt {
         $question = $this->find_question_for_user($user);
-        return $question ? capquiz_question_attempt::create_attempt($user, $question) : null;
+        if ($question === null) {
+            return null;
+        }
+        return capquiz_question_attempt::create_attempt($user, $question);
     }
 
     /**
      * Finds a new question for the user
      *
      * @param capquiz_user $user
-     * @return mixed
-     * @throws \dml_exception
      */
-    private function find_question_for_user(capquiz_user $user) {
+    private function find_question_for_user(capquiz_user $user): ?capquiz_question {
         $selector = $this->matchmakingloader->selector();
+        if ($selector === null) {
+            return null;
+        }
         $questionlist = $this->capquiz->question_list();
         $inactiveattempts = capquiz_question_attempt::inactive_attempts($user);
         return $selector->next_question_for_user($user, $questionlist, $inactiveattempts);
@@ -199,19 +197,21 @@ class capquiz_question_engine {
      * @param capquiz_question_attempt $previous
      * @param capquiz_question_attempt $current
      */
-    private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current) {
+    private function update_question_rating(capquiz_question_attempt $previous, capquiz_question_attempt $current): void {
         $ratingsystem = $this->ratingsystemloader->rating_system();
         $currentcorrect = $current->is_correctly_answered();
         $previouscorrect = $previous->is_correctly_answered();
-        $currentquestion = $this->capquiz->question_list()->question($current->question_id());
-        $previousquestion = $this->capquiz->question_list()->question($previous->question_id());
-
-        $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating(), true);
-        $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);
-
-        if (!$currentquestion || !$previousquestion) {
+        $qlist = $this->capquiz->question_list();
+        $currentquestion = $qlist->question($current->question_id());
+        if (!$currentquestion) {
             return;
         }
+        $previousquestion = $qlist->question($previous->question_id());
+        if (!$previousquestion) {
+            return;
+        }
+        $current->set_previous_question_rating($previousquestion->get_capquiz_question_rating(), true);
+        $current->set_question_rating($currentquestion->get_capquiz_question_rating(), true);
         if ($previouscorrect && !$currentcorrect) {
             $ratingsystem->question_victory_ratings($currentquestion, $previousquestion);
         } else if (!$previouscorrect && $currentcorrect) {

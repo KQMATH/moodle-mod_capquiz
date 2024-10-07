@@ -25,6 +25,8 @@
 
 namespace mod_capquiz;
 
+use stdClass;
+
 /**
  * Class capquiz_matchmaking_strategy
  *
@@ -38,24 +40,19 @@ abstract class capquiz_matchmaking_strategy {
     /**
      * Sets a new matchmaking strategy configuration
      *
-     * @param \stdClass $configuration
-     * @return mixed
+     * @param stdClass $configuration
      */
-    abstract public function configure(\stdClass $configuration);
+    abstract public function configure(stdClass $configuration): void;
 
     /**
      * Returns the current configuration
-     *
-     * @return mixed
      */
-    abstract public function configuration();
+    abstract public function configuration(): stdClass;
 
     /**
      * Returns the default configuration
-     *
-     * @return mixed
      */
-    abstract public function default_configuration();
+    abstract public function default_configuration(): stdClass;
 
     /**
      * Returns a new question for the user based on the matchmaking strategy configuration
@@ -63,9 +60,8 @@ abstract class capquiz_matchmaking_strategy {
      * @param capquiz_user $user
      * @param capquiz_question_list $qlist
      * @param array $inactiveattempts
-     * @return mixed
      */
     abstract public function next_question_for_user(capquiz_user $user, capquiz_question_list $qlist,
-            array $inactiveattempts);
+            array $inactiveattempts): ?capquiz_question;
 
 }

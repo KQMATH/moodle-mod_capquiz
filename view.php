@@ -33,27 +33,22 @@ $cmid = capquiz_urls::require_course_module_id_param();
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
 
-$cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);
-if (!$capquiz) {
-    capquiz_urls::redirect_to_front_page();
-}
+$renderer = $capquiz->renderer();
 
 capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlview);
 
 if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
     if ($capquiz->has_question_list()) {
-        $capquiz->renderer()->display_instructor_dashboard($capquiz);
+        $renderer->display_instructor_dashboard($capquiz);
     } else {
-        $capquiz->renderer()->display_choose_question_list_view($capquiz);
+        $renderer->display_choose_question_list_view();
     }
 } else {
     require_capability('mod/capquiz:student', $capquiz->context());
     // Question engine is null if the quiz is not published.
     $qengine = $capquiz->question_engine($capquiz->user());
-    if ($qengine) {
-        $qengine->delete_invalid_attempt($capquiz->user());
-    }
+    $qengine?->delete_invalid_attempt($capquiz->user());
     $capquiz->update_grades();
-    $capquiz->renderer()->display_question_attempt_view($capquiz);
+    $renderer->display_question_attempt_view($capquiz);
 }

@@ -219,3 +219,7 @@
 .capquiz-regrade-all {
     margin-top: 16px;
 }
+
+#page-mod-capquiz-edit table.question-bank-table {
+    width: 100%;
+}

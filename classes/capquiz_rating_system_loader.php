@@ -25,6 +25,9 @@
 
 namespace mod_capquiz;
 
+use moodle_url;
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/capquiz_rating_system_registry.php');
@@ -41,19 +44,19 @@ require_once($CFG->dirroot . '/mod/capquiz/classes/rating_system/elo_rating/elo_
 class capquiz_rating_system_loader {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var \stdClass $record */
-    private $record;
+    /** @var ?stdClass $record */
+    private ?stdClass $record = null;
 
     /** @var capquiz_rating_system_registry $registry */
-    private $registry;
+    private capquiz_rating_system_registry $registry;
 
-    /** @var \stdClass $configuration */
-    private $configuration;
+    /** @var ?stdClass $configuration */
+    private ?stdClass $configuration;
 
     /**
-     * capquiz_rating_system_loader constructor.
+     * Constructor.
      *
      * @param capquiz $capquiz
      */
@@ -65,10 +68,8 @@ class capquiz_rating_system_loader {
 
     /**
      * Returns rating system
-     *
-     * @return capquiz_rating_system|null
      */
-    public function rating_system() {
+    public function rating_system(): ?capquiz_rating_system {
         if (!$this->record) {
             return null;
         }
@@ -84,17 +85,16 @@ class capquiz_rating_system_loader {
      *
      * @return bool
      */
-    public function has_rating_system() : bool {
+    public function has_rating_system(): bool {
         return $this->rating_system() !== null;
     }
 
     /**
      * Returns configuration form
      *
-     * @param \moodle_url $url
-     * @return null
+     * @param moodle_url $url
      */
-    public function configuration_form(\moodle_url $url) {
+    public function configuration_form(moodle_url $url): mixed {
         if ($this->record && $this->configuration) {
             return $this->registry->configuration_form($this->record->rating_system, $this->configuration, $url);
         }
@@ -106,7 +106,7 @@ class capquiz_rating_system_loader {
      *
      * @return string rating system name
      */
-    public function current_rating_system_name() : string {
+    public function current_rating_system_name(): string {
         if ($this->record) {
             return $this->record->rating_system;
         }
@@ -114,50 +114,41 @@ class capquiz_rating_system_loader {
     }
 
     /**
-     * Configures the current rating system
+     * Configure the current rating system.
      *
-     * @param \stdClass $candidateconfig
+     * @param stdClass $candidateconfig
      */
-    public function configure_current_rating_system(\stdClass $candidateconfig) {
+    public function configure_current_rating_system(stdClass $candidateconfig): void {
         if (!$this->record) {
             return;
         }
         $system = $this->rating_system();
         $system->configure($candidateconfig);
-        $configuration = $system->configuration();
-        if ($configuration) {
-            $this->record->configuration = $this->serialize($configuration);
-        } else {
-            $this->record->configuration = '';
-        }
+        $config = $system->configuration();
+        $this->record->configuration = empty((array)$config) ? '' : $this->serialize($config);
         $this->update_configuration($this->record);
     }
 
     /**
-     * sets the default rating system
+     * Set the default rating system.
      */
-    public function set_default_rating_system() {
+    public function set_default_rating_system(): void {
         $this->set_rating_system($this->registry->default_rating_system());
     }
 
     /**
-     * Sets rating system defined by $ratingsystem
+     * Set the rating system
      *
      * @param string $ratingsystem
-     * @throws \dml_exception
      */
-    public function set_rating_system(string $ratingsystem) {
+    public function set_rating_system(string $ratingsystem): void {
         global $DB;
         $system = $this->registry->rating_system($ratingsystem);
-        $record = new \stdClass;
+        $record = new stdClass;
         $record->rating_system = $ratingsystem;
         $record->capquiz_id = $this->capquiz->id();
         $defaultconfig = $system->default_configuration();
-        if ($defaultconfig) {
-            $record->configuration = $this->serialize($defaultconfig);
-        } else {
-            $record->configuration = '';
-        }
+        $record->configuration = empty((array)$defaultconfig) ? '' : $this->serialize($defaultconfig);
         if ($this->record) {
             $record->id = $this->record->id;
             $this->update_configuration($record);
@@ -169,13 +160,10 @@ class capquiz_rating_system_loader {
 
     /**
      * Loads this instances configuration
-     *
-     * @throws \dml_exception
      */
-    private function load_configuration() {
+    private function load_configuration(): void {
         global $DB;
-        $conditions = ['capquiz_id' => $this->capquiz->id()];
-        $configuration = $DB->get_record('capquiz_rating_system', $conditions);
+        $configuration = $DB->get_record('capquiz_rating_system', ['capquiz_id' => $this->capquiz->id()]);
         if ($configuration) {
             $this->set_configuration($configuration);
         }
@@ -184,10 +172,9 @@ class capquiz_rating_system_loader {
     /**
      * Updates this instances configuration as well as updates the database
      *
-     * @param \stdClass $configuration
-     * @throws \dml_exception
+     * @param stdClass $configuration
      */
-    private function update_configuration(\stdClass $configuration) {
+    private function update_configuration(stdClass $configuration): void {
         global $DB;
         if ($DB->update_record('capquiz_rating_system', $configuration)) {
             $this->set_configuration($configuration);
@@ -197,9 +184,9 @@ class capquiz_rating_system_loader {
     /**
      * Sets this instances configuration
      *
-     * @param \stdClass $record
+     * @param stdClass $record
      */
-    private function set_configuration(\stdClass $record) {
+    private function set_configuration(stdClass $record): void {
         $this->record = $record;
         $this->configuration = $this->deserialize($record->configuration);
     }
@@ -207,10 +194,10 @@ class capquiz_rating_system_loader {
     /**
      * Serializes the input configuration object
      *
-     * @param \stdClass $configuration the configuration to be serialized
+     * @param stdClass $configuration the configuration to be serialized
      * @return string json string representing the input configuration
      */
-    private function serialize(\stdClass $configuration) : string {
+    private function serialize(stdClass $configuration): string {
         return json_encode($configuration);
     }
 
@@ -218,9 +205,8 @@ class capquiz_rating_system_loader {
      * Deserializes JSON formatted configuration string
      *
      * @param string $configuration The JSON string to be deserialized back into a configuration object
-     * @return mixed
      */
-    private function deserialize(string $configuration) {
+    private function deserialize(string $configuration): mixed {
         return json_decode($configuration, false);
     }
 

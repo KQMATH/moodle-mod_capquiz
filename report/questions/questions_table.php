@@ -25,12 +25,14 @@
 
 namespace capquizreport_questions;
 
+use core\context;
 use core\dml\sql_join;
 use mod_capquiz\report\capquiz_attempts_report;
 use mod_capquiz\report\capquiz_attempts_report_options;
 use mod_capquiz\report\capquiz_attempts_report_table;
 use moodle_url;
 use quiz_responses_options;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -48,7 +50,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param object $capquiz
      * @param context $context
      * @param capquiz_attempts_report_options $options
@@ -71,14 +74,11 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
      * This overwrites the parent method because full SQL query may fail on Mysql
      * because of the limit in the number of tables in the join. Therefore we only
      * join 59 tables in the main query and add the rest here.
-     *
-     * @return void
      */
-    public function build_table() {
+    public function build_table(): void {
         if (!$this->rawdata) {
             return;
         }
-
         $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetimeseconds', 'capquiz'));
         parent::build_table();
     }
@@ -86,70 +86,54 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
     /**
      * Format the submission and feedback columns.
      *
-     * @param string $colname The column name
-     * @param stdClass $attempt The attempt
-     * @return mixed string or NULL
+     * @param string $colname
+     * @param stdClass $attempt
      */
-    public function other_cols($colname, $attempt) {
-        switch ($colname) {
-            case 'question':
-                return $this->data_col($attempt->slot, 'questionsummary', $attempt);
-            default:
-                return null;
-        }
+    public function other_cols($colname, $attempt): ?string {
+        return match ($colname) {
+            'question' => $this->data_col($attempt->slot, 'questionsummary', $attempt),
+            default => null,
+        };
     }
 
     /**
      * Format a single column, used in other_cols
      *
-     * @param integer $slot  attempts slot
+     * @param int $slot  attempts slot
      * @param string $field
-     * @param object $attempt
-     * @return string
+     * @param stdClass $attempt
      */
-    public function data_col($slot, $field, $attempt) {
+    public function data_col(int $slot, string $field, stdClass $attempt): string {
         if ($attempt->usageid == 0) {
             return '-';
         }
         $value = $this->field_from_extra_data($attempt, $slot, $field);
-
-        if (is_null($value)) {
-            $summary = '-';
-        } else {
-            $summary = trim($value);
-        }
-
+        $summary = $value !== null ? trim($value) : '-';
         if ($this->is_downloading() && $this->is_downloading() != 'html') {
             return $summary;
         }
         $summary = s($summary);
-
         if ($this->is_downloading()) {
             return $summary;
         }
-
         if ($field === 'questionsummary') {
             return $this->make_preview_link($summary, $attempt, $slot);
-
-        } else {
-            return $summary;
         }
+        return $summary;
     }
 
     /**
      * Column text from the extra data loaded in load_extra_data(), before html formatting etc.
      *
-     * @param object $attempt
+     * @param stdClass $attempt
      * @param int $slot
      * @param string $field
-     * @return string
      */
-    protected function field_from_extra_data($attempt, $slot, $field) {
+    protected function field_from_extra_data(stdClass $attempt, int $slot, string $field): string {
         if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
             return '-';
         }
         $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-
         if (property_exists($stepdata, $field . 'full')) {
             $value = $stepdata->{$field . 'full'};
         } else {
@@ -160,17 +144,13 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the answer state column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_answerstate($attempt) {
-        if (is_null($attempt->attempt)) {
+    public function col_answerstate(stdClass $attempt): string {
+        if ($attempt->attempt === null || $attempt->usageid === 0) {
             return '-';
         }
-        if ($attempt->usageid == 0) {
-            return '-';
-        }
-
         $state = $this->slot_state($attempt, $attempt->slot);
         if ($this->is_downloading()) {
             return $state->__toString();
@@ -179,57 +159,43 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
         }
     }
 
-
     /**
      * Generate the display of the question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionrating($attempt) {
-        if ($attempt->questionrating) {
-            return $attempt->questionrating;
-        } else {
-            return '-';
-        }
+    public function col_questionrating(stdClass $attempt): string {
+        return $attempt->questionrating ?: '-';
     }
 
     /**
      * Generate the display of the time created (actually time answered) rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_timecreated($attempt) {
-        if ($attempt->attempt) {
-            return userdate($attempt->timeanswered, $this->strtimeformat);
-        } else {
-            return '-';
-        }
+    public function col_timecreated(stdClass $attempt): string {
+        return $attempt->attempt ? userdate($attempt->timeanswered, $this->strtimeformat) : '-';
     }
 
     /**
      * Generate the display of the time created (actually time answered) rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_attemptid($attempt) {
-        if ($attempt->attempt) {
-            return $attempt->attempt;
-        } else {
-            return '-';
-        }
+    public function col_attemptid(stdClass $attempt) {
+        return $attempt->attempt ?: '-';
     }
 
     /**
      * Generate the display of the previous question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionprevrating($attempt) {
+    public function col_questionprevrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
-                'moodle', array('class' => 'icon'));
-
+            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;
             } else {
@@ -242,15 +208,14 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the previous question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_prevquestionrating($attempt) {
+    public function col_prevquestionrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
-                'moodle', array('class' => 'icon'));
-
+            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;
             } else {
@@ -263,15 +228,14 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the previous question rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_prevquestionprevrating($attempt) {
+    public function col_prevquestionprevrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningicon = $OUTPUT->pix_icon('i/warning', get_string('rating_manually_updated', 'capquizreport_questions'),
-                'moodle', array('class' => 'icon'));
-
+            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;
             } else {
@@ -284,25 +248,23 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
 
     /**
      * Generate the display of the previous question manual rating column.
-     * @param object $attempt the table row being output.
-     * @return string HTML content to go inside the td.
+     *
+     * @param stdClass $attempt the table row being output.
      */
-    public function col_questionprevratingmanual($attempt) {
-        if (is_null($attempt->manualprevqrating)) {
+    public function col_questionprevratingmanual(stdClass $attempt): string {
+        if ($attempt->manualprevqrating === null) {
             return '-';
         }
-        $ismanual = ($attempt->manualprevqrating) ? 'true' : 'false';
-        $manualprevqrating = get_string($ismanual, 'capquiz');
-        return $manualprevqrating;
+        return get_string($attempt->manualprevqrating ? 'true' : 'false', 'capquiz');
     }
 
     /**
      * Contruct all the parts of the main database query.
-     * @param \core\dml\sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
-     * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
-     *     build the actual database query.
+     *
+     * @param sql_join $allowedstudentsjoins (joins, wheres, params) defines allowed users for the report.
+     * @return array 4 elements ($fields, $from, $where, $params) that can be used to build the actual database query.
      */
-    public function base_sql(sql_join $allowedstudentsjoins) {
+    public function base_sql(sql_join $allowedstudentsjoins): array {
         global $DB;
         list($fields, $from, $where, $params) = parent::base_sql($allowedstudentsjoins);
         $fields1 = ',
@@ -349,16 +311,9 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
     }
 
     /**
-     * Does this report require the detailed information for each question from the
-     * question_attempts_steps table?
-     *
-     * @return bool
+     * Does this report require the detailed information for each question from the question_attempts_steps table?
      */
-    protected function requires_latest_steps_loaded() {
-        if ($this->options->showqtext) {
-            return true;
-        } else {
-            return false;
-        }
+    protected function requires_latest_steps_loaded(): bool {
+        return (bool)$this->options->showqtext;
     }
 }

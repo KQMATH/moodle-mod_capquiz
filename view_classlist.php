@@ -35,12 +35,6 @@ require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
-$cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);
-if (!$capquiz) {
-    capquiz_urls::redirect_to_front_page();
-}
-
 capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
-$renderer = $capquiz->renderer();
-$renderer->display_leaderboard($capquiz);
+$capquiz->renderer()->display_leaderboard($capquiz);

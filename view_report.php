@@ -37,10 +37,5 @@ require_capability('mod/capquiz:instructor', $context);
 
 $cmid = capquiz_urls::require_course_module_id_param();
 $capquiz = new capquiz($cmid);
-if (!$capquiz) {
-    capquiz_urls::redirect_to_front_page();
-}
-
 capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
-$renderer = $capquiz->renderer();
-$renderer->display_report($capquiz);
+$capquiz->renderer()->display_report($capquiz);

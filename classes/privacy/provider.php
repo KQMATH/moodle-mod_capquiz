@@ -26,7 +26,6 @@
 
 namespace mod_capquiz\privacy;
 
-use coding_exception;
 use context;
 use context_module;
 use core_privacy\local\metadata\collection;
@@ -35,8 +34,6 @@ use core_privacy\local\request\contextlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
-use dml_exception;
-use moodle_exception;
 use question_display_options;
 use stdClass;
 
@@ -56,9 +53,10 @@ class provider implements
     \core_privacy\local\request\plugin\provider {
 
     /**
-     * Returns meta data about this system.
+     * Returns metadata about this system.
+     *
      * @param collection $items The initialised collection to add metadata to.
-     * @return  collection  A listing of user data stored through this system.
+     * @return collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $items): collection {
         // The table 'capquiz' stores a record for each capquiz.
@@ -69,7 +67,7 @@ class provider implements
         $items->add_database_table('capquiz_attempt', [
             'userid' => 'privacy:metadata:capquiz_attempt:userid',
             'time_answered' => 'privacy:metadata:capquiz_attempt:time_answered',
-            'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed'
+            'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed',
         ], 'privacy:metadata:capquiz_attempt');
 
         // The 'capquiz_question' table is used to map the usage of a question used in a CAPQuiz activity.
@@ -102,7 +100,7 @@ class provider implements
             'capquiz_user_id' => 'privacy:metadata:capquiz_user_rating:capquiz_user_id',
             'rating' => 'privacy:metadata:capquiz_user_rating:rating',
             'manual' => 'privacy:metadata:capquiz_user_rating:manual',
-            'timecreated' => 'privacy:metadata:capquiz_user_rating:timecreated'
+            'timecreated' => 'privacy:metadata:capquiz_user_rating:timecreated',
         ], 'privacy:metadata:capquiz_user_rating');
 
         // CAPQuiz links to the 'core_question' subsystem for all question functionality.
@@ -136,7 +134,7 @@ class provider implements
         $contextlist->add_from_sql($sql, [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'capquiz',
-            'userid' => $userid
+            'userid' => $userid,
         ]);
         return $contextlist;
     }
@@ -145,13 +143,10 @@ class provider implements
      * Export all user data for the specified user, in the specified contexts.
      *
      * @param approved_contextlist $contextlist The approved contexts to export information for.
-     * @throws coding_exception
-     * @throws dml_exception
-     * @throws moodle_exception
      */
-    public static function export_user_data(approved_contextlist $contextlist) {
+    public static function export_user_data(approved_contextlist $contextlist): void {
         global $DB;
-        if (empty($contextlist)) {
+        if ($contextlist->count() === 0) {
             return;
         }
         $user = $contextlist->get_user();
@@ -185,7 +180,7 @@ class provider implements
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'capquiz',
-            'userid' => $user->id
+            'userid' => $user->id,
         ];
         $params += $contextparams;
         $qubaidforcontext = [];
@@ -208,7 +203,7 @@ class provider implements
             // where X is the attempt number.
             $subcontext = [
                 get_string('attempts', 'capquiz'),
-                get_string('attempt', 'capquiz') . " $attempt->capattemptid"
+                get_string('attempt', 'capquiz') . " $attempt->capattemptid",
             ];
 
             writer::with_context($context)->export_data($subcontext, $data);
@@ -240,8 +235,6 @@ class provider implements
      *
      * @param context $context The context to export the users rating for
      * @param int $userid the specified users id
-     * @throws coding_exception
-     * @throws dml_exception
      */
     public static function export_user_rating(context $context, int $userid) {
         global $DB;
@@ -262,7 +255,7 @@ class provider implements
             $data->timecreated = transform::datetime($rating->timecreated);
             $subcontext = [
                 get_string('userratings', 'capquiz'),
-                get_string('userrating', 'capquiz') . " $rating->ratingid"
+                get_string('userrating', 'capquiz') . " $rating->ratingid",
             ];
             writer::with_context($context)->export_data($subcontext, $data);
         }
@@ -273,7 +266,7 @@ class provider implements
      *
      * @param context $context The specific context to delete data for.
      */
-    public static function delete_data_for_all_users_in_context(context $context) {
+    public static function delete_data_for_all_users_in_context(context $context): void {
         global $DB;
         if ($context->contextlevel != CONTEXT_MODULE) {
             return;
@@ -296,7 +289,7 @@ class provider implements
      *
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
-    public static function delete_data_for_user(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist): void {
         global $DB;
         if (empty($contextlist->count())) {
             return;

@@ -81,7 +81,7 @@ function xmldb_capquiz_upgrade($oldversion) {
                 $qlist->level_2_rating,
                 $qlist->level_3_rating,
                 $qlist->level_4_rating,
-                $qlist->level_5_rating
+                $qlist->level_5_rating,
             ]);
             $DB->update_record('capquiz_question_list', $qlist);
         }
@@ -105,11 +105,11 @@ function xmldb_capquiz_upgrade($oldversion) {
         $utable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table capquiz_user_rating.
-        $utable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $utable->add_key('capquiz_user_id', XMLDB_KEY_FOREIGN, array('capquiz_user_id'), 'capquiz_user', array('id'));
+        $utable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $utable->add_key('capquiz_user_id', XMLDB_KEY_FOREIGN, ['capquiz_user_id'], 'capquiz_user', ['id']);
 
         // Adding indexes to table capquiz_user_rating.
-        $utable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+        $utable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, ['timecreated']);
 
         // Conditionally launch create table for enrol_lti_lti2_consumer.
         if (!$dbman->table_exists($utable)) {
@@ -127,11 +127,11 @@ function xmldb_capquiz_upgrade($oldversion) {
         $qtable->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table capquiz_question_rating.
-        $qtable->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $qtable->add_key('capquiz_question_id', XMLDB_KEY_FOREIGN, array('capquiz_question_id'), 'capquiz_question', array('id'));
+        $qtable->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $qtable->add_key('capquiz_question_id', XMLDB_KEY_FOREIGN, ['capquiz_question_id'], 'capquiz_question', ['id']);
 
         // Adding indexes to table capquiz_question_rating.
-        $qtable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+        $qtable->add_index('timecreated', XMLDB_INDEX_NOTUNIQUE, ['timecreated']);
 
         // Conditionally launch create table for capquiz_question_rating.
         if (!$dbman->table_exists($qtable)) {
@@ -143,27 +143,27 @@ function xmldb_capquiz_upgrade($oldversion) {
         $aqrfield = new xmldb_field(
             'question_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aqrkey = new xmldb_key(
-            'question_rating_id', XMLDB_KEY_FOREIGN, array('question_rating_id'), 'capquiz_question_rating', array('id'));
+            'question_rating_id', XMLDB_KEY_FOREIGN, ['question_rating_id'], 'capquiz_question_rating', ['id']);
         $aqprevrfield = new xmldb_field(
             'question_prev_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aqprevrkey = new xmldb_key(
             'question_prev_rating_id',
-            XMLDB_KEY_FOREIGN, array('question_prev_rating_id'), 'capquiz_question_rating', array('id'));
+            XMLDB_KEY_FOREIGN, ['question_prev_rating_id'], 'capquiz_question_rating', ['id']);
 
         $aprevqrfield = new xmldb_field(
             'prev_question_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aprevqrkey = new xmldb_key(
             'prev_question_rating_id',
-            XMLDB_KEY_FOREIGN, array('prev_question_rating_id'), 'capquiz_question_rating', array('id'));
+            XMLDB_KEY_FOREIGN, ['prev_question_rating_id'], 'capquiz_question_rating', ['id']);
 
         $aprevqprevrfield = new xmldb_field(
             'prev_question_prev_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aprevqprevrkey = new xmldb_key(
             'prev_question_prev_rating_id',
-            XMLDB_KEY_FOREIGN, array('prev_question_prev_rating_id'), 'capquiz_question_rating', array('id'));
+            XMLDB_KEY_FOREIGN, ['prev_question_prev_rating_id'], 'capquiz_question_rating', ['id']);
 
         if (!$dbman->field_exists($atable, $aqrfield)) {
             $dbman->add_field($atable, $aqrfield);
@@ -185,13 +185,13 @@ function xmldb_capquiz_upgrade($oldversion) {
         $aurfield = new xmldb_field(
             'user_rating_id', XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aurkey = new xmldb_key(
-            'user_rating_id', XMLDB_KEY_FOREIGN, array('user_rating_id'), 'capquiz_user_rating', array('id'));
+            'user_rating_id', XMLDB_KEY_FOREIGN, ['user_rating_id'], 'capquiz_user_rating', ['id']);
         $aprevurfield = new xmldb_field(
             'user_prev_rating_id',
             XMLDB_TYPE_INTEGER, 11, null, null, null, null);
         $aprevurkey = new xmldb_key(
             'user_prev_rating_id',
-            XMLDB_KEY_FOREIGN, array('user_prev_rating_id'), 'capquiz_user_rating', array('id'));
+            XMLDB_KEY_FOREIGN, ['user_prev_rating_id'], 'capquiz_user_rating', ['id']);
 
         if (!$dbman->field_exists($atable, $aurfield)) {
             $dbman->add_field($atable, $aurfield);

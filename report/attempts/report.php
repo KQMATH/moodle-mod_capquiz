@@ -26,7 +26,9 @@
 namespace capquizreport_attempts;
 
 use context_course;
+use mod_capquiz\capquiz;
 use mod_capquiz\report\capquiz_attempts_report;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -51,17 +53,16 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
      * @param stdClass $course - course object
      * @param string $download - type of download being requested
      */
-    public function display($capquiz, $cm, $course, $download) {
-        global $OUTPUT, $DB;
+    public function display($capquiz, $cm, $course, $download): bool {
+        global $DB;
 
-        list($studentsjoins) = $this->init(
-            'attempts', 'capquizreport_attempts\capquizreport_attempts_settings_form', $capquiz, $cm, $course);
+        list($studentsjoins) = $this->init('attempts', 'capquizreport_attempts\capquizreport_attempts_settings_form',
+            $capquiz, $cm, $course);
 
         $this->options = new capquizreport_attempts_options('attempts', $capquiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
             $this->options->process_settings_from_form($fromform);
-
         } else {
             $this->options->process_settings_from_params();
         }
@@ -72,15 +73,16 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         $questions = capquiz_report_get_questions($capquiz);
 
         // Prepare for downloading, if applicable.
-        $courseshortname = format_string($course->shortname, true,
-            array('context' => context_course::instance($course->id)));
+        $courseshortname = format_string($course->shortname, true, ['context' => context_course::instance($course->id)]);
 
         $table = new capquizreport_attempts_table($capquiz, $this->context,
             $this->options, $studentsjoins, $questions, $this->options->get_url());
+
         $filename = capquiz_report_download_filename(get_string('attemptsfilename', 'capquizreport_attempts'),
             $courseshortname, $capquiz->name());
-        $table->is_downloading($this->options->download, $filename,
-            $courseshortname . ' ' . format_string($capquiz->name(), true));
+
+        $table->is_downloading($this->options->download, $filename, $courseshortname . ' ' . format_string($capquiz->name()));
+
         if ($table->is_downloading()) {
             raise_memory_limit(MEMORY_EXTRA);
         }
@@ -103,20 +105,18 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         // Start output.
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
-            $this->print_standard_header_and_messages($cm, $course, $capquiz,
-                $this->options, $hasquestions, $hasstudents);
+            $this->print_standard_header_and_messages($cm, $course, $capquiz, $this->options, $hasquestions, $hasstudents);
 
             // Print the display options.
             $this->form->display();
         }
 
         if ($hasquestions && !empty($questions) && ($hasstudents || $this->options->attempts == self::ALL_WITH)) {
-
             $table->setup_sql_queries($studentsjoins);
 
             // Define table columns.
-            $columns = array();
-            $headers = array();
+            $columns = [];
+            $headers = [];
 
             if (!$table->is_downloading() && $this->options->checkboxcolumn) {
                 $columns[] = 'checkbox';
@@ -126,7 +126,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $this->add_user_columns($table, $columns, $headers);
 
             if ($table->is_downloading()) {
-                $this->add_uesrid_column($columns, $headers);
+                $this->add_userid_column($columns, $headers);
                 $this->add_moodlequestionid_column($columns, $headers);
             }
 
@@ -178,6 +178,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $table->collapsible(true);
 
             $table->out($this->options->pagesize, true);
+
         }
         return true;
     }

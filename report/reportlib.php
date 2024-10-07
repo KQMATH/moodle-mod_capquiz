@@ -23,6 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\context\module;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\report\capquiz_report_factory;
@@ -39,45 +40,42 @@ require_once($CFG->libdir . '/filelib.php');
  * @param context_module $context the context level to check caps against
  * @return array list of valid reports present
  */
-function capquiz_report_list($context) {
+function capquiz_report_list(context_module $context): array {
     static $reportlist;
     if (!empty($reportlist)) {
         return $reportlist;
     }
     $pluginmanager = new capquiz_plugin_manager('capquizreport');
-    $installedplugins = $pluginmanager->get_sorted_plugins_list();
     $enabledplugins = core_plugin_manager::instance()->get_enabled_plugins('capquizreport');
-    foreach ($installedplugins as $idx => $reportname) {
+    foreach ($pluginmanager->get_sorted_plugins_list() as $reportname) {
         $report = capquiz_report_factory::make($reportname);
-
         if (isset($enabledplugins[$reportname]) && $report->canview($context)) {
             $reportlist[] = $reportname;
         }
-        continue;
     }
     return $reportlist;
 }
-
-
 
 /**
  * Create a filename for use when downloading data from a capquiz report. It is
  * expected that this will be passed to flexible_table::is_downloading, which
  * cleans the filename of bad characters and adds the file extension.
+ *
  * @param string $report the type of report.
  * @param string $courseshortname the course shortname.
  * @param string $capquizname the capquiz name.
  * @return string the filename.
  */
-function capquiz_report_download_filename($report, $courseshortname, $capquizname) {
-    return $courseshortname . '-' . format_string($capquizname, true) . '-' . $report;
+function capquiz_report_download_filename(string $report, string $courseshortname, string $capquizname): string {
+    return $courseshortname . '-' . format_string($capquizname) . '-' . $report;
 }
 
 /**
  * Are there any questions in this capquiz?
- * @param int $capquizid the capquizid id.
+ *
+ * @param int $capquizid
  */
-function capquiz_has_questions($capquizid) {
+function capquiz_has_questions(int $capquizid): bool {
     global $DB;
     $sql = 'SELECT cq.id
               FROM {capquiz_question} cq
@@ -89,12 +87,11 @@ function capquiz_has_questions($capquizid) {
 /**
  * Get the questions in this capquiz, in order.
  *
- * @param capquiz $capquiz the capquiz.
+ * @param capquiz $capquiz
  * @return array of slot => $question object with fields
  *      ->slot, ->id, ->qtype, ->length.
- * @throws dml_exception
  */
-function capquiz_report_get_questions(capquiz $capquiz) {
+function capquiz_report_get_questions(capquiz $capquiz): array {
     global $DB;
     $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id', "'#'", 'cu.id', 'ca.slot') . ' AS uniqueid,
                 ca.slot,
@@ -113,14 +110,13 @@ function capquiz_report_get_questions(capquiz $capquiz) {
             AND q.length > 0
 
             ORDER BY ca.slot';
-    $qsbyslot = $DB->get_records_sql($sql, array($capquiz->id()));
+    $qsbyslot = $DB->get_records_sql($sql, [$capquiz->id()]);
     $number = 1;
     foreach ($qsbyslot as $question) {
         $question->number = $number;
         $number += $question->length;
         $question->type = $question->qtype;
     }
-
     return $qsbyslot;
 }
 
@@ -133,7 +129,7 @@ function capquiz_report_get_questions(capquiz $capquiz) {
  *      made '' is returned instead of 'Attempts: 0'.
  * @return string a string like "Attempts: 123".
  */
-function capquiz_num_attempt_summary(capquiz $capquiz, $returnzero = false) {
+function capquiz_num_attempt_summary(capquiz $capquiz, bool $returnzero = false): string {
     $numattempts = capquiz_report_num_attempt($capquiz);
     if ($numattempts || $returnzero) {
         return get_string('attemptsnum', 'quiz', $numattempts);
@@ -146,98 +142,84 @@ function capquiz_num_attempt_summary(capquiz $capquiz, $returnzero = false) {
  *
  * @param capquiz $capquiz
  * @return int number of answered CAPQuiz attempts
- * @throws dml_exception
  */
 function capquiz_report_num_attempt(capquiz $capquiz): int {
     global $DB;
-    $sql = 'SELECT  COUNT( ca.id)
+    $sql = 'SELECT COUNT(ca.id)
               FROM {capquiz_attempt} ca
               JOIN {capquiz_user} cu ON cu.capquiz_id = :capquizid AND cu.id = ca.user_id
               JOIN {question_usages} qu ON qu.id = cu.question_usage_id
               JOIN {question_attempts} qa ON qa.questionusageid = qu.id AND qa.slot = ca.slot
               JOIN {capquiz_question} cq ON cq.id = ca.question_id';
-    $attempts = $DB->count_records_sql($sql, ['capquizid' => $capquiz->id()]);
-    return $attempts;
+    return $DB->count_records_sql($sql, ['capquizid' => $capquiz->id()]);
 }
-
 
 /**
  * Generate a message saying that this capquiz has no questions, with a button to
  * go to the edit page, if the user has the right capability.
+ *
  * @param object $quiz the quiz settings.
  * @param object $cm the course_module object.
- * @param object $context the quiz context.
+ * @param module $context the quiz context.
  * @return string HTML to output.
  */
-function capquiz_no_questions_message($quiz, $cm, $context) {
+function capquiz_no_questions_message($quiz, $cm, module $context): string {
     global $OUTPUT;
-
-    $output = '';
-    $output .= $OUTPUT->notification(get_string('noquestions', 'quiz'));
+    $output = $OUTPUT->notification(get_string('noquestions', 'quiz'));
     if (has_capability('mod/capquiz:manage', $context)) {
         $output .= $OUTPUT->single_button(capquiz_urls::view_question_list_url(), get_string('editquiz', 'quiz'), 'get');
     }
-
     return $output;
 }
 
 /**
  * Generate a message saying that this capquiz has no questions, with a button to
  * go to the dashboard page (question list settings), if the user has the right capability.
+ *
  * @param object $quiz the quiz settings.
  * @param object $cm the course_module object.
- * @param object $context the quiz context.
+ * @param module $context the quiz context.
  * @return string HTML to output.
  */
-function capquiz_not_published_message($quiz, $cm, $context) {
+function capquiz_not_published_message($quiz, $cm, module $context): string {
     global $OUTPUT;
-
-    $output = '';
-    $output .= $OUTPUT->notification(get_string('question_list_not_published', 'capquiz'));
+    $output = $OUTPUT->notification(get_string('question_list_not_published', 'capquiz'));
     if (has_capability('mod/capquiz:manage', $context)) {
         $output .= $OUTPUT->single_button(capquiz_urls::view_url(), get_string('question_list_settings', 'capquiz'), 'get');
     }
-
     return $output;
 }
 
 /**
- * Make all named SQL parameters unique and
- * generate a new parameter array with the unique parameters.
+ * Make all named SQL parameters unique and generate a new parameter array with the unique parameters.
+ *
  * @param string $sql The SQL with patameters to uniquify
  * @param array $params The patameters to uniquify
- * @return array
  */
-function uniquify_sql_params($sql, $params): array {
+function uniquify_sql_params(string $sql, array $params): array {
     $pattern = "/:([a-zA-Z0-9_]+)/";
     $paramsres = [];
     $processed = [];
-    $sqlres = preg_replace_callback($pattern,
-        function ($matches) use (&$params, &$paramsres, &$processed) {
-            $index = 1;
-            $key = substr($matches[0], 1);
-            if (!array_key_exists($key, $params)) {
-                return $matches[0];
-            }
-
-            if (array_key_exists($key, $processed)) {
-                $processed[$key] += 1;
-                $index = $processed[$key];
-            } else {
-                $processed[$key] = 1;
-            }
-
-            $newkey = $key . $index;
-            $paramsres[$newkey] = $params[$key];
-
-            return $matches[0] . $index;
-        }, $sql);
-
+    $sqlres = preg_replace_callback($pattern, function ($matches) use (&$params, &$paramsres, &$processed) {
+        $index = 1;
+        $key = substr($matches[0], 1);
+        if (!array_key_exists($key, $params)) {
+            return $matches[0];
+        }
+        if (array_key_exists($key, $processed)) {
+            $processed[$key] += 1;
+            $index = $processed[$key];
+        } else {
+            $processed[$key] = 1;
+        }
+        $newkey = $key . $index;
+        $paramsres[$newkey] = $params[$key];
+        return $matches[0] . $index;
+    }, $sql);
     foreach ($params as $param => $value) {
         if (!array_key_exists($param, $paramsres) && !array_key_exists($param, $processed)) {
             $paramsres[$param] = $value;
         }
     }
-
     return [$sqlres, $paramsres];
 }

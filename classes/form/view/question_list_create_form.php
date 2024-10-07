@@ -42,7 +42,7 @@ class question_list_create_form extends \moodleform {
     /**
      * Defines form
      */
-    public function definition() {
+    public function definition(): void {
         $form = $this->_form;
         $form->addElement('text', 'title', get_string('title', 'capquiz'));
         $form->setType('title', PARAM_TEXT);
@@ -74,7 +74,7 @@ class question_list_create_form extends \moodleform {
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    public function validations($data, $files) {
+    public function validations($data, $files): array {
         $errors = [];
         if (empty($data['title'])) {
             $errors['title'] = get_string('title_required', 'capquiz');

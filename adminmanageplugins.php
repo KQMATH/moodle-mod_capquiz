@@ -30,17 +30,14 @@ require_login();
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 
 $subtype = required_param('subtype', PARAM_PLUGIN);
-$action = optional_param('action', null, PARAM_PLUGIN);
+$action = optional_param('action', 'view', PARAM_PLUGIN);
 $plugin = optional_param('plugin', null, PARAM_PLUGIN);
 
 if (!empty($plugin)) {
     require_sesskey();
 }
 
-// Create the class for this controller.
-$pluginmanager = new capquiz_plugin_manager($subtype);
-
 $PAGE->set_context(context_system::instance());
 
-// Execute the controller.
+$pluginmanager = new capquiz_plugin_manager($subtype);
 $pluginmanager->execute($action, $plugin);

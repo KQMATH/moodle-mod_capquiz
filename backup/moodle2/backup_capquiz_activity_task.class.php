@@ -53,10 +53,11 @@ class backup_capquiz_activity_task extends backup_activity_task {
 
     /**
      * Code the transformations to perform in the activity in order to get transportable (encoded) links.
+     *
      * @param string $content
      * @return string of content with the URLs encoded
      */
-    public static function encode_content_links($content) {
+    public static function encode_content_links($content): string {
         global $CFG;
         $base = preg_quote($CFG->wwwroot, '/');
         // Link to the list of CAPQuizzes.

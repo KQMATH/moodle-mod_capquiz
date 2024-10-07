@@ -62,9 +62,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz
      *
      * @param object $data
-     * @throws base_step_exception
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz($data) {
         global $DB;
@@ -82,9 +79,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz question list
      *
      * @param object $data
-     * @throws base_step_exception
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_question_list($data) {
         global $DB;
@@ -102,8 +96,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz questions
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_question($data) {
         global $DB;
@@ -122,8 +114,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz question rating
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_question_rating($data) {
         global $DB;
@@ -138,8 +128,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz question selection
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_question_selection($data) {
         global $DB;
@@ -154,8 +142,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz question rating system
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_rating_system($data) {
         global $DB;
@@ -182,8 +168,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz user rating
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_user_rating($data) {
         global $DB;
@@ -198,8 +182,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Processes and backs up capquiz question attempt
      *
      * @param object $data
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function process_capquiz_attempt($data) {
         global $DB;
@@ -221,8 +203,6 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
      * Updates a users usageid and maps the users old and new ids
      *
      * @param int $newusageid
-     * @throws dml_exception
-     * @throws restore_step_exception
      */
     protected function inform_new_usage_id($newusageid) {
         global $DB;

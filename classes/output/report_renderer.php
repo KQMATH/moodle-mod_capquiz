@@ -29,6 +29,7 @@ use capquiz_exception;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\report\capquiz_report_factory;
+use moodle_page;
 use tabobject;
 
 defined('MOODLE_INTERNAL') || die();
@@ -46,33 +47,25 @@ require_once(__DIR__ . '/../../report/reportfactory.php');
 class report_renderer {
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
-    /** @var renderer $renderer */
-    private $renderer;
-
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
-     * report_renderer constructor.
+     * Constructor.
+     *
      * @param capquiz $capquiz
-     * @param renderer $renderer
      */
-    public function __construct(capquiz $capquiz, renderer $renderer) {
+    public function __construct(capquiz $capquiz) {
         $this->capquiz = $capquiz;
-        $this->renderer = $renderer;
         $this->page = $capquiz->get_page();
     }
 
     /**
      * Renders report
-     *
-     * @return \lang_string|string
-     * @throws \coding_exception
-     * @throws capquiz_exception
      */
-    public function render() {
+    public function render(): string {
         global $CFG;
         $html = '';
         $download = optional_param('download', '', PARAM_RAW);
@@ -82,21 +75,21 @@ class report_renderer {
         if (empty($reportlist)) {
             return get_string('noreports', 'capquiz');
         }
-        if ($mode == '') {
+        if ($mode === '') {
             // Default to first accessible report and redirect.
             capquiz_urls::redirect_to_url(capquiz_urls::view_report_url(reset($reportlist)));
         }
         if (!in_array($mode, $reportlist)) {
             throw new capquiz_exception('erroraccessingreport', 'capquiz',
-                $CFG->wwwroot.'/mod/capquiz/view.php?id=' . $this->capquiz->course()->id);
+                $CFG->wwwroot . '/mod/capquiz/view.php?id=' . $this->capquiz->course()->id);
         }
         $report = capquiz_report_factory::make($mode);
         $this->setup_report();
 
-        $row = array();
+        $row = [];
         foreach ($reportlist as $rep) {
-            $row[] = new tabobject('capquiz_' . $rep, capquiz_urls::view_report_url($rep),
-                get_string('pluginname', 'capquizreport_' . $rep));
+            $url = capquiz_urls::view_report_url($rep);
+            $row[] = new tabobject('capquiz_' . $rep, $url, get_string('pluginname', 'capquizreport_' . $rep));
         }
         $tabs[] = $row;
 
@@ -105,15 +98,13 @@ class report_renderer {
         ob_start();
         $report->display($this->capquiz, $this->capquiz->course_module(), $this->capquiz->course(), $download);
         $html .= ob_get_clean();
-
         return $html;
-
     }
 
     /**
      * Sets pagelayout to "report"
      */
-    private function setup_report() {
+    private function setup_report(): void {
         $this->page->set_pagelayout('report');
     }
 }

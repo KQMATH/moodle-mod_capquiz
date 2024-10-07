@@ -42,25 +42,23 @@ use part_of_admin_tree;
 class capquizreport extends base {
     /**
      * Return URL used for management of plugins of this type.
-     *
-     * @return moodle_url
      */
-    public static function get_manage_url() {
-        return new moodle_url('/mod/capquiz/adminmanageplugins.php', array('subtype' => 'capquizreport'));
+    public static function get_manage_url(): moodle_url {
+        return new moodle_url('/mod/capquiz/adminmanageplugins.php', ['subtype' => 'capquizreport']);
     }
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.
+     *
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
      */
-    public static function get_enabled_plugins() {
+    public static function get_enabled_plugins(): ?array {
         global $DB;
-
         $plugins = core_plugin_manager::instance()->get_installed_plugins('capquizreport');
         if (!$plugins) {
-            return array();
+            return [];
         }
-        $installed = array();
+        $installed = [];
         foreach ($plugins as $plugin => $version) {
             $installed[] = 'capquizreport_' . $plugin;
         }
@@ -75,20 +73,17 @@ class capquizreport extends base {
             unset($plugins[$name]);
         }
 
-        $enabled = array();
+        $enabled = [];
         foreach ($plugins as $plugin => $version) {
             $enabled[$plugin] = $plugin;
         }
-
         return $enabled;
     }
 
     /**
      * Is it possible to uninstall this plugin?
-     *
-     * @return bool
      */
-    public function is_uninstall_allowed() {
+    public function is_uninstall_allowed(): bool {
         return true;
     }
 
@@ -102,7 +97,7 @@ class capquizreport extends base {
      * @param string $parentnodename
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig): void {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
@@ -127,10 +122,8 @@ class capquizreport extends base {
 
     /**
      * Returns the node name used in admin settings menu for this plugin settings (if applicable)
-     *
-     * @return string
      */
-    public function get_settings_section_name() {
+    public function get_settings_section_name(): string {
         return $this->type . '_' . $this->name;
     }
 }

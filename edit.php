@@ -35,16 +35,8 @@ require_login($cm->course, false, $cm);
 $context = \context_module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
-try {
-    $cmid = capquiz_urls::require_course_module_id_param();
-    $capquiz = new capquiz($cmid);
-    capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
-    $bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
-    $bankview = $bankrenderer->create_view();
-    $renderer = $capquiz->renderer();
-    $renderer->display_question_list_view($capquiz);
-
-} catch (\coding_exception $e) {
-    debugging ( "Exception: ".$e );
-    capquiz_urls::redirect_to_front_page();
-} /* */
+$capquiz = new capquiz($cmid);
+capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
+$bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
+$bankview = $bankrenderer->create_view();
+$capquiz->renderer()->display_question_list_view($capquiz);

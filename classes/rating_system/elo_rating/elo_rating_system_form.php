@@ -25,7 +25,8 @@
 
 namespace mod_capquiz;
 
-use mod_capquiz\capquiz;
+use moodle_url;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,39 +42,38 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class elo_rating_system_form extends \moodleform {
 
-    /** @var \stdClass $configuration */
-    private $configuration;
+    /** @var stdClass $config */
+    private stdClass $config;
 
     /**
-     * elo_rating_system_form constructor.
-     * @param \stdClass $configuration
-     * @param \moodle_url $url
+     * Constructor.
+     *
+     * @param stdClass $config
+     * @param moodle_url $url
      */
-    public function __construct(\stdClass $configuration, \moodle_url $url) {
-        $this->configuration = $configuration;
+    public function __construct(stdClass $config, moodle_url $url) {
+        $this->config = $config;
         parent::__construct($url);
     }
 
     /**
      * Defines rating system form
-     *
-     * @throws \coding_exception
      */
-    public function definition() /*: void*/ {
+    public function definition(): void {
         $form = $this->_form;
 
         $form->addElement('text', 'student_k_factor', get_string('student_k_factor', 'capquiz'));
         $form->setType('student_k_factor', PARAM_INT);
         $form->addRule('student_k_factor', get_string('student_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
         $form->addRule('student_k_factor', get_string('k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
-        $form->setDefault('student_k_factor', $this->configuration->student_k_factor);
+        $form->setDefault('student_k_factor', $this->config->student_k_factor);
         $form->addHelpButton('student_k_factor', 'student_k_factor', 'capquiz');
 
         $form->addElement('text', 'question_k_factor', get_string('question_k_factor', 'capquiz'));
         $form->setType('question_k_factor', PARAM_INT);
         $form->addRule('question_k_factor', get_string('question_k_factor_specified_rule', 'capquiz'), 'required', null, 'client');
         $form->addRule('question_k_factor', get_string('k_factor_numeric_rule', 'capquiz'), 'numeric', null, 'client');
-        $form->setDefault('question_k_factor', $this->configuration->question_k_factor);
+        $form->setDefault('question_k_factor', $this->config->question_k_factor);
         $form->addHelpButton('question_k_factor', 'question_k_factor', 'capquiz');
 
         $this->add_action_buttons(false);

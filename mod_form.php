@@ -38,10 +38,8 @@ class mod_capquiz_mod_form extends moodleform_mod {
 
     /**
      * Defines the corm
-     *
-     * @throws coding_exception
      */
-    public function definition() {
+    public function definition(): void {
         $form = $this->_form;
         $form->addElement('text', 'name', get_string('name'), ['size' => '64']);
         $form->setType('name', PARAM_TEXT);

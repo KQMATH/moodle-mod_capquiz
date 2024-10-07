@@ -30,6 +30,8 @@ use mod_capquiz\capquiz_matchmaking_strategy_loader;
 use mod_capquiz\capquiz_matchmaking_strategy_registry;
 use mod_capquiz\capquiz_urls;
 use mod_capquiz\form\view\matchmaking_strategy_selection_form;
+use moodle_page;
+use moodle_url;
 
 /**
  * class matchmaking_strategy_selection_renderer
@@ -41,17 +43,17 @@ use mod_capquiz\form\view\matchmaking_strategy_selection_form;
  */
 class matchmaking_strategy_selection_renderer {
 
-    /** @var \moodle_url $url */
-    private $url;
+    /** @var moodle_url $url */
+    private moodle_url $url;
 
     /** @var capquiz $capquiz */
-    private $capquiz;
+    private capquiz $capquiz;
 
     /** @var renderer $renderer */
-    private $renderer;
+    private renderer $renderer;
 
-    /** @var \moodle_page $page */
-    private $page;
+    /** @var moodle_page $page */
+    private moodle_page $page;
 
     /**
      * matchmaking_strategy_selection_renderer constructor.
@@ -69,19 +71,16 @@ class matchmaking_strategy_selection_renderer {
     /**
      * Sets redirect url
      *
-     * @param \moodle_url $url
+     * @param moodle_url $url
      */
-    public function set_redirect_url(\moodle_url $url) {
+    public function set_redirect_url(moodle_url $url): void {
         $this->url = $url;
     }
 
     /**
      * Renders the matchmaking strategy selection form
-     *
-     * @return bool|string
-     * @throws \moodle_exception
      */
-    public function render() {
+    public function render(): bool|string {
         $url = $this->page->url;
         $form = new matchmaking_strategy_selection_form($this->capquiz, $url);
         $formdata = $form->get_data();
@@ -93,7 +92,7 @@ class matchmaking_strategy_selection_renderer {
             redirect($this->url);
         }
         return $this->renderer->render_from_template('capquiz/matchmaking_selection_strategy', [
-            'form' => $form->render()
+            'form' => $form->render(),
         ]);
     }
 

@@ -49,9 +49,8 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    public function validation($data, $files) {
+    public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
-
         if (!($data['urating']
             || $data['uprevrating']
             || $data['qprevrating']
@@ -61,7 +60,6 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
             || $data['right'])) {
             $errors['coloptions'] = get_string('reportmustselectstate', 'quiz');
         }
-
         return $errors;
     }
 
@@ -70,22 +68,15 @@ class capquizreport_attempts_settings_form extends capquiz_attempts_report_form 
      *
      * @param MoodleQuickForm $mform the form to add preference fields to
      */
-    protected function other_preference_fields(MoodleQuickForm $mform) {
-        $mform->addGroup(array(
-            $mform->createElement('advcheckbox', 'ansstate', '',
-                get_string('ansstate', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'urating', '',
-                get_string('urating', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'uprevrating', '',
-                get_string('uprevrating', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'qprevrating', '',
-                get_string('qprevrating', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'qtext', '',
-                get_string('questiontext', 'quiz_responses')),
-            $mform->createElement('advcheckbox', 'resp', '',
-                get_string('response', 'quiz_responses')),
-            $mform->createElement('advcheckbox', 'right', '',
-                get_string('rightanswer', 'quiz_responses')),
-        ), 'coloptions', get_string('showthe', 'quiz_responses'), array(' '), false);
+    protected function other_preference_fields(MoodleQuickForm $mform): void {
+        $mform->addGroup([
+            $mform->createElement('advcheckbox', 'ansstate', '', get_string('ansstate', 'capquizreport_attempts')),
+            $mform->createElement('advcheckbox', 'urating', '', get_string('urating', 'capquizreport_attempts')),
+            $mform->createElement('advcheckbox', 'uprevrating', '', get_string('uprevrating', 'capquizreport_attempts')),
+            $mform->createElement('advcheckbox', 'qprevrating', '', get_string('qprevrating', 'capquizreport_attempts')),
+            $mform->createElement('advcheckbox', 'qtext', '', get_string('questiontext', 'quiz_responses')),
+            $mform->createElement('advcheckbox', 'resp', '', get_string('response', 'quiz_responses')),
+            $mform->createElement('advcheckbox', 'right', '', get_string('rightanswer', 'quiz_responses')),
+        ], 'coloptions', get_string('showthe', 'quiz_responses'), [' '], false);
     }
 }
