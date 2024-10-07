@@ -28,7 +28,7 @@ namespace capquizreport_questions;
 use context_course;
 use mod_capquiz\capquiz;
 use mod_capquiz\report\capquiz_attempts_report;
-use mod_quiz\local\reports\attempts_report_options;
+use mod_capquiz\report\capquiz_attempts_report_options;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -170,11 +170,12 @@ class capquizreport_questions_report extends capquiz_attempts_report {
      * @param stdClass $cm the course_module information.
      * @param stdClass $course the course settings.
      * @param capquiz $capquiz the capquiz settings.
-     * @param attempts_report_options $options the current report settings.
+     * @param capquiz_attempts_report_options $options the current report settings.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */
-    protected function print_standard_header_and_messages($cm, $course, capquiz $capquiz, attempts_report_options $options,
+    protected function print_standard_header_and_messages($cm, $course, capquiz $capquiz,
+                                                          capquiz_attempts_report_options $options,
                                                           bool $hasquestions, bool $hasstudents): void {
         global $OUTPUT;
         $this->print_header_and_tabs($cm, $course, $capquiz, $this->mode);

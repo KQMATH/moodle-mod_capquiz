@@ -85,6 +85,9 @@ abstract class capquiz_attempts_report_table extends table_sql {
     /** @var bool whether to include the column with checkboxes to select each attempt. */
     protected $includecheckboxes;
 
+    /** @var string date format. */
+    protected $strtimeformat;
+
     /**
      * Constructor.
      *

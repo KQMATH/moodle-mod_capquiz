@@ -112,7 +112,6 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
         }
 
         if ($hasquestions && !empty($questions) && ($hasstudents || $this->options->attempts == self::ALL_WITH)) {
-
             $table->setup_sql_queries($studentsjoins);
 
             // Define table columns.
@@ -127,7 +126,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $this->add_user_columns($table, $columns, $headers);
 
             if ($table->is_downloading()) {
-                $this->add_uesrid_column($columns, $headers);
+                $this->add_userid_column($columns, $headers);
                 $this->add_moodlequestionid_column($columns, $headers);
             }
 
@@ -179,6 +178,7 @@ class capquizreport_attempts_report extends capquiz_attempts_report {
             $table->collapsible(true);
 
             $table->out($this->options->pagesize, true);
+
         }
         return true;
     }

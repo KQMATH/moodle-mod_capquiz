@@ -94,6 +94,15 @@ class capquizreport_attempts_table extends capquiz_attempts_report_table {
     }
 
     /**
+     * TODO: Fix this workaround for preventing errors with name column preferences.
+     *
+     * @return string
+     */
+    public function get_sql_where(): string {
+        return '';
+    }
+
+    /**
      * Format a single column, used in other_cols
      *
      * @param int $slot

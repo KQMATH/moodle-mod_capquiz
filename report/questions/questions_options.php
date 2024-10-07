@@ -43,13 +43,13 @@ require_once($CFG->dirroot . '/mod/capquiz/report/attemptsreport_options.php');
 class capquizreport_questions_options extends capquiz_attempts_report_options {
 
     /** @var bool whether to show the question text columns. */
-    public bool $showqtext = false;
+    public $showqtext = false;
 
     /**
      * @var string quiz_attempts_report::ALL_WITH or quiz_attempts_report::ENROLLED_WITH
      *      quiz_attempts_report::ENROLLED_WITHOUT or quiz_attempts_report::ENROLLED_ALL
      */
-    public string $attempts = capquiz_attempts_report::ALL_WITH;
+    public $attempts = capquiz_attempts_report::ALL_WITH;
 
     /**
      * Get the current value of the settings to pass to the settings form.

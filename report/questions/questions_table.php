@@ -89,7 +89,7 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
      * @param string $colname
      * @param stdClass $attempt
      */
-    public function other_cols(string $colname, stdClass $attempt): ?string {
+    public function other_cols($colname, $attempt): ?string {
         return match ($colname) {
             'question' => $this->data_col($attempt->slot, 'questionsummary', $attempt),
             default => null,
@@ -158,7 +158,6 @@ class capquizreport_questions_table extends capquiz_attempts_report_table {
             return $this->make_review_link($state, $attempt, $attempt->slot);
         }
     }
-
 
     /**
      * Generate the display of the question rating column.

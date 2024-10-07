@@ -25,11 +25,11 @@
 
 namespace mod_capquiz\report;
 
+use capquizreport_attempts\capquizreport_attempts_options;
 use context_module;
 use core\context\module;
 use core\dml\sql_join;
 use mod_capquiz\capquiz;
-use mod_quiz\local\reports\attempts_report_options;
 use mod_quiz\local\reports\attempts_report_options_form;
 use moodle_url;
 use stdClass;
@@ -69,7 +69,7 @@ abstract class capquiz_attempts_report extends report {
     /** @var attempts_report_options_form The settings form to use. */
     protected $form;
 
-    /** @var attempts_report_options the options affecting this report. */
+    /** @var ?capquizreport_attempts_options the options affecting this report. */
     protected $options = null;
 
     /**
@@ -113,12 +113,12 @@ abstract class capquiz_attempts_report extends report {
      * @param stdClass $cm the course_module information.
      * @param stdClass $course the course settings.
      * @param capquiz $capquiz the capquiz settings.
-     * @param attempts_report_options $options the current report settings.
+     * @param capquiz_attempts_report_options $options the current report settings.
      * @param bool $hasquestions whether there are any questions in the capquiz.
      * @param bool $hasstudents whether there are any relevant students.
      */
     protected function print_standard_header_and_messages(stdClass $cm, stdClass $course, capquiz $capquiz,
-                                                          attempts_report_options $options, bool $hasquestions,
+                                                          capquiz_attempts_report_options $options, bool $hasquestions,
                                                           bool $hasstudents): void {
         global $OUTPUT;
 
@@ -215,7 +215,7 @@ abstract class capquiz_attempts_report extends report {
      * @param array $columns the list of columns. Added to.
      * @param array $headers the columns headings. Added to.
      */
-    protected function add_uesrid_column(array &$columns, array &$headers): void {
+    protected function add_userid_column(array &$columns, array &$headers): void {
         $columns[] = 'userid';
         $headers[] = get_string('userid', 'capquiz');
     }
