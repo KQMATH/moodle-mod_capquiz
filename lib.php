@@ -25,6 +25,7 @@
  */
 
 use mod_capquiz\capquiz;
+use mod_capquiz\output\question_attempt_renderer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -236,6 +237,41 @@ function capquiz_reset_gradebook($courseid, $type = '') {
     foreach ($instances as $instance) {
         capquiz_grade_item_update($instance, 'reset');
     }
+}
+
+/**
+ * Serve question files.
+ *
+ * @param stdClass $course
+ * @param stdClass $context
+ * @param string $component
+ * @param string $filearea
+ * @param int $qubaid
+ * @param int $slot
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @see quiz_question_pluginfile
+ */
+function capquiz_question_pluginfile(stdClass $course, stdClass $context, string $component, string $filearea,
+                                     int $qubaid, int $slot, array $args, bool $forcedownload, array $options = []): void {
+    global $DB;
+    $user = $DB->get_record('capquiz_user', ['question_usage_id' => $qubaid]);
+    $cm = get_coursemodule_from_instance('capquiz', $user->capquiz_id, $course->id, false, MUST_EXIST);
+    require_login($course, false, $cm);
+    $quba = question_engine::load_questions_usage_by_activity($qubaid);
+    $displayoptions = question_attempt_renderer::attempt_display_options(context_module::instance($cm->id));
+    if (!$quba->check_file_access($slot, $displayoptions, $component, $filearea, $args, $forcedownload)) {
+        send_file_not_found();
+    }
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    $file = $fs->get_file_by_hash(sha1($fullpath));
+    if (!$file || $file->is_directory()) {
+        send_file_not_found();
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**

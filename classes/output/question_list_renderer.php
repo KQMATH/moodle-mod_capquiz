@@ -96,11 +96,11 @@ class question_list_renderer {
         for ($i = 0; $i < $qlist->question_count(); $i++) {
             $question = $questions[$i];
             $courseid = $question->course_id();
-            $editurl = new \moodle_url($CFG->wwwroot . '/question/question.php', [
+            $editurl = new \moodle_url('/question/bank/editquestion/question.php', [
                 'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
-            $previewurl = new \moodle_url($CFG->wwwroot . '/question/preview.php', [
+            $previewurl = new \moodle_url('/question/bank/previewquestion/preview.php', [
                 'courseid' => $courseid,
                 'id' => $question->question_id()
             ]);
