@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
-## [0.7.0] - planned 2023-04-28
+## [0.7.1] - 2024-10-10
+
+- Fixed bug with uploaded images in questions not being displayed
+- Fixed edit/preview action links in question list
+
+## [0.7.0] - 2023-04-28
 
 + Upgraded to work with Moodle 4.0
 

@@ -98,7 +98,7 @@ class question_attempt_renderer {
             if ($attempt->is_answered()) {
                 return $this->render_review($attempt);
             } else if ($attempt->is_pending()) {
-                return $this->render_attempt($attempt, $this->attempt_display_options());
+                return $this->render_attempt($attempt, self::attempt_display_options($this->capquiz->context()));
             }
         }
         return get_string('you_finished_capquiz', 'capquiz');
@@ -272,9 +272,9 @@ class question_attempt_renderer {
      *
      * @return \question_display_options
      */
-    private function attempt_display_options() : \question_display_options {
+    public static function attempt_display_options($context) : \question_display_options {
         $options = new \question_display_options();
-        $options->context = $this->capquiz->context();
+        $options->context = $context;
         $options->flags = \question_display_options::HIDDEN;
         $options->marks = \question_display_options::HIDDEN;
         $options->rightanswer = \question_display_options::HIDDEN;
