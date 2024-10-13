@@ -15,34 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays the entry page into the capquiz
+ * Redirect to report page, or view page if the user can't see reports.
  *
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @copyright   2019 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz;
+require_once(__DIR__ . '/../../config.php');
 
-require_once('../../config.php');
+global $CFG, $DB, $PAGE;
 
-require_login();
+require_once($CFG->dirroot . '/mod/capquiz/locallib.php');
 
 $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
+$context = \core\context\module::instance($cm->id);
 
-$cmid = capquiz_urls::require_course_module_id_param();
-$capquiz = new capquiz($cmid);
-if (!$capquiz) {
-    capquiz_urls::redirect_to_front_page();
+$PAGE->set_context($context);
+$PAGE->set_cm($cm);
+$PAGE->set_url('/mod/capquiz/grade.php', ['id' => $cm->id]);
+
+if (!has_capability('mod/capquiz:instructor', $context)) {
+    redirect(new \core\url('/mod/capquiz/view.php', ['id' => $cm->id]));
 }
 
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlview);
-
-if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
-    redirect(capquiz_urls::view_classlist_url());
-}
-
-redirect(capquiz_urls::view_url());
+redirect(new \core\url('/mod/capquiz/report.php', ['id' => $cm->id]));

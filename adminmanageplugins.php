@@ -25,6 +25,8 @@
 
 require_once("../../config.php");
 
+global $CFG, $PAGE;
+
 require_login();
 
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
@@ -37,7 +39,7 @@ if (!empty($plugin)) {
     require_sesskey();
 }
 
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context(\core\context\system::instance());
 
 $pluginmanager = new capquiz_plugin_manager($subtype);
 $pluginmanager->execute($action, $plugin);

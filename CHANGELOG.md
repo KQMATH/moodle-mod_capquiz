@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
+## [0.9.0] 2025-10-01
+
+**Important:** Read changelog before upgrading.
+This is a major codebase simplification and refactoring.
+
+- Question lists are no longer separate from CAPQuiz instances.
+  This means there is no longer such a thing as question list templates.
+  Any existing question list template will be migrated to a CAPQuiz without an opening time (unpublished)
+  - The "Publish" button has been removed from unpublished CAPQuizzes.
+  To make your CAPQuiz available to students, you must now configure the "Open for students" setting with a date.
+  Disabling the setting is the same as the unpublished state of earlier CAPQuiz versions.
+  - Published CAPQuizzes can now be unpublished by disabling the "Open for students" setting.
+  - You can now attempt CAPQuizzes as an instructor, instead of changing your role to student.
+  This changes your user rating as normal, but question ratings will now not be affected by your attempts.
+  - It is now possible to configure which question behaviour to use for a CAPQuiz instance.
+  Some question behaviours don't work or make sense with CAPQuiz, so they have been disabled.
+  These are: *Adaptive mode*, *Deferred feedback*, and *Deferred feedback with CBM*.
+  The *Adaptive mode (no penalty)* question behaviour is available,
+  but is discouraged in favor of *Interactive with multiple tries*.
+  - Some question display options can now be configured per CAPQuiz instance.
+  The options are used when the user reviews their question attempt.
+  Available to show/hide: Specific feedback, general feedback, right answer, and correctness.
+  - Questions now always use the latest version by default. If your CAPQuiz uses old question versions whether
+  intentionally, unknowingly, or frustratingly, they will all be migrated to use the latest question version.
+  If you want to use an older version of a question, you can change this manually per question in the *Questions* tab.
+  - You can now easily see if a question has already been added while browsing the question bank.
+  The **+** button will be replaced by a checkmark to indicate this.
+  This also removes the possibility of adding duplicate questions.
+  - Optimized database queries which should result in huge speedups when you have many users and attempts.
+  - CAPQuiz instances are now properly deleted. This was an issue for a while.
 
 ## [0.8.0] 2024-10-07
 

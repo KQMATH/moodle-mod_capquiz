@@ -15,40 +15,51 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays the correct view, depending on your role, acts as an entrypoint to the capquiz
+ * View page.
  *
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz;
+use mod_capquiz\capquiz;
+use mod_capquiz\output\classlist;
+use mod_capquiz\output\renderer;
 
-require_once('../../config.php');
+require_once(__DIR__ . '/../../config.php');
+
+global $CFG, $OUTPUT, $PAGE, $USER;
+
+require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
-$cmid = capquiz_urls::require_course_module_id_param();
+$cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
+$context = \core\context\module::instance($cmid);
 
-$capquiz = new capquiz($cmid);
-$renderer = $capquiz->renderer();
+$PAGE->set_context($context);
+$PAGE->set_cm($cm);
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_url(new \core\url('/mod/capquiz/view.php', ['id' => $cmid]));
 
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$urlview);
+/** @var renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_capquiz');
 
-if (has_capability('mod/capquiz:instructor', $capquiz->context())) {
-    if ($capquiz->has_question_list()) {
-        $renderer->display_instructor_dashboard($capquiz);
-    } else {
-        $renderer->display_choose_question_list_view();
-    }
-} else {
-    require_capability('mod/capquiz:student', $capquiz->context());
-    // Question engine is null if the quiz is not published.
-    $qengine = $capquiz->question_engine($capquiz->user());
-    $qengine?->delete_invalid_attempt($capquiz->user());
-    $capquiz->update_grades();
-    $renderer->display_question_attempt_view($capquiz);
+echo $OUTPUT->header();
+
+if (has_capability('mod/capquiz:instructor', $context)) {
+    echo $renderer->render(new classlist(new capquiz($cm->instance)));
 }
+
+if (has_any_capability(['mod/capquiz:student', 'mod/capquiz:instructor'], $context)) {
+    $attempturl = new \core\url('/mod/capquiz/attempt.php', ['id' => $cmid]);
+    echo '<h2>Attempt quiz</h2>';
+    echo '<div>';
+    echo $renderer->render(new action_link($attempturl, get_string('attempt', 'capquiz')));
+    echo '</div>';
+}
+
+echo $OUTPUT->footer();

@@ -14,278 +14,305 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file defines the class capquiz representing a capquiz
- *
- * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2019 NTNU
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+declare(strict_types=1);
 
 namespace mod_capquiz;
 
-use context_module;
-use moodle_page;
-use renderer_base;
-use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->libdir . '/questionlib.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_rating_system_loader.php');
-require_once($CFG->dirroot . '/mod/capquiz/classes/capquiz_matchmaking_strategy_loader.php');
+use core\persistent;
+use mod_capquiz\local\helpers\stars;
 
 /**
- * Class capquiz
+ * CAPQuiz instance.
  *
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2019 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquiz {
+class capquiz extends persistent {
+    /** @var string The table name. */
+    const TABLE = 'capquiz';
 
-    /** @var context_module $context */
-    private $context;
-
-    /** @var stdClass $cm */
-    private $cm;
-
-    /** @var stdClass $courserecord */
-    private $courserecord;
-
-    /** @var stdClass $record */
-    private $record;
-
-    /** @var renderer_base $renderer */
-    private renderer_base $renderer;
-
-    /** @var ?capquiz_question_list $qlist */
-    private ?capquiz_question_list $qlist;
-
-    /** @var moodle_page $page */
-    private moodle_page $page;
+    /** @var \stdClass Course module info */
+    private \stdClass $cm;
 
     /**
      * Constructor.
      *
-     * @param int $cmid
+     * @param int $id
+     * @param ?\stdClass $record
      */
-    public function __construct(int $cmid) {
-        global $DB, $PAGE;
-        $this->cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
-        $this->context = context_module::instance($cmid);
-        $PAGE->set_context($this->context);
-        $this->renderer = $PAGE->get_renderer('mod_capquiz');
-        $this->courserecord = $DB->get_record('course', ['id' => $this->cm->course], '*', MUST_EXIST);
-        $this->record = $DB->get_record('capquiz', ['id' => $this->cm->instance], '*', MUST_EXIST);
-        $this->qlist = capquiz_question_list::load_question_list($this);
-        $this->page = $PAGE;
+    public function __construct(int $id = 0, ?\stdClass $record = null) {
+        parent::__construct($id, $record);
+        $this->cm = new \stdClass();
+        $this->cm->id = 0;
     }
 
     /**
-     * Updates the grades if the grading is completed or if forced
+     * Create a new question slot.
      *
-     * @param bool $force
-     */
-    public function update_grades(bool $force = false): void {
-        if (!$this->is_grading_completed() || $force) {
-            capquiz_update_grades($this->record);
-        }
-    }
-
-    /**
-     * Returns the page of the CapQuiz
-     */
-    public function get_page(): moodle_page {
-        return $this->page;
-    }
-
-    /**
-     * Returns the capquiz' id
-     */
-    public function id(): int {
-        return $this->record->id;
-    }
-
-    /**
-     * Returns the capquiz' name
-     */
-    public function name(): string {
-        return $this->record->name;
-    }
-
-    /**
-     * Returns true if the capquiz is published
-     */
-    public function is_published(): bool {
-        return $this->record->published;
-    }
-
-    /**
-     * Returns true if the capquiz is completely graded
-     */
-    public function is_grading_completed(): bool {
-        return $this->record->timedue < time() && $this->record->timedue > 0;
-    }
-
-    /**
-     * Returns the amount of stars needed to pass
-     */
-    public function stars_to_pass(): int {
-        return $this->record->stars_to_pass;
-    }
-
-    /**
-     * Returns the time when the quiz is due
-     */
-    public function time_due(): int {
-        return $this->record->timedue;
-    }
-
-    /**
-     * Sets a new value for stars to pass
-     *
-     * @param int $stars
-     */
-    public function set_stars_to_pass(int $stars): void {
-        global $DB;
-        $this->record->stars_to_pass = $stars;
-        $DB->update_record('capquiz', $this->record);
-    }
-
-    /**
-     * Sets a new due time
-     *
-     * @param int $time
-     */
-    public function set_time_due(int $time): void {
-        global $DB;
-        $this->record->timedue = $time;
-        $DB->update_record('capquiz', $this->record);
-    }
-
-    /**
-     * Sets a new default rating
-     *
+     * @param int $questionid
      * @param float $rating
+     * @return capquiz_slot
      */
-    public function set_default_user_rating(float $rating): void {
+    public function create_slot(int $questionid, float $rating): capquiz_slot {
         global $DB;
-        $this->record->default_user_rating = $rating;
-        $DB->update_record('capquiz', $this->record);
+        $transaction = $DB->start_delegated_transaction();
+        $questionbankentry = get_question_bank_entry($questionid);
+        $slot = new capquiz_slot();
+        $slot->set('capquizid', $this->get('id'));
+        $slot->create();
+        $slot->rate($rating, false);
+        $context = $this->get_context();
+        $DB->insert_record('question_references', (object)[
+            'usingcontextid' => $context->id,
+            'component' => 'mod_capquiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->get('id'),
+            'questionbankentryid' => $questionbankentry->id,
+            'version' => null, // Always latest.
+        ]);
+        $transaction->allow_commit();
+        return $slot;
     }
 
     /**
-     * Publishes the capquiz if it can publish it
-     */
-    public function publish(): bool {
-        global $DB;
-        if (!$this->can_publish()) {
-            return false;
-        }
-        $this->record->published = true;
-        $DB->update_record('capquiz', $this->record);
-        return $this->is_published();
-    }
-
-    /**
-     * Returns true if the capquiz is publishable
-     */
-    public function can_publish(): bool {
-        if (!$this->has_question_list() || $this->is_published()) {
-            return false;
-        }
-        return $this->question_list()->has_questions();
-    }
-
-    /**
-     * Returns a new question engine based on the user
+     * Create a new CAPQuiz user.
      *
-     * @param capquiz_user $user
+     * @param int $moodleuserid
+     * @return capquiz_user
      */
-    public function question_engine(capquiz_user $user): ?capquiz_question_engine {
-        $quba = $user->question_usage();
-        if (!$quba) {
-            return null;
+    public function create_user(int $moodleuserid): capquiz_user {
+        $user = new capquiz_user();
+        $user->set_many([
+            'userid' => $moodleuserid,
+            'capquizid' => $this->get('id'),
+        ]);
+        $user->create();
+        $user->rate($this->get('defaultuserrating'), false);
+        return $user;
+    }
+
+    /**
+     * Create a new question usage.
+     *
+     * @return \question_usage_by_activity
+     */
+    public function create_question_usage(): \question_usage_by_activity {
+        $quba = \question_engine::make_questions_usage_by_activity('mod_capquiz', $this->get_context());
+        $quba->set_preferred_behaviour($this->get('questionbehaviour'));
+        \question_engine::save_questions_usage_by_activity($quba);
+        return $quba;
+    }
+
+    /**
+     * Update preferred question behavior for all users.
+     *
+     * @return void
+     */
+    public function update_question_behavior(): void {
+        foreach (capquiz_user::get_records(['capquizid' => $this->get('id')]) as $user) {
+            $quba = $user->get_question_usage();
+            $quba->set_preferred_behaviour($this->get('questionbehaviour'));
+            \question_engine::save_questions_usage_by_activity($quba);
         }
-        $ratingsystemloader = new capquiz_rating_system_loader($this);
-        $strategyloader = new capquiz_matchmaking_strategy_loader($this);
-        return new capquiz_question_engine($this, $quba, $strategyloader, $ratingsystemloader);
     }
 
     /**
-     * Returns the capquiz user
+     * Check if the CAPQuiz is open.
      */
-    public function user(): ?capquiz_user {
-        global $USER;
-        return capquiz_user::load_user($this, $USER->id, $this->context());
+    public function is_open(): bool {
+        $now = \core\di::get(\core\clock::class)->time();
+        return $now >= $this->get('timeopen') && $now <= $this->get('timedue');
     }
 
     /**
-     * Returns the default rating
+     * Returns true if the capquiz is completely graded.
      */
-    public function default_user_rating(): float {
-        return $this->record->default_user_rating;
+    public function is_past_due_time(): bool {
+        $now = \core\di::get(\core\clock::class)->time();
+        return $now > $this->get('timedue') && $this->get('timedue') > 0;
     }
 
     /**
-     * Returns true if the capquiz has a question list
+     * Returns the number of stars that can be achieved.
      */
-    public function has_question_list(): bool {
-        return $this->qlist !== null;
+    public function get_max_stars(): int {
+        return stars::get_max_stars($this->get('starratings'));
     }
 
     /**
-     * Returns the quiz' question list
+     * The star ratings are internally stored as a CSV string. Use this helper to easily get them as a float array.
+     *
+     * @return float[]
      */
-    public function question_list(): ?capquiz_question_list {
-        return $this->qlist;
+    public function get_star_ratings_array(): array {
+        return array_map('floatval', explode(',', $this->get('starratings')));
     }
 
     /**
-     * Returns the current context
+     * Get course module info.
+     *
+     * @return \stdClass
      */
-    public function context(): context_module {
-        return $this->context;
-    }
-
-    /**
-     * Returns teh current course module
-     */
-    public function course_module(): stdClass {
+    public function get_cm(): \stdClass {
+        if ($this->get('id') !== 0) {
+            $this->cm = get_coursemodule_from_instance('capquiz', $this->get('id'), strictness: MUST_EXIST);
+        }
         return $this->cm;
     }
 
     /**
-     * Returns the current course
+     * Get context for this CAPQUiz instance.
+     *
+     * @return \core\context\module
      */
-    public function course(): stdClass {
-        return $this->courserecord;
+    public function get_context(): \core\context\module {
+        $cmid = (int)$this->get_cm()->id;
+        return \core\context\module::instance($cmid);
     }
 
     /**
-     * Returns the current renderer
+     * Custom validation for the starstopass property.
+     * Check if the number is between 0 and how many stars are configured.
+     *
+     * @param int $starstopass
+     * @return bool|\lang_string
      */
-    public function renderer(): renderer_base {
-        return $this->renderer;
+    protected function validate_starstopass(int $starstopass): bool|\lang_string {
+        if ($starstopass > stars::get_max_stars($this->get('starratings')) || $starstopass < 0) {
+            return new \lang_string('errorvalidatestarstopass', 'capquiz');
+        }
+        return true;
     }
 
     /**
-     * Validates the matchmaking and rating systems
+     * Custom validation for the starratings property.
+     * Check if each rating in the CSV string is a valid number, and that they're greater than the previous.
+     *
+     * @param string $ratings
+     * @return true|\core\lang_string
      */
-    public function validate_matchmaking_and_rating_systems(): void {
-        $ratingsystemloader = new capquiz_rating_system_loader($this);
-        if (!$ratingsystemloader->has_rating_system()) {
-            $ratingsystemloader->set_default_rating_system();
+    protected function validate_starratings(string $ratings): bool|\core\lang_string {
+        $previous = 0.0;
+        foreach (explode(',', $ratings) as $rating) {
+            $previous = filter_var($rating, FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => $previous + 1.0]]);
+            if (!$previous) {
+                return new \core\lang_string('errorvalidatestarratings', 'capquiz');
+            }
         }
-        $strategyloader = new capquiz_matchmaking_strategy_loader($this);
-        if (!$strategyloader->has_strategy()) {
-            $strategyloader->set_default_strategy();
-        }
+        return true;
     }
 
+    /**
+     * Custom validation for the questiondisplayoptions property.
+     * Check if each property has a valid name and value for {@see \question_display_options}.
+     *
+     * @param string $options
+     * @return bool|\core\lang_string
+     */
+    protected function validate_questiondisplayoptions(string $options): bool|\core\lang_string {
+        foreach (json_decode($options, true) as $key => $value) {
+            if (!in_array($key, ['feedback', 'generalfeedback', 'rightanswer', 'correctness'])) {
+                return false;
+            }
+            if ($value !== \question_display_options::HIDDEN && $value !== \question_display_options::VISIBLE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Return the definition of the properties of this model.
+     *
+     * @return array
+     */
+    protected static function define_properties(): array {
+        return [
+            'course' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'name' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'intro' => [
+                'type' => PARAM_TEXT,
+                'null' => NULL_ALLOWED,
+            ],
+            'introformat' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'defaultuserrating' => [
+                'type' => PARAM_FLOAT,
+                'default' => 1200.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'defaultquestionrating' => [
+                'type' => PARAM_FLOAT,
+                'default' => 600.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'starratings' => [
+                'type' => PARAM_TEXT,
+                'default' => '1300,1450,1600,1800,2000',
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'starstopass' => [
+                'type' => PARAM_INT,
+                'default' => 3,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'timeopen' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'timedue' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'numquestioncandidates' => [
+                'type' => PARAM_INT,
+                'default' => 10,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'minquestionsuntilreappearance' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'userwinprobability' => [
+                'type' => PARAM_FLOAT,
+                'default' => 0.75,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'userkfactor' => [
+                'type' => PARAM_FLOAT,
+                'default' => 32.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'questionkfactor' => [
+                'type' => PARAM_FLOAT,
+                'default' => 8.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'questionbehaviour' => [
+                'type' => PARAM_TEXT,
+                'default' => 'immediatefeedback',
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'questiondisplayoptions' => [
+                'type' => PARAM_TEXT,
+                'default' => '{}',
+                'null' => NULL_NOT_ALLOWED,
+            ],
+        ];
+    }
 }

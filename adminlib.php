@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/adminlib.php');
@@ -36,7 +38,6 @@ require_once($CFG->libdir . '/adminlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
-
     /** @var string the name of plugin subtype */
     private string $subtype;
 
@@ -47,7 +48,7 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
      */
     public function __construct(string $subtype) {
         $this->subtype = $subtype;
-        $url = new moodle_url('/mod/capquiz/adminmanageplugins.php', ['subtype' => $subtype]);
+        $url = new \core\url('/mod/capquiz/adminmanageplugins.php', ['subtype' => $subtype]);
         parent::__construct('manage' . $subtype . 'plugins', get_string('manage' . $subtype . 'plugins', 'capquiz'), $url);
     }
 
@@ -70,7 +71,7 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new stdClass();
+            $result = new \stdClass();
             $result->page = $this;
             $result->settings = [];
             return [$this->name => $result];
@@ -79,7 +80,6 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
         }
     }
 }
-
 
 /**
  * Class that handles the display and configuration of the list of capquiz plugins.
@@ -90,9 +90,8 @@ class capquiz_admin_page_manage_capquiz_plugins extends admin_externalpage {
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class capquiz_plugin_manager {
-
-    /** @var moodle_url the url of the manage capquiz plugin page */
-    private moodle_url $pageurl;
+    /** @var \core\url the url of the manage capquiz plugin page */
+    private \core\url $pageurl;
 
     /** @var string report */
     private string $subtype;
@@ -106,7 +105,7 @@ class capquiz_plugin_manager {
      * @param string $subtype
      */
     public function __construct(string $subtype) {
-        $this->pageurl = new moodle_url('/mod/capquiz/adminmanageplugins.php', ['subtype' => $subtype]);
+        $this->pageurl = new \core\url('/mod/capquiz/adminmanageplugins.php', ['subtype' => $subtype]);
         $this->subtype = $subtype;
     }
 
@@ -139,8 +138,7 @@ class capquiz_plugin_manager {
      */
     private function check_permissions(): void {
         require_login();
-        $systemcontext = context_system::instance();
-        require_capability('moodle/site:config', $systemcontext);
+        require_capability('moodle/site:config', \core\context\system::instance());
     }
 
     /**
@@ -219,7 +217,7 @@ class capquiz_plugin_manager {
      * @return array The list of plugins
      */
     public function get_sorted_plugins_list(): array {
-        $names = core_component::get_plugin_list($this->subtype);
+        $names = \core\component::get_plugin_list($this->subtype);
         $result = [];
         foreach ($names as $name => $path) {
             $idx = get_config($this->subtype . '_' . $name, 'sortorder');
@@ -244,7 +242,7 @@ class capquiz_plugin_manager {
 
         // Set up the table.
         $this->view_header();
-        $table = new flexible_table($this->subtype . 'pluginsadminttable');
+        $table = new \core_table\flexible_table($this->subtype . 'pluginsadminttable');
         $table->define_baseurl($this->pageurl);
         $table->define_columns(['pluginname', 'version', 'hideshow', 'order', 'settings', 'uninstall']);
         $table->define_headers([get_string($this->subtype . 'type', 'capquiz'),
@@ -286,8 +284,8 @@ class capquiz_plugin_manager {
 
             $exists = file_exists($CFG->dirroot . '/mod/capquiz/' . $shortsubtype . '/' . $plugin . '/settings.php');
             if ($row[1] !== '' && $exists) {
-                $url = new moodle_url('/admin/settings.php', ['section' => $this->subtype . '_' . $plugin]);
-                $row[] = html_writer::link($url, get_string('settings'));
+                $url = new \core\url('/admin/settings.php', ['section' => $this->subtype . '_' . $plugin]);
+                $row[] = \core\output\html_writer::link($url, get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
             }
@@ -324,14 +322,14 @@ class capquiz_plugin_manager {
     private function format_icon_link(string $action, string $plugin, string $icon, string $alt): string {
         global $OUTPUT;
         if ($action === 'delete') {
-            $url = core_plugin_manager::instance()->get_uninstall_url($this->subtype . '_' . $plugin, 'manage');
+            $url = \core\plugin_manager::instance()->get_uninstall_url($this->subtype . '_' . $plugin, 'manage');
             if (!$url) {
                 return '&nbsp;';
             }
-            return html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
+            return \core\output\html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
         }
-        $url = new moodle_url($this->pageurl, ['action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey()]);
-        $icon = new pix_icon($icon, $alt, 'moodle', ['title' => $alt]);
+        $url = new \core\url($this->pageurl, ['action' => $action, 'plugin' => $plugin, 'sesskey' => sesskey()]);
+        $icon = new \core\output\pix_icon($icon, $alt, 'moodle', ['title' => $alt]);
         return $OUTPUT->action_icon($url, $icon, null, ['title' => $alt]) . ' ';
     }
 

@@ -27,27 +27,17 @@ $string['ansstate'] = 'answer state';
 $string['answerstate'] = 'Answer state';
 $string['attemptsfilename'] = 'attempts';
 
-$string['correct'] = 'Correct';
-
-$string['false'] = 'False';
-
 $string['pluginname'] = 'Attempts';
-$string['privacy:metadata'] = 'The capquizreport attempts plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The CAPQuiz attempts report plugin does not store any personal data.';
 
 $string['qprevrating'] = 'question\'s previous rating';
 $string['qrating'] = 'question rating';
-$string['question'] = 'Question';
 $string['questionprevrating'] = 'Question\'s previous rating';
 $string['questionprevratingmanual'] = 'Previous rating manually updated';
 
 $string['rating_manually_updated'] = 'Previous rating was manually updated';
 $string['response'] = 'Response';
-$string['rightanswer'] = 'Right answer';
-
-$string['true'] = 'True';
 
 $string['uprevrating'] = 'user\'s previous rating';
 $string['urating'] = 'user rating';
 $string['userprevrating'] = 'User\'s previous rating';
-
-$string['wrong'] = 'Wrong';

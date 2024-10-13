@@ -33,12 +33,10 @@ require_once($CFG->dirroot . '/mod/capquiz/backup/moodle2/restore_capquiz_stepsl
  * @package mod_capquiz
  */
 class restore_capquiz_activity_task extends restore_activity_task {
-
     /**
      * This should define settings. Not used at the moment.
      */
     protected function define_my_settings() {
-
     }
 
     /**
@@ -93,5 +91,4 @@ class restore_capquiz_activity_task extends restore_activity_task {
     public static function define_restore_log_rules_for_course() {
         return [];
     }
-
 }

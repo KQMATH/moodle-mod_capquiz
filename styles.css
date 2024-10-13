@@ -1,85 +1,16 @@
-.capquiz-list {
-    border: 1px solid #eaeaea;
-    padding: 0;
-}
-
-.capquiz-list li {
-    padding: 4px;
-    background: #fafafa;
-    border-bottom: 1px solid #eaeaea;
-}
-
-.capquiz-question-list li {
-    display: flex;
-}
-
-.capquiz-flex {
-    display: flex;
-}
-
-.capquiz-flex-item {
-    width: 50%;
-}
-
-.capquiz-tree tr td,
-.capquiz-tree tr th {
-    padding: 6px;
-}
-
-.capquiz-tree tr:first-child {
-    background: #fafafa;
-}
-
-.capquiz-tree tr:first-child td {
-    font-weight: bold;
-}
-
-.capquiz-attempt-metainfo {
-    width: 100%;
-    background: #f7f7f7;
-    padding: 8px;
-    margin: 8px 0;
-    border: 1px solid #e0e0e0;
-    overflow: hidden;
-}
-
-.capquiz-attempt-metainfo tr:first-child {
-    background: #fafafa;
-}
-
-.capquiz-qlist-questions tr td {
-    padding: 2px 4px;
-}
-
-.capquiz-quiz-top {
-    background: #f7f7f7;
-    padding: 8px;
-    margin-bottom: 8px;
-    border: 1px solid #e0e0e0;
+.capquiz-attempt-header {
     min-height: 44px;
     overflow: hidden;
     text-align: center;
 }
 
-.capquiz-quiz-stars .icon {
-    width: 24px;
-    height: 24px;
-}
-
-.capquiz-quiz-progress {
-    position: relative;
-    display: inline-block;
-    background: #e0e0e0;
+.capquiz-star-progress {
     min-width: unset;
-    width: 100%;
-    margin-top: 8px;
-    border: 1px solid #bbb;
     height: 32px;
 }
 
 @media (min-width: 576px) {
-    .capquiz-quiz-progress {
-        background: #e0e0e0;
+    .capquiz-star-progress {
         min-width: 256px;
         width: 30%;
         margin-top: 0;
@@ -89,11 +20,7 @@
     }
 }
 
-.capquiz-reduced-width {
-    width: 80%;
-}
-
-.capquiz-quiz-progress-fill {
+.capquiz-star-progress-fill {
     background: #59f;
     text-align: left;
     height: 30px;
@@ -101,7 +28,7 @@
     max-width: 100%;
 }
 
-.capquiz-quiz-progress-unfill {
+.capquiz-star-progress-unfill {
     position: absolute;
     top: -1px;
     right: 0;
@@ -113,7 +40,7 @@
     max-width: 100%;
 }
 
-.capquiz-quiz-progress-fill .capquiz-quiz-progress-percent {
+.capquiz-star-progress-fill .capquiz-star-progress-percent {
     min-width: 254px;
     padding-left: 8px;
     position: absolute;
@@ -121,7 +48,7 @@
     margin-top: 4px;
 }
 
-.capquiz-quiz-progress-unfill .capquiz-quiz-progress-percent {
+.capquiz-star-progress-unfill .capquiz-star-progress-percent {
     min-width: 254px;
     padding-right: 8px;
     position: absolute;
@@ -141,85 +68,134 @@
     border: 1px solid #bbb;
 }
 
-.capquiz-default-question-rating {
-    display: inline-block;
-}
-
-.capquiz-sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.capquiz-details {
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    transition: 0.2s ease all;
-}
-
-.capquiz-details:hover {
-    background: #f0f0f0;
-    border: 1px solid #ddd;
-}
-
-.capquiz-details summary {
-    outline: none;
-    user-select: none;
-    padding: 8px;
-}
-
-.capquiz-details-content {
-    background: #fdfdfd;
-    padding: 8px;
-}
-
-.capquiz-quiz-stars {
+.capquiz-stars {
     position: relative;
 }
 
-.capquiz-star,
-.capquiz-lost-star,
-.capquiz-no-star,
-.capquiz-help-stars {
+.capquiz-stars .icon {
+    width: 24px;
+    height: 24px;
+}
+
+.capquiz-stars > span {
     cursor: pointer;
 }
 
-.capquiz-star-tooltip {
-    position: fixed;
-    padding: 8px;
-    border: 1px solid #555;
-    background: #333;
-    color: #dbdbdb;
-    display: none;
-    z-index: 1000;
-    border-radius: 6px;
-    max-width: 600px;
-}
-
 .capquiz-question-rating {
-    width: 112px;
+    min-width: 24rem;
+    gap: 0.5rem;
 }
 
 .capquiz-question-rating input {
-    width: 80px;
+    margin: 0.5rem 0;
 }
 
-.capquiz-classlist tr td,
-.capquiz-classlist tr th {
-    padding: 4px 16px;
+#page-mod-capquiz-edit .question-bank-table .questionname {
+    position: relative;
+    zoom: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #555;
 }
 
-.capquiz-classlist tr:nth-child(odd) td {
-    background: #fafafa;
+#page-mod-capquiz-edit .question-bank-table .questiontext {
+    position: relative;
+    zoom: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.3em;
 }
 
-.capquiz-add-selected-questions {
-    margin: 4px;
+#page-mod-capquiz-edit .question-bank-table .questiontext p {
+    margin: 0;
 }
 
-.capquiz-regrade-all {
-    margin-top: 16px;
+#page-mod-capquiz-edit .question-bank-table .questionnametext {
+    padding: 0 0.2em;
+}
+
+#page-mod-capquiz-edit table.question-bank-table td,
+#page-mod-capquiz-edit table.question-bank-table th {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#page-mod-capquiz-edit table.question-bank-table td,
+#page-mod-capquiz-edit table.question-bank-table th {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#page-mod-capquiz-edit .question-bank-table {
+    width: auto;
+}
+
+#page-mod-capquiz-edit .question-bank-table .header {
+    text-align: center;
+    padding: 0 2px;
+    border: 0 none;
+    vertical-align: top;
+    width: auto;
+}
+
+#page-mod-capquiz-edit .question-bank-table .header.checkbox {
+    vertical-align: bottom;
+    text-align: center;
+}
+
+#page-mod-capquiz-edit .question-bank-table .header.qtype .sorters {
+    white-space: nowrap;
+}
+
+#page-mod-capquiz-edit .question-bank-table th .sorters {
+    font-weight: normal;
+    font-size: 0.8em;
+}
+
+#page-mod-capquiz-edit .question-bank-table td.modifiername,
+#page-mod-capquiz-edit .question-bank-table td.creatorname,
+#page-mod-capquiz-edit .question-bank-table td.questionlastused {
+    line-height: 1em;
+}
+
+#page-mod-capquiz-edit .question-bank-table td.modifiername span.date,
+#page-mod-capquiz-edit .question-bank-table td.creatorname span.date {
+    font-weight: normal;
+    font-size: 0.8em;
 }
 
 #page-mod-capquiz-edit table.question-bank-table {
-    width: 100%;
+    table-layout: fixed;
+    overflow-x: visible;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#page-mod-capquiz-edit .question-bank-table .iconcol {
+    width: 16px;
+    text-align: center;
+    padding: 0;
+}
+
+#page-mod-capquiz-edit .question-bank-table .iconcol .icon {
+    width: 16px;
+}
+
+#page-mod-capquiz-edit .question-bank-table .checkbox {
+    width: 32px;
+    text-align: center;
+    padding: 0;
+}
+
+#page-mod-capquiz-edit .question-bank-table .editmenu {
+    width: 5em;
+}
+
+#page-mod-capquiz-edit .question-bank-table .qtype {
+    text-align: center;
+    width: 28px;
+    padding: 0;
 }

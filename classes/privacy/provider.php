@@ -14,20 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy Subsystem implementation for mod_capquiz.
- *
- * @package     mod_capquiz
- * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @author      Sebastian Søviknes Gundersen <sebastian@sgundersen.com>
- * @copyright   2019 NTNU
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_capquiz\privacy;
 
-use context;
-use context_module;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\contextlist;
@@ -35,77 +23,68 @@ use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use question_display_options;
-use stdClass;
 
 /**
  * Privacy Subsystem implementation for mod_capquiz.
  *
+ * @package     mod_capquiz
  * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @author      Sebastian Søviknes Gundersen <sebastian@sgundersen.com>
- * @copyright   2019 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2019 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
     // This plugin has data.
     \core_privacy\local\metadata\provider,
-
     // This plugin currently implements the original plugin_provider interface.
     \core_privacy\local\request\plugin\provider {
-
     /**
      * Returns metadata about this system.
      *
-     * @param collection $items The initialised collection to add metadata to.
+     * @param collection $collection The initialised collection to add metadata to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items): collection {
+    public static function get_metadata(collection $collection): collection {
         // The table 'capquiz' stores a record for each capquiz.
         // It does not contain user personal data, but data is returned from it for contextual requirements.
 
         // The table 'capquiz_attempt' stores a record of each capquiz attempt.
         // It contains a userid which links to the user making the attempt and contains information about that attempt.
-        $items->add_database_table('capquiz_attempt', [
+        $collection->add_database_table('capquiz_attempt', [
             'userid' => 'privacy:metadata:capquiz_attempt:userid',
-            'time_answered' => 'privacy:metadata:capquiz_attempt:time_answered',
-            'time_reviewed' => 'privacy:metadata:capquiz_attempt:time_reviewed',
+            'timeanswered' => 'privacy:metadata:capquiz_attempt:timeanswered',
+            'timereviewed' => 'privacy:metadata:capquiz_attempt:timereviewed',
         ], 'privacy:metadata:capquiz_attempt');
 
-        // The 'capquiz_question' table is used to map the usage of a question used in a CAPQuiz activity.
+        // The table 'capquiz_slot' represents a question used by a capquiz.
         // It does not contain user data.
 
         // The 'capquiz_question_rating' contains each change of rating for a question.
         // It does not contain user data.
 
-        // The 'capquiz_question_list' table is used to store the set of question lists used by a CapQuiz activity.
-        // It does not contain user data.
+        // The table 'capquiz_user' stores users in a capquiz.
+        // This is to keep track of current rating and stars achieved and graded.
 
-        // The 'capquiz_question_selection' contains selections / settings for each CAPQuiz activity.
-        // It does not contain user data.
-
-        // The 'capquiz_rating_system' does not contain any user identifying data and does not need a mapping.
-
-        // The table 'capquiz_user' stores a record of each user in each capquiz attempt.
-        // This is to kep track of rating and achievement level.
         // It contains a userid which links to the user and contains information about that user.
-        $items->add_database_table('capquiz_user', [
+        $collection->add_database_table('capquiz_user', [
             'userid' => 'privacy:metadata:capquiz_user:userid',
             'rating' => 'privacy:metadata:capquiz_user:rating',
-            'highest_level' => 'privacy:metadata:capquiz_user:highest_level',
+            'higheststars' => 'privacy:metadata:capquiz_user:higheststars',
         ], 'privacy:metadata:capquiz_user');
 
         // The table 'capquiz_user_rating' stores a record of each user rating in each capquiz attempt.
         // This is to kep track of rating and achievement level, in addition to provide a historical log.
-        // It contains a capquiz_user_id which links to the capquiz_user and contains information about that user.
-        $items->add_database_table('capquiz_user_rating', [
-            'capquiz_user_id' => 'privacy:metadata:capquiz_user_rating:capquiz_user_id',
+        // It contains a capquiz user id which links to the capquiz_user and contains information about that user.
+        $collection->add_database_table('capquiz_user_rating', [
+            'capquizuserid' => 'privacy:metadata:capquiz_user_rating:capquizuserid',
             'rating' => 'privacy:metadata:capquiz_user_rating:rating',
             'manual' => 'privacy:metadata:capquiz_user_rating:manual',
             'timecreated' => 'privacy:metadata:capquiz_user_rating:timecreated',
         ], 'privacy:metadata:capquiz_user_rating');
 
         // CAPQuiz links to the 'core_question' subsystem for all question functionality.
-        $items->add_subsystem_link('core_question', [], 'privacy:metadata:core_question');
-        return $items;
+        $collection->add_subsystem_link('core_question', [], 'privacy:metadata:core_question');
+        return $collection;
     }
 
     /**
@@ -125,11 +104,9 @@ class provider implements
                    AND m.name = :modname
                   JOIN {capquiz} cq
                     ON cq.id = cm.instance
-                  JOIN {capquiz_question_list} cql
-                    ON cql.capquiz_id = cq.id
                   JOIN {capquiz_user} cu
-                    ON cu.capquiz_id = cq.id
-                   AND cu.user_id = :userid';
+                    ON cu.capquizid = cq.id
+                   AND cu.userid = :userid';
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, [
             'contextlevel' => CONTEXT_MODULE,
@@ -150,16 +127,16 @@ class provider implements
             return;
         }
         $user = $contextlist->get_user();
-        list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
-        $sql = "SELECT cx.id                 AS contextid,
-                       cm.id                 AS cmid,
-                       ca.id                 AS capattemptid,
-                       ca.question_id        AS questionid,
-                       ca.answered           AS answered,
-                       ca.time_reviewed      AS timereviewed,
-                       ca.time_answered      AS timeanswered,
-                       cu.id                 AS capuserid,
-                       cu.question_usage_id  AS qubaid
+        [$contextsql, $contextparams] = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
+        $sql = "SELECT cx.id              AS contextid,
+                       cm.id              AS cmid,
+                       ca.id              AS capquizattemptid,
+                       ca.slotid          AS capquizslotid,
+                       ca.answered        AS answered,
+                       ca.timereviewed    AS timereviewed,
+                       ca.timeanswered    AS timeanswered,
+                       cu.id              AS capquizuserid,
+                       cu.questionusageid AS questionusageid
                   FROM {context} cx
                   JOIN {course_modules} cm
                     ON cm.id = cx.instanceid
@@ -169,13 +146,11 @@ class provider implements
                    AND m.name = :modname
                   JOIN {capquiz} cq
                     ON cq.id = cm.instance
-                  JOIN {capquiz_question_list} cql
-                    ON cql.capquiz_id = cq.id
                   JOIN {capquiz_user} cu
-                    ON cu.capquiz_id = cq.id
-                   AND cu.user_id = :userid
+                    ON cu.capquizid = cq.id
+                   AND cu.userid = :userid
                   JOIN {capquiz_attempt} ca
-                    ON ca.user_id = cu.id
+                    ON ca.capquizuserid = cu.id
                  WHERE cx.id {$contextsql}";
         $params = [
             'contextlevel' => CONTEXT_MODULE,
@@ -191,11 +166,11 @@ class provider implements
             if (!$context || $context->instanceid != $attempt->cmid) {
                 // This row belongs to the different data module than the previous row.
                 // Start new data module.
-                $context = context_module::instance($attempt->cmid);
+                $context = \core\context\module::instance($attempt->cmid);
             }
-            $qubaidforcontext[$context->id] = $attempt->qubaid;
+            $qubaidforcontext[$context->id] = $attempt->questionusageid;
             // Store the quiz attempt data.
-            $data = new stdClass();
+            $data = new \stdClass();
             $data->timereviewed = transform::datetime($attempt->timereviewed);
             $data->timeanswered = transform::datetime($attempt->timeanswered);
 
@@ -203,12 +178,12 @@ class provider implements
             // where X is the attempt number.
             $subcontext = [
                 get_string('attempts', 'capquiz'),
-                get_string('attempt', 'capquiz') . " $attempt->capattemptid",
+                get_string('attempt', 'capquiz') . ' ' . $attempt->capquizattemptid,
             ];
 
             writer::with_context($context)->export_data($subcontext, $data);
 
-            static::export_user_rating($context, $attempt->capuserid);
+            static::export_user_rating($context, $attempt->capquizuserid);
         }
         $attempts->close();
 
@@ -225,7 +200,12 @@ class provider implements
             writer::with_context($context)->export_data([], $data);
             // This attempt was made by the user. They 'own' all data on it. Store the question usage data.
             \core_question\privacy\provider::export_question_usage(
-                $user->id, $context, [], $qubaidforcontext[$context->id], $options, true
+                userid: $user->id,
+                context: $context,
+                usagecontext: [],
+                usage: $qubaidforcontext[$context->id],
+                options: $options,
+                isowner: true,
             );
         }
     }
@@ -233,10 +213,10 @@ class provider implements
     /**
      * Export the rating data from a specified user
      *
-     * @param context $context The context to export the users rating for
-     * @param int $userid the specified users id
+     * @param \core\context $context The context to export the users rating for
+     * @param int $capquizuserid
      */
-    public static function export_user_rating(context $context, int $userid) {
+    public static function export_user_rating(\core\context $context, int $capquizuserid): void {
         global $DB;
         $sql = "SELECT cur.id                AS ratingid,
                        cur.rating            AS rating,
@@ -244,12 +224,12 @@ class provider implements
                        cur.timecreated       AS timecreated
                   FROM {capquiz_user} cu
                   JOIN {capquiz_user_rating} cur
-                    ON cur.capquiz_user_id = cu.id
-                 WHERE cu.id = :userid";
-        $ratings = $DB->get_recordset_sql($sql, ['userid' => $userid]);
+                    ON cur.capquizuserid = cu.id
+                 WHERE cu.id = :capquizuserid";
+        $ratings = $DB->get_recordset_sql($sql, ['capquizuserid' => $capquizuserid]);
 
         foreach ($ratings as $rating) {
-            $data = new stdClass();
+            $data = new \stdClass();
             $data->rating = $rating->rating;
             $data->manual = $rating->manual;
             $data->timecreated = transform::datetime($rating->timecreated);
@@ -264,9 +244,9 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param context $context The specific context to delete data for.
+     * @param \core\context $context The specific context to delete data for.
      */
-    public static function delete_data_for_all_users_in_context(context $context): void {
+    public static function delete_data_for_all_users_in_context(\core\context $context): void {
         global $DB;
         if ($context->contextlevel != CONTEXT_MODULE) {
             return;
@@ -275,12 +255,13 @@ class provider implements
         if (!$cm) {
             return;
         }
-        $users = $DB->get_records('capquiz_user', ['capquiz_id' => $cm->instance]);
-        foreach ($users as $user) {
-            $DB->delete_records('capquiz_attempt', ['user_id' => $user->id]);
-            $DB->delete_records('capquiz_user_rating', ['capquiz_user_id' => $user->id]);
+        $users = $DB->get_records('capquiz_user', ['capquizid' => $cm->instance], fields: 'id');
+        if (!empty($users)) {
+            $userids = array_keys($users);
+            $DB->delete_records_list('capquiz_attempt', 'capquizuserid', $userids);
+            $DB->delete_records_list('capquiz_user_rating', 'capquizuserid', $userids);
+            $DB->delete_records('capquiz_user', ['capquizid' => $cm->instance]);
         }
-        $DB->delete_records('capquiz_user', ['capquiz_id' => $cm->instance]);
         \core_question\privacy\provider::delete_data_for_all_users_in_context($context);
     }
 
@@ -291,17 +272,17 @@ class provider implements
      */
     public static function delete_data_for_user(approved_contextlist $contextlist): void {
         global $DB;
-        if (empty($contextlist->count())) {
+        if ($contextlist->count() === 0) {
             return;
         }
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
             $cm = get_coursemodule_from_id('capquiz', $context->instanceid);
-            $user = $DB->get_record('capquiz_user', ['capquiz_id' => $cm->instance, 'user_id' => $userid]);
+            $user = $DB->get_record('capquiz_user', ['capquizid' => $cm->instance, 'userid' => $userid]);
             if ($user) {
-                $DB->delete_records('capquiz_attempt', ['user_id' => $user->id]);
-                $DB->delete_records('capquiz_user_rating', ['capquiz_user_id' => $user->id]);
-                $DB->delete_records('capquiz_user', ['capquiz_id' => $cm->instance, 'user_id' => $userid]);
+                $DB->delete_records('capquiz_attempt', ['capquizuserid' => $user->id]);
+                $DB->delete_records('capquiz_user_rating', ['capquizuserid' => $user->id]);
+                $DB->delete_records('capquiz_user', ['capquizid' => $cm->instance, 'userid' => $userid]);
             }
         }
         \core_question\privacy\provider::delete_data_for_user($contextlist);

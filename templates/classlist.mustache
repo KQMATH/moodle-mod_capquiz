@@ -21,62 +21,59 @@
     {
         "users": [
             {
-                "index": 1,
-                "username": "sebastsg",
-                "firstname": "Sebastian",
-                "lastname": "Gundersen",
+                "username": "user1",
+                "firstname": "First",
+                "lastname": "Last",
                 "rating": 1653.6,
                 "stars": 4,
-                "graded_stars": 3,
-                "passing_grade": true
+                "gradedstars": 3,
+                "passinggrade": true
             }
         ],
         "regrade": {
-            "id": "id",
             "method": "post",
-            "classes": "capquiz-regrade-all",
-            "url": "#",
-            "primary": true,
+            "id": "capquiz_regrade_button",
+            "type": "primary",
+            "url": "/mod/capquiz/edit.php?id=1&action=regradeall",
             "label": "Regrade all",
-            "diabled": false
+            "disabled": false
         }
     }
 }}
-<h2>{{#str}} classlist, capquiz {{/str}}</h2>
-<table class="capquiz-tree capquiz-classlist">
+<h2>{{#str}}classlist, capquiz{{/str}}</h2>
+<p>{{#str}}enrolled_students, capquiz{{/str}}: {{usercount}}</p>
+<table class="generaltable table-sm">
+    <thead>
     <tr>
-        <th>#</th>
-        <th class="capquiz-sortable">{{#str}} username, capquiz {{/str}}</th>
-        <th class="capquiz-sortable">{{#str}} firstname, capquiz {{/str}}</th>
-        <th class="capquiz-sortable">{{#str}} lastname, capquiz {{/str}}</th>
-        <th class="capquiz-sortable capquiz-sortable-default-desc">{{#str}} rating, capquiz {{/str}}</th>
-        <th class="capquiz-sortable">{{#str}} stars, capquiz {{/str}}</th>
-        <th class="capquiz-sortable">{{#str}} graded_stars, capquiz {{/str}}</th>
-        <th class="capquiz-sortable">{{#str}} pass_or_fail, capquiz {{/str}}</th>
+        <th>{{#str}}username{{/str}}</th>
+        <th>{{#str}}firstname{{/str}}</th>
+        <th>{{#str}}lastname{{/str}}</th>
+        <th>{{#str}}rating, capquiz{{/str}}</th>
+        <th>{{#str}}stars, capquiz{{/str}}</th>
+        <th>{{#str}}graded_stars, capquiz{{/str}}</th>
+        <th>{{#str}}pass_or_fail, capquiz{{/str}}</th>
     </tr>
+    </thead>
+    <tbody>
     {{#users}}
         <tr>
-            {{#.}}
-                <td>{{ index }}</td>
-                <td>{{ username }}</td>
-                <td>{{ firstname }}</td>
-                <td>{{ lastname }}</td>
-                <td>{{ rating }}</td>
-                <td>{{ stars }}</td>
-                <td>{{ graded_stars }}</td>
-                <td>
-                    {{#passing_grade}}{{#str}} grade_pass, capquiz {{/str}}{{/passing_grade}}
-                    {{^passing_grade}}{{#str}} grade_fail, capquiz {{/str}}{{/passing_grade}}
-                </td>
-            {{/.}}
+            <td>{{username}}</td>
+            <td>{{firstname}}</td>
+            <td>{{lastname}}</td>
+            <td>{{rating}}</td>
+            <td>{{stars}}</td>
+            <td>{{gradedstars}}</td>
+            <td>
+                {{#passinggrade}}{{#str}}grade_pass, capquiz{{/str}}{{/passinggrade}}
+                {{^passinggrade}}{{#str}}grade_fail, capquiz{{/str}}{{/passinggrade}}
+            </td>
         </tr>
     {{/users}}
+    </tbody>
 </table>
-
 {{^users}}
-    <p>{{#str}} no_enrolled_students, capquiz {{/str}}</p>
+    <p>{{#str}}no_enrolled_students, capquiz{{/str}}</p>
 {{/users}}
-
 {{#regrade}}
-    {{> core/single_button}}
+    {{>core/single_button}}
 {{/regrade}}

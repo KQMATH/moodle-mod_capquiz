@@ -14,240 +14,165 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file defines a class representing a capquiz user
- *
- * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @copyright   2019 NTNU
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+declare(strict_types=1);
 
 namespace mod_capquiz;
 
-use context_module;
-use question_engine;
-use question_usage_by_activity;
-use stdClass;
+use core\persistent;
 
 /**
- * capquiz_user class
+ * CAPQuiz user.
  *
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @copyright   2019 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquiz_user {
-
-    /** @var stdClass $record */
-    private stdClass $record;
-
-    /** @var stdClass $user */
-    private stdClass $user;
-
-    /** @var capquiz_user_rating $rating */
-    private capquiz_user_rating $rating;
-
-    /** @var question_usage_by_activity $quba */
-    private question_usage_by_activity $quba;
+class capquiz_user extends persistent {
+    /** @var string The table name. */
+    const TABLE = 'capquiz_user';
 
     /**
-     * Constructor.
-     *
-     * @param stdClass $record
-     * @param context_module $context
-     */
-    public function __construct(stdClass $record, context_module $context) {
-        global $DB;
-        $this->record = $record;
-        $this->user = $DB->get_record('user', ['id' => $this->record->user_id]);
-
-        $rating = capquiz_user_rating::latest_user_rating_by_user($record->id);
-        if ($rating === null) {
-            $this->rating = capquiz_user_rating::insert_user_rating_entry($this->id(), $this->rating());
-        } else {
-            $this->rating = $rating;
-        }
-        $this->create_question_usage($context);
-        $this->quba = question_engine::load_questions_usage_by_activity($this->record->question_usage_id);
-    }
-
-    /**
-     * Verify if user has permission to use question
-     */
-    private function has_question_usage(): bool {
-        return $this->record->question_usage_id !== null;
-    }
-
-    /**
-     * Create question usage
-     *
-     * @param context_module $context
-     */
-    public function create_question_usage(context_module $context): void {
-        global $DB;
-        if ($this->has_question_usage()) {
-            return;
-        }
-        $quba = question_engine::make_questions_usage_by_activity('mod_capquiz', $context);
-        $quba->set_preferred_behaviour('immediatefeedback');
-        // TODO: Don't suppress the error if it becomes possible to save QUBAs without slots.
-        @question_engine::save_questions_usage_by_activity($quba);
-        $this->record->question_usage_id = $quba->get_id();
-        $DB->update_record('capquiz_user', $this->record);
-    }
-
-
-    /**
-     * Return this user's quba.
-     */
-    public function question_usage(): ?question_usage_by_activity {
-        return $this->quba;
-    }
-
-    /**
-     * Loads capquiz user
-     *
-     * @param capquiz $capquiz
-     * @param int $moodleuserid
-     * @param context_module $context
-     */
-    public static function load_user(capquiz $capquiz, int $moodleuserid, context_module $context): ?capquiz_user {
-        global $DB;
-        if ($user = self::load_db_entry($capquiz, $moodleuserid, $context)) {
-            return $user;
-        }
-        $record = new stdClass();
-        $record->user_id = $moodleuserid;
-        $record->capquiz_id = $capquiz->id();
-        $record->rating = $capquiz->default_user_rating();
-        $capquizuserid = $DB->insert_record('capquiz_user', $record);
-        capquiz_user_rating::insert_user_rating_entry($capquizuserid, $record->rating);
-        return self::load_db_entry($capquiz, $moodleuserid, $context);
-    }
-
-    /**
-     * Returns count of users in this capquiz
-     *
-     * @param int $capquizid
-     * @return int count of users in this capquiz
-     */
-    public static function user_count(int $capquizid): int {
-        global $DB;
-        return $DB->count_records('capquiz_user', ['capquiz_id' => $capquizid]);
-    }
-
-    /**
-     * Returns list of all users in this capquiz
-     *
-     * @param int $capquizid
-     * @param context_module $context
-     * @return capquiz_user[]
-     */
-    public static function list_users(int $capquizid, context_module $context): array {
-        global $DB;
-        $records = $DB->get_records('capquiz_user', ['capquiz_id' => $capquizid]);
-        return array_map(fn(stdClass $record) => new capquiz_user($record, $context), array_values($records));
-    }
-
-    /**
-     * Return this user's id
-     */
-    public function id(): int {
-        return $this->record->id;
-    }
-
-    /**
-     * Returns this user's username
-     */
-    public function username(): string {
-        return $this->user->username;
-    }
-
-    /**
-     * Returns this user's first name
-     */
-    public function first_name(): string {
-        return $this->user->firstname;
-    }
-
-    /**
-     * Returns this user's last name
-     */
-    public function last_name(): string {
-        return $this->user->lastname;
-    }
-
-    /**
-     * Return users rating
-     */
-    public function rating(): float {
-        return $this->record->rating;
-    }
-
-    /**
-     * Get this user's capquiz rating
-     */
-    public function get_capquiz_user_rating(): capquiz_user_rating {
-        return $this->rating;
-    }
-
-    /**
-     * Return the highest star rating this user has achieved
-     */
-    public function highest_stars_achieved(): int {
-        return $this->record->highest_level;
-    }
-
-    /**
-     * Return the highest star grade
-     */
-    public function highest_stars_graded(): int {
-        return $this->record->stars_graded;
-    }
-
-    /**
-     * Set this user's highest star rating
-     *
-     * @param int $higheststar
-     */
-    public function set_highest_star(int $higheststar): void {
-        global $DB;
-        $this->record->highest_level = $higheststar;
-        $DB->update_record('capquiz_user', $this->record);
-    }
-
-    /**
-     * Set this user's rating
+     * Rate this user. The new user rating is returned.
      *
      * @param float $rating
      * @param bool $manual
      */
-    public function set_rating(float $rating, bool $manual = false): void {
-        global $DB;
-        $this->record->rating = $rating;
-        $DB->update_record('capquiz_user', $this->record);
-        $userrating = capquiz_user_rating::create_user_rating($this, $rating, $manual);
-        $this->rating = $userrating;
+    public function rate(float $rating, bool $manual): capquiz_user_rating {
+        $this->set('rating', $rating);
+        $this->save();
+        $userrating = new capquiz_user_rating();
+        $userrating->set_many([
+            'capquizuserid' => $this->get('id'),
+            'rating' => $rating,
+            'manual' => $manual,
+        ]);
+        return $userrating->create();
     }
 
     /**
-     * Load user entry from database
+     * Creates a new question attempt for this user.
      *
-     * @param capquiz $capquiz
-     * @param int $moodleuserid
-     * @param context_module $context
+     * @param capquiz_slot $slot
+     * @return ?capquiz_attempt
      */
-    private static function load_db_entry(capquiz $capquiz, int $moodleuserid, context_module $context): ?capquiz_user {
+    public function create_attempt(capquiz_slot $slot): ?capquiz_attempt {
         global $DB;
-        $entry = $DB->get_record('capquiz_user', [
-            'user_id' => $moodleuserid,
-            'capquiz_id' => $capquiz->id(),
+        $question = $slot->find_question();
+        if (!$question) {
+            return null;
+        }
+        $questions = question_load_questions([$question->id]);
+        $question = reset($questions);
+        if (!$question) {
+            return null;
+        }
+        $transaction = $DB->start_delegated_transaction();
+        $quba = $this->get_question_usage();
+        $qubaslot = $quba->add_question(\question_bank::make_question($question));
+        $quba->start_question($qubaslot);
+        \question_engine::save_questions_usage_by_activity($quba);
+        $attempt = new capquiz_attempt();
+        $attempt->set_many([
+            'slot' => $qubaslot,
+            'capquizid' => $this->get('capquizid'),
+            'capquizuserid' => $this->get('id'),
+            'slotid' => $slot->get('id'),
         ]);
-        return empty($entry) ? null : new capquiz_user($entry, $context);
+        $attempt->create();
+        $transaction->allow_commit();
+        return $attempt;
     }
 
+    /**
+     * Get the question usage for this user's quiz attempts.
+     * TODO: This function should not create the question usage.
+     *
+     * @return \question_usage_by_activity
+     */
+    public function get_question_usage(): \question_usage_by_activity {
+        if (!$this->get('questionusageid')) {
+            $capquiz = new capquiz($this->get('capquizid'));
+            $quba = $capquiz->create_question_usage();
+            $this->set('questionusageid', $quba->get_id());
+            $this->save();
+        }
+        return \question_engine::load_questions_usage_by_activity($this->get('questionusageid'));
+    }
+
+    /**
+     * Find an unreviewed attempt.
+     *
+     * @return ?capquiz_attempt
+     */
+    public function find_unreviewed_attempt(): ?capquiz_attempt {
+        return capquiz_attempt::get_record([
+            'capquizuserid' => $this->get('id'),
+            'reviewed' => 0,
+        ]) ?: null;
+    }
+
+    /**
+     * Find the previously reviewed attempt.
+     *
+     * @return capquiz_attempt|null
+     */
+    public function find_previously_reviewed_attempt(): ?capquiz_attempt {
+        $records = capquiz_attempt::get_records([
+            'capquizuserid' => $this->get('id'),
+        ], 'timereviewed', 'DESC', 0, 1);
+        return empty($records) ? null : reset($records);
+    }
+
+    /**
+     * Get reviewed attempts.
+     *
+     * @param int $limit
+     * @return capquiz_attempt[]
+     */
+    public function get_reviewed_attempts(int $limit): array {
+        return capquiz_attempt::get_records([
+            'capquizuserid' => $this->get('id'),
+            'answered' => 1,
+            'reviewed' => 1,
+        ], 'timecreated', 'DESC', 0, $limit);
+    }
+
+    /**
+     * Return the definition of the properties of this model.
+     *
+     * @return array
+     */
+    protected static function define_properties(): array {
+        return [
+            'userid' => [
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'capquizid' => [
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'questionusageid' => [
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ],
+            'rating' => [
+                'type' => PARAM_FLOAT,
+                'default' => 0.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'higheststars' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'starsgraded' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+        ];
+    }
 }
