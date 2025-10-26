@@ -79,7 +79,8 @@ class capquiz extends persistent {
     /**
      * Delete a question slot.
      *
-     * This must be called instead of capquiz_slot::delete() in order to delete the question reference as well.
+     * This must be called instead of capquiz_slot::delete() in order to delete the question reference
+     * and any question attempts as well.
      *
      * @param capquiz_slot $slot
      * @return bool
@@ -97,6 +98,7 @@ class capquiz extends persistent {
             'questionarea' => 'slot',
             'itemid' => $slot->get('id'),
         ]);
+        $DB->delete_records(capquiz_attempt::TABLE, ['slotid' => $slot->get('id')]);
         return $slot->delete();
     }
 

@@ -99,19 +99,32 @@ class capquiz_attempt extends persistent {
             return true;
         }
 
-        // At this point, we're certain that the question attempt is finished. We start by adjusting the user rating.
+        // At this point, we're certain that the question attempt is finished. Finish the question and save.
         $quba->finish_question($this->get('slot'));
         \question_engine::save_questions_usage_by_activity($quba);
+
+        // Get the current user rating now, since we might need to return early.
         $userratingbeforeattempt = capquiz_user_rating::get_latest_by_user($user->get('id'));
-        $slot = new capquiz_slot($this->get('slotid'));
-        $newuserrating = elo::new_rating($capquiz->get('userkfactor'), (float)$score, $user->get('rating'), $slot->get('rating'));
-        $userratingafterattempt = $user->rate($newuserrating, false);
         $this->set_many([
-            'answered' => 1,
+            'answered' => true,
             'timeanswered' => \core\di::get(\core\clock::class)->time(),
             'userprevratingid' => $userratingbeforeattempt->get('id'),
-            'userratingid' => $userratingafterattempt->get('id'),
         ]);
+
+        // The slot may be deleted for various reasons, so attempt to load it by allowing missing records.
+        $slot = capquiz_slot::get_record(['id' => $this->get('slotid')]);
+        if (!$slot) {
+            // We can't calculate a new user rating when the slot has been deleted.
+            $this->set('userratingid', $userratingbeforeattempt->get('id'));
+            $this->save();
+            $transaction->allow_commit();
+            return true;
+        }
+
+        // Adjust user rating.
+        $newuserrating = elo::new_rating($capquiz->get('userkfactor'), (float)$score, $user->get('rating'), $slot->get('rating'));
+        $userratingafterattempt = $user->rate($newuserrating, false);
+        $this->set('userratingid', $userratingafterattempt->get('id'));
         $this->save();
         for ($star = $capquiz->get_max_stars(); $star > 0; $star--) {
             $requiredrating = stars::get_required_rating_for_star($capquiz->get('starratings'), $star);

@@ -128,9 +128,12 @@ final class capquiz_test extends \advanced_testcase {
         $context = \core\context\course::instance($course->id);
         $category = $this->questiongenerator->create_question_category(['contextid' => $context->id]);
         $question = $this->questiongenerator->create_question('truefalse', null, ['category' => $category->id]);
+        $user = $this->getDataGenerator()->create_user();
+        $capquizuser = $capquiz->create_user((int)$user->id);
 
         // Testing creating slot.
         $slot = $capquiz->create_slot($question->id, 1000.0);
+        $slotid = $slot->get('id');
         $conditions = [
             'component' => 'mod_capquiz',
             'questionarea' => 'slot',
@@ -139,10 +142,15 @@ final class capquiz_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('question_references', $conditions));
         $this->assertEquals($capquiz->get('id'), $slot->get('capquizid'));
 
+        // Create a question attempt.
+        $this->assertNotNull($capquizuser->create_attempt($slot));
+        $this->assertEquals(1, capquiz_attempt::count_records(['slotid' => $slotid]));
+
         // Test deleting slot.
         $this->assertTrue($capquiz->delete_slot($slot));
         $this->assertFalse($DB->record_exists('question_references', $conditions));
-        $this->assertEquals(0, $slot->get('id'));
-        $this->assertFalse($capquiz->delete_slot($slot), 'Slot id should be unset in persistent::delete()');
+        $this->assertEquals(0, capquiz_attempt::count_records(['slotid' => $slotid]));
+        $this->assertEquals(0, $slot->get('id'), 'Slot id should be unset in persistent::delete()');
+        $this->assertFalse($capquiz->delete_slot($slot));
     }
 }
