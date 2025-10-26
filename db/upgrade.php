@@ -1039,5 +1039,16 @@ function xmldb_capquiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025101401, 'capquiz');
     }
 
+    if ($oldversion < 2025101402) {
+        $sql = "DELETE
+                  FROM {question_references}
+                 WHERE component = 'mod_capquiz'
+                   AND questionarea = 'slot'
+                   AND itemid NOT IN (SELECT id FROM {capquiz_slot})";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2025101402, 'capquiz');
+    }
+
     return true;
 }

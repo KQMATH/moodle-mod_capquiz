@@ -75,7 +75,7 @@ switch ($action) {
         $slot = new capquiz_slot($slotid);
         // We have already confirmed capability on this quiz, so it's enough to check the slot belongs to it.
         if ($slot->get('capquizid') === $capquiz->get('id')) {
-            $slot->delete();
+            $capquiz->delete_slot($slot);
         }
         redirect($PAGE->url);
         // Unreachable.

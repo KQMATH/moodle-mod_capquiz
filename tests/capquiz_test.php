@@ -31,6 +31,9 @@ final class capquiz_test extends \advanced_testcase {
     /** @var \mod_capquiz_generator CAPQuiz generator */
     private \mod_capquiz_generator $generator;
 
+    /** @var \core_question_generator Question generator */
+    private \core_question_generator $questiongenerator;
+
     /**
      * Set up.
      *
@@ -38,9 +41,13 @@ final class capquiz_test extends \advanced_testcase {
      */
     public function setUp(): void {
         parent::setUp();
+        $this->resetAfterTest();
         /** @var \mod_capquiz_generator $generator */
         $generator = self::getDataGenerator()->get_plugin_generator('mod_capquiz');
         $this->generator = $generator;
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = self::getDataGenerator()->get_plugin_generator('core_question');
+        $this->questiongenerator = $questiongenerator;
     }
 
     /**
@@ -91,7 +98,6 @@ final class capquiz_test extends \advanced_testcase {
      * @return void
      */
     public function test_create_user(): void {
-        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $capquiz = $this->generator->create_capquiz((int)$course->id);
         $user = $this->getDataGenerator()->create_user();
@@ -108,5 +114,35 @@ final class capquiz_test extends \advanced_testcase {
         $rating = reset($ratings);
         $this->assertEqualsWithDelta($capquiz->get('defaultuserrating'), $rating->get('rating'), 0.00001);
         $this->assertFalse($rating->get('manual'));
+    }
+
+    /**
+     * Test creating and deleting slots.
+     *
+     * @return void
+     */
+    public function test_create_and_delete_slot(): void {
+        global $DB;
+        $course = $this->getDataGenerator()->create_course();
+        $capquiz = $this->generator->create_capquiz((int)$course->id);
+        $context = \core\context\course::instance($course->id);
+        $category = $this->questiongenerator->create_question_category(['contextid' => $context->id]);
+        $question = $this->questiongenerator->create_question('truefalse', null, ['category' => $category->id]);
+
+        // Testing creating slot.
+        $slot = $capquiz->create_slot($question->id, 1000.0);
+        $conditions = [
+            'component' => 'mod_capquiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->get('id'),
+        ];
+        $this->assertTrue($DB->record_exists('question_references', $conditions));
+        $this->assertEquals($capquiz->get('id'), $slot->get('capquizid'));
+
+        // Test deleting slot.
+        $this->assertTrue($capquiz->delete_slot($slot));
+        $this->assertFalse($DB->record_exists('question_references', $conditions));
+        $this->assertEquals(0, $slot->get('id'));
+        $this->assertFalse($capquiz->delete_slot($slot), 'Slot id should be unset in persistent::delete()');
     }
 }

@@ -77,6 +77,30 @@ class capquiz extends persistent {
     }
 
     /**
+     * Delete a question slot.
+     *
+     * This must be called instead of capquiz_slot::delete() in order to delete the question reference as well.
+     *
+     * @param capquiz_slot $slot
+     * @return bool
+     */
+    public function delete_slot(capquiz_slot $slot): bool {
+        global $DB;
+        if ($slot->get('capquizid') !== $this->get('id')) {
+            return false;
+        }
+        if ($slot->get('id') === 0) {
+            return false;
+        }
+        $DB->delete_records('question_references', [
+            'component' => 'mod_capquiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->get('id'),
+        ]);
+        return $slot->delete();
+    }
+
+    /**
      * Create a new CAPQuiz user.
      *
      * @param int $moodleuserid

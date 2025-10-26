@@ -67,11 +67,11 @@ class question_bank_view extends \core_question\local\bank\view {
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
         $customviewcolumns = [
-            'mod_capquiz\question\bank\add_question_column' . column_base::ID_SEPARATOR . 'add_question_column',
-            'mod_capquiz\question\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
-            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
-            'mod_quiz\question\bank\question_name_text_column' . column_base::ID_SEPARATOR . 'question_name_text_column',
-            'mod_capquiz\question\bank\preview_question_column' . column_base::ID_SEPARATOR . 'preview_question_column',
+            add_question_column::class . column_base::ID_SEPARATOR . 'add_question_column',
+            checkbox_column::class . column_base::ID_SEPARATOR . 'checkbox_column',
+            \qbank_viewquestiontype\question_type_column::class . column_base::ID_SEPARATOR . 'question_type_column',
+            question_name_text_column::class . column_base::ID_SEPARATOR . 'question_name_text_column',
+            preview_question_column::class . column_base::ID_SEPARATOR . 'preview_question_column',
         ];
         foreach ($customviewcolumns as $columnid) {
             [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
