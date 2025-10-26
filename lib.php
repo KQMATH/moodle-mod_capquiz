@@ -106,7 +106,7 @@ function capquiz_delete_instance(int $capquizid): bool {
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function capquiz_questions_in_use(array $questionids): bool {
-    $qubaidjoin = new qubaid_join('{ ' . capquiz_user::TABLE . '} cu', 'cu.questionusageid');
+    $qubaidjoin = new qubaid_join('{' . capquiz_user::TABLE . '} cu', 'cu.questionusageid');
     return question_engine::questions_in_use($questionids, $qubaidjoin);
 }
 
