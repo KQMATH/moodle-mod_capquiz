@@ -18,7 +18,10 @@ declare(strict_types=1);
 
 namespace mod_capquiz\question\bank;
 
+use mod_capquiz\capquiz_slot;
 use mod_capquiz\local\helpers\questions;
+use core\output\action_link;
+use core\output\pix_icon;
 
 /**
  * Question bank column for adding questions to CAPQuiz.
@@ -53,7 +56,7 @@ class add_question_column extends \core_question\local\bank\column_base {
             return;
         }
         if (in_array($question->id, $this->addedquestionids)) {
-            echo $OUTPUT->render(new \core\output\pix_icon('t/check', ''));
+            echo $OUTPUT->render(new pix_icon('t/check', ''));
             return;
         }
         $url = new \core\url('/mod/capquiz/edit.php', [
@@ -62,7 +65,7 @@ class add_question_column extends \core_question\local\bank\column_base {
             'questionid' => $question->id,
         ]);
         $title = get_string('add_to_quiz', 'capquiz');
-        $link = new \action_link($url, '', null, ['title' => $title], new \core\output\pix_icon('t/add', $title));
+        $link = new action_link($url, '', null, ['title' => $title], new pix_icon('t/add', $title));
         echo $OUTPUT->render($link);
     }
 
