@@ -33,12 +33,10 @@ require_once($CFG->dirroot . '/mod/capquiz/backup/moodle2/backup_capquiz_stepsli
  * @package mod_capquiz
  */
 class backup_capquiz_activity_task extends backup_activity_task {
-
     /**
      * This should define settings. Not used at the moment.
      */
     protected function define_my_settings() {
-
     }
 
     /**
@@ -46,7 +44,6 @@ class backup_capquiz_activity_task extends backup_activity_task {
      */
     protected function define_my_steps() {
         $this->add_step(new backup_capquiz_activity_structure_step('capquiz_structure', 'capquiz.xml'));
-        // TODO: This might not be necessary in future Moodle versions, if discussed subclass is added.
         $this->add_step(new backup_calculate_question_categories('activity_question_categories'));
         $this->add_step(new backup_delete_temp_questions('clean_temp_questions'));
     }
@@ -68,5 +65,4 @@ class backup_capquiz_activity_task extends backup_activity_task {
         $content = preg_replace($search, '$@CAPQUIZVIEWBYID*$2@$', $content);
         return $content;
     }
-
 }

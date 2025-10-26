@@ -1,5 +1,5 @@
 # CAPQuiz
-[![Moodle plugin CI](https://github.com/KQMATH/moodle-mod_capquiz/workflows/Moodle%20plugin%20CI/badge.svg?branch=master)](https://github.com/KQMATH/moodle-mod_capquiz/actions?query=workflow%3A%22Moodle+plugin+CI%22+branch%3Amaster)
+[![Moodle plugin CI](https://github.com/KQMATH/moodle-mod_capquiz/actions/workflows/moodle-ci.yml/badge.svg)](https://github.com/KQMATH/moodle-mod_capquiz/actions)
 
 Computer adaptive practice activity module for Moodle
 
@@ -20,16 +20,8 @@ Documentation is available as
 + [CAPQuiz](https://moodle.org/plugins/pluginversions.php?plugin=mod_capquiz) in the Moodle Plugin Repository
 
 ## Known Bugs
-
-1.  Users have to take care not to delete questions used by 
-    instances of CAPQuiz.  At present, there is no mechanism to
-    prevent accidental deletion.
-2.  Issues have been reported with the class list in old quizzes
-    after upgrading to the most recent versions.  New quizzes created
-    in the new version seem to work as they should.
-3.  Further testing is required, so if you use CAPQuiz, please report
-    any trouble, preferably using 
-    [Github issues](https://github.com/KQMATH/moodle-mod_capquiz/issues).
+Further testing is required, so if you use CAPQuiz, please report any trouble, preferably using
+[GitHub issues](https://github.com/KQMATH/moodle-mod_capquiz/issues).
 
 ## History
 The idea of an adaptive learning system at NTNU in Ålesund (then Ålesund University College) was first conceived by Siebe van Albada.  His efforts led to a prototype, known as [MathGen](https://github.com/MathGen/oppgavegenerator), written as a standalone server in python.
@@ -41,9 +33,10 @@ CAPQuiz includes the work of many [contributors](https://github.com/KQMATH/moodl
 
 **Project lead:** Hans Georg Schaathun: <hasc@ntnu.no>
 
+**Maintainer:** [Sebastian Gundersen](https://github.com/sebastsg) <sebastian@sgundersen.com>
+
 **Previous Developers:**
 * Aleksander Skrede <aleksander.l.skrede@ntnu.no>
-* Sebastian S. Gundersen <sebastian@sgundersen.com>
 * [André Storhaug](https://github.com/andstor) <andr3.storhaug@gmail.com>
 
 **Original idea:**

@@ -1,166 +1,141 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/capquiz/db" VERSION="20210205" COMMENT="XMLDB file for Moodle module mod/capquiz"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+<XMLDB PATH="mod/capquiz/db" VERSION="20241022" COMMENT="XMLDB file for Moodle module mod/capquiz"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
-  <TABLES>
-    <TABLE NAME="capquiz" COMMENT="Table from which sessions are created.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="published" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false" COMMENT="Indicates whether or not the question list is published, if it has one"/>
-        <FIELD NAME="default_user_rating" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" COMMENT="Default rating for users"/>
-        <FIELD NAME="stars_to_pass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="How many stars are required for a passing grade"/>
-        <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="capquiz_question_list" COMMENT="An ordered list of questions used by a CAPQuiz assignment.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Title of this question list"/>
-        <FIELD NAME="author" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Short description of the question list"/>
-        <FIELD NAME="star_ratings" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="1300,1450,1600,1800,2000" SEQUENCE="false"/>
-        <FIELD NAME="is_template" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="time_created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="time_modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="default_question_rating" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="600" SEQUENCE="false" COMMENT="Default question for users"/>
-        <FIELD NAME="context_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="capquiz_id" TYPE="foreign-unique" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
-        <KEY NAME="author" TYPE="foreign" FIELDS="author" REFTABLE="user" REFFIELDS="id"/>
-        <KEY NAME="context_id" TYPE="foreign" FIELDS="context_id" REFTABLE="context" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="capquiz_question" COMMENT="Table holding a references to a question and the question list, as well as the rating of that question for that specific list">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="question_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The question identifier for the question bank"/>
-        <FIELD NAME="question_list_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Identifier for the CAP question list which this question is part of"/>
-        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified question for the specified CAP question list"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="question" REFFIELDS="id"/>
-        <KEY NAME="question_list_id" TYPE="foreign" FIELDS="question_list_id" REFTABLE="capquiz_question_list" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="capquiz_user" COMMENT="User table">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="question_usage_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user for the specified CAPQuiz question list"/>
-        <FIELD NAME="highest_level" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest number of stars attained by this user"/>
-        <FIELD NAME="stars_graded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of stars for the final grade"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="user" REFFIELDS="id"/>
-        <KEY NAME="capquiz_id" TYPE="foreign" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
-        <KEY NAME="question_usage_id" TYPE="foreign-unique" FIELDS="question_usage_id" REFTABLE="question_usages" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="capquiz_attempt" COMMENT="Attempt table">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="slot" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="question_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="reviewed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="answered" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="time_answered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="time_reviewed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="question_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the question used in this attempt"/>
-        <FIELD NAME="question_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the question used in this attempt"/>
-        <FIELD NAME="prev_question_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the previous question used in this attempt"/>
-        <FIELD NAME="prev_question_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the previous question used in this attempt"/>
-        <FIELD NAME="user_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_user_rating for the user used in this attempt"/>
-        <FIELD NAME="user_prev_rating_id" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_user_rating for the user used in this attempt"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="user_id" TYPE="foreign" FIELDS="user_id" REFTABLE="capquiz_user" REFFIELDS="id"/>
-        <KEY NAME="question_id" TYPE="foreign" FIELDS="question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
-        <KEY NAME="question_rating_id" TYPE="foreign" FIELDS="question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
-        <KEY NAME="question_prev_rating_id" TYPE="foreign" FIELDS="question_prev_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
-        <KEY NAME="prev_question_rating_id" TYPE="foreign" FIELDS="prev_question_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
-        <KEY NAME="prev_question_prev_rating_id" TYPE="foreign" FIELDS="prev_question_prev_rating_id" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
-        <KEY NAME="user_rating_id" TYPE="foreign" FIELDS="user_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
-        <KEY NAME="user_previous_rating_id" TYPE="foreign" FIELDS="prev_question_rating_id" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="timereviewed" UNIQUE="false" FIELDS="user_id, time_reviewed" COMMENT="Index attempts by timestamp"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="capquiz_question_rating" COMMENT="Stores a rating for a CAPQuiz question.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="capquiz_question_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified question"/>
-        <FIELD NAME="manual" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="capquiz_question_id" TYPE="foreign" FIELDS="capquiz_question_id" REFTABLE="capquiz_question" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="capquiz_user_rating" COMMENT="Stores a rating for a CAPQuiz user.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="capquiz_user_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="rating" TYPE="float" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The rating of the specified user"/>
-        <FIELD NAME="manual" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="capquiz_user_id" TYPE="foreign" FIELDS="capquiz_user_id" REFTABLE="capquiz_user" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="capquiz_question_selection" COMMENT="Question selection table.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="strategy" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="configuration" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="capquiz_id" TYPE="foreign" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="capquiz_rating_system" COMMENT="Rating system table">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="capquiz_id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="rating_system" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="configuration" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="capquiz_id" TYPE="foreign" FIELDS="capquiz_id" REFTABLE="capquiz" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-  </TABLES>
+    <TABLES>
+        <TABLE NAME="capquiz" COMMENT="CAPQuiz settings">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="defaultuserrating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="1200" SEQUENCE="false" DECIMALS="2"/>
+                <FIELD NAME="defaultquestionrating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="600" SEQUENCE="false" DECIMALS="2"/>
+                <FIELD NAME="starratings" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="1300,1450,1600,1800,2000" SEQUENCE="false"/>
+                <FIELD NAME="starstopass" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="3" SEQUENCE="false" COMMENT="How many stars are required for a passing grade"/>
+                <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timedue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="numquestioncandidates" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false" COMMENT="How many questions to include in question selection"/>
+                <FIELD NAME="minquestionsuntilreappearance" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Minimum number of questions until a question reappears"/>
+                <FIELD NAME="userwinprobability" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0.75" SEQUENCE="false" DECIMALS="2" COMMENT="Probability of a student answering the question correctly"/>
+                <FIELD NAME="userkfactor" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="32" SEQUENCE="false" DECIMALS="2"/>
+                <FIELD NAME="questionkfactor" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="8" SEQUENCE="false" DECIMALS="2"/>
+                <FIELD NAME="questionbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="immediatefeedback" SEQUENCE="false"/>
+                <FIELD NAME="questiondisplayoptions" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Question display options stored as JSON"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="capquiz_slot" COMMENT="Question slot">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="capquizid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The CAPQuiz id for which this question is part of"/>
+                <FIELD NAME="rating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="capquizid" TYPE="foreign" FIELDS="capquizid" REFTABLE="capquiz" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="capquiz_user" COMMENT="User table">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="capquizid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="questionusageid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="rating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+                <FIELD NAME="higheststars" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The highest number of stars attained by this user"/>
+                <FIELD NAME="starsgraded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of stars for the final grade"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="capquizid" TYPE="foreign" FIELDS="capquizid" REFTABLE="capquiz" REFFIELDS="id"/>
+                <KEY NAME="questionusageid" TYPE="foreign-unique" FIELDS="questionusageid" REFTABLE="question_usages" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="capquiz_attempt" COMMENT="Attempt table">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="slot" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="capquizid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="capquizuserid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="slotid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="reviewed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="answered" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timeanswered" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timereviewed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="questionratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the question used in this attempt"/>
+                <FIELD NAME="questionprevratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the question used in this attempt"/>
+                <FIELD NAME="prevquestionratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_question_rating for the previous question used in this attempt"/>
+                <FIELD NAME="prevquestionprevratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_question_rating for the previous question used in this attempt"/>
+                <FIELD NAME="userratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the capquiz_user_rating for the user used in this attempt"/>
+                <FIELD NAME="userprevratingid" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false" COMMENT="The id of the previous capquiz_user_rating for the user used in this attempt"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="capquizid" TYPE="foreign" FIELDS="capquizid" REFTABLE="capquiz" REFFIELDS="id"/>
+                <KEY NAME="capquizuserid" TYPE="foreign" FIELDS="capquizuserid" REFTABLE="capquiz_user" REFFIELDS="id"/>
+                <KEY NAME="slotid" TYPE="foreign" FIELDS="slotid" REFTABLE="capquiz_slot" REFFIELDS="id"/>
+                <KEY NAME="questionratingid" TYPE="foreign" FIELDS="questionratingid" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+                <KEY NAME="questionprevratingid" TYPE="foreign" FIELDS="questionprevratingid" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+                <KEY NAME="prevquestionratingid" TYPE="foreign" FIELDS="prevquestionratingid" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+                <KEY NAME="prevquestionprevratingid" TYPE="foreign" FIELDS="prevquestionprevratingid" REFTABLE="capquiz_question_rating" REFFIELDS="id"/>
+                <KEY NAME="userratingid" TYPE="foreign" FIELDS="userratingid" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
+                <KEY NAME="userprevratingid" TYPE="foreign" FIELDS="userprevratingid" REFTABLE="capquiz_user_rating" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="capquiz_question_rating" COMMENT="Stores a rating for a CAPQuiz question.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="slotid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="rating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+                <FIELD NAME="manual" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="slotid" TYPE="foreign" FIELDS="slotid" REFTABLE="capquiz_slot" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="capquiz_user_rating" COMMENT="Stores a rating for a CAPQuiz user.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="capquizuserid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="rating" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5"/>
+                <FIELD NAME="manual" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="capquizuserid" TYPE="foreign" FIELDS="capquizuserid" REFTABLE="capquiz_user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
 </XMLDB>

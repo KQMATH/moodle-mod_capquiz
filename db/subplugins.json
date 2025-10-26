@@ -1,4 +1,7 @@
 {
+    "subplugintypes": {
+        "capquizreport": "report"
+    },
     "plugintypes": {
         "capquizreport": "mod/capquiz/report"
     }

@@ -1,20 +1,20 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest a new feature for CAPQuiz
 title: ''
 labels: enhancement
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+Background:
+- Example: I'm always frustrated when ...
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Suggested solution:
+- Example: Add button to do X thing on page Y
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+Alternatives considered:
+- Example: Change default value for setting X
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+Additional information:
+- Example: This mockup illustrates button placement

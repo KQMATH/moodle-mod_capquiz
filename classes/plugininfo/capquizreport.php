@@ -14,21 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Subplugin info class.
- *
- * @package     mod_capquiz
- * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @copyright   2019 Norwegian University of Science and Technology (NTNU)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_capquiz\plugininfo;
 
 use admin_settingpage;
 use core\plugininfo\base;
 use core_plugin_manager;
-use moodle_url;
 use part_of_admin_tree;
 
 /**
@@ -43,8 +33,8 @@ class capquizreport extends base {
     /**
      * Return URL used for management of plugins of this type.
      */
-    public static function get_manage_url(): moodle_url {
-        return new moodle_url('/mod/capquiz/adminmanageplugins.php', ['subtype' => 'capquizreport']);
+    public static function get_manage_url(): \core\url {
+        return new \core\url('/mod/capquiz/adminmanageplugins.php', ['subtype' => 'capquizreport']);
     }
 
     /**
@@ -58,18 +48,14 @@ class capquizreport extends base {
         if (!$plugins) {
             return [];
         }
-        $installed = [];
-        foreach ($plugins as $plugin => $version) {
-            $installed[] = 'capquizreport_' . $plugin;
-        }
-
-        list($installed, $params) = $DB->get_in_or_equal($installed, SQL_PARAMS_NAMED);
+        $installed = array_map(fn(string $plugin) => "capquizreport_$plugin", array_keys($plugins));
+        [$installed, $params] = $DB->get_in_or_equal($installed, SQL_PARAMS_NAMED);
         $disabled = $DB->get_records_select('config_plugins', "plugin $installed AND name = 'disabled'", $params, 'plugin ASC');
         foreach ($disabled as $conf) {
             if (empty($conf->value)) {
                 continue;
             }
-            list($type, $name) = explode('_', $conf->plugin, 2);
+            [$type, $name] = explode('_', $conf->plugin, 2);
             unset($plugins[$name]);
         }
 

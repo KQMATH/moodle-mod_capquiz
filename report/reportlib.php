@@ -25,64 +25,12 @@
 
 use core\context\module;
 use mod_capquiz\capquiz;
-use mod_capquiz\capquiz_urls;
-use mod_capquiz\report\capquiz_report_factory;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/capquiz/adminlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 require_once($CFG->libdir . '/filelib.php');
-
-/**
- * Generates and returns list of available CAPQuiz report sub-plugins
- *
- * @param context_module $context the context level to check caps against
- * @return array list of valid reports present
- */
-function capquiz_report_list(context_module $context): array {
-    static $reportlist;
-    if (!empty($reportlist)) {
-        return $reportlist;
-    }
-    $pluginmanager = new capquiz_plugin_manager('capquizreport');
-    $enabledplugins = core_plugin_manager::instance()->get_enabled_plugins('capquizreport');
-    foreach ($pluginmanager->get_sorted_plugins_list() as $reportname) {
-        $report = capquiz_report_factory::make($reportname);
-        if (isset($enabledplugins[$reportname]) && $report->canview($context)) {
-            $reportlist[] = $reportname;
-        }
-    }
-    return $reportlist;
-}
-
-/**
- * Create a filename for use when downloading data from a capquiz report. It is
- * expected that this will be passed to flexible_table::is_downloading, which
- * cleans the filename of bad characters and adds the file extension.
- *
- * @param string $report the type of report.
- * @param string $courseshortname the course shortname.
- * @param string $capquizname the capquiz name.
- * @return string the filename.
- */
-function capquiz_report_download_filename(string $report, string $courseshortname, string $capquizname): string {
-    return $courseshortname . '-' . format_string($capquizname) . '-' . $report;
-}
-
-/**
- * Are there any questions in this capquiz?
- *
- * @param int $capquizid
- */
-function capquiz_has_questions(int $capquizid): bool {
-    global $DB;
-    $sql = 'SELECT cq.id
-              FROM {capquiz_question} cq
-              JOIN {capquiz_question_list} cql ON cql.capquiz_id = :capquizid AND cql.is_template = 0
-              WHERE cq.question_list_id = cql.id';
-    return $DB->record_exists_sql($sql, ['capquizid' => $capquizid]);
-}
 
 /**
  * Get the questions in this capquiz, in order.
@@ -93,99 +41,85 @@ function capquiz_has_questions(int $capquizid): bool {
  */
 function capquiz_report_get_questions(capquiz $capquiz): array {
     global $DB;
-    $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id', "'#'", 'cu.id', 'ca.slot') . ' AS uniqueid,
-                ca.slot,
-                q.id,
-                q.qtype,
-                q.length
-            FROM {question} q
-            JOIN {capquiz_question} cq ON cq.question_id = q.id
-            JOIN {capquiz_question_list} cql ON cql.id = cq.question_list_id AND cql.is_template = 0
-            JOIN {capquiz_user} cu ON cu.capquiz_id = cql.capquiz_id
-            JOIN {question_usages} qu ON qu.id = cu.question_usage_id
-            JOIN {question_attempts} qa ON qa.questionusageid = qu.id
-            JOIN {capquiz_attempt} ca ON ca.question_id = cq.id AND ca.slot = qa.slot AND ca.user_id = cu.id
-
-            WHERE cu.capquiz_id = ?
-            AND q.length > 0
-
-            ORDER BY ca.slot';
-    $qsbyslot = $DB->get_records_sql($sql, [$capquiz->id()]);
+    $sql = 'SELECT DISTINCT ' . $DB->sql_concat('qa.id', "'#'", 'cu.id', 'ca.slot') . " AS uniqueid,
+                   ca.slot,
+                   q.id,
+                   q.qtype,
+                   q.length
+              FROM {capquiz_slot} cs
+              JOIN {question_references} qr
+                ON qr.itemid = cs.id
+               AND qr.component = 'mod_capquiz'
+               AND qr.questionarea = 'slot'
+              JOIN {question_versions} qv
+                ON qv.questionbankentryid = qr.questionbankentryid
+               AND qv.version = COALESCE(
+                       qr.version,
+                       (SELECT MAX(qv2.version)
+                         FROM {question_versions} qv2
+                        WHERE qv2.questionbankentryid = qr.questionbankentryid)
+                   )
+              JOIN {question} q
+                ON q.id = qv.questionid
+               AND q.length > 0
+              JOIN {capquiz_user} cu
+                ON cu.capquizid = cs.capquizid
+              JOIN {question_usages} qu
+                ON qu.id = cu.questionusageid
+              JOIN {question_attempts} qa
+                ON qa.questionusageid = qu.id
+              JOIN {capquiz_attempt} ca
+                ON ca.slotid = cs.id
+               AND ca.slot = qa.slot
+               AND ca.capquizuserid = cu.id
+             WHERE cs.capquizid = :capquizid
+             ORDER BY ca.slot";
+    $questionsbyslot = $DB->get_records_sql($sql, ['capquizid' => $capquiz->get('id')]);
     $number = 1;
-    foreach ($qsbyslot as $question) {
+    foreach ($questionsbyslot as $question) {
         $question->number = $number;
         $number += $question->length;
         $question->type = $question->qtype;
     }
-    return $qsbyslot;
+    return $questionsbyslot;
 }
 
 /**
- * Return a textual summary of the number of attempts that have been made at a particular quiz,
- * returns '' if no attempts have been made yet, unless $returnzero is passed as true.
+ * Returns the number of question attempts in a CAPQuiz.
  *
- * @param capquiz $capquiz
- * @param bool $returnzero if false (default), when no attempts have been
- *      made '' is returned instead of 'Attempts: 0'.
- * @return string a string like "Attempts: 123".
+ * @param int $capquizid
  */
-function capquiz_num_attempt_summary(capquiz $capquiz, bool $returnzero = false): string {
-    $numattempts = capquiz_report_num_attempt($capquiz);
-    if ($numattempts || $returnzero) {
-        return get_string('attemptsnum', 'quiz', $numattempts);
-    }
-    return '';
-}
-
-/**
- * Returns the number of CAPQuiz attempts.
- *
- * @param capquiz $capquiz
- * @return int number of answered CAPQuiz attempts
- */
-function capquiz_report_num_attempt(capquiz $capquiz): int {
+function capquiz_report_num_attempt(int $capquizid): int {
     global $DB;
     $sql = 'SELECT COUNT(ca.id)
               FROM {capquiz_attempt} ca
-              JOIN {capquiz_user} cu ON cu.capquiz_id = :capquizid AND cu.id = ca.user_id
-              JOIN {question_usages} qu ON qu.id = cu.question_usage_id
-              JOIN {question_attempts} qa ON qa.questionusageid = qu.id AND qa.slot = ca.slot
-              JOIN {capquiz_question} cq ON cq.id = ca.question_id';
-    return $DB->count_records_sql($sql, ['capquizid' => $capquiz->id()]);
+              JOIN {capquiz_user} cu
+                ON cu.capquizid = :capquizid
+               AND cu.id = ca.capquizuserid
+              JOIN {question_usages} qu
+                ON qu.id = cu.questionusageid
+              JOIN {question_attempts} qa
+                ON qa.questionusageid = qu.id
+               AND qa.slot = ca.slot
+              JOIN {capquiz_slot} cs
+                ON cs.id = ca.slotid';
+    return $DB->count_records_sql($sql, ['capquizid' => $capquizid]);
 }
 
 /**
  * Generate a message saying that this capquiz has no questions, with a button to
  * go to the edit page, if the user has the right capability.
  *
- * @param object $quiz the quiz settings.
- * @param object $cm the course_module object.
+ * @param cm_info $cm the course_module object.
  * @param module $context the quiz context.
  * @return string HTML to output.
  */
-function capquiz_no_questions_message($quiz, $cm, module $context): string {
+function capquiz_no_questions_message(cm_info $cm, module $context): string {
     global $OUTPUT;
     $output = $OUTPUT->notification(get_string('noquestions', 'quiz'));
     if (has_capability('mod/capquiz:manage', $context)) {
-        $output .= $OUTPUT->single_button(capquiz_urls::view_question_list_url(), get_string('editquiz', 'quiz'), 'get');
-    }
-    return $output;
-}
-
-/**
- * Generate a message saying that this capquiz has no questions, with a button to
- * go to the dashboard page (question list settings), if the user has the right capability.
- *
- * @param object $quiz the quiz settings.
- * @param object $cm the course_module object.
- * @param module $context the quiz context.
- * @return string HTML to output.
- */
-function capquiz_not_published_message($quiz, $cm, module $context): string {
-    global $OUTPUT;
-    $output = $OUTPUT->notification(get_string('question_list_not_published', 'capquiz'));
-    if (has_capability('mod/capquiz:manage', $context)) {
-        $output .= $OUTPUT->single_button(capquiz_urls::view_url(), get_string('question_list_settings', 'capquiz'), 'get');
+        $url = new \core\url('/mod/capquiz/edit.php', ['id' => $cm->id]);
+        $output .= $OUTPUT->single_button($url, get_string('editquiz', 'quiz'), 'get');
     }
     return $output;
 }

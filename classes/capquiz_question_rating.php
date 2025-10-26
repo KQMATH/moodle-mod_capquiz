@@ -14,135 +14,55 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file defines a class represeting a capquiz question rating
- *
- * @package     mod_capquiz
- * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @copyright   2019 NTNU
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+declare(strict_types=1);
 
 namespace mod_capquiz;
 
-use dml_exception;
-use stdClass;
+use core\persistent;
 
 /**
  * Class capquiz_question_rating
  *
  * @package     mod_capquiz
- * @author      André Storhaug <andr3.storhaug@gmail.com>
- * @copyright   2019 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capquiz_question_rating {
-
-    /** @var stdClass $record */
-    private stdClass $record;
+class capquiz_question_rating extends persistent {
+    /** @var string The table name. */
+    const TABLE = 'capquiz_question_rating';
 
     /**
-     * Constructor.
+     * Get the latest question rating for a given slot.
      *
-     * @param stdClass $record
+     * @param capquiz_slot $slot
      */
-    public function __construct(stdClass $record) {
-        $this->record = $record;
+    public static function get_latest_by_slot(capquiz_slot $slot): ?capquiz_question_rating {
+        $records = self::get_records(['slotid' => $slot->get('id')], 'timecreated', 'DESC', 0, 1);
+        return empty($records) ? null : reset($records);
     }
 
     /**
-     * Loads a question rating from the database with a matching id
+     * Return the definition of the properties of this model.
      *
-     * @param int $questionratingid
+     * @return array
      */
-    public static function load_question_rating(int $questionratingid): ?capquiz_question_rating {
-        global $DB;
-        $record = $DB->get_record('capquiz_question_rating', ['id' => $questionratingid]);
-        return empty($record) ? null : new capquiz_question_rating($record);
-    }
-
-    /**
-     * Creates a new question rating and inserts it to the database
-     *
-     * @param capquiz_question $question
-     * @param float $rating
-     * @param bool $manual
-     */
-    public static function create_question_rating(capquiz_question $question, float $rating,
-                                                  bool $manual = false): capquiz_question_rating {
-        return self::insert_question_rating_entry($question->id(), $rating, $manual);
-    }
-
-    /**
-     * Insert new question rating to database
-     *
-     * @param int $questionid
-     * @param float $rating
-     * @param bool $manual
-     */
-    public static function insert_question_rating_entry(int $questionid, float $rating,
-                                                        bool $manual = false): capquiz_question_rating {
-        global $DB;
-        $record = new stdClass();
-        $record->capquiz_question_id = $questionid;
-        $record->rating = $rating;
-        $record->manual = $manual;
-        $record->timecreated = time();
-        $ratingid = $DB->insert_record('capquiz_question_rating', $record);
-        $record->id = $ratingid;
-        return new capquiz_question_rating($record);
-    }
-
-    /**
-     * Load information about the latest question rating for an attempt from the database.
-     *
-     * @param int $questionid
-     */
-    public static function latest_question_rating_by_question(int $questionid): ?capquiz_question_rating {
-        global $DB;
-        $sql = "SELECT cqr.*
-                  FROM {capquiz_question_rating} cqr
-                  JOIN {capquiz_question} cq ON cq.id = cqr.capquiz_question_id
-                 WHERE cqr.id = (
-                    SELECT MAX(cqr2.id)
-                    FROM {capquiz_question_rating} cqr2
-                    JOIN {capquiz_question} cq2 ON cq2.id = cqr2.capquiz_question_id
-                    WHERE cq2.id = cq.id
-                    )
-                AND cq.id = :question_id";
-        $record = $DB->get_record_sql($sql, ['question_id' => $questionid]);
-        return empty($record) ? null : new capquiz_question_rating($record);
-    }
-
-    /**
-     * Returns this question ratings id
-     */
-    public function id(): int {
-        return $this->record->id;
-    }
-
-    /**
-     * Returns the time of when the question rating was created
-     */
-    public function timecreated(): string {
-        return $this->record->timecreated;
-    }
-
-    /**
-     * Returns the question rating
-     */
-    public function rating(): float {
-        return $this->record->rating;
-    }
-
-    /**
-     * Sets the question rating
-     *
-     * @param float $rating
-     */
-    public function set_rating(float $rating): void {
-        global $DB;
-        $this->record->rating = $rating;
-        $DB->update_record('capquiz_question_rating', $this->record);
+    protected static function define_properties(): array {
+        return [
+            'slotid' => [
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'rating' => [
+                'type' => PARAM_FLOAT,
+                'default' => 0.0,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+            'manual' => [
+                'type' => PARAM_BOOL,
+                'default' => false,
+                'null' => NULL_NOT_ALLOWED,
+            ],
+        ];
     }
 }

@@ -15,22 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Index page
+ * List all instances of CAPQuiz in a course.
  *
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz;
+use mod_capquiz\capquiz;
+use mod_capquiz\output\index_table;
+use mod_capquiz\output\renderer;
 
 require_once('../../config.php');
 
-require_login();
+global $DB, $PAGE, $OUTPUT;
 
 $courseid = required_param('id', PARAM_INT);
-$course = $DB->get_record('course', ['id' => $courseid]);
-if ($course) {
-    $PAGE->set_url(capquiz_urls::create_view_url(capquiz_urls::$urlview));
+$course = get_course($courseid);
+$context = \core\context\course::instance($courseid);
+require_login($course);
+
+$capquizplural = get_string('modulenameplural', 'capquiz');
+
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('incourse');
+$PAGE->set_url(new \core\url('/mod/capquiz/index.php', ['id' => $courseid]));
+$PAGE->set_title($capquizplural);
+$PAGE->set_heading($course->fullname);
+
+echo $OUTPUT->header();
+
+if (has_capability('mod/capquiz:instructor', $context)) {
+    /** @var renderer $renderer */
+    $renderer = $PAGE->get_renderer('mod_capquiz');
+    echo $renderer->render(new index_table(capquiz::get_records(['course' => $courseid])));
 }
+
+echo $OUTPUT->footer();

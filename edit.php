@@ -15,28 +15,82 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit capquiz
+ * Edit question list.
  *
  * @package     mod_capquiz
- * @author      Aleksander Skrede <aleksander.l.skrede@ntnu.no>
- * @copyright   2018 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2024 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_capquiz;
+use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_slot;
 
-require_once("../../config.php");
+require_once(__DIR__ . '/../../config.php');
+
+global $CFG, $OUTPUT, $PAGE, $USER, $DB;
+
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 
-$cmid = capquiz_urls::require_course_module_id_param();
+$cmid = optional_param('id', 0, PARAM_INT);
+if (!$cmid) {
+    $cmid = required_param('cmid', PARAM_INT);
+}
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
-$context = \context_module::instance($cmid);
+$context = \core\context\module::instance($cmid);
 require_capability('mod/capquiz:instructor', $context);
 
-$capquiz = new capquiz($cmid);
-capquiz_urls::set_page_url($capquiz, capquiz_urls::$urledit);
-$bankrenderer = new output\question_bank_renderer($capquiz, $capquiz->renderer());
-$bankview = $bankrenderer->create_view();
-$capquiz->renderer()->display_question_list_view($capquiz);
+$PAGE->set_context($context);
+$PAGE->set_cm($cm);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_url(new \core\url('/mod/capquiz/edit.php', ['id' => $cmid]));
+
+$capquiz = new capquiz($cm->instance);
+
+if (optional_param('addselectedquestions', false, PARAM_BOOL)) {
+    // Question IDs are submitted in input names starting with q, and ending with the question ID.
+    foreach ((array)data_submitted() as $key => $value) {
+        $matches = [];
+        if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
+            $questionid = (int)$matches[1];
+            $capquiz->create_slot($questionid, $capquiz->get('defaultquestionrating'));
+        }
+    }
+    redirect($PAGE->url);
+}
+
+$action = optional_param('action', null, PARAM_ALPHA);
+switch ($action) {
+    case 'addquestion':
+        $questionid = required_param('questionid', PARAM_INT);
+        $capquiz->create_slot($questionid, $capquiz->get('defaultquestionrating'));
+        redirect($PAGE->url);
+        // Unreachable.
+
+    case 'deleteslot':
+        $slotid = required_param('slotid', PARAM_INT);
+        $slot = new capquiz_slot($slotid);
+        // We have already confirmed capability on this quiz, so it's enough to check the slot belongs to it.
+        if ($slot->get('capquizid') === $capquiz->get('id')) {
+            $slot->delete();
+        }
+        redirect($PAGE->url);
+        // Unreachable.
+
+    case 'regradeall':
+        capquiz_update_grades($capquiz->to_record());
+        redirect($PAGE->url);
+        // Unreachable.
+
+    default:
+        break;
+}
+
+echo $OUTPUT->header();
+/** @var \mod_capquiz\output\renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_capquiz');
+echo $renderer->render(new \mod_capquiz\output\edit_questions($capquiz));
+echo $OUTPUT->footer();

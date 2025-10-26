@@ -18,8 +18,8 @@
  * File to define access policies
  *
  * @package     mod_capquiz
- * @author      Sebastian S. Gundersen <sebastian@sgundersen.com>
- * @copyright   2018 NTNU
+ * @author      Sebastian Gundersen <sebastian@sgundersen.com>
+ * @copyright   2018 Norwegian University of Science and Technology (NTNU)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
