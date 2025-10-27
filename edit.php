@@ -45,10 +45,21 @@ require_capability('mod/capquiz:instructor', $context);
 
 $PAGE->set_context($context);
 $PAGE->set_cm($cm);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_url(new \core\url('/mod/capquiz/edit.php', ['id' => $cmid]));
 
 $capquiz = new capquiz($cm->instance);
+$course = get_course($cm->course);
+
+$title = get_string('questions', 'capquiz');
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= format_string($capquiz->get('name'));
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= $course->shortname;
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+
+$PAGE->activityheader->disable();
 
 if (optional_param('addselectedquestions', false, PARAM_BOOL)) {
     // Question IDs are submitted in input names starting with q, and ending with the question ID.

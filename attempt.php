@@ -48,11 +48,22 @@ $PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_url(new \core\url('/mod/capquiz/attempt.php', ['id' => $cmid]));
+$PAGE->set_cacheable(false);
+
+$capquiz = new capquiz($cm->instance);
+$course = get_course($cm->course);
+
+$title = format_string($capquiz->get('name'));
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= $course->shortname;
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+
+$PAGE->activityheader->disable();
 
 /** @var \mod_capquiz\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_capquiz');
 
-$capquiz = new capquiz($cm->instance);
 $user = capquiz_user::get_record([
     'userid' => $USER->id,
     'capquizid' => $capquiz->get('id'),

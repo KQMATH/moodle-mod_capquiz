@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['add_star'] = 'Add star';
 $string['add_to_quiz'] = 'Add to capquiz';
 $string['attempt'] = 'Attempt';
+$string['attemptquiz'] = 'Attempt quiz';
+$string['attemptquizinfo'] = 'Question ratings will not be affected while previewing the quiz.';
 $string['attempts'] = 'Attempts';
 
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';

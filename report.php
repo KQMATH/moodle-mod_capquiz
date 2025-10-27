@@ -38,15 +38,26 @@ $reporttype = optional_param('reporttype', '', PARAM_ALPHA);
 
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
+$context = \core\context\module::instance($cmid);
+require_capability('mod/capquiz:instructor', $context);
 
-$PAGE->set_context(\core\context\module::instance($cmid));
+$PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('report');
 $PAGE->set_url(new \core\url('/mod/capquiz/report.php', ['id' => $cmid]));
 
-if (!has_capability('mod/capquiz:instructor', $PAGE->context)) {
-    throw new moodle_exception('erroraccessingreport', 'capquiz');
-}
+$capquiz = new capquiz($cm->instance);
+$course = get_course($cm->course);
+
+$title = get_string('results', 'quiz');
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= format_string($capquiz->get('name'));
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= $course->shortname;
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+
+$PAGE->activityheader->disable();
 
 $availablereporttypes = capquiz_report_list();
 
@@ -73,5 +84,5 @@ if (!class_exists($classname)) {
 $report = new $classname();
 
 echo $OUTPUT->header();
-$report->display(new capquiz($cm->instance), $PAGE->cm, $PAGE->course, $download);
+$report->display($capquiz, $PAGE->cm, $PAGE->course, $download);
 echo $OUTPUT->footer();
