@@ -1050,5 +1050,14 @@ function xmldb_capquiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025101402, 'capquiz');
     }
 
+    if ($oldversion < 2025101403) {
+        $sql = "DELETE
+                  FROM {capquiz_question_rating}
+                 WHERE slotid NOT IN (SELECT id FROM {capquiz_slot})";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2025101403, 'capquiz');
+    }
+
     return true;
 }

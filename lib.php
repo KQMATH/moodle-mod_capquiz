@@ -29,10 +29,7 @@
 
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_attempt;
-use mod_capquiz\capquiz_question_rating;
-use mod_capquiz\capquiz_slot;
 use mod_capquiz\capquiz_user;
-use mod_capquiz\capquiz_user_rating;
 use mod_capquiz\local\helpers\questions;
 use mod_capquiz\local\helpers\stars;
 use mod_capquiz\question\bank\question_bank_view;
@@ -64,9 +61,7 @@ function capquiz_add_instance(stdClass $moduleinfo): int {
 function capquiz_update_instance(stdClass $moduleinfo): bool {
     $moduleinfo->id = (int)$moduleinfo->instance;
     $capquiz = new capquiz(record: $moduleinfo);
-    $capquiz->update();
-    $capquiz->update_question_behavior();
-    return true;
+    return $capquiz->update();
 }
 
 /**
@@ -79,22 +74,8 @@ function capquiz_update_instance(stdClass $moduleinfo): bool {
  * @return bool
  */
 function capquiz_delete_instance(int $capquizid): bool {
-    global $DB;
-    $capquizusers = $DB->get_records(capquiz_user::TABLE, ['capquizid' => $capquizid], fields: 'id');
-    $capquizuserids = array_column($capquizusers, 'id');
-    $qubaidjoin = new qubaid_join('{ ' . capquiz_user::TABLE . '} cu', 'cu.questionusageid', 'cu.capquizid = :capquizid', [
-        'capquizid' => $capquizid,
-    ]);
-    question_engine::delete_questions_usage_by_activities($qubaidjoin);
-    $DB->delete_records_list(capquiz_attempt::TABLE, 'capquizuserid', $capquizuserids);
-    $DB->delete_records_list(capquiz_user_rating::TABLE, 'capquizuserid', $capquizuserids);
-    $DB->delete_records(capquiz_user::TABLE, ['capquizid' => $capquizid]);
-    $DB->delete_records(capquiz_question_rating::TABLE, ['capquizid' => $capquizid]);
-    $DB->delete_records(capquiz_slot::TABLE, ['capquizid' => $capquizid]);
-    foreach ($DB->get_records('event', ['modulename' => 'capquiz', 'instance' => $capquizid]) as $event) {
-        calendar_event::load($event)->delete();
-    }
-    return $DB->delete_records(capquiz::TABLE, ['id' => $capquizid]);
+    $capquiz = new capquiz($capquizid);
+    return $capquiz->delete();
 }
 
 /**
@@ -106,7 +87,10 @@ function capquiz_delete_instance(int $capquizid): bool {
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function capquiz_questions_in_use(array $questionids): bool {
-    $qubaidjoin = new qubaid_join('{' . capquiz_user::TABLE . '} cu', 'cu.questionusageid');
+    $qubaidjoin = new qubaid_join(
+        from: '{' . capquiz_user::TABLE . '} cu',
+        usageidcolumn: 'cu.questionusageid',
+    );
     return question_engine::questions_in_use($questionids, $qubaidjoin);
 }
 

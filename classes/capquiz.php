@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace mod_capquiz;
 
+use calendar_event;
 use core\persistent;
 use mod_capquiz\local\helpers\stars;
 
@@ -59,10 +60,11 @@ class capquiz extends persistent {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $questionbankentry = get_question_bank_entry($questionid);
-        $slot = new capquiz_slot();
-        $slot->set('capquizid', $this->get('id'));
+        $slot = new capquiz_slot(record: (object)[
+            'capquizid' => $this->get('id'),
+            'rating' => $rating,
+        ]);
         $slot->create();
-        $slot->rate($rating, false);
         $context = $this->get_context();
         $DB->insert_record('question_references', (object)[
             'usingcontextid' => $context->id,
@@ -77,46 +79,18 @@ class capquiz extends persistent {
     }
 
     /**
-     * Delete a question slot.
-     *
-     * This must be called instead of capquiz_slot::delete() in order to delete the question reference
-     * and any question attempts as well.
-     *
-     * @param capquiz_slot $slot
-     * @return bool
-     */
-    public function delete_slot(capquiz_slot $slot): bool {
-        global $DB;
-        if ($slot->get('capquizid') !== $this->get('id')) {
-            return false;
-        }
-        if ($slot->get('id') === 0) {
-            return false;
-        }
-        $DB->delete_records('question_references', [
-            'component' => 'mod_capquiz',
-            'questionarea' => 'slot',
-            'itemid' => $slot->get('id'),
-        ]);
-        $DB->delete_records(capquiz_attempt::TABLE, ['slotid' => $slot->get('id')]);
-        return $slot->delete();
-    }
-
-    /**
      * Create a new CAPQuiz user.
      *
      * @param int $moodleuserid
      * @return capquiz_user
      */
     public function create_user(int $moodleuserid): capquiz_user {
-        $user = new capquiz_user();
-        $user->set_many([
+        $user = new capquiz_user(record: (object)[
             'userid' => $moodleuserid,
             'capquizid' => $this->get('id'),
+            'rating' => $this->get('defaultuserrating'),
         ]);
-        $user->create();
-        $user->rate($this->get('defaultuserrating'), false);
-        return $user;
+        return $user->create();
     }
 
     /**
@@ -129,19 +103,6 @@ class capquiz extends persistent {
         $quba->set_preferred_behaviour($this->get('questionbehaviour'));
         \question_engine::save_questions_usage_by_activity($quba);
         return $quba;
-    }
-
-    /**
-     * Update preferred question behavior for all users.
-     *
-     * @return void
-     */
-    public function update_question_behavior(): void {
-        foreach (capquiz_user::get_records(['capquizid' => $this->get('id')]) as $user) {
-            $quba = $user->get_question_usage();
-            $quba->set_preferred_behaviour($this->get('questionbehaviour'));
-            \question_engine::save_questions_usage_by_activity($quba);
-        }
     }
 
     /**
@@ -247,6 +208,63 @@ class capquiz extends persistent {
             }
         }
         return true;
+    }
+
+    /**
+     * Update question behavior.
+     *
+     * @param bool $result Whether or not the update was successful.
+     * @return void
+     */
+    protected function after_update($result): void {
+        if (!$result) {
+            return;
+        }
+        $this->update_question_behavior();
+    }
+
+    /**
+     * Update preferred question behavior for all users.
+     *
+     * @return void
+     */
+    public function update_question_behavior(): void {
+        foreach (capquiz_user::get_records(['capquizid' => $this->get('id')]) as $user) {
+            $quba = $user->get_question_usage();
+            $quba->set_preferred_behaviour($this->get('questionbehaviour'));
+            \question_engine::save_questions_usage_by_activity($quba);
+        }
+    }
+
+    /**
+     * Delete users, slots, and calendar events.
+     *
+     * @return void
+     */
+    protected function before_delete(): void {
+        foreach (capquiz_user::get_records(['capquizid' => $this->get('id')]) as $user) {
+            $user->delete();
+        }
+        foreach (capquiz_slot::get_records(['capquizid' => $this->get('id')]) as $slot) {
+            $slot->delete();
+        }
+        $this->delete_calendar_events();
+    }
+
+    /**
+     * Delete all calendar events for this CAPQuiz instance.
+     *
+     * @return void
+     */
+    private function delete_calendar_events(): void {
+        global $DB;
+        $events = $DB->get_records('event', [
+            'modulename' => 'capquiz',
+            'instance' => $this->get('id'),
+        ]);
+        foreach ($events as $event) {
+            calendar_event::load($event)->delete();
+        }
     }
 
     /**
