@@ -45,20 +45,39 @@ $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_url(new \core\url('/mod/capquiz/view.php', ['id' => $cmid]));
 
+$capquiz = new capquiz($cm->instance);
+$course = get_course($cm->course);
+
+$title = format_string($capquiz->get('name'));
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= $course->shortname;
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+if (html_is_blank($capquiz->get('intro'))) {
+    $PAGE->activityheader->set_description('');
+}
+
+$PAGE->add_body_class('limitedwidth');
+
 /** @var renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_capquiz');
 
 echo $OUTPUT->header();
 
 if (has_capability('mod/capquiz:instructor', $context)) {
-    echo $renderer->render(new classlist(new capquiz($cm->instance)));
+    echo $renderer->render(new classlist($capquiz));
 }
 
 if (has_any_capability(['mod/capquiz:student', 'mod/capquiz:instructor'], $context)) {
     $attempturl = new \core\url('/mod/capquiz/attempt.php', ['id' => $cmid]);
-    echo '<h2>Attempt quiz</h2>';
+    echo '<h2 class="mt-6">';
+    echo get_string('attemptquiz', 'capquiz');
+    echo '</h2>';
+    echo '<p>';
+    echo get_string('attemptquizinfo', 'capquiz');
+    echo '</p>';
     echo '<div>';
-    echo $renderer->render(new action_link($attempturl, get_string('attempt', 'capquiz')));
+    echo $renderer->render(new action_link($attempturl, get_string('preview')));
     echo '</div>';
 }
 

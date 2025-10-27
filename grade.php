@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_capquiz\capquiz;
+
 require_once(__DIR__ . '/../../config.php');
 
 global $CFG, $DB, $PAGE;
@@ -37,6 +39,18 @@ $context = \core\context\module::instance($cm->id);
 $PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_url('/mod/capquiz/grade.php', ['id' => $cm->id]);
+
+$capquiz = new capquiz($cm->instance);
+$course = get_course($cm->course);
+
+$title = format_string($capquiz->get('name'));
+$title .= moodle_page::TITLE_SEPARATOR;
+$title .= $course->shortname;
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+if (html_is_blank($capquiz->get('intro'))) {
+    $PAGE->activityheader->set_description('');
+}
 
 if (!has_capability('mod/capquiz:instructor', $context)) {
     redirect(new \core\url('/mod/capquiz/view.php', ['id' => $cm->id]));

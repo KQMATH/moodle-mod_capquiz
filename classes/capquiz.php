@@ -284,13 +284,15 @@ class capquiz extends persistent {
                 'null' => NULL_NOT_ALLOWED,
             ],
             'intro' => [
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
+                'default' => '',
                 'null' => NULL_ALLOWED,
             ],
             'introformat' => [
                 'type' => PARAM_INT,
-                'default' => 0,
+                'default' => FORMAT_MOODLE,
                 'null' => NULL_NOT_ALLOWED,
+                'choices' => [FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN],
             ],
             'defaultuserrating' => [
                 'type' => PARAM_FLOAT,

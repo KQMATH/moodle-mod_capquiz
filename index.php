@@ -35,21 +35,20 @@ $courseid = required_param('id', PARAM_INT);
 $course = get_course($courseid);
 $context = \core\context\course::instance($courseid);
 require_login($course);
+require_capability('mod/capquiz:instructor', $context);
 
 $capquizplural = get_string('modulenameplural', 'capquiz');
 
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_url(new \core\url('/mod/capquiz/index.php', ['id' => $courseid]));
-$PAGE->set_title($capquizplural);
+$PAGE->set_title("$course->fullname: $capquizplural");
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-if (has_capability('mod/capquiz:instructor', $context)) {
-    /** @var renderer $renderer */
-    $renderer = $PAGE->get_renderer('mod_capquiz');
-    echo $renderer->render(new index_table(capquiz::get_records(['course' => $courseid])));
-}
+/** @var renderer $renderer */
+$renderer = $PAGE->get_renderer('mod_capquiz');
+echo $renderer->render(new index_table(capquiz::get_records(['course' => $courseid])));
 
 echo $OUTPUT->footer();
