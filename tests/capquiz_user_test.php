@@ -38,6 +38,7 @@ final class capquiz_user_test extends \advanced_testcase {
      */
     public function setUp(): void {
         parent::setUp();
+        $this->resetAfterTest();
         /** @var \mod_capquiz_generator $generator */
         $generator = self::getDataGenerator()->get_plugin_generator('mod_capquiz');
         $this->generator = $generator;
@@ -49,29 +50,42 @@ final class capquiz_user_test extends \advanced_testcase {
      * @return void
      */
     public function test_create_attempt(): void {
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
+        $capquiz = $this->generator->create_capquiz();
+        $slot = $this->generator->create_slot($capquiz);
+        $user = $this->generator->create_user($capquiz);
 
-        // Create a question in a new question category.
-        /** @var \core_question_generator $questiongenerator */
-        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = \core\context\course::instance($course->id);
-        $category = $questiongenerator->create_question_category(['contextid' => $context->id]);
-        $question = $questiongenerator->create_question('truefalse', null, ['category' => $category->id]);
-
-        // Add the question to a CAPQuiz.
-        $capquiz = $this->generator->create_capquiz((int)$course->id);
-        $slot = $capquiz->create_slot($question->id, 1000.0);
-
-        // Create a user for the CAPQuiz.
-        $user = $this->getDataGenerator()->create_user();
-        $capquizuser = $capquiz->create_user((int)$user->id);
-
-        // Test creating a question attempt for the user.
-        $attempt = $capquizuser->create_attempt($slot);
+        $attempt = $user->create_attempt($slot);
         $this->assertNotNull($attempt);
         $this->assertEquals($capquiz->get('id'), $attempt->get('capquizid'));
-        $this->assertEquals($capquizuser->get('id'), $attempt->get('capquizuserid'));
+        $this->assertEquals($user->get('id'), $attempt->get('capquizuserid'));
         $this->assertEquals($slot->get('id'), $attempt->get('slotid'));
+    }
+
+    /**
+     * Test before delete hook.
+     *
+     * @return void
+     */
+    public function test_before_delete(): void {
+        // Setup.
+        $capquiz = $this->generator->create_capquiz();
+        $slot = $this->generator->create_slot($capquiz);
+        $user = $this->generator->create_user($capquiz);
+
+        // Confirm that the setup is as expected.
+        $this->assertNotNull($user->create_attempt($slot));
+        $this->assertEquals(1, capquiz_attempt::count_records(['capquizuserid' => $user->get('id')]));
+        $this->assertEquals(1, capquiz_user_rating::count_records(['capquizuserid' => $user->get('id')]));
+        $user->rate(500.0, true);
+        $this->assertEquals(2, capquiz_user_rating::count_records(['capquizuserid' => $user->get('id')]));
+
+        // Delete the user. Keep the id for further tests.
+        $capquizuserid = $user->get('id');
+        $this->assertTrue($user->delete());
+        $this->assertEquals(0, $user->get('id'));
+
+        // Confirm the user ratings and question attempts were all deleted.
+        $this->assertEquals(0, capquiz_user_rating::count_records(['capquizuserid' => $capquizuserid]));
+        $this->assertEquals(0, capquiz_attempt::count_records(['capquizuserid' => $capquizuserid]));
     }
 }

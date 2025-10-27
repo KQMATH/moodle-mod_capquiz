@@ -19,15 +19,15 @@ declare(strict_types=1);
 namespace mod_capquiz;
 
 /**
- * Test CAPQuiz attempt.
+ * Test CAPQuiz slot.
  *
  * @package   mod_capquiz
- * @covers    \mod_capquiz\capquiz_attempt
+ * @covers    \mod_capquiz\capquiz_slot
  * @author    Sebastian Gundersen <sebastian@sgundersen.com>
  * @copyright 2025 Norwegian University of Science and Technology (NTNU)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class capquiz_attempt_test extends \advanced_testcase {
+final class capquiz_slot_test extends \advanced_testcase {
     /** @var \mod_capquiz_generator CAPQuiz generator */
     private \mod_capquiz_generator $generator;
 
@@ -45,28 +45,37 @@ final class capquiz_attempt_test extends \advanced_testcase {
     }
 
     /**
-     * Test marking an attempt as reviewed.
+     * Test before delete hook.
      *
      * @return void
      */
-    public function test_mark_as_reviewed(): void {
+    public function test_before_delete(): void {
+        global $DB;
+
+        // Setup.
         $capquiz = $this->generator->create_capquiz();
-        $slot = $this->generator->create_slot($capquiz);
         $user = $this->generator->create_user($capquiz);
-        $attempt = $user->create_attempt($slot);
+        $slot = $this->generator->create_slot($capquiz);
 
-        // Can't review before answering.
-        $this->assertFalse($attempt->get('answered'));
-        $this->assertFalse($attempt->get('reviewed'));
-        $this->assertFalse($attempt->mark_as_reviewed());
+        // Confirm that the setup is as expected.
+        $this->assertNotNull($user->create_attempt($slot));
+        $this->assertEquals(1, capquiz_attempt::count_records(['slotid' => $slot->get('id')]));
+        $this->assertEquals(1, capquiz_question_rating::count_records(['slotid' => $slot->get('id')]));
+        $slot->rate(1100.0, true);
+        $this->assertEquals(2, capquiz_question_rating::count_records(['slotid' => $slot->get('id')]));
 
-        // Can't mark as reviewed more than once.
-        $attempt->set('reviewed', true);
-        $this->assertFalse($attempt->mark_as_reviewed());
+        // Delete the slot. Keep the id for further tests.
+        $slotid = $slot->get('id');
+        $this->assertTrue($slot->delete());
+        $this->assertEquals(0, $slot->get('id'));
 
-        // Can review after answering.
-        $attempt->set('answered', true);
-        $attempt->set('reviewed', false);
-        $this->assertTrue($attempt->mark_as_reviewed());
+        // Confirm the question reference, question ratings, and attempts were all deleted.
+        $this->assertEquals(0, $DB->count_records('question_references', [
+            'component' => 'mod_capquiz',
+            'questionarea' => 'slot',
+            'itemid' => $slot->get('id'),
+        ]));
+        $this->assertEquals(0, capquiz_question_rating::count_records(['slotid' => $slotid]));
+        $this->assertEquals(0, capquiz_attempt::count_records(['slotid' => $slotid]));
     }
 }

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use mod_capquiz\capquiz;
+use mod_capquiz\capquiz_slot;
+use mod_capquiz\capquiz_user;
 
 /**
  * CAPQuiz module test data generator class
@@ -44,13 +46,58 @@ class mod_capquiz_generator extends testing_module_generator {
     /**
      * Create a CAPQUiz.
      *
-     * @param int $courseid
      * @param array $record
      * @return capquiz
      */
-    public function create_capquiz(int $courseid, array $record = []): capquiz {
-        $record['course'] = $courseid;
+    public function create_capquiz(array $record = []): capquiz {
+        if (!array_key_exists('course', $record)) {
+            $datagenerator = phpunit_util::get_data_generator();
+            $course = $datagenerator->create_course();
+            $record['course'] = (int)$course->id;
+        }
         $record = $this->create_instance($record);
         return new capquiz((int)$record->id);
+    }
+
+    /**
+     * Create a CAPQuiz slot.
+     *
+     * @param capquiz $capquiz
+     * @param float $rating
+     * @param ?int $questionid A question will be generated if this is null
+     * @return capquiz_slot
+     */
+    public function create_slot(capquiz $capquiz, float $rating = 1000.0, ?int $questionid = null): capquiz_slot {
+        if ($questionid === null) {
+            $questionid = $this->create_question($capquiz)->id;
+        }
+        return $capquiz->create_slot($questionid, $rating);
+    }
+
+    /**
+     * Create a question in the context of a CAPQuiz.
+     *
+     * @param capquiz $capquiz
+     * @return stdClass
+     */
+    public function create_question(capquiz $capquiz): \stdClass {
+        $datagenerator = phpunit_util::get_data_generator();
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $datagenerator->get_plugin_generator('core_question');
+        $context = \core\context\course::instance($capquiz->get('course'));
+        $category = $questiongenerator->create_question_category(['contextid' => $context->id]);
+        return $questiongenerator->create_question('truefalse', null, ['category' => $category->id]);
+    }
+
+    /**
+     * Create a CAPQuiz user.
+     *
+     * @param capquiz $capquiz
+     * @return capquiz_user
+     */
+    public function create_user(capquiz $capquiz): capquiz_user {
+        $datagenerator = phpunit_util::get_data_generator();
+        $user = $datagenerator->create_user();
+        return $capquiz->create_user((int)$user->id);
     }
 }

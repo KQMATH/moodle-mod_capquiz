@@ -34,6 +34,20 @@ class capquiz_slot extends persistent {
     const TABLE = 'capquiz_slot';
 
     /**
+     * Create the initial question rating…
+     *
+     * @return void
+     */
+    protected function after_create(): void {
+        $questionrating = new capquiz_question_rating(record: (object)[
+            'slotid' => $this->get('id'),
+            'rating' => $this->get('rating'),
+            'manual' => false,
+        ]);
+        $questionrating->create();
+    }
+
+    /**
      * Rate this slot. The new question rating is returned.
      *
      * @param float $rating
@@ -218,6 +232,26 @@ class capquiz_slot extends persistent {
     public static function get_record_for_next_question(capquiz_user $user): ?self {
         $slots = self::get_records_for_question_selection($user);
         return empty($slots) ? null : $slots[mt_rand(0, count($slots) - 1)];
+    }
+
+    /**
+     * Delete question ratings and attempts for this slot.
+     *
+     * @return void
+     */
+    protected function before_delete(): void {
+        global $DB;
+        $DB->delete_records('question_references', [
+            'component' => 'mod_capquiz',
+            'questionarea' => 'slot',
+            'itemid' => $this->get('id'),
+        ]);
+        foreach (capquiz_question_rating::get_records(['slotid' => $this->get('id')]) as $questionrating) {
+            $questionrating->delete();
+        }
+        foreach (capquiz_attempt::get_records(['slotid' => $this->get('id')]) as $attempt) {
+            $attempt->delete();
+        }
     }
 
     /**

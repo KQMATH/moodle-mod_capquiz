@@ -19,6 +19,8 @@ declare(strict_types=1);
 namespace mod_capquiz;
 
 use core\persistent;
+use qubaid_join;
+use question_engine;
 
 /**
  * CAPQuiz user.
@@ -31,6 +33,20 @@ use core\persistent;
 class capquiz_user extends persistent {
     /** @var string The table name. */
     const TABLE = 'capquiz_user';
+
+    /**
+     * Create the initial user rating…
+     *
+     * @return void
+     */
+    protected function after_create(): void {
+        $userrating = new capquiz_user_rating(record: (object)[
+            'capquizuserid' => $this->get('id'),
+            'rating' => $this->get('rating'),
+            'manual' => false,
+        ]);
+        $userrating->create();
+    }
 
     /**
      * Rate this user. The new user rating is returned.
@@ -106,10 +122,11 @@ class capquiz_user extends persistent {
      * @return ?capquiz_attempt
      */
     public function find_unreviewed_attempt(): ?capquiz_attempt {
-        return capquiz_attempt::get_record([
+        $attempt = capquiz_attempt::get_record([
             'capquizuserid' => $this->get('id'),
             'reviewed' => 0,
-        ]) ?: null;
+        ]);
+        return $attempt ?: null;
     }
 
     /**
@@ -118,9 +135,12 @@ class capquiz_user extends persistent {
      * @return capquiz_attempt|null
      */
     public function find_previously_reviewed_attempt(): ?capquiz_attempt {
-        $records = capquiz_attempt::get_records([
-            'capquizuserid' => $this->get('id'),
-        ], 'timereviewed', 'DESC', 0, 1);
+        $records = capquiz_attempt::get_records(
+            filters: ['capquizuserid' => $this->get('id')],
+            sort: 'timereviewed',
+            order: 'DESC',
+            limit: 1,
+        );
         return empty($records) ? null : reset($records);
     }
 
@@ -131,11 +151,37 @@ class capquiz_user extends persistent {
      * @return capquiz_attempt[]
      */
     public function get_reviewed_attempts(int $limit): array {
-        return capquiz_attempt::get_records([
-            'capquizuserid' => $this->get('id'),
-            'answered' => 1,
-            'reviewed' => 1,
-        ], 'timecreated', 'DESC', 0, $limit);
+        return capquiz_attempt::get_records(
+            filters: [
+                'capquizuserid' => $this->get('id'),
+                'answered' => true,
+                'reviewed' => true,
+            ],
+            sort: 'timecreated',
+            order: 'DESC',
+            limit: $limit,
+        );
+    }
+
+    /**
+     * Delete question usage, user ratings, and question attempts for this user.
+     *
+     * @return void
+     */
+    protected function before_delete(): void {
+        $qubaidjoin = new qubaid_join(
+            from: '{' . static::TABLE . '} cu',
+            usageidcolumn: 'cu.questionusageid',
+            where: 'cu.id = :capquizuserid',
+            params: ['capquizuserid' => $this->get('id')],
+        );
+        question_engine::delete_questions_usage_by_activities($qubaidjoin);
+        foreach (capquiz_attempt::get_records(['capquizuserid' => $this->get('id')]) as $attempt) {
+            $attempt->delete();
+        }
+        foreach (capquiz_user_rating::get_records(['capquizuserid' => $this->get('id')]) as $userrating) {
+            $userrating->delete();
+        }
     }
 
     /**
