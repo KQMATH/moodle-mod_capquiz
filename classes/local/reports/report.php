@@ -36,7 +36,6 @@ interface report {
      * @param capquiz $capquiz
      * @param cm_info $cm
      * @param \stdClass $course
-     * @param string $download
      */
-    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course, string $download): void;
+    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course): void;
 }

@@ -45,13 +45,16 @@ class report implements \mod_capquiz\local\reports\report {
      * @param capquiz $capquiz
      * @param cm_info $cm
      * @param \stdClass $course
-     * @param string $download
+     * @return void
      */
-    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course, string $download): void {
+    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course): void {
         global $DB, $CFG, $OUTPUT, $PAGE;
         $context = \core\context\module::instance($cm->id);
         $studentsjoins = get_enrolled_with_capabilities_join($context);
-        $baseurl = new \core\url('/mod/capquiz/report.php', ['id' => $context->instanceid, 'reporttype' => 'attempts']);
+        $baseurl = new \core\url('/mod/capquiz/report.php', [
+            'id' => $context->instanceid,
+            'reporttype' => 'attempts',
+        ]);
         $form = new form($baseurl, ['capquiz' => $capquiz, 'context' => $context]);
         $options = new options($capquiz, $cm, $course);
         if ($fromform = $form->get_data()) {
@@ -61,7 +64,9 @@ class report implements \mod_capquiz\local\reports\report {
         }
         $form->set_data($options->get_initial_form_data());
         $questions = capquiz_report_get_questions($capquiz);
-        $courseshortname = format_string($course->shortname, true, ['context' => \core\context\course::instance($course->id)]);
+        $courseshortname = format_string($course->shortname, true, [
+            'context' => \core\context\course::instance($course->id),
+        ]);
         $table = new table($capquiz, $context, $options, $studentsjoins, $questions, $options->get_url());
         $filenamesuffix = get_string('attemptsfilename', 'capquizreport_attempts');
         $capquizname = format_string($capquiz->get('name'));
@@ -80,6 +85,7 @@ class report implements \mod_capquiz\local\reports\report {
         }
         $hasquestions = capquiz_slot::count_records(['capquizid' => $capquiz->get('id')]) > 0;
         if (!$table->is_downloading()) {
+            echo $OUTPUT->header();
             $PAGE->set_title($capquiz->get('name'));
             $PAGE->set_heading($course->fullname);
             $title = get_string('pluginname', 'capquizreport_attempts') . ' ' . get_string('report');
@@ -122,7 +128,7 @@ class report implements \mod_capquiz\local\reports\report {
         // therefore do not include in extra-field list.
         $fields = \core_user\fields::for_identity($context);
         if ($table->is_downloading()) {
-            $fields = $fields->including('institution', 'department', 'email')->get_required_fields();
+            $fields = $fields->including('institution', 'department', 'email');
         }
         foreach ($fields->get_required_fields() as $field) {
             $columns[] = $field;
@@ -144,23 +150,25 @@ class report implements \mod_capquiz\local\reports\report {
             $columns[] = 'answerstate';
             $headers[] = get_string('answerstate', 'capquizreport_attempts');
         }
+        if ($options->showgrade) {
+            $columns[] = 'grade';
+            $headers[] = get_string('gradenoun');
+        }
         if ($options->showurating) {
             $columns[] = 'userrating';
             $headers[] = get_string('userrating', 'capquiz');
         }
         if ($options->showuprevrating) {
             $columns[] = 'userprevrating';
-            $headers[] = get_string('userprevrating', 'capquizreport_attempts');
+            $headers[] = get_string('userprevrating', 'capquiz');
         }
         if ($options->showqprevrating) {
             $columns[] = 'questionprevrating';
-            $headers[] = get_string('questionprevrating', 'capquizreport_attempts');
+            $headers[] = get_string('questionprevrating', 'capquiz');
         }
         if ($table->is_downloading()) {
             $columns[] = 'questionprevratingmanual';
-            $headers[] = get_string('questionprevratingmanual', 'capquizreport_attempts');
-        }
-        if ($table->is_downloading()) {
+            $headers[] = get_string('questionprevratingmanual', 'capquiz');
             $columns[] = 'timeanswered';
             $headers[] = get_string('timeanswered', 'capquiz');
             $columns[] = 'timereviewed';
@@ -172,7 +180,7 @@ class report implements \mod_capquiz\local\reports\report {
         }
         if ($options->showresponses) {
             $columns[] = 'response';
-            $headers[] = get_string('response', 'capquizreport_attempts');
+            $headers[] = get_string('response', 'quiz');
         }
         if ($options->showright) {
             $columns[] = 'right';

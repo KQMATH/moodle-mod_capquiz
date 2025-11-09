@@ -160,7 +160,7 @@ class options {
     public function setup_from_params(): void {
         $this->attempts = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
         $this->onlyanswered = (bool)optional_param('onlyanswered', $this->onlyanswered, PARAM_BOOL);
-        $this->pagesize = optional_param('pagesize', $this->pagesize, PARAM_INT);
+        $this->pagesize = (int)optional_param('pagesize', $this->pagesize, PARAM_INT);
         $this->download = optional_param('download', $this->download, PARAM_ALPHA);
     }
 

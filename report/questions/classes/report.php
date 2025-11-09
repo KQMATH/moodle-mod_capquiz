@@ -44,9 +44,9 @@ class report implements \mod_capquiz\local\reports\report {
      * @param capquiz $capquiz
      * @param cm_info $cm
      * @param \stdClass $course
-     * @param string $download
+     * @return void
      */
-    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course, string $download): void {
+    public function display(capquiz $capquiz, cm_info $cm, \stdClass $course): void {
         global $DB, $OUTPUT, $PAGE;
         $context = \core\context\module::instance($cm->id);
         $studentsjoins = get_enrolled_with_capabilities_join($context);
@@ -89,6 +89,7 @@ class report implements \mod_capquiz\local\reports\report {
 
         $hasquestions = capquiz_slot::count_records(['capquizid' => $capquiz->get('id')]) > 0;
         if (!$table->is_downloading()) {
+            echo $OUTPUT->header();
             $PAGE->set_title($capquiz->get('name'));
             $PAGE->set_heading($course->fullname);
             $title = get_string('pluginname', 'capquizreport_questions') . ' ' . get_string('report');
@@ -118,10 +119,10 @@ class report implements \mod_capquiz\local\reports\report {
             $columns[] = 'questionrating';
             $headers[] = get_string('questionrating', 'capquiz');
             $columns[] = 'questionprevrating';
-            $headers[] = get_string('questionprevrating', 'capquizreport_questions');
+            $headers[] = get_string('questionprevrating', 'capquiz');
             if ($table->is_downloading()) {
                 $columns[] = 'questionprevratingmanual';
-                $headers[] = get_string('questionprevratingmanual', 'capquizreport_questions');
+                $headers[] = get_string('questionprevratingmanual', 'capquiz');
             }
             $columns[] = 'questionid';
             $headers[] = get_string('moodlequestionid', 'capquiz');

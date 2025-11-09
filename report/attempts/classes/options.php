@@ -37,6 +37,9 @@ class options extends \mod_capquiz\local\reports\options {
     /** @var bool whether to show the question answer state (correct or wrong) columns. */
     public bool $showansstate = true;
 
+    /** @var bool whether to show the grade column. */
+    public bool $showgrade = true;
+
     /** @var bool whether to show the previous question rating columns. */
     public bool $showqprevrating = true;
 
@@ -73,6 +76,7 @@ class options extends \mod_capquiz\local\reports\options {
     public function get_initial_form_data(): \stdClass {
         $toform = parent::get_initial_form_data();
         $toform->ansstate = $this->showansstate;
+        $toform->grade = $this->showgrade;
         $toform->urating = $this->showurating;
         $toform->uprevrating = $this->showuprevrating;
         $toform->qprevrating = $this->showqprevrating;
@@ -89,6 +93,7 @@ class options extends \mod_capquiz\local\reports\options {
     public function setup_from_form_data($fromform): void {
         parent::setup_from_form_data($fromform);
         $this->showansstate = (bool)$fromform->ansstate;
+        $this->showgrade = (bool)$fromform->grade;
         $this->showurating = (bool)$fromform->urating;
         $this->showuprevrating = (bool)$fromform->uprevrating;
         $this->showqprevrating = (bool)$fromform->qprevrating;
@@ -102,13 +107,14 @@ class options extends \mod_capquiz\local\reports\options {
      */
     public function setup_from_params(): void {
         parent::setup_from_params();
-        $this->showansstate = optional_param('ansstate', $this->showansstate, PARAM_BOOL);
-        $this->showurating = optional_param('urating', $this->showurating, PARAM_BOOL);
-        $this->showuprevrating = optional_param('uprevrating', $this->showuprevrating, PARAM_BOOL);
-        $this->showqprevrating = optional_param('qprevrating', $this->showqprevrating, PARAM_BOOL);
-        $this->showqtext = optional_param('qtext', $this->showqtext, PARAM_BOOL);
-        $this->showresponses = optional_param('resp', $this->showresponses, PARAM_BOOL);
-        $this->showright = optional_param('right', $this->showright, PARAM_BOOL);
+        $this->showansstate = (bool)optional_param('ansstate', $this->showansstate, PARAM_BOOL);
+        $this->showgrade = (bool)optional_param('grade', $this->showgrade, PARAM_BOOL);
+        $this->showurating = (bool)optional_param('urating', $this->showurating, PARAM_BOOL);
+        $this->showuprevrating = (bool)optional_param('uprevrating', $this->showuprevrating, PARAM_BOOL);
+        $this->showqprevrating = (bool)optional_param('qprevrating', $this->showqprevrating, PARAM_BOOL);
+        $this->showqtext = (bool)optional_param('qtext', $this->showqtext, PARAM_BOOL);
+        $this->showresponses = (bool)optional_param('resp', $this->showresponses, PARAM_BOOL);
+        $this->showright = (bool)optional_param('right', $this->showright, PARAM_BOOL);
     }
 
     /**
@@ -118,6 +124,7 @@ class options extends \mod_capquiz\local\reports\options {
     public function setup_from_user_preferences(): void {
         parent::setup_from_user_preferences();
         $this->showansstate = (bool)get_user_preferences('capquizreport_attempts_ansstate', $this->showansstate);
+        $this->showgrade = (bool)get_user_preferences('capquizreport_attempts_grade', $this->showgrade);
         $this->showurating = (bool)get_user_preferences('capquizreport_attempts_urating', $this->showurating);
         $this->showuprevrating = (bool)get_user_preferences('capquizreport_attempts_uprevrating', $this->showuprevrating);
         $this->showqprevrating = (bool)get_user_preferences('capquizreport_attempts_qprevrating', $this->showqprevrating);
@@ -133,6 +140,7 @@ class options extends \mod_capquiz\local\reports\options {
     public function update_user_preferences(): void {
         parent::update_user_preferences();
         set_user_preference('capquizreport_attempts_ansstate', $this->showansstate);
+        set_user_preference('capquizreport_attempts_grade', $this->showgrade);
         set_user_preference('capquizreport_attempts_urating', $this->showurating);
         set_user_preference('capquizreport_attempts_uprevrating', $this->showuprevrating);
         set_user_preference('capquizreport_attempts_qprevrating', $this->showqprevrating);
@@ -148,6 +156,7 @@ class options extends \mod_capquiz\local\reports\options {
         parent::resolve_dependencies();
 
         $showanything = $this->showansstate
+            || $this->showgrade
             || $this->showurating
             || $this->showqprevrating
             || $this->showuprevrating
@@ -176,6 +185,7 @@ class options extends \mod_capquiz\local\reports\options {
     protected function get_url_params(): array {
         $params = parent::get_url_params();
         $params['ansstate'] = $this->showansstate;
+        $params['grade'] = $this->showgrade;
         $params['urating'] = $this->showurating;
         $params['uprevrating'] = $this->showuprevrating;
         $params['qprevrating'] = $this->showqprevrating;
