@@ -19,7 +19,9 @@ declare(strict_types=1);
 namespace capquizreport_attempts;
 
 use core\dml\sql_join;
+use core\output\html_writer;
 use mod_capquiz\capquiz;
+use question_state;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -86,7 +88,7 @@ class table extends \mod_capquiz\local\reports\table {
     }
 
     /**
-     * TODO: Fix this workaround for preventing errors with name column preferences.
+     * Workaround for preventing errors with name column preferences.
      *
      * @return string
      */
@@ -115,7 +117,7 @@ class table extends \mod_capquiz\local\reports\table {
             return $summary;
         }
         if ($field === 'responsesummary') {
-            return $this->make_review_link($summary, $attempt, $slot);
+            return $summary;
         }
         if ($field === 'questionsummary') {
             return $this->make_preview_link($summary, $attempt, $slot);
@@ -144,6 +146,21 @@ class table extends \mod_capquiz\local\reports\table {
     }
 
     /**
+     * Generate the display of the user's picture column.
+     *
+     * @param \stdClass $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_picture(\stdClass $attempt): string {
+        global $OUTPUT;
+        $user = new \stdClass();
+        $additionalfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
+        $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
+        $user->id = $attempt->userid;
+        return $OUTPUT->user_picture($user);
+    }
+
+    /**
      * Generate the display of the answer state column.
      *
      * @param \stdClass $attempt the table row being output.
@@ -153,12 +170,35 @@ class table extends \mod_capquiz\local\reports\table {
         if ($attempt->attempt === null || $attempt->usageid === 0) {
             return '-';
         }
+        $showcorrectness = true;
         $state = $this->slot_state($attempt, (int)$attempt->slot);
         if ($this->is_downloading()) {
-            return (string)$state;
+            return $state->get_state_class($showcorrectness);
         } else {
-            return $this->make_review_link((string)$state, $attempt, (int)$attempt->slot);
+            $fractionicon = '';
+            $text = $state->default_string($showcorrectness);
+            if ($state->is_finished() && $state != question_state::$needsgrading) {
+                $fractionicon = $this->icon_for_fraction($this->slot_fraction($attempt, (int)$attempt->slot));
+            }
+            return html_writer::tag('span', $fractionicon . $text);
         }
+    }
+
+    /**
+     * Generate the display of the grade column.
+     *
+     * @param \stdClass $attempt the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_grade(\stdClass $attempt): string {
+        if ($attempt->attempt === null || $attempt->usageid === 0) {
+            return '-';
+        }
+        $state = $this->slot_state($attempt, (int)$attempt->slot);
+        if (!$state->is_finished() || $state == question_state::$needsgrading) {
+            return '-';
+        }
+        return (string)$this->slot_fraction($attempt, (int)$attempt->slot);
     }
 
     /**
@@ -196,7 +236,7 @@ class table extends \mod_capquiz\local\reports\table {
     public function col_questionprevrating(\stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->prevquestionrating) {
-            $warningalt = get_string('rating_manually_updated', 'capquizreport_attempts');
+            $warningalt = get_string('rating_manually_updated', 'capquiz');
             $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->prevquestionrating;
@@ -225,7 +265,7 @@ class table extends \mod_capquiz\local\reports\table {
      */
     protected function requires_latest_steps_loaded(): bool {
         return $this->options->showansstate || $this->options->showqtext || $this->options->showresponses
-            || $this->options->showright;
+            || $this->options->showright || $this->options->showgrade;
     }
 
     /**

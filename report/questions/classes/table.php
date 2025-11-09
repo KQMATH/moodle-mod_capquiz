@@ -142,11 +142,7 @@ class table extends \mod_capquiz\local\reports\table {
             return '-';
         }
         $state = $this->slot_state($attempt, (int)$attempt->slot);
-        if ($this->is_downloading()) {
-            return (string)$state;
-        } else {
-            return $this->make_review_link((string)$state, $attempt, (int)$attempt->slot);
-        }
+        return (string)$state;
     }
 
     /**
@@ -184,7 +180,7 @@ class table extends \mod_capquiz\local\reports\table {
     public function col_questionprevrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningalt = get_string('rating_manually_updated', 'capquiz');
             $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;
@@ -204,7 +200,7 @@ class table extends \mod_capquiz\local\reports\table {
     public function col_prevquestionrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningalt = get_string('rating_manually_updated', 'capquiz');
             $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;
@@ -224,7 +220,7 @@ class table extends \mod_capquiz\local\reports\table {
     public function col_prevquestionprevrating(stdClass $attempt): string {
         global $OUTPUT;
         if ($attempt->questionprevrating) {
-            $warningalt = get_string('rating_manually_updated', 'capquizreport_questions');
+            $warningalt = get_string('rating_manually_updated', 'capquiz');
             $warningicon = $OUTPUT->pix_icon('i/warning', $warningalt, 'moodle', ['class' => 'icon']);
             if (!$this->is_downloading() && $attempt->manualprevqrating) {
                 return $warningicon . $attempt->questionprevrating;

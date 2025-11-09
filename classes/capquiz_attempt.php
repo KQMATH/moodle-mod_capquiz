@@ -75,16 +75,17 @@ class capquiz_attempt extends persistent {
      *
      * @param capquiz $capquiz
      * @param capquiz_user $user
+     * @param ?array $postdata Only intended for testing. Use this data instead of the data from $_POST.
      * @return bool false if attempt has already been answered, true otherwise
      */
-    public function submit(capquiz $capquiz, capquiz_user $user): bool {
+    public function submit(capquiz $capquiz, capquiz_user $user, ?array $postdata = null): bool {
         global $DB;
         if ($this->get('answered') && $this->get('reviewed')) {
             return false;
         }
         $transaction = $DB->start_delegated_transaction();
         $quba = $user->get_question_usage();
-        $quba->process_action($this->get('slot'), $quba->extract_responses($this->get('slot')));
+        $quba->process_action($this->get('slot'), $quba->extract_responses($this->get('slot'), $postdata));
         $quba->update_question_flags();
 
         // Some question behaviours let users try again, so we need to return early before we finish the question.

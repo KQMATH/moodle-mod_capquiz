@@ -52,7 +52,6 @@ $string['due_date_grading'] = 'Due date for final grading was {$a}.';
 $string['due_time_grading'] = 'Time for final grading';
 
 $string['enrolled_students'] = 'Enrolled students';
-$string['erroraccessingreport'] = 'You cannot access this report';
 $string['errorvalidatestarratings'] = 'The star ratings list is invalid';
 $string['errorvalidatestarstopass'] = 'Stars to pass can\'t be higher than the number of configured stars';
 
@@ -116,11 +115,14 @@ $string['question_k_factor_required'] = 'Question k-factor is required.';
 $string['question_k_factor_specified_rule'] = 'Question k-factor must be specified';
 $string['questionbehaviourwarningadaptive'] = '\'Adaptive mode\' is not recommended for CAPQuiz. Please consider \'Interactive with multiple tries\' instead.';
 $string['questionid'] = 'Question id';
+$string['questionprevrating'] = 'Question\'s previous rating';
+$string['questionprevratingmanual'] = 'Previous rating manually updated';
 $string['questionrating'] = 'Question rating';
 $string['questions'] = 'Questions';
 $string['questionselection'] = 'Question selection';
 
 $string['rating'] = 'Rating';
+$string['rating_manually_updated'] = 'Previous rating was manually updated';
 $string['rating_system'] = 'Rating system';
 $string['regrade_all'] = 'Regrade all';
 $string['reportplugin'] = 'Report plugins';
@@ -159,6 +161,7 @@ $string['user_win_probability'] = 'Desired user win probability';
 $string['user_win_probability_help'] = 'This specifies the probability of a student answering the question correctly. A probability of 0.5 will make the matchmaking engine try to find a question with a similar rating as the student.';
 $string['user_win_probability_required'] = 'Desired user win probability is required';
 $string['userid'] = 'User id';
+$string['userprevrating'] = 'User\'s previous rating';
 $string['userrating'] = 'User rating';
 $string['userratings'] = 'User ratings';
 

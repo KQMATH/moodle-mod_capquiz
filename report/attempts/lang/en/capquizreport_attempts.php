@@ -32,12 +32,6 @@ $string['privacy:metadata'] = 'The CAPQuiz attempts report plugin does not store
 
 $string['qprevrating'] = 'question\'s previous rating';
 $string['qrating'] = 'question rating';
-$string['questionprevrating'] = 'Question\'s previous rating';
-$string['questionprevratingmanual'] = 'Previous rating manually updated';
-
-$string['rating_manually_updated'] = 'Previous rating was manually updated';
-$string['response'] = 'Response';
 
 $string['uprevrating'] = 'user\'s previous rating';
 $string['urating'] = 'user rating';
-$string['userprevrating'] = 'User\'s previous rating';

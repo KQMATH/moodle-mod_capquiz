@@ -51,13 +51,14 @@ class form extends \moodleform {
         $mform->setType('pagesize', PARAM_INT);
 
         $mform->addGroup([
-            $mform->createElement('advcheckbox', 'ansstate', '', get_string('ansstate', 'capquizreport_attempts')),
+            $mform->createElement('advcheckbox', 'ansstate', '', get_string('status', 'quiz')),
+            $mform->createElement('advcheckbox', 'resp', '', get_string('response', 'quiz')),
+            $mform->createElement('advcheckbox', 'grade', '', get_string('gradenoun')),
+            $mform->createElement('advcheckbox', 'right', '', get_string('rightanswer', 'question')),
+            $mform->createElement('advcheckbox', 'qtext', '', get_string('questiontext', 'quiz')),
             $mform->createElement('advcheckbox', 'urating', '', get_string('urating', 'capquizreport_attempts')),
             $mform->createElement('advcheckbox', 'uprevrating', '', get_string('uprevrating', 'capquizreport_attempts')),
             $mform->createElement('advcheckbox', 'qprevrating', '', get_string('qprevrating', 'capquizreport_attempts')),
-            $mform->createElement('advcheckbox', 'qtext', '', get_string('questiontext', 'quiz_responses')),
-            $mform->createElement('advcheckbox', 'resp', '', get_string('response', 'quiz_responses')),
-            $mform->createElement('advcheckbox', 'right', '', get_string('rightanswer', 'quiz_responses')),
         ], 'coloptions', get_string('showthe', 'quiz_responses'), [' '], false);
 
         $mform->addElement('submit', 'submitbutton', get_string('showreport', 'quiz'));
@@ -73,7 +74,7 @@ class form extends \moodleform {
      */
     public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
-        $options = ['urating', 'uprevrating', 'qprevrating', 'ansstate', 'qtext', 'resp', 'right'];
+        $options = ['urating', 'uprevrating', 'qprevrating', 'ansstate', 'grade', 'qtext', 'resp', 'right'];
         if (empty(array_filter($options, fn(string $key) => isset($data[$key]) && $data[$key]))) {
             $errors['coloptions'] = get_string('reportmustselectstate', 'quiz');
         }

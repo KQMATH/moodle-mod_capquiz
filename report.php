@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 use mod_capquiz\capquiz;
 use mod_capquiz\local\reports\report;
 
@@ -33,7 +35,6 @@ global $CFG, $OUTPUT, $PAGE;
 require_once($CFG->dirroot . '/mod/capquiz/report/reportlib.php');
 
 $cmid = required_param('id', PARAM_INT);
-$download = optional_param('download', '', PARAM_RAW);
 $reporttype = optional_param('reporttype', '', PARAM_ALPHA);
 
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
@@ -46,13 +47,13 @@ $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('report');
 $PAGE->set_url(new \core\url('/mod/capquiz/report.php', ['id' => $cmid]));
 
-$capquiz = new capquiz($cm->instance);
+$capquiz = new capquiz((int)$cm->instance);
 $course = get_course($cm->course);
 
 $title = get_string('results', 'quiz');
-$title .= moodle_page::TITLE_SEPARATOR;
+$title .= \moodle_page::TITLE_SEPARATOR;
 $title .= format_string($capquiz->get('name'));
-$title .= moodle_page::TITLE_SEPARATOR;
+$title .= \moodle_page::TITLE_SEPARATOR;
 $title .= $course->shortname;
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
@@ -61,28 +62,29 @@ $PAGE->activityheader->disable();
 
 $availablereporttypes = capquiz_report_list();
 
-if (empty($reporttype)) {
+if (strlen($reporttype) === 0) {
     $reporttype = reset($availablereporttypes);
     $PAGE->url->param('reporttype', $reporttype);
 }
 
 if (!in_array($reporttype, $availablereporttypes)) {
-    throw new moodle_exception('erroraccessingreport', 'capquiz');
+    throw new \moodle_exception('erroraccessingreport', 'quiz');
 }
 
 $filepath = "$CFG->dirroot/mod/capquiz/report/$reporttype/classes/report.php";
 if (!is_readable($filepath)) {
-    throw new moodle_exception("report type '$reporttype' doesn't provide expected file '$filepath'");
+    throw new \moodle_exception("report type '$reporttype' doesn't provide expected file '$filepath'");
 }
 require_once($filepath);
 $classname = "capquizreport_$reporttype\\report";
 if (!class_exists($classname)) {
-    throw new moodle_exception("report type '$reporttype' doesn't define expected class '$classname' in '$filepath'");
+    throw new \moodle_exception("report type '$reporttype' doesn't define expected class '$classname' in '$filepath'");
 }
+
+// Reports are responsible for outputting the header when necessary. Doing it here will mess up downloads.
 
 /** @var report $report */
 $report = new $classname();
+$report->display($capquiz, $PAGE->cm, $PAGE->course);
 
-echo $OUTPUT->header();
-$report->display($capquiz, $PAGE->cm, $PAGE->course, $download);
 echo $OUTPUT->footer();

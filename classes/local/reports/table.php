@@ -25,6 +25,7 @@ use core\output\html_writer;
 use mod_capquiz\capquiz;
 use popup_action;
 use qubaid_condition;
+use qubaid_join;
 use qubaid_list;
 use question_engine_data_mapper;
 use question_state;
@@ -272,7 +273,17 @@ abstract class table extends table_sql {
         global $DB;
 
         $extrafields = \core_user\fields::for_identity($this->context)
-            ->including('id', 'idnumber', 'firstname', 'lastname', 'picture', 'imagealt', 'institution', 'department', 'email')
+            ->including(
+                'id',
+                'idnumber',
+                'firstname',
+                'lastname',
+                'picture',
+                'imagealt',
+                'institution',
+                'department',
+                'email',
+            )
             ->get_sql('u')->selects;
 
         $allnames = \core_user\fields::for_name()
@@ -282,8 +293,8 @@ abstract class table extends table_sql {
         $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(ca.id, 0)') . ' AS uniqueid,';
         $fields .= '
                 cu.questionusageid AS usageid,
-                ca.id AS attempt,
-                u.id AS userid,
+                ca.id              AS attempt,
+                u.id               AS userid,
                 u.idnumber' . $allnames . ',
                 u.picture,
                 u.imagealt,
@@ -401,7 +412,8 @@ abstract class table extends table_sql {
         }
         $lateststeps = [];
         $dm = new question_engine_data_mapper();
-        foreach ($dm->load_questions_usages_latest_steps($qubaids, array_map(fn($o) => $o->slot, $this->questions)) as $step) {
+        $slots = array_map(fn($question) => $question->slot, $this->questions);
+        foreach ($dm->load_questions_usages_latest_steps($qubaids, $slots) as $step) {
             $lateststeps[$step->questionusageid][$step->slot] = $step;
         }
         return $lateststeps;
@@ -410,18 +422,25 @@ abstract class table extends table_sql {
     /**
      * Get an appropriate qubaid_condition for loading more data about the attempts we are displaying.
      *
-     * @return qubaid_list
+     * @see \mod_quiz\local\reports\attempts_report_table::get_qubaids_condition()
+     * @return qubaid_condition
      */
-    protected function get_qubaids_condition(): qubaid_list {
+    protected function get_qubaids_condition(): qubaid_condition {
         if ($this->rawdata === null) {
             throw new coding_exception('Cannot call get_qubaids_condition until the main data has been loaded.');
         }
-        $qubaids = [];
-        foreach ($this->rawdata as $attempt) {
-            if ($attempt->usageid > 0) {
-                $qubaids[] = $attempt->usageid;
-            }
+        if ($this->is_downloading()) {
+            return new qubaid_join(
+                from: "(SELECT DISTINCT cu.questionusageid
+                          FROM {$this->sql->from}
+                         WHERE {$this->sql->where}) caqubaquery",
+                usageidcolumn: 'caqubaquery.questionusageid',
+                where: '1 = 1',
+                params: $this->sql->params,
+            );
         }
+        $qubaids = array_map(fn(stdClass $attempt) => (int)$attempt->usageid, $this->rawdata);
+        $qubaids = array_filter($qubaids, fn(int $questionusageid) => $questionusageid > 0);
         return new qubaid_list($qubaids);
     }
 
