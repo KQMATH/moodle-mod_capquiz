@@ -291,23 +291,62 @@ function capquiz_reset_gradebook($courseid, $type = ''): void {
  * The individual list of parameters expected can be found in
  * question_build_edit_resources.
  *
+ * @see mod_quiz_output_fragment_quiz_question_bank()
  * @param array $args The fragment arguments.
  * @return string The rendered mform fragment.
  */
 function capquiz_output_fragment_capquiz_qbank(array $args): string {
     global $PAGE;
     require_capability('mod/capquiz:instructor', $PAGE->context);
+
     $querystring = parse_url($args['querystring'], PHP_URL_QUERY);
     $params = [];
     parse_str($querystring, $params);
-    $params['cmid'] = $PAGE->cm->id;
-    [$url, $contexts, $cmid, $cm, $capquiz, $pagevars] = question_build_edit_resources('editq', '/mod/capquiz/edit.php', $params);
-    $extraparams = ['cmid' => $cmid];
+
+    $params['cmid'] = clean_param($args['bankcmid'], PARAM_INT);
+    $params['bankcmid'] = clean_param($args['bankcmid'], PARAM_INT);
+    $params['capquizcmid'] = clean_param($args['capquizcmid'], PARAM_INT);
+
+    $extraparams = [
+        'capquizcmid' => clean_param($args['capquizcmid'], PARAM_INT),
+    ];
+
+    [
+        $url,
+        $contexts,
+        $cmid,
+        $cm,
+        $module,
+        $pagevars,
+    ] = question_build_edit_resources('editq', '/mod/capquiz/edit.php', array_merge($params, $extraparams));
+
+    if (!has_capability('moodle/question:useall', $contexts->lowest())) {
+        require_capability('moodle/question:usemine', $contexts->lowest());
+    }
+
+    $extraparams['cmid'] = $cmid;
+
+    $course = get_course($cm->course);
+
     ob_start();
-    $qbank = new question_bank_view($contexts, $url, get_course($cm->course), $cm, $pagevars, $extraparams);
+    $qbank = new question_bank_view($contexts, $url, $course, $cm, $pagevars, $extraparams);
     $qbank->display();
     $qbankhtml = ob_get_clean();
     return html_writer::div(html_writer::div($qbankhtml, 'bd'), 'questionbankformforpopup');
+}
+
+/**
+ * Build and return the output for the question bank and category chooser.
+ *
+ * @see mod_quiz_output_fragment_switch_question_bank()
+ * @param array $args provided by the AJAX request.
+ * @return string html to render to the modal.
+ */
+function capquiz_output_fragment_switch_question_bank($args): string {
+    global $USER, $COURSE, $OUTPUT;
+    $quizcmid = clean_param($args['capquizcmid'], PARAM_INT);
+    $switchbankwidget = new \core_question\output\switch_question_bank($quizcmid, $COURSE->id, $USER->id);
+    return $OUTPUT->render($switchbankwidget);
 }
 
 /**

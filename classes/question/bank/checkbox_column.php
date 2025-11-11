@@ -29,14 +29,15 @@ use mod_capquiz\local\helpers\questions;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class checkbox_column extends \core_question\local\bank\checkbox_column {
-    /** @var int[] Question IDs that have already been added the CAPQuiz */
+    /** @var int[] Question IDs that have already been added to the CAPQuiz */
     private array $addedquestionids = [];
 
     /**
      * Load IDs of questions already added to the quiz.
      */
     protected function init(): void {
-        $context = \core\context\module::instance($this->qbank->cm->id);
+        $capquizcmid = $this->qbank instanceof question_bank_view ? $this->qbank->capquizcmid : $this->qbank->cm->id;
+        $context = \core\context\module::instance($capquizcmid);
         $questions = questions::get_all_questions_by_references($context->id, 'slot');
         $this->addedquestionids = array_column($questions, 'id');
     }

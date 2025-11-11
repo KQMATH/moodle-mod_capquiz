@@ -176,12 +176,8 @@ class capquiz_user extends persistent {
             params: ['capquizuserid' => $this->get('id')],
         );
         question_engine::delete_questions_usage_by_activities($qubaidjoin);
-        foreach (capquiz_attempt::get_records(['capquizuserid' => $this->get('id')]) as $attempt) {
-            $attempt->delete();
-        }
-        foreach (capquiz_user_rating::get_records(['capquizuserid' => $this->get('id')]) as $userrating) {
-            $userrating->delete();
-        }
+        capquiz_attempt::delete_records(['capquizuserid' => $this->get('id')]);
+        capquiz_user_rating::delete_records(['capquizuserid' => $this->get('id')]);
     }
 
     /**
