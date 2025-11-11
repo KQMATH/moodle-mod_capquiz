@@ -336,20 +336,6 @@ function capquiz_output_fragment_capquiz_qbank(array $args): string {
 }
 
 /**
- * Build and return the output for the question bank and category chooser.
- *
- * @see mod_quiz_output_fragment_switch_question_bank()
- * @param array $args provided by the AJAX request.
- * @return string html to render to the modal.
- */
-function capquiz_output_fragment_switch_question_bank($args): string {
-    global $USER, $COURSE, $OUTPUT;
-    $quizcmid = clean_param($args['capquizcmid'], PARAM_INT);
-    $switchbankwidget = new \core_question\output\switch_question_bank($quizcmid, $COURSE->id, $USER->id);
-    return $OUTPUT->render($switchbankwidget);
-}
-
-/**
  * Serve question files.
  *
  * @param stdClass $course

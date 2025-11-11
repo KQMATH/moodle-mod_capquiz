@@ -21,7 +21,6 @@ namespace mod_capquiz\question\bank;
 use core\output\html_writer;
 use core_question\local\bank\column_base;
 use core_question\local\bank\column_manager_base;
-use core_question\local\bank\filter_condition_manager;
 use core_question\local\bank\question_edit_contexts;
 use mod_quiz\question\bank\question_name_text_column;
 
@@ -60,18 +59,6 @@ class question_bank_view extends \core_question\local\bank\view {
      * @param array $extraparams
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
-        if (!isset($params['filter'])) {
-            $params['filter']  = filter_condition_manager::get_default_filter($params['cat']);
-            unset($params['filter']['hidden']);
-        }
-        for ($i = 1; $i <= \core_question\local\bank\view::MAX_SORTS; $i++) {
-            $sort = optional_param("qbs$i", '', PARAM_TEXT);
-            if ($sort) {
-                $params["qbs$i"] = $sort;
-            } else {
-                break;
-            }
-        }
         $this->capquizcmid = (int)$extraparams['capquizcmid'];
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
     }
@@ -103,10 +90,6 @@ class question_bank_view extends \core_question\local\bank\view {
      * Display the question bank switch.
      */
     protected function display_question_bank_header(): void {
-        global $OUTPUT;
-        echo $OUTPUT->render_from_template('mod_quiz/switch_bank_header', [
-            'currentbank' => \cm_info::create($this->cm)->get_formatted_name(),
-        ]);
     }
 
     /**
