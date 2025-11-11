@@ -63,7 +63,11 @@ class edit_questions implements \renderable, \templatable {
         $cmid = (int)$cm->id;
         $context = $this->capquiz->get_context();
         $output->get_page()->requires->js_call_amd('mod_capquiz/edit_slots', 'init', [$cmid]);
-        $output->get_page()->requires->js_call_amd('mod_capquiz/qbank_modal', 'init', [$context->id]);
+        $output->get_page()->requires->js_call_amd('mod_capquiz/qbank_modal', 'init', [
+            $context->id,
+            $cmid,
+            $cmid,
+        ]);
         $rows = [];
         $editstr = get_string('edit');
         $previewstr = get_string('preview');

@@ -246,12 +246,8 @@ class capquiz_slot extends persistent {
             'questionarea' => 'slot',
             'itemid' => $this->get('id'),
         ]);
-        foreach (capquiz_question_rating::get_records(['slotid' => $this->get('id')]) as $questionrating) {
-            $questionrating->delete();
-        }
-        foreach (capquiz_attempt::get_records(['slotid' => $this->get('id')]) as $attempt) {
-            $attempt->delete();
-        }
+        capquiz_question_rating::delete_records(['slotid' => $this->get('id')]);
+        capquiz_attempt::delete_records(['slotid' => $this->get('id')]);
     }
 
     /**

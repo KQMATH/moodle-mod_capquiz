@@ -183,6 +183,21 @@ class capquiz_attempt extends persistent {
     }
 
     /**
+     * Delete records where criteria matches, while also calling hooks.
+     *
+     * @param array $criteria
+     * @return void
+     */
+    public static function delete_records(array $criteria): void {
+        do {
+            $records = self::get_records($criteria, limit: 100);
+            foreach ($records as $record) {
+                $record->delete();
+            }
+        } while (!empty($records));
+    }
+
+    /**
      * Return the definition of the properties of this model.
      *
      * @return array
