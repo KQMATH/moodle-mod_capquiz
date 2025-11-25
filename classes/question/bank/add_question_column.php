@@ -38,8 +38,8 @@ class add_question_column extends \core_question\local\bank\column_base {
      * Load IDs of questions already added to the quiz. This lets us only show an add action for unadded questions.
      */
     protected function init(): void {
-        $capquizcmid = $this->qbank instanceof question_bank_view ? $this->qbank->capquizcmid : $this->qbank->cm->id;
-        $context = \core\context\module::instance($capquizcmid);
+        $quizcmid = $this->qbank instanceof question_bank_view ? $this->qbank->quizcmid : $this->qbank->cm->id;
+        $context = \core\context\module::instance($quizcmid);
         $questions = questions::get_all_questions_by_references($context->id, 'slot');
         $this->addedquestionids = array_column($questions, 'id');
     }
@@ -60,7 +60,7 @@ class add_question_column extends \core_question\local\bank\column_base {
             return;
         }
         $url = new \core\url('/mod/capquiz/edit.php', [
-            'id' => $this->qbank instanceof question_bank_view ? $this->qbank->capquizcmid : $this->qbank->cm->id,
+            'id' => $this->qbank instanceof question_bank_view ? $this->qbank->quizcmid : $this->qbank->cm->id,
             'action' => 'addquestion',
             'questionid' => $question->id,
         ]);
