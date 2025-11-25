@@ -38,7 +38,7 @@ export class QuestionBankModal extends Modal {
         modalConfig.show = true;
         modalConfig.removeOnClose = true;
         this.contextId = modalConfig.contextId;
-        this.capquizCmId = modalConfig.capquizCmId;
+        this.quizCmId = modalConfig.quizCmId;
         this.bankCmId = modalConfig.bankCmId;
         this.originalTitle = modalConfig.title;
         super.configure(modalConfig);
@@ -62,7 +62,7 @@ export class QuestionBankModal extends Modal {
         this.setTitle(this.originalTitle);
         this.setBody(Fragment.loadFragment('mod_capquiz', 'capquiz_qbank', this.contextId, {
             querystring: window.location.search,
-            capquizcmid: this.capquizCmId,
+            quizcmid: this.quizCmId,
             bankcmid: this.bankCmId,
         }));
     }
@@ -123,9 +123,9 @@ export class QuestionBankModal extends Modal {
         this.getModal().on('submit', 'form#questionsubmit', event => {
             const form = event.currentTarget;
             const cmIdInput = document.querySelector('form#questionsubmit input[name="cmid"]');
-            cmIdInput.setAttribute('value', this.capquizCmId);
+            cmIdInput.setAttribute('value', this.quizCmId);
             const actionUrl = new URL(form.getAttribute('action'));
-            actionUrl.searchParams.set('cmid', this.capquizCmId);
+            actionUrl.searchParams.set('cmid', this.quizCmId);
             form.setAttribute('action', actionUrl.toString());
         });
 
@@ -159,7 +159,7 @@ export class QuestionBankModal extends Modal {
         this.setFooter(goBackButton);
 
         const bodyFragment = Fragment.loadFragment('mod_capquiz', 'switch_question_bank', this.contextId, {
-            capquizcmid: this.capquizCmId,
+            quizcmid: this.quizCmId,
             bankcmid: this.bankCmId,
         });
         this.setBody(bodyFragment);
@@ -188,10 +188,10 @@ export class QuestionBankModal extends Modal {
  * Initialize.
  *
  * @param {number} contextId
- * @param {number} capquizCmId
+ * @param {number} quizCmId
  * @param {number} bankCmId
  */
-export const init = (contextId, capquizCmId, bankCmId) => {
+export const init = (contextId, quizCmId, bankCmId) => {
     QuestionBankModal.registerModalType();
     document.addEventListener('click', async event => {
         const target = event.target.closest('.menu [data-action="questionbank"]');
@@ -199,14 +199,12 @@ export const init = (contextId, capquizCmId, bankCmId) => {
             event.preventDefault();
             await QuestionBankModal.create({
                 contextId: contextId,
-                capquizCmId: capquizCmId,
+                quizCmId: quizCmId,
                 bankCmId: bankCmId,
                 title: target.dataset.header,
-                addOnPage: target.dataset.addonpage,
                 templateContext: {
                     hidden: true,
                 },
-                large: true,
             });
         }
     });

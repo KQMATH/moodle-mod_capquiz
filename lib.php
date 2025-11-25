@@ -27,6 +27,8 @@
 
 // phpcs:disable moodle.Commenting.ValidTags.Invalid
 
+use core_question\local\bank\filter_condition_manager;
+use core_question\local\bank\question_edit_contexts;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_attempt;
 use mod_capquiz\capquiz_user;
@@ -305,10 +307,10 @@ function capquiz_output_fragment_capquiz_qbank(array $args): string {
 
     $params['cmid'] = clean_param($args['bankcmid'], PARAM_INT);
     $params['bankcmid'] = clean_param($args['bankcmid'], PARAM_INT);
-    $params['capquizcmid'] = clean_param($args['capquizcmid'], PARAM_INT);
+    $params['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
 
     $extraparams = [
-        'capquizcmid' => clean_param($args['capquizcmid'], PARAM_INT),
+        'quizcmid' => clean_param($args['quizcmid'], PARAM_INT),
     ];
 
     [
@@ -342,11 +344,51 @@ function capquiz_output_fragment_capquiz_qbank(array $args): string {
  * @param array $args provided by the AJAX request.
  * @return string html to render to the modal.
  */
-function capquiz_output_fragment_switch_question_bank($args): string {
+function capquiz_output_fragment_switch_question_bank(array $args): string {
     global $USER, $COURSE, $OUTPUT;
-    $quizcmid = clean_param($args['capquizcmid'], PARAM_INT);
+    $quizcmid = clean_param($args['quizcmid'], PARAM_INT);
     $switchbankwidget = new \core_question\output\switch_question_bank($quizcmid, $COURSE->id, $USER->id);
     return $OUTPUT->render($switchbankwidget);
+}
+
+
+/**
+ * Question data fragment to get the question html via ajax call.
+ *
+ * @see mod_quiz_output_fragment_question_data()
+ * @param array $args
+ * @return string
+ */
+function capquiz_output_fragment_question_data(array $args): string {
+    if (empty($args)) {
+        return '';
+    }
+    // Retrieve params from query string.
+    [$params, $extraparams] = filter_condition_manager::extract_parameters_from_fragment_args($args);
+
+    // Build required parameters.
+    $cmid = clean_param($args['cmid'], PARAM_INT);
+    $thispageurl = new \core\url('/mod/capquiz/edit.php', ['cmid' => $cmid]);
+    $thiscontext = \core\context\module::instance($cmid);
+    $contexts = new question_edit_contexts($thiscontext);
+    $defaultcategory = question_get_default_category($contexts->lowest()->id, true);
+    $params['cat'] = implode(',', [$defaultcategory->id, $defaultcategory->contextid]);
+
+    $course = get_course($params['courseid']);
+    // The viewing bank mod id.
+    [, $cm] = get_module_from_cmid(clean_param($args['cmid'], PARAM_INT));
+    $params['tabname'] = 'questions';
+    $extraparams['quizcmid'] = clean_param($args['quizcmid'], PARAM_INT);
+
+    // Custom question bank view.
+    $viewclass = clean_param($args['view'], PARAM_NOTAGS);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+
+    // Question table.
+    $questionbank->add_standard_search_conditions();
+    ob_start();
+    $questionbank->display_question_list();
+    return ob_get_clean();
 }
 
 /**
