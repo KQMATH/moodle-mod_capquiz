@@ -36,8 +36,8 @@ class checkbox_column extends \core_question\local\bank\checkbox_column {
      * Load IDs of questions already added to the quiz.
      */
     protected function init(): void {
-        $capquizcmid = $this->qbank instanceof question_bank_view ? $this->qbank->capquizcmid : $this->qbank->cm->id;
-        $context = \core\context\module::instance($capquizcmid);
+        $quizcmid = $this->qbank instanceof question_bank_view ? $this->qbank->quizcmid : $this->qbank->cm->id;
+        $context = \core\context\module::instance($quizcmid);
         $questions = questions::get_all_questions_by_references($context->id, 'slot');
         $this->addedquestionids = array_column($questions, 'id');
     }

@@ -43,9 +43,9 @@ class question_bank_view extends \core_question\local\bank\view {
     public $component = 'mod_capquiz';
 
     /**
-     * @var int CAPQuiz course module id
+     * @var int The course module id for the activity
      */
-    public readonly int $capquizcmid;
+    public readonly int $quizcmid;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ class question_bank_view extends \core_question\local\bank\view {
      * @param array $extraparams
      */
     public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
-        $this->capquizcmid = (int)$extraparams['capquizcmid'];
+        $this->quizcmid = (int)$extraparams['quizcmid'];
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
     }
 
