@@ -44,9 +44,9 @@ class question_bank_view extends \core_question\local\bank\view {
     public $component = 'mod_capquiz';
 
     /**
-     * @var int CAPQuiz course module id
+     * @var int The course module id for the activity
      */
-    public readonly int $capquizcmid;
+    public readonly int $quizcmid;
 
     /**
      * Constructor.
@@ -64,15 +64,7 @@ class question_bank_view extends \core_question\local\bank\view {
             $params['filter']  = filter_condition_manager::get_default_filter($params['cat']);
             unset($params['filter']['hidden']);
         }
-        for ($i = 1; $i <= \core_question\local\bank\view::MAX_SORTS; $i++) {
-            $sort = optional_param("qbs$i", '', PARAM_TEXT);
-            if ($sort) {
-                $params["qbs$i"] = $sort;
-            } else {
-                break;
-            }
-        }
-        $this->capquizcmid = (int)$extraparams['capquizcmid'];
+        $this->quizcmid = (int)$extraparams['quizcmid'];
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
     }
 
