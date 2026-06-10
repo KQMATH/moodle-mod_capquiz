@@ -69,7 +69,7 @@ class attempt implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $output->get_page()->requires->js_module('core_question_engine');
+        $output->get_page()->requires->js_call_amd('core_question/question_engine');
         $qubaslot = $this->attempt->get('slot');
         $quba = $this->user->get_question_usage();
         // This adds the necessary JS and CSS for the question type.
