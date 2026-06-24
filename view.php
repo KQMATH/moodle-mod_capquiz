@@ -23,8 +23,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\context\module;
+use core\url;
 use mod_capquiz\capquiz;
 use mod_capquiz\output\classlist;
+use mod_capquiz\output\user_dashboard;
 use mod_capquiz\output\renderer;
 
 require_once(__DIR__ . '/../../config.php');
@@ -38,12 +41,12 @@ require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
-$context = \core\context\module::instance($cmid);
+$context = module::instance($cmid);
 
 $PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_url(new \core\url('/mod/capquiz/view.php', ['id' => $cmid]));
+$PAGE->set_url(new url('/mod/capquiz/view.php', ['id' => $cmid]));
 
 $capquiz = new capquiz($cm->instance);
 $course = get_course($cm->course);
@@ -64,21 +67,21 @@ $renderer = $PAGE->get_renderer('mod_capquiz');
 
 echo $OUTPUT->header();
 
+$attempturl = new url('/mod/capquiz/attempt.php', ['id' => $cmid]);
+
 if (has_capability('mod/capquiz:instructor', $context)) {
     echo $renderer->render(new classlist($capquiz));
-}
-
-if (has_any_capability(['mod/capquiz:student', 'mod/capquiz:instructor'], $context)) {
-    $attempturl = new \core\url('/mod/capquiz/attempt.php', ['id' => $cmid]);
     echo '<h2 class="mt-6">';
-    echo get_string('attemptquiz', 'capquiz');
+    echo get_string('previewquiz', 'capquiz');
     echo '</h2>';
     echo '<p>';
-    echo get_string('attemptquizinfo', 'capquiz');
+    echo get_string('previewquizinfo', 'capquiz');
     echo '</p>';
-    echo '<div>';
-    echo $renderer->render(new action_link($attempturl, get_string('preview')));
-    echo '</div>';
+    echo '<p>';
+    echo $renderer->render(new action_link($attempturl, get_string('previewquiz', 'capquiz')));
+    echo '</p>';
+} else if (has_capability('mod/capquiz:student', $context)) {
+    echo $renderer->render(new user_dashboard($capquiz));
 }
 
 echo $OUTPUT->footer();
