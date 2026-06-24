@@ -19,6 +19,10 @@ declare(strict_types=1);
 namespace mod_capquiz;
 
 use calendar_event;
+use core\clock;
+use core\context\module;
+use core\di;
+use core\lang_string;
 use core\persistent;
 use mod_capquiz\local\helpers\stars;
 
@@ -109,16 +113,16 @@ class capquiz extends persistent {
      * Check if the CAPQuiz is open.
      */
     public function is_open(): bool {
-        $now = \core\di::get(\core\clock::class)->time();
-        return $now >= $this->get('timeopen') && $now <= $this->get('timedue');
+        $clock = di::get(clock::class);
+        return $clock->time() >= $this->get('timeopen') && !$this->is_past_due_time();
     }
 
     /**
      * Returns true if the capquiz is completely graded.
      */
     public function is_past_due_time(): bool {
-        $now = \core\di::get(\core\clock::class)->time();
-        return $now > $this->get('timedue') && $this->get('timedue') > 0;
+        $clock = di::get(clock::class);
+        return $clock->time() > $this->get('timedue') && $this->get('timedue') > 0;
     }
 
     /**
@@ -152,11 +156,11 @@ class capquiz extends persistent {
     /**
      * Get context for this CAPQUiz instance.
      *
-     * @return \core\context\module
+     * @return module
      */
-    public function get_context(): \core\context\module {
+    public function get_context(): module {
         $cmid = (int)$this->get_cm()->id;
-        return \core\context\module::instance($cmid);
+        return module::instance($cmid);
     }
 
     /**
@@ -164,11 +168,11 @@ class capquiz extends persistent {
      * Check if the number is between 0 and how many stars are configured.
      *
      * @param int $starstopass
-     * @return bool|\lang_string
+     * @return bool|lang_string
      */
-    protected function validate_starstopass(int $starstopass): bool|\lang_string {
+    protected function validate_starstopass(int $starstopass): bool|lang_string {
         if ($starstopass > stars::get_max_stars($this->get('starratings')) || $starstopass < 0) {
-            return new \lang_string('errorvalidatestarstopass', 'capquiz');
+            return new lang_string('errorvalidatestarstopass', 'capquiz');
         }
         return true;
     }
@@ -178,14 +182,14 @@ class capquiz extends persistent {
      * Check if each rating in the CSV string is a valid number, and that they're greater than the previous.
      *
      * @param string $ratings
-     * @return true|\core\lang_string
+     * @return true|lang_string
      */
-    protected function validate_starratings(string $ratings): bool|\core\lang_string {
+    protected function validate_starratings(string $ratings): bool|lang_string {
         $previous = 0.0;
         foreach (explode(',', $ratings) as $rating) {
             $previous = filter_var($rating, FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => $previous + 1.0]]);
             if (!$previous) {
-                return new \core\lang_string('errorvalidatestarratings', 'capquiz');
+                return new lang_string('errorvalidatestarratings', 'capquiz');
             }
         }
         return true;
@@ -196,9 +200,9 @@ class capquiz extends persistent {
      * Check if each property has a valid name and value for {@see \question_display_options}.
      *
      * @param string $options
-     * @return bool|\core\lang_string
+     * @return bool|lang_string
      */
-    protected function validate_questiondisplayoptions(string $options): bool|\core\lang_string {
+    protected function validate_questiondisplayoptions(string $options): bool|lang_string {
         foreach (json_decode($options, true) as $key => $value) {
             if (!in_array($key, ['feedback', 'generalfeedback', 'rightanswer', 'correctness'])) {
                 return false;

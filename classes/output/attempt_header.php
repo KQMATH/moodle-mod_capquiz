@@ -36,10 +36,13 @@ class attempt_header implements renderable, templatable {
      * Constructor.
      *
      * @param capquiz_user $user
+     * @param capquiz $capquiz
      */
     public function __construct(
         /** @var capquiz_user User */
         private readonly capquiz_user $user,
+        /** @var capquiz CAPQuiz */
+        private readonly capquiz $capquiz,
     ) {
     }
 
@@ -60,11 +63,10 @@ class attempt_header implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        $capquiz = new capquiz($this->user->get('capquizid'));
-        $percent = stars::get_percent_to_next_star($capquiz, $this->user->get('rating'));
+        $percent = stars::get_percent_to_next_star($this->capquiz, $this->user->get('rating'));
         $stars = [];
-        $starratings = $capquiz->get('starratings');
-        for ($star = 1; $star <= $capquiz->get_max_stars(); $star++) {
+        $starratings = $this->capquiz->get('starratings');
+        for ($star = 1; $star <= $this->capquiz->get_max_stars(); $star++) {
             if ($this->user->get('higheststars') >= $star) {
                 if ($this->user->get('rating') >= stars::get_required_rating_for_star($starratings, $star)) {
                     $stars[] = ['icon' => 'star', 'tooltip' => get_string('tooltip_achieved_star', 'capquiz')];

@@ -77,7 +77,7 @@ class attempt implements renderable, templatable {
         question_engine::initialise_js();
         $cm = $this->capquiz->get_cm();
         return [
-            'header' => $output->render(new attempt_header($this->user)),
+            'header' => $output->render(new attempt_header($this->user, $this->capquiz)),
             'attempt' => [
                 'url' => (new \core\url('/mod/capquiz/attempt.php', ['id' => $cm->id, 'action' => 'submit']))->out(false),
                 'body' => $quba->render_question($qubaslot, questions::get_question_display_options($this->capquiz)),

@@ -30,7 +30,6 @@ $string['add_star'] = 'Add star';
 $string['add_to_quiz'] = 'Add to capquiz';
 $string['attempt'] = 'Attempt';
 $string['attemptquiz'] = 'Attempt quiz';
-$string['attemptquizinfo'] = 'Question ratings will not be affected while previewing the quiz.';
 $string['attempts'] = 'Attempts';
 
 $string['capquiz:addinstance'] = 'Add an instance of CAPQuiz';
@@ -93,6 +92,8 @@ $string['pluginadministration'] = 'CAPQuiz administration';
 $string['pluginname'] = 'CAPQuiz';
 $string['prevent_question_n_times'] = 'Prevent the same question to be used for N attempts';
 $string['prevent_question_n_times_help'] = 'This will prevent a student from being matched with the same question for the specified number of attempts.';
+$string['previewquiz'] = 'Preview quiz';
+$string['previewquizinfo'] = 'Question ratings will not be affected while previewing the quiz.';
 $string['privacy:metadata:capquiz_attempt'] = 'Details about each attempt on a CAPQuiz.';
 $string['privacy:metadata:capquiz_attempt:capquizuserid'] = 'The CAPQuiz user who made the attempt.';
 $string['privacy:metadata:capquiz_attempt:timeanswered'] = 'The time that the attempt was answered.';
