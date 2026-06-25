@@ -113,8 +113,11 @@ class capquiz extends persistent {
      * Check if the CAPQuiz is open.
      */
     public function is_open(): bool {
+        if ($this->is_past_due_time()) {
+            return false;
+        }
         $clock = di::get(clock::class);
-        return $clock->time() >= $this->get('timeopen') && !$this->is_past_due_time();
+        return $clock->time() >= $this->get('timeopen') && $this->get('timeopen') > 0;
     }
 
     /**
