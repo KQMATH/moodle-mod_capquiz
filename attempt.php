@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\context\module;
+use core\url;
 use mod_capquiz\capquiz;
 use mod_capquiz\capquiz_slot;
 use mod_capquiz\capquiz_user;
@@ -39,15 +41,15 @@ require_once($CFG->dirroot . '/mod/capquiz/lib.php');
 $cmid = required_param('id', PARAM_INT);
 $cm = get_coursemodule_from_id('capquiz', $cmid, 0, false, MUST_EXIST);
 require_login($cm->course, false, $cm);
-$context = \core\context\module::instance($cmid);
+$context = module::instance($cmid);
 if (!has_any_capability(['mod/capquiz:student', 'mod/capquiz:instructor'], $context)) {
-    redirect(new \core\url('/'));
+    redirect(new url('/'));
 }
 
 $PAGE->set_context($context);
 $PAGE->set_cm($cm);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_url(new \core\url('/mod/capquiz/attempt.php', ['id' => $cmid]));
+$PAGE->set_url(new url('/mod/capquiz/attempt.php', ['id' => $cmid]));
 $PAGE->set_cacheable(false);
 
 $capquiz = new capquiz($cm->instance);
