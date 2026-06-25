@@ -25,8 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024102101;
-$plugin->requires  = 2022041901;
 $plugin->component = 'capquizreport_questions';
+$plugin->version   = 2025101500;
+$plugin->requires  = 2024100700;
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.2.0';
