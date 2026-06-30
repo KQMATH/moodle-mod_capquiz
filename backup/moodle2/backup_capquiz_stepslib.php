@@ -65,7 +65,7 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $questionrating = new backup_nested_element('qrating', ['id'], [
             'slotid',
             'rating',
-            'manual',
+            'ismanual',
             'timecreated',
             'timemodified',
             'usermodified',
@@ -89,7 +89,7 @@ class backup_capquiz_activity_structure_step extends backup_questions_activity_s
         $userrating = new backup_nested_element('userrating', ['id'], [
             'capquizuserid',
             'rating',
-            'manual',
+            'ismanual',
             'timecreated',
             'timemodified',
             'usermodified',

@@ -1059,5 +1059,21 @@ function xmldb_capquiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025101403, 'capquiz');
     }
 
+    if ($oldversion < 2025102001) {
+        $table = new xmldb_table('capquiz_question_rating');
+        $field = new xmldb_field('manual', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'ismanual');
+        }
+
+        $table = new xmldb_table('capquiz_user_rating');
+        $field = new xmldb_field('manual', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'ismanual');
+        }
+
+        upgrade_mod_savepoint(true, 2025102001, 'capquiz');
+    }
+
     return true;
 }
