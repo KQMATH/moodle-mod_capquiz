@@ -73,7 +73,7 @@ class capquiz_user_rating extends persistent {
                 'default' => 0.0,
                 'null' => NULL_NOT_ALLOWED,
             ],
-            'manual' => [
+            'ismanual' => [
                 'type' => PARAM_BOOL,
                 'default' => false,
                 'null' => NULL_NOT_ALLOWED,

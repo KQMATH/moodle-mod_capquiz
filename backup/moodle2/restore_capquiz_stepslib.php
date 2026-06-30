@@ -94,6 +94,10 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $data = (object)$data;
         $oldid = $data->id;
         $data->slotid = $this->get_new_parentid('capquiz_slot');
+        if (isset($data->manual)) {
+            $data->ismanual = $data->manual;
+            unset($data->manual);
+        }
         $newitemid = $DB->insert_record('capquiz_question_rating', $data);
         $this->set_mapping('capquiz_question_rating', $oldid, $newitemid);
     }
@@ -120,6 +124,10 @@ class restore_capquiz_activity_structure_step extends restore_questions_activity
         $data = (object)$data;
         $oldid = $data->id;
         $data->capquizuserid = $this->get_new_parentid('capquiz_user');
+        if (isset($data->manual)) {
+            $data->ismanual = $data->manual;
+            unset($data->manual);
+        }
         $newitemid = $DB->insert_record('capquiz_user_rating', $data);
         $this->set_mapping('capquiz_user_rating', $oldid, $newitemid);
     }
