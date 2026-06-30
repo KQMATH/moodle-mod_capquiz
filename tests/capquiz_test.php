@@ -106,7 +106,7 @@ final class capquiz_test extends \advanced_testcase {
         $this->assertCount(1, $ratings);
         $rating = reset($ratings);
         $this->assertEqualsWithDelta($capquiz->get('defaultuserrating'), $rating->get('rating'), 0.00001);
-        $this->assertFalse($rating->get('manual'));
+        $this->assertFalse($rating->get('ismanual'));
     }
 
     /**
@@ -134,6 +134,6 @@ final class capquiz_test extends \advanced_testcase {
         $this->assertCount(1, $ratings);
         $rating = reset($ratings);
         $this->assertEqualsWithDelta(1000.0, $rating->get('rating'), 0.00001);
-        $this->assertFalse($rating->get('manual'));
+        $this->assertFalse($rating->get('ismanual'));
     }
 }

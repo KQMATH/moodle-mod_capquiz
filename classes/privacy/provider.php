@@ -78,7 +78,7 @@ class provider implements
         $collection->add_database_table('capquiz_user_rating', [
             'capquizuserid' => 'privacy:metadata:capquiz_user_rating:capquizuserid',
             'rating' => 'privacy:metadata:capquiz_user_rating:rating',
-            'manual' => 'privacy:metadata:capquiz_user_rating:manual',
+            'ismanual' => 'privacy:metadata:capquiz_user_rating:manual',
             'timecreated' => 'privacy:metadata:capquiz_user_rating:timecreated',
         ], 'privacy:metadata:capquiz_user_rating');
 
@@ -231,7 +231,7 @@ class provider implements
         foreach ($ratings as $rating) {
             $data = new \stdClass();
             $data->rating = $rating->rating;
-            $data->manual = $rating->manual;
+            $data->ismanual = $rating->ismanual;
             $data->timecreated = transform::datetime($rating->timecreated);
             $subcontext = [
                 get_string('userratings', 'capquiz'),
