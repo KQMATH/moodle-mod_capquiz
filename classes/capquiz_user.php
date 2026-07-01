@@ -43,7 +43,7 @@ class capquiz_user extends persistent {
         $userrating = new capquiz_user_rating(record: (object)[
             'capquizuserid' => $this->get('id'),
             'rating' => $this->get('rating'),
-            'manual' => false,
+            'ismanual' => false,
         ]);
         $userrating->create();
     }
@@ -61,7 +61,7 @@ class capquiz_user extends persistent {
         $userrating->set_many([
             'capquizuserid' => $this->get('id'),
             'rating' => $rating,
-            'manual' => $manual,
+            'ismanual' => $manual,
         ]);
         return $userrating->create();
     }
