@@ -42,7 +42,7 @@ class capquiz_slot extends persistent {
         $questionrating = new capquiz_question_rating(record: (object)[
             'slotid' => $this->get('id'),
             'rating' => $this->get('rating'),
-            'manual' => false,
+            'ismanual' => false,
         ]);
         $questionrating->create();
     }
@@ -61,7 +61,7 @@ class capquiz_slot extends persistent {
         $questionrating->set_many([
             'slotid' => $this->get('id'),
             'rating' => $rating,
-            'manual' => $manual,
+            'ismanual' => $manual,
         ]);
         return $questionrating->create();
     }
