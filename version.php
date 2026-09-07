@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_capquiz';
-$plugin->release   = '5.2.1';
-$plugin->version   = 2026042001;
+$plugin->release   = '5.2.2';
+$plugin->version   = 2026042002;
 $plugin->requires  = 2026042000;
 $plugin->maturity  = MATURITY_STABLE;
