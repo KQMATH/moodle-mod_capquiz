@@ -282,7 +282,7 @@ class table extends \mod_capquiz\local\reports\table {
                     qa.questionid AS questionid,
                     cqr.rating    AS questionrating,
                     pcqr.rating   AS prevquestionrating,
-                    pcqr.manual   AS manualprevqrating,
+                    pcqr.ismanual AS manualprevqrating,
                     cur.rating    AS userrating,
                     pcur.rating   AS prevuserrating,
                     pcur.rating   AS manualprevurating';
