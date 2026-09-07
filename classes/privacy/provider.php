@@ -218,10 +218,10 @@ class provider implements
      */
     public static function export_user_rating(\core\context $context, int $capquizuserid): void {
         global $DB;
-        $sql = "SELECT cur.id                AS ratingid,
-                       cur.rating            AS rating,
-                       cur.manual            AS manual,
-                       cur.timecreated       AS timecreated
+        $sql = "SELECT cur.id,
+                       cur.rating,
+                       cur.ismanual,
+                       cur.timecreated
                   FROM {capquiz_user} cu
                   JOIN {capquiz_user_rating} cur
                     ON cur.capquizuserid = cu.id
@@ -235,7 +235,7 @@ class provider implements
             $data->timecreated = transform::datetime($rating->timecreated);
             $subcontext = [
                 get_string('userratings', 'capquiz'),
-                get_string('userrating', 'capquiz') . " $rating->ratingid",
+                get_string('userrating', 'capquiz') . " $rating->id",
             ];
             writer::with_context($context)->export_data($subcontext, $data);
         }

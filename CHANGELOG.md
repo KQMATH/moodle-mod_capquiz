@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this plugin will be documented in this file.
 
+## 5.1.2 - 2026-09-07
+### Fixed
+- Fixed queries for results tables (https://github.com/KQMATH/moodle-mod_capquiz/issues/277)
+
 ## 5.1 - 2026-06-25
 ### Added
 - You can now attempt CAPQuizzes as an instructor, instead of changing your role to student.

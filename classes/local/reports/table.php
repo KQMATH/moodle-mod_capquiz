@@ -22,6 +22,7 @@ use coding_exception;
 use core\context;
 use core\dml\sql_join;
 use core\output\html_writer;
+use core\url;
 use mod_capquiz\capquiz;
 use popup_action;
 use qubaid_condition;
@@ -45,8 +46,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class table extends table_sql {
-    /** @var \core\url the URL of this report. */
-    protected \core\url $reporturl;
+    /** @var url the URL of this report. */
+    protected url $reporturl;
 
     /** @var array the display options. */
     protected array $displayoptions;
@@ -87,7 +88,7 @@ abstract class table extends table_sql {
      * @param options $options
      * @param sql_join $studentsjoins Contains joins, wheres, params
      * @param array $questions
-     * @param \core\url $reporturl
+     * @param url $reporturl
      */
     public function __construct(
         $uniqueid,
@@ -96,7 +97,7 @@ abstract class table extends table_sql {
         options $options,
         sql_join $studentsjoins,
         array $questions,
-        \core\url $reporturl,
+        url $reporturl,
     ) {
         parent::__construct("capquiz_report_$uniqueid");
         $this->useridfield = 'userid';
@@ -117,7 +118,7 @@ abstract class table extends table_sql {
      */
     public function col_checkbox(stdClass $attempt): string {
         if (property_exists($attempt, 'attempt')) {
-            return '<input type="checkbox" name="attemptid[]" value="' . $attempt->attempt . '" />';
+            return '<input type="checkbox" name="attemptid[]" value="' . $attempt->attempt . '">';
         } else {
             return '';
         }
@@ -272,20 +273,6 @@ abstract class table extends table_sql {
     public function base_sql(sql_join $allowedstudentsjoins): array {
         global $DB;
 
-        $extrafields = \core_user\fields::for_identity($this->context)
-            ->including(
-                'id',
-                'idnumber',
-                'firstname',
-                'lastname',
-                'picture',
-                'imagealt',
-                'institution',
-                'department',
-                'email',
-            )
-            ->get_sql('u')->selects;
-
         $allnames = \core_user\fields::for_name()
             ->with_identity($this->context)
             ->get_sql('u')->selects;
@@ -300,7 +287,6 @@ abstract class table extends table_sql {
                 u.imagealt,
                 u.institution,
                 u.department,
-                u.email' . $extrafields . ',
                 ca.slot,
                 ca.timeanswered,
                 ca.timereviewed';
