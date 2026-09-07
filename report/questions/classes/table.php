@@ -259,7 +259,7 @@ class table extends \mod_capquiz\local\reports\table {
                         ca.timeanswered  AS timecreated,
                         cqr.rating       AS questionrating,
                         pcqr.rating      AS questionprevrating,
-                        pcqr.manual      AS manualprevqrating,
+                        pcqr.ismanual    AS manualprevqrating,
                         cs.id            AS slotid,
                         qv.questionid    AS questionid
                    FROM $from
@@ -288,7 +288,7 @@ class table extends \mod_capquiz\local\reports\table {
                         ca.timeanswered  AS timecreated,
                         cqr.rating       AS questionrating,
                         pcqr.rating      AS questionprevrating,
-                        pcqr.manual      AS manualprevqrating,
+                        pcqr.ismanual    AS manualprevqrating,
                         cs2.id           AS slotid,
                         qv.questionid    AS questionid
                    FROM $from
